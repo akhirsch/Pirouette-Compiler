@@ -8,8 +8,8 @@ The process continues for all numbers > 0.
 
 helper curr :=
     curr ~> Pong.x;
-    let Pong.x := Pong.(x)-1 in     --? Pong.(x-1) ?--
-    Pong.print_int Pong.x;          -- I want to print x here but that is not a pirouette feature --
+    let Pong.x := Pong.(x)-1 in     --? Pong.(x-1) ?--  -- I imagine these have a fundamental difference. what is it? --
+    Pong.print_int Pong.x;          -- I want to print x here. citation: ian/testing branch examples/ep.pir --
     Pong.x ~> Ping.x; 
     if Ping.(x>0)
     then helper Ping.x
@@ -17,8 +17,8 @@ helper curr :=
 
 main := 
     let Ping.x := 100 in
-    if Ping.(x>0)
-    then helper Ping.x
+    -- if Ping.(x>0) then --        -- Seems safe to remove... is there any conflict possible? --
+    helper Ping.x
 ;
 
 
