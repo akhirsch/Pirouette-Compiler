@@ -3,37 +3,44 @@ This program choreographes two threads, Ping and Pong.
 Ping begins with the value 100 and sends it to Pong. 
 Pong decrements the value by 1 and prints it.
 Pong then passes the decremented value back to Ping.
-The process continues for all numbers > 0.
- -}
+The process continues for all numbers 100 to 1.
+-}
+
 
 helper curr :=
-    curr ~> Pong.x;
-    let Pong.x := Pong.(x)-1 in     --? Pong.(x-1) ?--  -- I imagine these have a fundamental difference. what is it? --
-    Pong.print_int Pong.x;          -- I want to print x here. citation: ian/testing branch examples/ep.pir --
-    Pong.x ~> Ping.x; 
+    let Pong.x := [Ping] Ping.curr ~> Pong; in
+    let Pong.x := Pong.(x-1); in
+    -- Pong.print_int Pong.x; --    --errors out--      -- citation: ian/testing branch examples/ep.pir --
+    let Ping.x := [Pong] Pong.x ~> Ping; in
     if Ping.(x>0)
-    then helper Ping.x
-;
+    then Ping.helper Ping.x
+    else ();
 
 main := 
-    let Ping.x := 100 in
-    -- if Ping.(x>0) then --        -- Seems safe to remove... is there any conflict possible? --
-    helper Ping.x
-;
+    let Ping.x := Ping.100; in 
+    Ping.helper Ping.x;
 
 
 {-
-NetIR:
-    Ping:
-    let x = 100 in
-    while x > 0
-    do 
-        send x to Ping;
-        let x = recieve from Pong;
+RUN RESULTS:
 
-    Pong:
-    let x = recieve from Ping in
-    let x = x-1 in
-    print "i: " ^ Pong.x;
-    send x to Pong
+>dune exec pirc pingpong.pir 
+
+= Printed to terminal:
+Entering directory '/Users/clairehuyck/Pirouette-Compiler'
+Leaving directory '/Users/clairehuyck/Pirouette-Compiler'
+= New files created
+pingpong.Ping.ast pingpong.Pong.ast pingpong.ast pingpong.ml 
+
+
+>dune exec ocamlc pingpong.ml 
+
+= Printed to terminl
+Entering directory '/Users/clairehuyck/Pirouette-Compiler'
+Leaving directory '/Users/clairehuyck/Pirouette-Compiler'
+File "pingpong.ml", line 1, characters 21-49:
+1 | let chan_Ping_Pong = Domainslib.Chan.make_bounded 0
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Error: Unbound module Domainslib
+
 -}
