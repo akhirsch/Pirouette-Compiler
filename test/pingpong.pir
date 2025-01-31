@@ -23,19 +23,21 @@ main :=
 
 {-
 RUN RESULTS:
-
 >dune exec pirc pingpong.pir 
 
 = Printed to terminal:
 Entering directory '/Users/clairehuyck/Pirouette-Compiler'
 Leaving directory '/Users/clairehuyck/Pirouette-Compiler'
-= New files created
-pingpong.Ping.ast pingpong.Pong.ast pingpong.ast pingpong.ml 
+= New files created:
+pingpong.Ping.ast
+pingpong.Pong.ast
+pingpong.ast
+pingpong.ml 
 
 
 >dune exec ocamlc pingpong.ml 
 
-= Printed to terminl
+= Printed to terminal:
 Entering directory '/Users/clairehuyck/Pirouette-Compiler'
 Leaving directory '/Users/clairehuyck/Pirouette-Compiler'
 File "pingpong.ml", line 1, characters 21-49:
