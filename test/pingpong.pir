@@ -14,7 +14,7 @@ helper curr :=
     let Ping.x := [Pong] Pong.x ~> Ping; in
     if Ping.(x>0)
     then Ping.helper Ping.x
-    else ();
+    else Ping.x;
 
 main := 
     let Ping.x := Ping.100; in 
