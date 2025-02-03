@@ -6,16 +6,21 @@ helper
     let
       Pong.y := Pong.(x - 1);
     in
-      let
-        Ping.x := [Pong] Pong.(y) ~> Ping;
-      in
-        if
-          Ping.(x > 0)
-        then
-          Ping[L] ~> Pong; Ping.(helper) Ping.(x)
-        else
-          Ping[R] ~> Pong; Ping.(print_endline) Ping.("done");
+      if
+        Pong.(x > 0)
+      then
+        Pong[L] ~> Ping;
+        let
+          Ping.x := [Pong] Pong.(y) ~> Ping;
+        in
+          Ping.(helper) Ping.(x)
+      else
+        Pong[R] ~> Ping;
+        let
+          Ping.x := [Pong] Pong.(y) ~> Ping;
+        in
+          Ping.(print_endline) Ping.("done");
 main := let
           Ping.x := Ping.(100);
         in
-          Ping.(helper) Ping.(x);
+          helper Ping.(x);

@@ -11,14 +11,18 @@
             (y) := (ret (x - 1))
           )
         in
-          (let
-             (
-               (_) := ((ret (y)) ~> Ping)
-             )
-           in
-             (allow Ping choice
-              | R -> (()) (())
-              | L -> (()) (())))))
+          (if
+             (ret (x > 0))
+           then
+             (choose L for Ping;
+              let (
+                    (_) := ((ret (y)) ~> Ping)
+                  ) in ((()) (())))
+           else
+             (choose R for Ping;
+              let (
+                    (_) := ((ret (y)) ~> Ping)
+                  ) in ((()) (()))))))
   (main) := (let (
                    (_) := (())
                  ) in ((()) (())))

@@ -10,18 +10,17 @@ The process continues for all numbers 100 to 1.
 helper curr :=
     let Pong.x := [Ping] Ping.curr ~> Pong; in
     let Pong.y := Pong.x-1; in
-    let Ping.x := [Pong] Pong.y ~> Ping; in
-    --Ping.print_endline Ping."number";            --x errors out--      -- citation: ian/testing branch examples/ep.pir --
-    if Ping.(x>0)
-    then Ping[L] ~> Pong;
+    if Pong.(x>0)
+    then Pong[L] ~> Ping;
+        let Ping.x := [Pong] Pong.y ~> Ping; in
         Ping.helper Ping.x
-        --Pong.print_endline Pong."number"
-    else Ping[R] ~> Pong;
+        --Pong.print_endline Pong."number"      --x errors out--      -- citation: ian/testing branch examples/ep.pir --
+    else Pong[R] ~> Ping;
+        let Ping.x := [Pong] Pong.y ~> Ping; in
         Ping.print_endline Ping."done";
 
 main := 
     let Ping.x := Ping.100; in 
-    
     Ping.helper Ping.x;
 
 

@@ -11,18 +11,18 @@
             (_) := (())
           )
         in
-          (let
-             (
-               (x) := (<~ Pong)
-             )
-           in
-             (if
-                (ret (x > 0))
-              then
-                (choose L for Pong; (ret (helper)) (ret (x)))
-              else
-                (choose R for Pong; (ret (print_endline)) (ret ("done")))))))
+          (allow Pong choice
+           | L -> let (
+                        (x) := (<~ Pong)
+                      ) in ((ret (helper)) (ret (x)))
+           | R ->
+               let
+                 (
+                   (x) := (<~ Pong)
+                 )
+               in
+                 ((ret (print_endline)) (ret ("done"))))))
   (main) := (let (
                    (x) := (ret (100))
-                 ) in ((ret (helper)) (ret (x))))
+                 ) in ((()) (ret (x))))
 )
