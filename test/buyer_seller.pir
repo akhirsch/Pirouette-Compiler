@@ -1,5 +1,5 @@
 {-
-This program choreographes two threads, Buyer and Seller.
+This program choreographes two , Buyer and Seller.
 Buyer proposes a bid value and sends it to Seller.
 Seller compares new bid to previous highest bid.
     Seller accepts higher new bids by sending true to Buyer. 
@@ -16,7 +16,7 @@ main :=
     let Seller.newbid := [Buyer] Buyer.bid ~> Seller; in
     if Seller.(newbid>highest)
     then Seller[R] ~> Buyer;
-        Buyer.true
+        Buyer.true;
     else Seller[L] ~> Buyer;
         Buyer.false
 ;

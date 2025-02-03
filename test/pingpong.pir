@@ -9,21 +9,25 @@ The process continues for all numbers 100 to 1.
 
 helper curr :=
     let Pong.x := [Ping] Ping.curr ~> Pong; in
-    let Pong.x := Pong.(x-1); in
-    -- Pong.print_int Pong.x; --    --errors out--      -- citation: ian/testing branch examples/ep.pir --
-    let Ping.x := [Pong] Pong.x ~> Ping; in
+    let Pong.y := Pong.x-1; in
+    let Ping.x := [Pong] Pong.y ~> Ping; in
+    --Ping.print_endline Ping."number";            --x errors out--      -- citation: ian/testing branch examples/ep.pir --
     if Ping.(x>0)
-    then Ping.helper Ping.x
-    else Ping.x;
+    then Ping[L] ~> Pong;
+        Ping.helper Ping.x
+        --Pong.print_endline Pong."number"
+    else Ping[R] ~> Pong;
+        Ping.print_endline Ping."done";
 
 main := 
     let Ping.x := Ping.100; in 
+    
     Ping.helper Ping.x;
 
 
 {-
 RUN RESULTS:
->dune exec pirc pingpong.pir 
+>dune exec pirc pingpong.pir
 
 = Printed to terminal:
 Entering directory '/Users/clairehuyck/Pirouette-Compiler'
