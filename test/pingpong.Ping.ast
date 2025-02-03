@@ -1,0 +1,28 @@
+(
+  (helper
+    curr) :=
+    (let
+       (
+         (_) := ((ret (curr)) ~> Pong)
+       )
+     in
+       (let
+          (
+            (_) := (())
+          )
+        in
+          (let
+             (
+               (x) := (<~ Pong)
+             )
+           in
+             (if
+                (ret (x > 0))
+              then
+                (choose L for Pong; (ret (helper)) (ret (x)))
+              else
+                (choose R for Pong; (ret (print_endline)) (ret ("done")))))))
+  (main) := (let (
+                   (x) := (ret (100))
+                 ) in ((ret (helper)) (ret (x))))
+)

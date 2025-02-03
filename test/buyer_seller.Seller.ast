@@ -1,0 +1,24 @@
+(
+  (main) :=
+    (let
+       (
+         (highest) := (ret (0))
+       )
+     in
+       (let
+          (
+            (_) := (())
+          )
+        in
+          (let
+             (
+               (newbid) := (<~ Buyer)
+             )
+           in
+             (if
+                (ret (newbid > highest))
+              then
+                (choose R for Buyer; ())
+              else
+                (choose L for Buyer; ())))))
+)

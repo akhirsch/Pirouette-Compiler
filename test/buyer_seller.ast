@@ -1,0 +1,16 @@
+main :=
+  let
+    Seller.highest := Seller.(0);
+  in
+    let
+      Buyer.bid := Buyer.(5);
+    in
+      let
+        Seller.newbid := [Buyer] Buyer.(bid) ~> Seller;
+      in
+        if
+          Seller.(newbid > highest)
+        then
+          Seller[R] ~> Buyer; Buyer.(true)
+        else
+          Seller[L] ~> Buyer; Buyer.(false);

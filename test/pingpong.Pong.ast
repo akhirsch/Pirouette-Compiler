@@ -1,0 +1,25 @@
+(
+  (helper
+    curr) :=
+    (let
+       (
+         (x) := (<~ Ping)
+       )
+     in
+       (let
+          (
+            (y) := (ret (x - 1))
+          )
+        in
+          (let
+             (
+               (_) := ((ret (y)) ~> Ping)
+             )
+           in
+             (allow Ping choice
+              | R -> (()) (())
+              | L -> (()) (())))))
+  (main) := (let (
+                   (_) := (())
+                 ) in ((()) (())))
+)
