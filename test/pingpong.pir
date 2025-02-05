@@ -1,51 +1,34 @@
 {- 
 This program choreographes two threads, Ping and Pong. 
 Ping begins with the value 100 and sends it to Pong. 
-Pong decrements the value by 1 and prints it.
+Pong decrements the value by 1 (and prints it).
 Pong then passes the decremented value back to Ping.
 The process continues for all numbers 100 to 1.
 -}
 
 
-helper curr :=
-    let Pong.x := [Ping] Ping.curr ~> Pong; in
-    let Pong.y := Pong.x-1; in
-    if Pong.(x>0)
-    then Pong[L] ~> Ping;
-        let Ping.x := [Pong] Pong.y ~> Ping; in
-        Ping.helper Ping.x
-        --Pong.print_endline Pong."number"      --x errors out--      -- citation: ian/testing branch examples/ep.pir --
-    else Pong[R] ~> Ping;
-        let Ping.x := [Pong] Pong.y ~> Ping; in
-        Ping.print_endline Ping."done";
-
 main := 
     let Ping.x := Ping.100; in 
+    let Pong.x := [Ping] Ping.x ~> Pong; in
     Ping.helper Ping.x;
 
-
-{-
-RUN RESULTS:
->dune exec pirc pingpong.pir
-
-= Printed to terminal:
-Entering directory '/Users/clairehuyck/Pirouette-Compiler'
-Leaving directory '/Users/clairehuyck/Pirouette-Compiler'
-= New files created:
-pingpong.Ping.ast
-pingpong.Pong.ast
-pingpong.ast
-pingpong.ml 
+helper curr :=
+    let Pong.y := Pong.curr-1; in
+    if Pong.(y>0)
+    then Pong[L] ~> Ping;
+        let Ping.x := [Pong] Pong.y ~> Ping; in
+        Pong.helper Pong.x 
+    else Pong[R] ~> Ping;
+        Ping."done";
 
 
->dune exec ocamlc pingpong.ml 
+{- Lines 13 and 20, 
+it appears the compiler may be struggling with helper 
+functions since they are not a part of the necessary 
+side of communication. Ping cannot comprehend Ping using
+the helper and vise versa. 
+In pingpong.ml, appears as () () -}
 
-= Printed to terminal:
-Entering directory '/Users/clairehuyck/Pirouette-Compiler'
-Leaving directory '/Users/clairehuyck/Pirouette-Compiler'
-File "pingpong.ml", line 1, characters 21-49:
-1 | let chan_Ping_Pong = Domainslib.Chan.make_bounded 0
-                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Error: Unbound module Domainslib
 
--}
+{- TO DO: add printing -}
+--Ping.print_endline Ping."x"        --y errors out--      -- citation: ian/testing branch examples/ep.pir -- 
