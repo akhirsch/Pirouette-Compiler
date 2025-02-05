@@ -1,4 +1,5 @@
-main := let LPF.x := [AGC] AGC.x ~> LPF; in
+main := 
+let LPF.x := [AGC] AGC.x ~> LPF; in
 let LPF.y := [AGC] AGC.y ~> LPF; in
 LPF.((x+y)/2)
 
@@ -13,8 +14,8 @@ NetIR:
   
 
   LPF:
-  let x = receive from LPF in 
-  let y = receive from LPF in
+  let x = receive from AGC in 
+  let y = receive from AGC in
   x + y / 2
 -}
 ;

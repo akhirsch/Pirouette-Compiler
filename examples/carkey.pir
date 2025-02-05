@@ -1,10 +1,15 @@
-main := let CAR.locked := CAR.true; in
+{-tried using same variable names, or at least similar to be able to follow haschor code, it would a return a bool for whether or not the car is locked-}
+
+main := 
+
+let CAR.locked := CAR.true; in
 let KEY.present := KEY.false; in
 
-if CAR.(locked = true)
+--when car is locked, locked == true, left branch
+if CAR.(locked)
   then CAR[L] ~> KEY;
 
-    let KEY.recieve_wake_signal := [CAR] CAR."myKey" ~> KEY; in
+    let KEY.receive_wake_signal := [CAR] CAR."myKey" ~> KEY; in
     if KEY.(receive_wake_signal = "myKey" && present = true)
 
       then KEY[L] ~> CAR;
@@ -18,19 +23,19 @@ if CAR.(locked = true)
             --this is where you would print a message about the car being unlocked
             let CAR.locked := CAR.false; in
             CAR.locked
-            CAR.print_endline CAR."LLR"
+            --CAR.print_endline CAR."LLR"
 
           else CAR[L] ~> KEY;
             --this is where you would print a message about incorrect answer, or wake signal not recieved
             let CAR.locked := CAR.true; in
             CAR.locked
-            CAR.print_endline CAR."LLL"
+            --CAR.print_endline CAR."LLL"
 
       else KEY[R] ~> CAR;
         
         let CAR.locked := CAR.true; in
         CAR.locked
-        CAR.print_endline CAR."LR"
+        --CAR.print_endline CAR."LR"
 
   else CAR[R] ~> KEY;
 
@@ -45,17 +50,17 @@ if CAR.(locked = true)
             then CAR[L] ~> KEY;
               let CAR.locked := CAR.true; in
               CAR.locked
-              CAR.print_endline CAR."RLL"
+              --CAR.print_endline CAR."RLL"
 
             else CAR[R] ~> KEY;
               let CAR.locked := CAR.false; in
               CAR.locked
-              CAR.print_endline CAR."RLR"
+              --CAR.print_endline CAR."RLR"
 
         else KEY[R] ~> CAR;
           let CAR.locked := CAR.false; in
           CAR.locked
-          CAR.print_endline CAR."RR"
+          --CAR.print_endline CAR."RR"
 
       
 
@@ -70,14 +75,14 @@ NetIR:
   | R => "Unlocked"
 
   let answer = recieve from KEY in
-  if answer = 2 then \-lock car-\ else \-send message?-\
+  let lock_signal = recieve from KEY in
 
 
   KEY:
 
   present : Bool
   present = false -- to start
-  input : int
+  input : string
   Allow KEY choice
   | L => "Present"
   | R => "Not Present"
