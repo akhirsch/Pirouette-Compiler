@@ -1,18 +1,27 @@
-{-tried using same variable names, or at least similar to be able to follow haschor code, it would a return a bool for whether or not the car is locked-}
+{-2/6/2024
+
+This is the pirouette translation of HasChor example of the carkey problem. When the car
+is locked it will try to send a wake signal. If the wake signal is recieved by the key
+then the key is present and will send a signal back to the car. Then, the car will send a challege 
+for the key to compute locally. (for now the challenge is pseudo-code and not actually meant to
+be computed. The answer from the key would be an input from the user) If the key sends the correct 
+answer the car is unlocked, otherwise the car will lock.
+
+-}
 
 main := 
 
 let CAR.locked := CAR.true; in
 let KEY.present := KEY.false; in
 
---when car is locked, locked == true, left branch
 if CAR.(locked)
   then CAR[L] ~> KEY;
 
     let KEY.receive_wake_signal := [CAR] CAR."myKey" ~> KEY; in
-    if KEY.(receive_wake_signal = "myKey" && present = true)
+    if KEY.(receive_wake_signal = "myKey")
 
       then KEY[L] ~> CAR;
+        let KEY.present := KEY.true; in
         let CAR.receive_present_signal := [KEY] KEY."Key Present" ~> CAR; in
         let KEY.problem := [CAR] CAR."Solve the challenge: 1+1 = ?\n" ~> KEY; in
         let CAR.answer := [KEY] KEY.input ~> CAR; in
@@ -23,44 +32,32 @@ if CAR.(locked)
             --this is where you would print a message about the car being unlocked
             let CAR.locked := CAR.false; in
             CAR.locked
-            --CAR.print_endline CAR."LLR"
+            
 
           else CAR[L] ~> KEY;
             --this is where you would print a message about incorrect answer, or wake signal not recieved
-            let CAR.locked := CAR.true; in
             CAR.locked
-            --CAR.print_endline CAR."LLL"
+            
 
       else KEY[R] ~> CAR;
-        
-        let CAR.locked := CAR.true; in
+        let CAR.locked := CAR.false; in
         CAR.locked
-        --CAR.print_endline CAR."LR"
+       
 
   else CAR[R] ~> KEY;
 
     
-      if KEY.(present)
+    let CAR.lock_signal := [KEY] KEY."LOCK" ~> CAR; in
+
+    if CAR.(lock_signal = "LOCK") 
 
         then KEY[L] ~> CAR;
-          let CAR.lock_signal := [KEY] KEY."LOCK" ~> CAR; in
-
-          if CAR.(lock_signal = "LOCK") 
-
-            then CAR[L] ~> KEY;
-              let CAR.locked := CAR.true; in
-              CAR.locked
-              --CAR.print_endline CAR."RLL"
-
-            else CAR[R] ~> KEY;
-              let CAR.locked := CAR.false; in
-              CAR.locked
-              --CAR.print_endline CAR."RLR"
-
-        else KEY[R] ~> CAR;
-          let CAR.locked := CAR.false; in
+          let CAR.locked := CAR.true; in
           CAR.locked
-          --CAR.print_endline CAR."RR"
+              
+        else KEY[R] ~> CAR;
+          CAR.locked
+          
 
       
 
@@ -92,24 +89,6 @@ NetIR:
   
 -}
 
--- failed attempts
-
-{-
---first attempt
-match CAR with
-| left -> match KEY with
-            | left -> let CAR.answer := [CAR] CAR. ~> KEY.problem;
-            | right -> CAR."Locked";
-| right -> match KEY with
-            |left -> CAR."Locked"
-            |right -> CAR."Locked"
-
--}
-
-{-if  then  send problem to key  else  car stays locked
-| CAR."Unlocked" -> 
-if KEY = "Present" then \- lock the car else autolock the car 
-the idea of it but def not right syntax-}
 
 
 ;
