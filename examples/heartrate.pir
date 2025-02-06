@@ -1,7 +1,7 @@
 main := 
-let LPF.x := [AGC] AGC.x ~> LPF; in
-let LPF.y := [AGC] AGC.y ~> LPF; in
-LPF.((x+y)/2)
+let LPF.x1 := [AGC] AGC.x2 ~> LPF; in
+let LPF.y1 := [AGC] AGC.y2 ~> LPF; in
+LPF.((x1+y1)/2)
 
 
 {-

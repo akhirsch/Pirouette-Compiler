@@ -40,7 +40,7 @@ if CAR.(locked)
   else CAR[R] ~> KEY;
 
     
-      if KEY.(present = true)
+      if KEY.(present)
 
         then KEY[L] ~> CAR;
           let CAR.lock_signal := [KEY] KEY."LOCK" ~> CAR; in
