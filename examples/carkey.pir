@@ -1,4 +1,4 @@
-{-2/6/2024
+{-2/6/2025
 
 This is the pirouette translation of HasChor example of the carkey problem. When the car
 is locked it will try to send a wake signal. If the wake signal is recieved by the key
@@ -59,8 +59,6 @@ if CAR.(locked)
           CAR.locked
           
 
-      
-
 {-
 NetIR:
   CAR:
@@ -88,7 +86,5 @@ NetIR:
   send input to CAR
   
 -}
-
-
 
 ;
