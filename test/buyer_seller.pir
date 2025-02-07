@@ -9,38 +9,24 @@ Buyer thread recieves desision and prints a message stating successful bid accep
 -}
 
 
+new_bid_processer new_bid curr_highest :=
+    if Seller.(new_bid>highest)
+    then Seller[R] ~> Buyer;
+        Buyer.new_bid
+    else Seller[L] ~> Buyer;
+        Buyer.(-1);
 
 main :=
     let Seller.highest := Seller.0; in
-    let Buyer.bid := Buyer.5; in                            -- Ideally, I would read user input here --
-    let Seller.newbid := [Buyer] Buyer.bid ~> Seller; in
-    if Seller.(newbid>highest)
-    then Seller[R] ~> Buyer;
-        Buyer.true;
-    else Seller[L] ~> Buyer;
-        Buyer.false
+    
+    -- Ideally, I would read user input here --
+    let Buyer.bid := User.5; in         
+    
+    let Seller.recieved := [Buyer] Buyer.bid ~> Seller; in    
+    let Buyer.outcome := Seller.new_bid_processer Seller.recieved Seller.highest; in
+    if Buyer.(outcome<0)
+    then Buyer[L] ~> User;
+        User."Bid not accepted."
+    else Buyer[R] ~> User;
+        User."Bid accepted."
 ;
-
-
-{-
-RUN RESULTS:
->dune exec pirc buyer_seller.pir
-
-=Printed to terminal:
-Entering directory '/Users/clairehuyck/Pirouette-Compiler'
-Leaving directory '/Users/clairehuyck/Pirouette-Compiler'
-=New files created:
-buyer_seller.Buyer.ast 
-buyer_seller.Seller.ast 
-buyer_seller.ast
-buyer_seller.ml
-
->dune exec ocamlc buyer_seller.ml
-=Printed to terminal:
-Entering directory '/Users/clairehuyck/Pirouette-Compiler'
-Leaving directory '/Users/clairehuyck/Pirouette-Compiler'
-File "buyer_seller.ml", line 1, characters 24-52:
-1 | let chan_Buyer_Seller = Domainslib.Chan.make_bounded 0
-                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Error: Unbound module Domainslib
--}
