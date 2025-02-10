@@ -30,6 +30,7 @@ let rec pprint_local_type ppf (typ : 'a Local.typ) =
   match typ with
   | TUnit _ -> fprintf ppf "@[<h>unit@]"
   | TInt _ -> fprintf ppf "@[<h>int@]"
+  | TFloat _ -> fprintf ppf "@[<h>float@]"
   | TString _ -> fprintf ppf "@[<h>string@]"
   | TBool _ -> fprintf ppf "@[<h>bool@]"
   | TProd (t1, t2, _) ->
@@ -54,6 +55,7 @@ let rec pprint_local_pattern ppf (pat : 'a Local.pattern) =
       (fun ppf (v : 'a Local.value) ->
         match v with
         | Int (i, _) -> fprintf ppf "%d" i
+        | Float (f, _) -> fprintf ppf "%f" f
         | String (s, _) -> fprintf ppf "\"%s\"" s
         | Bool (b, _) -> fprintf ppf "%b" b)
       v
@@ -80,6 +82,7 @@ let rec pprint_local_expr ppf (expr : 'a Local.expr) =
       (fun ppf (v : 'a Local.value) ->
         match v with
         | Int (i, _) -> fprintf ppf "%d" i
+        | Float (f, _) -> fprintf ppf "%f" f
         | String (s, _) -> fprintf ppf "\"%s\"" s
         | Bool (b, _) -> fprintf ppf "%b" b)
       v
