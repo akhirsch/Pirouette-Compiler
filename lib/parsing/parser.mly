@@ -175,6 +175,7 @@ choreo_type:
 local_type:
   | UNIT_T { TUnit (gen_pos $startpos $endpos) }
   | INT_T { TInt (gen_pos $startpos $endpos) }
+  | FLOAT_T { TFloat (gen_pos $startpos $endpos) }
   | STRING_T { TString (gen_pos $startpos $endpos) }
   | BOOL_T { TBool (gen_pos $startpos $endpos) }
   | t1=local_type TIMES t2=local_type { TProd (t1, t2, gen_pos $startpos $endpos) }
@@ -200,6 +201,7 @@ sync_label:
 
 value:
   | i=INT { Int (i, gen_pos $startpos $endpos) }
+  | f=FLOAT { Float (f, gen_pos $startpos $endpos) }
   | s=STRING { String (s, gen_pos $startpos $endpos) }
   | TRUE { Bool (true, gen_pos $startpos $endpos) }
   | FALSE { Bool (false, gen_pos $startpos $endpos) }
