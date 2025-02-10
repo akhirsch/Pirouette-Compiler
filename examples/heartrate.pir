@@ -1,17 +1,15 @@
-{-2/6/2025
-
-This is the translation of heartrate.hs into pirouette code. 
-Heartrate has two loactions, AGC and LPF. AGC sends two values 
-to LPF, and then LPF computes the average locally 
-
--}
-
-
-
 main := 
-let LPF.x1 := [AGC] AGC.x2 ~> LPF; in
-let LPF.y1 := [AGC] AGC.y2 ~> LPF; in
-LPF.((x1+y1)/2)
+
+let LPF.x := LPF.1; in
+let LPF.y := LPF.1; in
+let AGC.x := AGC.1; in
+let AGC.y := AGC.1; in
+
+let LPF.x := [AGC] AGC.x ~> LPF; in
+-- this is where I would wait
+let LPF.y := [AGC] AGC.y ~> LPF; in
+-- this is where I would wait
+LPF.((x+y)/2)
 
 
 {-

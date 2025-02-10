@@ -1,4 +1,4 @@
-{-2/6/2025
+{-2/6/2024
 
 This is the pirouette translation of HasChor example of the carkey problem. When the car
 is locked it will try to send a wake signal. If the wake signal is recieved by the key
@@ -50,14 +50,16 @@ if CAR.(locked)
     let CAR.lock_signal := [KEY] KEY."LOCK" ~> CAR; in
 
     if CAR.(lock_signal = "LOCK") 
-
-        then KEY[L] ~> CAR;
+    
+        then CAR[L] ~> KEY;
           let CAR.locked := CAR.true; in
           CAR.locked
               
-        else KEY[R] ~> CAR;
+        else CAR[R] ~> KEY;
           CAR.locked
           
+
+      
 
 {-
 NetIR:
@@ -86,5 +88,7 @@ NetIR:
   send input to CAR
   
 -}
+
+
 
 ;
