@@ -61,6 +61,7 @@ let rec dot_local_type (string_of_info : 'a -> string) (typ : 'a Local.typ)
   match typ with
   | TUnit info -> spf "%s [label=\"() %s\"];\n" node_name (string_of_info info), node_name
   | TInt info -> spf "%s [label=\"Int %s\"];\n" node_name (string_of_info info), node_name
+  | TFloat info -> spf "%s [label=\"Int %s\"];\n" node_name (string_of_info info), node_name
   | TString info ->
     spf "%s [label=\"String %s\"];\n" node_name (string_of_info info), node_name
   | TBool info ->
@@ -102,6 +103,9 @@ let rec dot_local_pattern (string_of_info : 'a -> string) (pat : 'a Local.patter
     (match v with
      | Int (i, info) ->
        ( spf "%s [label=\"%s %s\"];\n" node_name (string_of_int i) (string_of_info info)
+       , node_name )
+      | Float (f, info) ->
+        ( spf "%s [label=\"%s %s\"];\n" node_name (string_of_float f) (string_of_info info)
        , node_name )
      | String (s, info) ->
        spf "%s [label=\"%s %s\"];\n" node_name s (string_of_info info), node_name
@@ -149,6 +153,9 @@ let rec dot_local_expr (string_of_info : 'a -> string) (loc_expr : 'a Local.expr
      | Int (i, info) ->
        ( spf "%s [label=\"%s %s\"];\n" node_name (string_of_int i) (string_of_info info)
        , node_name )
+     | Float (f, info) ->
+      ( spf "%s [label=\"%s %s\"];\n" node_name (string_of_float f) (string_of_info info)
+      , node_name )
      | String (s, info) ->
        spf "%s [label=\"%s %s\"];\n" node_name s (string_of_info info), node_name
      | Bool (b, info) ->
