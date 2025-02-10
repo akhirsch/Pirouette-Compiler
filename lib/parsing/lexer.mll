@@ -85,8 +85,8 @@ rule read = parse
   | "snd"              { SND }
   | "left"             { LEFT }
   | "right"            { RIGHT }
-  | float as s         { FLOAT (float_of_string s)}
   | integer as s       { INT (int_of_string s) }
+  | float as s         { FLOAT (float_of_string s)}
   | identifier as s    { ID (s) }
   | '"'                { read_string (Buffer.create 17) lexbuf }
   | newline            { next_line lexbuf; read lexbuf }
