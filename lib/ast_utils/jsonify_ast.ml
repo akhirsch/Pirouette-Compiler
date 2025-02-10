@@ -25,6 +25,7 @@ and jsonify_bin_op = function
 let rec jsonify_local_type = function
   | Local.TUnit _ -> `String "TUnit"
   | Local.TInt _ -> `String "TInt"
+  | Local.TFloat _ -> `String "TFloat"
   | Local.TString _ -> `String "TString"
   | Local.TBool _ -> `String "TBool"
   | Local.TProd (t1, t2, _) ->
@@ -40,6 +41,7 @@ let rec jsonify_local_pattern = function
       [ ( "Val"
         , match v with
           | Int (i, _) -> `Int i
+          | Float (f, _) -> `Float f
           | String (s, _) -> `String s
           | Bool (b, _) -> `Bool b )
       ]
@@ -57,6 +59,7 @@ let rec jsonify_local_expr = function
       [ ( "Val"
         , match v with
           | Int (i, _) -> `Int i
+          | Float (f, _) -> `Float f
           | String (s, _) -> `String s
           | Bool (b, _) -> `Bool b )
       ]

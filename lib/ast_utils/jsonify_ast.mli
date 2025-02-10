@@ -10,6 +10,7 @@ val jsonify_local_pattern
   -> ([> `Assoc of (string * 'b) list
       | `Bool of bool
       | `Int of int
+      | `Float of float
       | `List of 'b list
       | `String of string
       ]
@@ -21,6 +22,7 @@ val jsonify_local_expr
   -> ([> `Assoc of (string * 'b) list
       | `Bool of bool
       | `Int of int
+      | `Float of float
       | `List of 'b list
       | `String of string
       ]
@@ -50,6 +52,7 @@ val jsonify_choreo_pattern
   -> ([> `Assoc of (string * 'b) list
       | `Bool of bool
       | `Int of int
+      | `Float of float
       | `List of 'b list
       | `String of string
       ]
@@ -61,6 +64,7 @@ val jsonify_choreo_stmt
   -> ([> `Assoc of (string * 'b) list
       | `Bool of bool
       | `Int of int
+      | `Float of float
       | `List of 'b list
       | `String of string
       ]
@@ -72,6 +76,7 @@ val jsonify_choreo_expr
   -> ([> `Assoc of (string * 'b) list
       | `Bool of bool
       | `Int of int
+      | `Float of float
       | `List of 'b list
       | `String of string
       ]
@@ -84,6 +89,7 @@ val jsonify_choreo_stmt_block
         ([> `Assoc of (string * 'b) list
          | `Bool of bool
          | `Int of int
+         | `Float of float
          | `List of 'b list
          | `String of string
          ]
@@ -113,6 +119,7 @@ val jsonify_net_stmt
   -> ([> `Assoc of (string * 'b) list
       | `Bool of bool
       | `Int of int
+      | `Float of float
       | `List of 'b list
       | `String of string
       ]
@@ -124,6 +131,7 @@ val jsonify_net_expr
   -> ([> `Assoc of (string * 'b) list
       | `Bool of bool
       | `Int of int
+      | `Float of float
       | `List of 'b list
       | `String of string
       ]
@@ -136,6 +144,7 @@ val jsonify_net_stmt_block
         ([> `Assoc of (string * 'b) list
          | `Bool of bool
          | `Int of int
+         | `Float of float
          | `List of 'b list
          | `String of string
          ]
