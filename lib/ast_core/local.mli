@@ -1,6 +1,7 @@
 module M : sig
   type 'a value =
     | Int of int * 'a
+    | Float of float * 'a
     | String of string * 'a
     | Bool of bool * 'a
 
@@ -30,6 +31,7 @@ module M : sig
   type 'a typ =
     | TUnit of 'a
     | TInt of 'a
+    | TFloat of 'a
     | TString of 'a
     | TBool of 'a
     | TProd of 'a typ * 'a typ * 'a
