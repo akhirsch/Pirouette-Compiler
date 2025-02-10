@@ -3,7 +3,7 @@
 %token <float> FLOAT
 %token <string> STRING
 %token TRUE FALSE
-%token UNIT_T INT_T STRING_T BOOL_T
+%token UNIT_T INT_T FLOAT_T STRING_T BOOL_T
 %token FUN TYPE
 %token UNDERSCORE
 %token COLONEQ
