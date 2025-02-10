@@ -21,6 +21,7 @@ let white = [' ' '\t']+
 let newline = '\r' | '\n' | "\r\n"
 
 let integer = digit+
+let float = (digit+ | '.' | digit+)
 let identifier = (alpha | '_' ) (alpha | digit | '_')*
 
 (** [read lexbuf] is the main lexer function that tokenizes the input based on the
@@ -85,6 +86,7 @@ rule read = parse
   | "left"             { LEFT }
   | "right"            { RIGHT }
   | integer as s       { INT (int_of_string s) }
+  | floats as s        { FLOAT (float_of_string s)}
   | identifier as s    { ID (s) }
   | '"'                { read_string (Buffer.create 17) lexbuf }
   | newline            { next_line lexbuf; read lexbuf }

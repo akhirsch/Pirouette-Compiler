@@ -1,6 +1,7 @@
 module M = struct
   type 'a value =
     | Int of int * 'a
+    | Float of float * 'a
     | String of string * 'a
     | Bool of bool * 'a
 
@@ -30,6 +31,7 @@ module M = struct
   type 'a typ =
     | TUnit of 'a
     | TInt of 'a
+    | TFloat of 'a
     | TString of 'a
     | TBool of 'a
     | TProd of 'a typ * 'a typ * 'a
@@ -75,6 +77,7 @@ struct
 
   let get_info_value : value -> Info.t = function
     | Int (_, i) -> i
+    | Float (_, i) -> i
     | String (_, i) -> i
     | Bool (_, i) -> i
   ;;
@@ -114,6 +117,7 @@ struct
   let get_info_typ : typ -> Info.t = function
     | TUnit i -> i
     | TInt i -> i
+    | TFloat i -> i
     | TString i -> i
     | TBool i -> i
     | TProd (_, _, i) -> i
@@ -147,6 +151,7 @@ struct
   let set_info_value : Info.t -> value -> value =
     fun i -> function
     | Int (n, _) -> Int (n, i)
+    | Float (n, _) -> Float (n, i)
     | String (s, _) -> String (s, i)
     | Bool (b, _) -> Bool (b, i)
   ;;
@@ -192,6 +197,7 @@ struct
     fun i -> function
     | TUnit _ -> TUnit i
     | TInt _ -> TInt i
+    | TFloat _ -> TFloat i
     | TString _ -> TString i
     | TBool _ -> TBool i
     | TProd (t1, t2, _) -> TProd (t1, t2, i)
