@@ -22,6 +22,7 @@ let rec emit_local_pexp (expr : 'a Local.expr) =
   match expr with
   | Unit _ -> Ast_builder.Default.eunit ~loc
   | Val (Int (i, _), _) -> Ast_builder.Default.eint ~loc i
+  | Val (Float (f, _), _) -> Ast_builder.Default.efloat ~loc f
   | Val (String (s, _), _) -> Ast_builder.Default.estring ~loc s
   | Val (Bool (b, _), _) -> Ast_builder.Default.ebool ~loc b
   | Var (VarId (v, _), _) -> Ast_builder.Default.evar ~loc v
@@ -78,6 +79,7 @@ and emit_local_ppat (pat : 'a Local.pattern) =
   match pat with
   | Default _ -> Ast_builder.Default.ppat_any ~loc
   | Val (Int (i, _), _) -> Ast_builder.Default.pint ~loc i
+  | Val (Float (f, _), _) -> Ast_builder.Default.pfloat ~loc f
   | Val (String (s, _), _) -> Ast_builder.Default.pstring ~loc s
   | Val (Bool (b, _), _) -> Ast_builder.Default.pbool ~loc b
   | Var (VarId (v, _), _) -> Ast_builder.Default.pvar ~loc v
