@@ -21,7 +21,7 @@ let white = [' ' '\t']+
 let newline = '\r' | '\n' | "\r\n"
 
 let integer = digit+
-let float = (digit+ | '.' | digit+)
+let float = (digit+  '.'  digit+)
 let identifier = (alpha | '_' ) (alpha | digit | '_')*
 
 (** [read lexbuf] is the main lexer function that tokenizes the input based on the
