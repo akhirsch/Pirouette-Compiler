@@ -1,15 +1,20 @@
 main := 
+let LPF.x := LPF.0; in
+let LPF.y := LPF.0; in
+let AGC.x := AGC.0; in
+let AGC.y := AGC.0; in
 
-let LPF.x := LPF.1; in
-let LPF.y := LPF.1; in
-let AGC.x := AGC.1; in
-let AGC.y := AGC.1; in
-
+if LPF.(x != 0)
+then LPF[L] ~> AGC;
 let LPF.x := [AGC] AGC.x ~> LPF; in
--- this is where I would wait
-let LPF.y := [AGC] AGC.y ~> LPF; in
--- this is where I would wait
-LPF.((x+y)/2)
+  if AGC.(y != 0)
+  then AGC[L] ~> LPF;
+  let LPF.y := [AGC] AGC.y ~> LPF; in
+  LPF.((x+y)/2)
+  else AGC[R] ~> LPF;
+  LPF.((x+y)/2)
+  else LPF[R] ~> AGC;
+  LPF.((x+y)/2)
 
 
 {-
