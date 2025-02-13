@@ -1,3 +1,9 @@
+{-2/13/2025
+
+This is a program translated from HasChor. There are two locations, AGC and LPF. 
+AGC sends two numbers to LPF and then LPF calculates the avergae of these numbers locally and returns.-}
+
+
 main := 
 let LPF.x := LPF.0; in
 let LPF.y := LPF.0; in
