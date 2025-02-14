@@ -1,0 +1,17 @@
+helper a := let
+              A.result := A.(a + 1);
+            in
+              A.(result);
+main :=
+  let
+    A.x := A.(0);
+  in
+    let
+      B.result := A.(helper) A.(x);
+    in
+      if
+        B.(result = 0)
+      then
+        B[L] ~> A; A.(true)
+      else
+        B[R] ~> A; A.(false);

@@ -1,0 +1,19 @@
+(
+  (helper a) := (let (
+                       (result) := (ret (a + 1))
+                     ) in (ret (result)))
+  (main) :=
+    (let
+       (
+         (x) := (ret (0))
+       )
+     in
+       (let
+          (
+            (_) := ((ret (helper)) (ret (x)))
+          )
+        in
+          (allow B choice
+           | R -> ret (false)
+           | L -> ret (true))))
+)

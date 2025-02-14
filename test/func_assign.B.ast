@@ -1,0 +1,22 @@
+(
+  (helper a) := (let (
+                       (_) := (())
+                     ) in (()))
+  (main) :=
+    (let
+       (
+         (_) := (())
+       )
+     in
+       (let
+          (
+            (result) := ((()) (()))
+          )
+        in
+          (if
+             (ret (result = 0))
+           then
+             (choose L for A; ())
+           else
+             (choose R for A; ()))))
+)
