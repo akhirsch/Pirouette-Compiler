@@ -9,10 +9,9 @@ answer the car is unlocked, otherwise the car will lock.
 
 -}
 
-main := 
-
+carkey a b :=
 let CAR.locked := CAR.true; in
-let KEY.present := KEY.false; in
+let KEY.present := KEY.false; in(
 
 if CAR.(locked)
   then CAR[L] ~> KEY;
@@ -56,7 +55,13 @@ if CAR.(locked)
           CAR.locked
               
         else CAR[R] ~> KEY;
-          CAR.locked
+          CAR.locked);
+
+main := 
+
+CAR.carkey CAR.true KEY.true
+KEY.carkey CAR.true KEY.true
+
           
 
       
