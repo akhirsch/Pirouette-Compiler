@@ -1,0 +1,238 @@
+
+```markdown:docs/compiler_Guide
+# Pirouette Compiler Guide
+
+## Introduction
+
+Think of a compiler as a translator who helps different people communicate. In our case, the Pirouette compiler translates high-level choreography code (which describes how multiple participants interact) into individual programs that each participant can run.
+
+## The Compilation Pipeline
+
+### 1. Lexical Analysis (Lexing)
+Like breaking down a sentence into words, the lexer breaks down your source code into tokens. It's similar to how you might break down "The cat sat." into [The] [cat] [sat] [.].
+
+The lexer is defined in `lib/parsing/lexer.mll` and handles:
+- Whitespace and comments
+- Keywords and operators
+- Identifiers and literals
+- Special characters
+
+### 2. Parsing
+The parser takes these tokens and builds them into a structured format called an Abstract Syntax Tree (AST). Think of it like taking those individual words and understanding that "The cat sat" is a sentence with a subject (cat), verb (sat), and article (the).
+
+The parser (`lib/parsing/parser.mly`):
+- Defines grammar rules
+- Builds AST nodes
+- Handles operator precedence
+- Reports syntax errors
+
+### 3. Type Checking
+Before proceeding further, the compiler checks if your program makes sense type-wise. It's like making sure you're not trying to add a number to a string or send a message to a participant that doesn't exist.
+
+The type system supports:
+- Basic types (int, bool, string)
+- Product types (pairs)
+- Sum types (variants)
+- Function types
+- Location-aware types
+
+### 4. Network Code Generation (Projection)
+This is where the magic happens! The compiler takes your choreography (the big picture of how everyone communicates) and creates individual programs for each participant. It's like taking a movie script and giving each actor only their lines and cues.
+
+The projection process:
+1. Identifies all participants
+2. Extracts each participant's view
+3. Generates local behaviors
+4. Preserves communication order
+5. Ensures protocol compliance
+
+### 5. Backend Code Generation
+Finally, the compiler generates actual executable code for each participant. Depending on your choice, it can generate code that uses:
+- Shared memory communication (for processes on the same machine)
+- HTTP communication (for processes that might be on different machines)
+
+The generated code includes:
+- Communication primitives
+- Data structures
+- Control flow
+- Runtime support
+
+## Example Flow
+
+Let's say you have a simple choreography where Alice sends a number to Bob, and Bob adds 1 to it. Here's how it flows through the compiler:
+
+1. **Source Code**:
+```pirouette
+[Alice] 5 ~> Bob.x;
+[Bob] (x + 1) ~> Alice.result
+```
+
+2. **After Lexing**: 
+The lexer produces tokens:
+```
+[LBRACKET] [IDENT "Alice"] [RBRACKET] [INT 5] [TILDE_ARROW] 
+[IDENT "Bob"] [DOT] [IDENT "x"] [SEMICOLON] ...
+```
+
+3. **After Parsing**: 
+The parser builds an AST:
+```ocaml
+Let(
+  Assign([LocPat(Bob, Var("x"))], 
+         Send(Alice, Int(5), Bob)),
+  Send(Bob, BinOp(Plus, Var("x"), Int(1)), Alice))
+```
+
+4. **After Projection**:
+For Alice:
+```ocaml
+let () = 
+  send 5 to_participant "Bob";
+  receive from_participant "Bob"
+```
+
+For Bob:
+```ocaml
+let () =
+  let x = receive from_participant "Alice" in
+  send (x + 1) to_participant "Alice"
+```
+
+5. **Final Backend Code**:
+The compiler generates executable OCaml code with appropriate communication primitives based on the chosen backend (HTTP or shared memory).
+
+## Running the Compiler
+
+Basic usage:
+```bash
+dune exec pirc -- [options] <file>
+```
+
+Common options:
+- `-ast-dump pprint`: Pretty print the AST
+- `-ast-dump json`: Output AST in JSON format
+- `-backend shm`: Use shared memory communication
+- `-backend http`: Use HTTP communication
+
+Example:
+```bash
+dune exec pirc -- -backend http examples/ping_pong.pir
+```
+
+## Understanding the Output
+
+For each input program, the compiler generates:
+
+1. **AST Representation**
+```
+<basename>.ast      # Pretty-printed AST
+<basename>.json     # JSON format AST (if requested)
+```
+
+2. **Participant Code**
+For HTTP backend:
+```
+<basename>_<participant>.ml  # One file per participant
+dune                        # Build configuration
+```
+
+For shared memory backend:
+```
+<basename>.ml               # Single file with all processes
+```
+
+3. **Network Code**
+```ocaml
+# Communication primitives
+let send value to_participant = ...
+let receive from_participant = ...
+```
+
+## Common Issues and Debugging
+
+1. **Syntax Errors**
+   - Check your choreography syntax against the formal grammar
+   - Look for missing semicolons or brackets
+   - Verify participant names are consistent
+
+2. **Type Errors**
+   - Ensure all communications use compatible types
+   - Check function arguments match their types
+   - Verify pattern matching is exhaustive
+
+3. **Projection Errors**
+   - Make sure each participant has all necessary information
+   - Check for causality issues in communication
+   - Verify choice consistency
+
+## Advanced Features
+
+### Functions
+```pirouette
+foo := fun x -> (x, x);
+```
+
+### Conditionals
+```pirouette
+if Alice.(x > 0) 
+then Alice[Yes] ~> Bob
+else Alice[No] ~> Bob
+```
+
+### Pattern Matching
+```pirouette
+match x with
+| (a, b) -> ...
+| left v -> ...
+| right v -> ...
+```
+
+### Types
+- Basic: `unit`, `int`, `bool`, `string`
+- Compound: `t1 * t2` (pairs), `t1 + t2` (sums)
+- Location-aware: `Alice.int`, `Bob.string`
+
+### Communication
+- Point-to-point: `[Alice] v ~> Bob`
+- Choice: `Alice[L] ~> Bob`
+- Sequencing: `;`
+
+## Best Practices
+
+1. **Program Structure**
+   - Start with type declarations
+   - Group related communications
+   - Use meaningful participant names
+
+2. **Communication Design**
+   - Minimize message passing
+   - Use structured data types
+   - Handle all error cases
+
+3. **Testing**
+   - Test with small examples first
+   - Verify both success and failure paths
+   - Check all participants' behaviors
+
+## Theory and Formal Foundations
+
+The compiler implements a theoretically sound type system based on:
+- Session types
+- Linear logic
+- Process calculi
+
+For detailed type rules and semantics, refer to the theory documentation in `docs/theory.tex`.
+
+## Contributing
+
+To contribute to the compiler:
+1. Fork the repository
+2. Create a feature branch
+3. Write tests for new features
+4. Follow OCaml coding guidelines
+5. Submit a pull request
+
+For more details, see the contributing guidelines in the repository.
+```
+
+This comprehensive guide covers all aspects of the Pirouette compiler, from basic usage to advanced features, with practical examples and clear explanations. The analogies and step-by-step breakdowns make it accessible to new users while providing enough depth for experienced developers.

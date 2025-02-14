@@ -67,7 +67,6 @@
 %type <Parsed_ast.Choreo.stmt> foreign_decl
 
 %start prog
-%start prog
 
 %%
 

@@ -45,9 +45,15 @@ module Msg_http_intf : M = struct
 
   let emit_net_send ~src ~dst pexp =
     ignore src;
-    [%expr Send_receive.send_message ~location:[%e Ast_builder.Default.estring ~loc dst] ~data:[%e pexp]]
+    [%expr 
+      match Lwt_main.run (Send_receive.send_message ~location:[%e Ast_builder.Default.estring ~loc dst] ~data:[%e pexp]) with
+      | Ok () -> ()
+      | Error msg -> failwith ("Send error: " ^ msg)]
 
   let emit_net_recv ~src ~dst =
     ignore src;
-    [%expr Send_receive.receive_message ~location:[%e Ast_builder.Default.estring ~loc dst]]
+    [%expr 
+      match Lwt_main.run (Send_receive.receive_message ~location:[%e Ast_builder.Default.estring ~loc dst]) with
+      | Ok msg -> msg
+      | Error msg -> failwith ("Receive error: " ^ msg)]
 end

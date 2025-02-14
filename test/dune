@@ -43,3 +43,15 @@
 ; (name marshal_receiver)
 ; (modules marshal_receiver)
 ; (libraries ounit2 http cohttp-lwt-unix logs types_test))
+
+
+(test
+ (name test_ffi_codegen)
+ (modules test_ffi_codegen)
+ (libraries 
+  ounit2 
+  ppxlib 
+  ast_core 
+  codegen)
+ (preprocess
+  (pps ppxlib.metaquot)))
