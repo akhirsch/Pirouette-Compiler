@@ -52,9 +52,9 @@ and merge_net_expr (expr : 'a Net.expr) (expr' : 'a Net.expr) : 'a Net.expr opti
     (match merge_net_expr e1 e1', merge_net_expr e2 e2' with
      | Some e1, Some e2 -> Some (FunApp (e1, e2, _m))
      | _ -> None)
-  | If (e1, e2, e3, _), If (e1', e2', e3', _) when e1 = e1' ->
-    (match merge_net_expr e2 e2', merge_net_expr e3 e3' with
-     | Some e2, Some e3 -> Some (If (e1, e2, e3, _m))
+  | If (e1, e2, e3, _), If (e1', e2', e3', _) ->
+    (match merge_net_expr e1 e1', merge_net_expr e2 e2', merge_net_expr e3 e3' with
+     | Some e1m, Some e2m, Some e3m -> Some (If (e1m, e2m, e3m, _m))
      | _ -> None)
   | Let (stmts, e, _), Let (stmts', e', _) ->
     if List.length stmts <> List.length stmts'
