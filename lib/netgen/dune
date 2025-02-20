@@ -1,3 +1,5 @@
 (library
  (name netgen)
- (libraries ast_core))
+ (libraries ast_core)
+ (instrumentation (backend bisect_ppx))
+ (preprocess (pps ppxlib.metaquot)))

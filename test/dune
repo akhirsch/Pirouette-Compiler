@@ -50,3 +50,10 @@
   codegen)
  (preprocess
   (pps ppxlib.metaquot)))
+
+(test
+ (name test_netgen_foreign)
+ (modules test_netgen_foreign)
+ (libraries ounit2 ast_core netgen)
+ (preprocess
+  (pps bisect_ppx ppxlib.metaquot)))
