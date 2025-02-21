@@ -152,6 +152,7 @@ let rec epp_choreo_stmt (stmt : 'a Choreo.stmt) (loc : string) : 'a Net.stmt =
   | Assign (ps, e, _) ->
     Assign (List.map (fun p -> epp_choreo_pattern p loc) ps, epp_choreo_expr e loc, _m)
   | TypeDecl (id, t, _) -> TypeDecl (id, epp_choreo_type t loc, _m)
+  | TypeAlias (name, t, _) -> TypeAlias (name, epp_choreo_type t loc, _m)
   | ForeignDecl (id, t, s, _) -> ForeignDecl (id, epp_choreo_type t loc, s, _m)
 
 and epp_choreo_expr (expr : 'a Choreo.expr) (loc : string) : 'a Net.expr =

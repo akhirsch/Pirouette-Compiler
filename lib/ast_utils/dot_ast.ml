@@ -65,7 +65,7 @@ let rec dot_local_type (string_of_info : 'a -> string) (typ : 'a Local.typ)
     spf "%s [label=\"String %s\"];\n" node_name (string_of_info info), node_name
   | TBool info ->
     spf "%s [label=\"Bool %s\"];\n" node_name (string_of_info info), node_name
-  | TVar (TypId (id, _), info) ->
+  | Local.TVar (TypId (id, _), info) ->
     spf "%s [label=\"TVar %s %s\"];\n" node_name id (string_of_info info), node_name
   | TProd (typ1, typ2, info) ->
     let c1, n1 = dot_local_type string_of_info typ1 in
@@ -294,6 +294,11 @@ let rec dot_choreo_type (string_of_info : 'a -> string) (typ : 'a Choreo.typ)
     let edge1 = spf "%s -> %s;\n" node_name n1 in
     let edge2 = spf "%s -> %s;\n" node_name n2 in
     sum_node ^ edge1 ^ edge2 ^ c1 ^ c2, node_name
+  | TAlias (name, t, info) ->
+    let alias_node = spf "%s [label=\"Alias %s %s\"];\n" node_name name (string_of_info info) in
+    let c, n = dot_choreo_type string_of_info t in
+    let edge = spf "%s -> %s;\n" node_name n in
+    alias_node ^ edge ^ c, node_name
 ;;
 
 (** [dot_pattern pat] creates the dot code for patterns [pat]
@@ -406,6 +411,11 @@ and dot_stmt (string_of_info : 'a -> string) (stmt : 'a Choreo.stmt) : string * 
     let c, n = dot_choreo_type string_of_info typ in
     let edge = spf "%s -> %s;\n" node_name n in
     decl_node ^ edge ^ c, node_name
+  | TypeAlias (name, t, info) ->
+    let alias_node = spf "%s [label=\"TypeAlias %s %s\"];\n" node_name name (string_of_info info) in
+    let c, n = dot_choreo_type string_of_info t in
+    let edge = spf "%s -> %s;\n" node_name n in
+    alias_node ^ edge ^ c, node_name
 
 (** [dot_choreo_expr chor_expr] creates the dot code for choreo expressions [chor_expr]
 

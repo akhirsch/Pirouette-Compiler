@@ -33,13 +33,12 @@ val jsonify_choreo_type
          (string
          * [> `Assoc of
               (string
-              * ([> `Assoc of (string * [> `List of 'c list ]) list | `String of string ]
-                 as
-                 'c))
-                list
+              * [> `Assoc of (string * [> `String of string | `List of 'c list ]) list
+                 | `List of 'c list
+                 | `String of string])
            | `List of 'b list
-           ])
-           list
+           | `String of string ]
+           list)
       | `String of string
       ]
       as
@@ -143,3 +142,10 @@ val jsonify_net_stmt_block
          'b)
           list
      ]
+type 'b json_value = [
+  | `String of string
+  | `Int of int 
+  | `Bool of bool
+  | `List of 'b list
+  | `Assoc of (string * 'b) list
+]

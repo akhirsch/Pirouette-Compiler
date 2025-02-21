@@ -8,6 +8,7 @@ module M : sig
     | TMap of 'a typ * 'a typ * 'a
     | TProd of 'a typ * 'a typ * 'a
     | TSum of 'a typ * 'a typ * 'a
+    | TAlias of string * 'a typ * 'a
 
   type 'a pattern =
     | Default of 'a
@@ -38,6 +39,7 @@ module M : sig
     | Decl of 'a pattern * 'a typ * 'a
     | Assign of 'a pattern list * 'a expr * 'a
     | TypeDecl of 'a Local.M.typ_id * 'a typ * 'a
+    | TypeAlias of string * 'a typ * 'a
     | ForeignDecl of 'a Local.M.var_id * 'a typ * string * 'a
 
   and 'a stmt_block = 'a stmt list

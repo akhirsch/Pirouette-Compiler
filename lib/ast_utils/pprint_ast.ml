@@ -18,6 +18,11 @@ module Choreo = Ast_core.Choreo.M
 module Net = Ast_core.Net.M
 open Format
 
+let pprint_typ_id ppf tid =
+  match tid with
+  | Local.TypId (id, _) -> fprintf ppf "%s" id
+;;
+
 (* ============================== Local ============================== *)
 
 (** [pprint_local_type] takes a formatter [ppf] and a local type,
@@ -32,7 +37,8 @@ let rec pprint_local_type ppf (typ : 'a Local.typ) =
   | TInt _ -> fprintf ppf "@[<h>int@]"
   | TString _ -> fprintf ppf "@[<h>string@]"
   | TBool _ -> fprintf ppf "@[<h>bool@]"
-  | TVar (TypId (id, _), _) -> fprintf ppf "@[<h>%s@]" id
+  | Local.TVar (id, _) ->
+      pprint_typ_id ppf id
   | TProd (t1, t2, _) ->
     fprintf ppf "@[<h>%a * %a@]" pprint_local_type t1 pprint_local_type t2
   | TSum (t1, t2, _) ->
@@ -165,6 +171,8 @@ let rec pprint_choreo_type ppf (typ : 'a Choreo.typ) =
     fprintf ppf "@[<h>%a *@ %a@]" pprint_choreo_type t1 pprint_choreo_type t2
   | TSum (t1, t2, _) ->
     fprintf ppf "@[<h>(%a) + (%a)@]" pprint_choreo_type t1 pprint_choreo_type t2
+  | TAlias (name, t, _) ->
+    fprintf ppf "@[<h>%s = %a@]" name pprint_choreo_type t
 ;;
 
 (** [pp_choreo_pattern] takes a formatter [fmt] and a choreo pattern,
@@ -213,6 +221,8 @@ and pprint_choreo_stmt ppf (stmt : 'a Choreo.stmt) =
       e
   | TypeDecl (TypId (id, _), t, _) ->
     fprintf ppf "@[<h>type %s := %a;@]" id pprint_choreo_type t
+  | TypeAlias (name, t, _) ->
+    fprintf ppf "@[<h>type %s = %a;@]" name pprint_choreo_type t
   | ForeignDecl (VarId (id, _), t, s, _) ->
     fprintf ppf "@[<h>foreign %s : %a := \"%s\";@]" id pprint_choreo_type t s
 
@@ -309,6 +319,7 @@ and pprint_net_stmt ppf (stmt : 'a Net.stmt) =
       pprint_net_expr
       e
   | TypeDecl (TypId (id, _), t, _) -> fprintf ppf "@[<h>%s : %a@]" id pprint_net_type t
+  | TypeAlias (name, t, _) -> fprintf ppf "@[<h>%s = %a@]" name pprint_net_type t
   | ForeignDecl (VarId (id, _), t, s, _) ->
     fprintf ppf "@[<h>foreign %s : %a := \"%s\";@]" id pprint_net_type t s
 
@@ -376,4 +387,3 @@ and pprint_net_expr ppf (expr : 'a Net.expr) =
       loc
       (pp_print_list ~pp_sep:(fun ppf () -> fprintf ppf "@ | ") pprint_net_choice)
       choices
-;;

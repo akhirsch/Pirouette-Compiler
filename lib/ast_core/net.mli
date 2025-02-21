@@ -29,6 +29,7 @@ module M : sig
     | Decl of 'a Local.M.pattern * 'a typ * 'a
     | Assign of 'a Local.M.pattern list * 'a expr * 'a
     | TypeDecl of 'a Local.M.typ_id * 'a typ * 'a
+    | TypeAlias of string * 'a typ * 'a
     | ForeignDecl of 'a Local.M.var_id * 'a typ * string * 'a
 
   and 'a stmt_block = 'a stmt list

@@ -10,6 +10,7 @@ module M = struct
     | TMap of 'a typ * 'a typ * 'a
     | TProd of 'a typ * 'a typ * 'a
     | TSum of 'a typ * 'a typ * 'a
+    | TAlias of string * 'a typ * 'a
 
   type 'a pattern =
     | Default of 'a
@@ -40,6 +41,7 @@ module M = struct
     | Decl of 'a pattern * 'a typ * 'a
     | Assign of 'a pattern list * 'a expr * 'a (* list is only for F P1 P2 ... Pn := C *)
     | TypeDecl of 'a Local.typ_id * 'a typ * 'a
+    | TypeAlias of string * 'a typ * 'a
     | ForeignDecl of 'a Local.var_id * 'a typ * string * 'a
 
   and 'a stmt_block = 'a stmt list
@@ -67,6 +69,7 @@ struct
     | TMap (_, _, i) -> i
     | TProd (_, _, i) -> i
     | TSum (_, _, i) -> i
+    | TAlias (_, _, i) -> i
   ;;
 
   let get_info_pattern : pattern -> Info.t = function
@@ -100,6 +103,7 @@ struct
     | Decl (_, _, i) -> i
     | Assign (_, _, i) -> i
     | TypeDecl (_, _, i) -> i
+    | TypeAlias (_, _, i) -> i
     | ForeignDecl (_, _, _, i) -> i
   ;;
 
@@ -116,6 +120,7 @@ struct
     | TMap (t1, t2, _) -> TMap (t1, t2, i)
     | TProd (t1, t2, _) -> TProd (t1, t2, i)
     | TSum (t1, t2, _) -> TSum (t1, t2, i)
+    | TAlias (name, t, _) -> TAlias (name, t, i)
   ;;
 
   let set_info_pattern : Info.t -> pattern -> pattern =
@@ -152,6 +157,7 @@ struct
     | Decl (pat, typ, _) -> Decl (pat, typ, i)
     | Assign (pats, e, _) -> Assign (pats, e, i)
     | TypeDecl (id, typ, _) -> TypeDecl (id, typ, i)
+    | TypeAlias (name, t, _) -> TypeAlias (name, t, i)
     | ForeignDecl (id, t, s, _) -> ForeignDecl (id, t, s, i)
   ;;
 end

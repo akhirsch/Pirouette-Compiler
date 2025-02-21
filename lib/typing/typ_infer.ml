@@ -77,6 +77,7 @@ and occurs_in_choreo var_name t2 =
   | Choreo.TVar (Choreo.Typ_Id (var_name', _), _) -> var_name = var_name'
   | Choreo.TMap (t1, t2, _) | Choreo.TProd (t1, t2, _) | Choreo.TSum (t1, t2, _) ->
     occurs_in_choreo var_name t1 || occurs_in_choreo var_name t2
+  | Choreo.TAlias (_, t, _) -> occurs_in_choreo var_name t
 
 (*traverse the substitution list `s`, apply all occurences of subst to `t`*)
 and apply_subst_typ_local s t =
@@ -107,6 +108,8 @@ and apply_subst_typ_choreo s t =
     Choreo.TProd (apply_subst_typ_choreo s t1, apply_subst_typ_choreo s t2, m)
   | Choreo.TSum (t1, t2, _) ->
     Choreo.TSum (apply_subst_typ_choreo s t1, apply_subst_typ_choreo s t2, m)
+  | Choreo.TAlias (name, t, _) ->
+    Choreo.TAlias (name, apply_subst_typ_choreo s t, m)
 
 (*apply substitution to context*)
 and apply_subst_ctx_local subst ctx =
@@ -362,6 +365,7 @@ let rec infer_choreo_stmt choreo_ctx global_ctx stmt
     compose_subst_choreo s_comp s3, t1, ctx_list @ choreo_ctx
   | Choreo.TypeDecl (_typ_id, _choreo_typ, _) -> failwith "Not implemented"
   | Choreo.ForeignDecl (_, _, _, _) -> failwith "Not implemented"
+  | Choreo.TypeAlias (_name, t, _) -> [], t, choreo_ctx
 
 and infer_choreo_stmt_block choreo_ctx global_ctx stmts
   : choreo_subst * ftv Choreo.typ * choreo_ctx

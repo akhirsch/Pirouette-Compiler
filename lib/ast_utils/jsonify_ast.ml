@@ -119,6 +119,8 @@ let rec jsonify_choreo_type = function
     `Assoc [ "TProd", `List [ jsonify_choreo_type t1; jsonify_choreo_type t2 ] ]
   | Choreo.TSum (t1, t2, _) ->
     `Assoc [ "TSum", `List [ jsonify_choreo_type t1; jsonify_choreo_type t2 ] ]
+  | Choreo.TAlias (name, t, _) ->
+    `Assoc [ "TAlias", `Assoc [ "name", `String name; "type", jsonify_choreo_type t ] ]
 ;;
 
 let rec jsonify_choreo_pattern = function
@@ -160,6 +162,14 @@ let rec jsonify_choreo_stmt = function
         "id", `String id;
         "choreo_type", jsonify_choreo_type t;
         "foreign_name", `String s
+      ]
+    ]
+  | Choreo.TypeAlias (name, t, _) ->
+    `Assoc [
+      "TypeAlias",
+      `Assoc [
+        "name", `String name;
+        "type", jsonify_choreo_type t
       ]
     ]
 
@@ -261,13 +271,23 @@ let rec jsonify_net_stmt = function
     `Assoc
       [ ( "Decl"
         , `Assoc
-            [ "net_pattern", jsonify_local_pattern p; "net_type", jsonify_net_type t ] )
+          [ "net_type", jsonify_net_type t;
+            "pattern", jsonify_net_expr p
+          ] )
+      ]
+  | Net.TypeAlias (name, typ, _) ->
+    `Assoc
+      [ ( "TypeAlias"
+        , `Assoc
+          [ "name", `String name;
+            "type", jsonify_net_type typ
+          ] )
       ]
   | Net.Assign (ps, e, _) ->
     `Assoc
       [ ( "Assign"
         , `Assoc
-            [ "net_pattern", `List (List.map jsonify_local_pattern ps)
+            [ "net_pattern", `List (List.map jsonify_net_expr ps)
             ; "net_expr", jsonify_net_expr e
             ] )
       ]
@@ -331,7 +351,7 @@ and jsonify_net_expr = function
     `Assoc
       [ ( "FunDef"
         , `Assoc
-            [ "patterns", `List (List.map jsonify_local_pattern ps)
+            [ "patterns", `List (List.map jsonify_net_expr ps)
             ; "net_expr", jsonify_net_expr e
             ] )
       ]
@@ -345,7 +365,7 @@ and jsonify_net_expr = function
   | Net.Right (e, _) -> `Assoc [ "Right", jsonify_net_expr e ]
   | Net.Match (e, cases, _) ->
     let jsonify_net_case (p, e) =
-      `Assoc [ "net_pattern", jsonify_local_pattern p; "net_expr", jsonify_net_expr e ]
+      `Assoc [ "net_pattern", jsonify_net_expr p; "net_expr", jsonify_net_expr e ]
     in
     `Assoc
       [ ( "Match"

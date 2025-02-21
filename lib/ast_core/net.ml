@@ -31,6 +31,7 @@ module M = struct
     | Decl of 'a Local.pattern * 'a typ * 'a
     | Assign of 'a Local.pattern list * 'a expr * 'a
     | TypeDecl of 'a Local.typ_id * 'a typ * 'a
+    | TypeAlias of string * 'a typ * 'a
     | ForeignDecl of 'a Local.var_id * 'a typ * string * 'a
 
   and 'a stmt_block = 'a stmt list
@@ -77,6 +78,7 @@ struct
     | Decl (_, _, i) -> i
     | Assign (_, _, i) -> i
     | TypeDecl (_, _, i) -> i
+    | TypeAlias (_, _, i) -> i
     | ForeignDecl (_, _, _, i) -> i
   ;;
 
@@ -115,6 +117,7 @@ struct
     | Decl (p, t, _) -> Decl (p, t, i)
     | Assign (ps, e, _) -> Assign (ps, e, i)
     | TypeDecl (id, t, _) -> TypeDecl (id, t, i)
+    | TypeAlias (name, t, _) -> TypeAlias (name, t, i)
     | ForeignDecl (id, t, s, _) -> ForeignDecl (id, t, s, i)
   ;;
 end
