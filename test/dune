@@ -1,5 +1,6 @@
 (test
  (name prettyprint_test)
+ (preprocess (pps bisect_ppx --conditional))
  (modules prettyprint_test testcases)
  (libraries parsing ounit2 ast_utils))
 
