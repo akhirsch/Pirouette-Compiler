@@ -65,6 +65,8 @@ let rec dot_local_type (string_of_info : 'a -> string) (typ : 'a Local.typ)
     spf "%s [label=\"String %s\"];\n" node_name (string_of_info info), node_name
   | TBool info ->
     spf "%s [label=\"Bool %s\"];\n" node_name (string_of_info info), node_name
+  | TVar (TypId (id, _), info) ->
+    spf "%s [label=\"TVar %s %s\"];\n" node_name id (string_of_info info), node_name
   | TProd (typ1, typ2, info) ->
     let c1, n1 = dot_local_type string_of_info typ1 in
     let c2, n2 = dot_local_type string_of_info typ2 in
@@ -269,6 +271,8 @@ let rec dot_choreo_type (string_of_info : 'a -> string) (typ : 'a Choreo.typ)
     let c, n = dot_local_type string_of_info typ in
     let edge = spf "%s -> %s;\n" node_name n in
     locid_node ^ edge ^ c, node_name
+  | TVar (Typ_Id (id, _), info) ->
+    spf "%s [label=\"TVar %s %s\"];\n" node_name id (string_of_info info), node_name
   | TMap (typ1, typ2, info) ->
     let c1, n1 = dot_choreo_type string_of_info typ1 in
     let c2, n2 = dot_choreo_type string_of_info typ2 in

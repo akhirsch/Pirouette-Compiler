@@ -30,7 +30,7 @@ let suite =
               ; ("local_pat_match_2" >:: fun _ -> peq Astutils_testcases.lcl_pat_match_2)
               ]
        ; "Foreign Declarations"
-         >::: [ ("foreign_decl" >:: fun _ -> peq Testcases.foreign_decl) ]
+         >::: [ ("foreign_decl" >:: fun _ -> peq Astutils_testcases.foreign_decl) ]
        ]
 ;;
 
