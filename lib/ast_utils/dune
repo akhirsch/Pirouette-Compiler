@@ -1,4 +1,5 @@
 (library
  (name ast_utils)
- (private_modules ast_locs jsonify_ast pprint_ast)
- (libraries ast_core parsing yojson))
+ (instrumentation (backend bisect_ppx))
+ (private_modules ast_locs)
+ (libraries ast_core parsing yojson bisect_ppx))

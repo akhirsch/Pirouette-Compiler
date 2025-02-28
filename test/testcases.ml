@@ -81,6 +81,45 @@ let lcl_pat_match_2 =
   "y := P.let y : int := 3 in\n\nmatch (x,z) with\n\n|(left 1,right \"None\")->();\n"
 ;;
 
-let foreign_decl =
-  "foreign myFunc : unit -> unit := \"external_function\";\n"
+let foreign_decl = {|
+  foreign myFunc : unit -> unit := "external_function";
+|}
 ;;
+
+let foreign_decl_net = {|
+  foreign netFunc : P1.(int) -> P2.(string) := "external_net_function";
+|}
+;;
+
+(* Net pretty printing test cases *)
+let net_foreign_decl = {|
+  foreign myFunc : P1.(unit) -> P2.(unit) := "external_function";
+|}
+;;
+
+let net_foreign_decl_complex = {|
+  foreign complexFunc : P1.(int * bool) -> P2.(string + unit) := "complex_external";
+|}
+;;
+
+let net_multi_decl = {|
+  foreign func1 : P1.(unit) -> P2.(unit) := "ext1";
+  foreign func2 : P1.(int) -> P2.(bool) := "ext2";
+|}
+;;
+
+let net_pprint_testcase = {|
+NetIR:
+  S:
+  2+3
+  send 3 to R
+  Allow R choice
+  | L => "Hello"
+  | R => "Bye"
+
+  R:
+  let x = receive from R in 
+  if x > 5 
+  then choose L for S
+  else choose R for S
+|} ;;
