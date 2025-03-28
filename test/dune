@@ -82,7 +82,7 @@
 
 (test
  (name dotast_test)
- (modules dotast_test)
+ (modules dotast_test dotgen_testcases)
  (libraries ounit2 parsing ast_utils))
 
 ;runs core_test.ml
