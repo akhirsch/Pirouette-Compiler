@@ -1,10 +1,8 @@
 open OUnit2
 
-let helper _ = ""
-;;
-let deq (pir :string) (dot_expected) =
+let deq (pir) (dot_expected) =
   let program = Parsing.Parse.parse_with_error (Lexing.from_string pir) in
-  let dot_actual = Ast_utils.stringify_dot_choreo_ast Parsing.Parsed_ast.string_of_pos program in
+  let dot_actual = Ast_utils.stringify_dot_choreo_ast Parsing.Parsed_ast.Pos_info.string_of_pos program in
   assert_equal dot_actual dot_expected
 ;;
 
