@@ -438,4 +438,47 @@ let pir_10 =
 
 let dot_10 = ""
 
+let pir_11 = 
+  "main := 
+let LPF.x := LPF.0; in
+let LPF.y := LPF.0; in
+let AGC.x := AGC.0; in
+let AGC.y := AGC.0; in
+
+if LPF.(x != 0)
+then LPF[L] ~> AGC;
+let LPF.x := [AGC] AGC.x ~> LPF; in
+  if AGC.(y != 0)
+  then AGC[L] ~> LPF;
+  let LPF.y := [AGC] AGC.y ~> LPF; in
+  LPF.((x+y)/2)
+  else AGC[R] ~> LPF;
+  LPF.((x+y)/2)
+  else LPF[R] ~> AGC;
+  LPF.((x+y)/2)
+  ;"
+
+  let dot_11 = ""
+
+  let pir_12 =
+    "main := let R.x := [S] S.true ~> R; in \n\n\
+     if R.(x && true) \n\n\
+     then R[L] ~> S; \n\n\
+     S.\"Hello\"\n\n\
+     else R[R] ~> S; \n\n\
+     S.\"Bye\";\n"
+  ;;
+
+  let dot_12 = ""
+
+  let pir_13 =
+    "main := let R.x := [S] S.true ~> R; in \n\n\
+     if R.(x||true) \n\n\
+     then R[L] ~> S; \n\n\
+     S.\"Hello\"\n\n\
+     else R[R] ~> S; \n\n\
+     S.\"Bye\";\n"
+  ;;
+
+  let dot_13 = ""
 ;;
