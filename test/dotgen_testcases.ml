@@ -175,39 +175,37 @@ let pir_3 =
     }"
   
 let dot_3_example =
-"digraph Example2 {
-  a[label=Assign];
-  b[label=\"y\"];
-  c[label=\"P2.\"];
-  d[label=Assign];
-  e[label=y];
-  f[label=If];
-  g[label=\"P1.\"];
-  h[label=\"Send: P2.\"];
-  i[label=\"P2.\"];
-  j[label=\"Send: P2.\"];
-  k[label=\"P2.\"];
-  l[label=BinOp];
-  m[label=3];
-  n[label=5];
-  o[label=\">\"];
-  p[label=\"P1[L]\"];
-  q[label=5];
-  r[label=\"P1[R]\"];
-  s[label=9];
-  t[label=int];
-  
-  a -> {b c};
-  b -> d;
-  d -> {e f}; 
-  f -> {g h i j k};
-  g -> l;
-  l -> {m n o};
-  h -> p;
-  i -> q;
-  j -> r;
-  k -> s;
-  c -> t;
+"digraph Example3 {
+    a[label=Assign];
+    b[label=\"y\"];
+    c[label=\"P2.\"];
+    d[label=Assign];
+    e[label=y];
+    f[label=If];
+    g[label=\"P1.\"];
+    h[label=\"Sync P1[L]\"];
+    i[label=\"P2.\"];
+    j[label=\"Sync P1[R]\"];
+    k[label=\"P2.\"];
+    l[label=BinOp];
+    m[label=3];
+    n[label=5];
+    o[label=\">\"];
+    q[label=5];
+    s[label=9];
+    t[label=int];
+    
+    a -> {b c};
+    b -> d;
+    d -> {e f}; 
+    f -> {g h j};
+    g -> l;
+    l -> {m n o};
+    h -> i;
+    i -> q;
+    j -> k;
+    k -> s;
+    c -> t;
 }"
 ;;
 
