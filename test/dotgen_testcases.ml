@@ -1,6 +1,17 @@
 let pir_1 =
-  "main := let R.x := S.3 ~> R; in \n\n\
+  "main := let R.x := [S] S.3 ~> R; in \n\n\
    if R.(x>5) \n\n\
+   then R[L] ~> S; \n\n\
+   S.\"Hello\"\n\n\
+   else R[R] ~> S; \n\n\
+   S.\"Bye\";\n"
+;;
+
+let testcase_1 =
+  "left _ := let \n\n\
+   R.x := [S] left S.1 ~> R;\n\n\
+   R.x := [S] right S.3 ~> R; in \n\n\
+   if R.(x> fst 5) \n\n\
    then R[L] ~> S; \n\n\
    S.\"Hello\"\n\n\
    else R[R] ~> S; \n\n\
