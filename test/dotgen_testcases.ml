@@ -19,43 +19,42 @@ let testcase_1 =
 ;;
 
 let dot_1 = 
-"digraph Example2 {
-  a[label=Assign]
-  b[label=main]
-  c[label=Let]
-  d[label=Assign]
-  e[label=\"R.\"]
-  f[label=\"Send: R.\"]
-  g[label=x]
-  h[label=\"S.\"]
-  i[label=3]
-  j[label=If]
-  k[label=\"R.\"]
-  l[label=\"Send: S.\"]
-  m[label=\"S.\"]
-  n[label=\"Send: S.\"]
-  o[label=\"S.\"]
-  p[label=BinOp]
-  q[label=x]
-  r[label=5]
-  s[label=\">\"]
-  t[label=\"R[L]\"]
-  u[label=\"\\\"Hello\\\"\"]
-  v[label=\"R[R]\"]
-  w[label=\"\\\"Bye\\\"\"]
-  
-  a -> {b c};
-  c -> {d j};
-  d -> {e f};
-  e -> g;
-  f -> h -> i;
-  j -> {k l m n o};
-  k -> p -> {q r s};
-  l -> t;
-  m -> u;
-  n -> v;
-  o -> w;
-}"
+"digraph Example1{
+    a[label=Assign]
+    b[label=main]
+    c[label=Let]
+    d[label=Assign]
+    e[label=\"R.\"]
+    f[label=\"Send: R.\"]
+    g[label=x]
+    h[label=\"S.\"]
+    i[label=3]
+    j[label=If]
+    k[label=\"R.\"]
+    l[label=\"Sync: R[L] -> S\"]
+    m[label=\"S.\"]
+    n[label=\"Sync: R[R] -> S\"]
+    o[label=\"S.\"]
+    p[label=BinOp]
+    q[label=x]
+    r[label=5]
+    s[label=\">\"]
+    u[label=\"\"Hello\"\"]
+    w[label=\"\"Bye\"\"]
+    
+    a -> {b c};
+    c -> {d j};
+    d -> {e f};
+    e -> g;
+    f -> h -> i;
+    j -> {k l n };
+    k -> p -> {q r s};
+    l -> m;
+    m -> u;
+    n -> o;
+    o -> w;
+}
+"
 ;;
 
 let pir_2 =
