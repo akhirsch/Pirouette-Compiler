@@ -56,6 +56,16 @@ let test_4_dot _ = deq Dotgen_testcases.pir_4 Dotgen_testcases.dot_4
 ;;
 
 let test_5_dot _ = deq Dotgen_testcases.pir_5 Dotgen_testcases.dot_5
+
+let test_6_dot _ = deq Dotgen_testcases.pir_6 Dotgen_testcases.dot_6
+
+let test_7_dot _ = deq Dotgen_testcases.pir_7 Dotgen_testcases.dot_7
+
+let test_8_dot _ = deq Dotgen_testcases.pir_8 Dotgen_testcases.dot_8
+
+let test_9_dot _ = deq Dotgen_testcases.pir_9 Dotgen_testcases.dot_9
+
+let test_10_dot _ = deq Dotgen_testcases.pir_10 Dotgen_testcases.dot_10
 let suite =
   "Dot Tests"
   >::: [ "Examples"
@@ -64,6 +74,11 @@ let suite =
               ; ("testcase3" >:: test_3_dot)
               ; ("testcase4" >:: test_4_dot)
               ; ("testcase5" >:: test_5_dot)
+              ; ("testcase6" >:: test_6_dot)
+              ; ("testcase7" >:: test_7_dot)
+              ; ("testcase8" >:: test_8_dot)
+              ; ("testcase9" >:: test_9_dot)
+              ; ("testcase10" >:: test_10_dot)
               ]
        ]
 ;; 

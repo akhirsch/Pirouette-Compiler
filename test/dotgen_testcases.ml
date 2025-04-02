@@ -393,6 +393,8 @@ let pir_6 =
    S.\"Bye\";\n"
 ;;
 
+let dot_6 = ""
+
 let pir_7 =
   "main := let R.x := [S] S.3 ~> R; in \n\n\
    if R.(x<=5) \n\n\
@@ -401,6 +403,8 @@ let pir_7 =
    else R[R] ~> S; \n\n\
    S.\"Bye\";\n"
 ;;
+
+let dot_7 = ""
 let pir_8 =
   "main := let R.x := [S] S.3 ~> R; in \n\n\
    if R.(x>=5) \n\n\
@@ -410,13 +414,28 @@ let pir_8 =
    S.\"Bye\";\n"
 ;;
 
+let dot_8 = ""
+
 let pir_9 =
   "main := let R.x := [S] S.3 ~> R; in \n\n\
    if R.(x=5) \n\n\
    then R[L] ~> S; \n\n\
-   S.\"Hello\"\n\n\
+   S.true\n\n\
    else R[R] ~> S; \n\n\
-   S.\"Bye\";\n"
+   S.false;\n"
 ;;
+
+let dot_9 = ""
+
+let pir_10 =
+  "main := let R.x := [S] S.-3 ~> R; in \n\n\
+   if R.(x!=5) \n\n\
+   then R[L] ~> S; \n\n\
+   S.true\n\n\
+   else R[R] ~> S; \n\n\
+   S.false;\n"
+;;
+
+let dot_10 = ""
 
 ;;
