@@ -261,6 +261,7 @@ let dot_4_example =
   t -> v;
   v -> w;
 }"
+;;
 
 let dot_4 = 
 "digraph G {
@@ -310,7 +311,76 @@ n20 [label=\"P1 [5:19-5:25]\"];
 n20 -> n21;
 n21 [label=\"z [5:22-5:25]\"];
 n22 [label=\"y [6:1-6:2]\"];
-
 }"
+;;
 
+let pir_5 =
+  "main :=
+    if R.(3/5 < 2*1)
+    then R[L] ~> S;
+  	  let R.res := [S] S.(1,true) ~> R; in R.\"Sent\"
+    else R[R] ~> S;
+  	  let R.res := [S] S.(0,false) ~> R; in R.\"why\";"
+;;
+
+let dot_5 =
+  "digraph Example5 {
+    a[label=Assign];
+    b[label=main];
+    c[label=If];
+    d[label=\"R.\"];
+    e[label=Let];
+    f[label=Let];
+    g[label=BinOp];
+    h[label=BinOp];
+    i[label=BinOp];
+    j[label=\"<\"];
+    k[label=3];
+    l[label=5];
+    m[label=\"\\\"];
+    n[label=2];
+    o[label=1];
+    p[label=\"*\"];
+    q[label=Assign];
+    r[label=\"R.\"];
+    s[label=\"R.\"];
+    t[label=\"Send: R\"];
+    u[label=Res];
+    v[label=Pair]; //check
+    w[label=0];
+    x[label=false];
+    y[label=\"\"Why\"\"];
+    z[label=Assign];
+    aa[label=\"R.\"];
+    ab[label=\"R.\"];
+    ac[label=\"Send: R\"];
+    ad[label=Res];
+    ae[label=Pair]; //check
+    af[label=1];
+    ag[label=true];
+    ah[label=\"\"Sent\"\"];
+    ai[label=\"Sync: R[R] -> S\"];
+    aj[label=\"Sync: R[L] -> S\"];
+    
+    a -> {b c};
+    c -> {d ai aj};
+    d -> g;
+    g -> {h i j};
+    h -> {k l m};
+    i -> {n o p};
+    e -> {q r};
+    q -> {s t};
+    s -> u;
+    t -> v;
+    v -> {w x};
+    r -> y;
+    f -> {z aa};
+    z -> {ab ac};
+    ab -> ad;
+    ac -> ae;
+    ae -> {af ag};
+    aa -> ah;
+    ai -> e;
+    aj -> f
+}"
 ;;

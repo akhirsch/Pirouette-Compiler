@@ -54,6 +54,8 @@ let test_3_dot _ = deq Dotgen_testcases.pir_3 Dotgen_testcases.dot_3
 
 let test_4_dot _ = deq Dotgen_testcases.pir_4 Dotgen_testcases.dot_4
 ;;
+
+let test_5_dot _ = deq Dotgen_testcases.pir_5 Dotgen_testcases.dot_5
 let suite =
   "Dot Tests"
   >::: [ "Examples"
@@ -61,6 +63,7 @@ let suite =
               ; ("testcase2" >:: test_2_dot)
               ; ("testcase3" >:: test_3_dot)
               ; ("testcase4" >:: test_4_dot)
+              ; ("testcase5" >:: test_5_dot)
               ]
        ]
 ;; 
