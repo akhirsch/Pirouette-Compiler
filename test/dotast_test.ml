@@ -4,7 +4,7 @@ let deq (pir) (dot_expected) =
   let program = Parsing.Parse.parse_with_error (Lexing.from_string pir) in
   let dot_actual = Ast_utils.stringify_dot_choreo_ast Parsing.Parsed_ast.Pos_info.string_of_pos program in
   print_string ("Expected:" ^ dot_expected ^ "\nActual:" ^ dot_actual ^ "\n");
-  assert_equal dot_actual dot_expected
+  assert_equal dot_expected dot_actual
 ;;
 let test_1_dot _ = deq Dotgen_testcases.pir_1 Dotgen_testcases.dot_1
 ;;(* put the dot ast test here *)
@@ -26,5 +26,5 @@ let suite =
               ; ("testcase4" >:: test_4_dot)
               ]
        ]
-;;
-let () = run_test_tt_main suite
+;; 
+let () = run_test_tt_main suite 
