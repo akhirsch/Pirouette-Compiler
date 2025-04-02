@@ -219,7 +219,7 @@ let pir_4 =
 	y;"
 ;;
 
-let dot_4 =
+let dot_4_example =
 "digraph Example4 {
   a[label=Assign];
   b[label=y];
@@ -259,4 +259,56 @@ let dot_4 =
   t -> v;
   v -> w;
 }"
+
+let dot_4 = 
+"digraph G {
+n0 [label=\"Assign [1:0-6:3]\"];
+n0 -> n1;
+n0 -> n2;
+n1 [label=\"y [1:0-1:1]\"];
+n2 [label=\"Let [1:4-6:2]\"];
+n2 -> n3 ;
+n2 -> n7;
+n3 [label=\"Assign [1:8-1:17]\"];
+n3 -> n4;
+n3 -> n6;
+n4 [label=\"P [1:8-1:11]\"];
+n4 -> n5;
+n5 [label=\"y [1:10-1:11]\"];
+n6 [label=\"y [1:15-1:16]\"];
+n7 [label=\"If [2:1-6:2]\"];
+n7 -> n8;
+n7 -> n13;
+n7 -> n15;
+n8 [label=\"P [2:4-2:13]\"];
+n8 -> n9;
+n9 [label=\"BinOp [2:6-2:13]\"];
+n9 -> n10;
+n9 -> n11;
+n9 -> n12;
+n10 [label=\"y [2:7-2:8]\"];
+n11 [label=\"3 [2:11-2:12]\"];
+n12 [label=\"> [2:9-2:10]\"];
+n13 [label=\"P [3:2-3:7]\"];
+n13 -> n14;
+n14 [label=\"1 [3:5-3:6]\"];
+n15 [label=\"Let [5:2-6:2]\"];
+n15 -> n16 ;
+n15 -> n22;
+n16 [label=\"Assign [5:6-5:32]\"];
+n16 -> n17;
+n16 -> n19;
+n17 [label=\"P2 [5:6-5:10]\"];
+n17 -> n18;
+n18 [label=\"a [5:9-5:10]\"];
+n19 [label=\"Send from: P1 [5:14-5:31]\"];
+n19 [label=\"Send to: P2 [5:14-5:31]\"];
+n19 -> n20;
+n20 [label=\"P1 [5:19-5:25]\"];
+n20 -> n21;
+n21 [label=\"z [5:22-5:25]\"];
+n22 [label=\"y [6:1-6:2]\"];
+
+}"
+
 ;;
