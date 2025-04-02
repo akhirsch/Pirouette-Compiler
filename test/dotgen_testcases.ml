@@ -53,8 +53,7 @@ let dot_1 =
     m -> u;
     n -> o;
     o -> w;
-}
-"
+}"
 ;;
 
 let pir_2 =
@@ -67,60 +66,64 @@ let pir_2 =
 ;;
 
 let dot_2 =
-"digraph Example2 {
-  a[label=Assign];
-  b[label=main];
-  c[label=If];
-  d[label=\"R.\"];
-  e[label=Let];
-  f[label=Let];
-  g[label=BinOp];
-  h[label=BinOp];
-  i[label=BinOp];
-  j[label=\">\"];
-  k[label=3];
-  l[label=5];
-  m[label=\"+\"];
-  n[label=2];
-  o[label=1];
-  p[label=\"-\"];
-  q[label=Assign];
-  r[label=\"R.\"];
-  s[label=\"R.\"];
-  t[label=\"Send: R\"];
-  u[label=Res];
-  v[label=Pair]; //check
-  w[label=1];
-  x[label=true];
-  y[label=\"\\\"Why\\\"\"];
-  z[label=Assign];
-  aa[label=\"R.\"];
-  ab[label=\"R.\"];
-  ac[label=\"Send: R\"];
-  ad[label=Res];
-  ae[label=Pair]; //check
-  af[label=0];
-  ag[label=false];
-  ah[label=\"\\\"Sent\\\"\"];
-  
-  a -> {b c};
-  c -> {d e f};
-  d -> g;
-  g -> {h i j};
-  h -> {k l m};
-  i -> {n o p};
-  e -> {q r};
-  q -> {s t};
-  s -> u;
-  t -> v;
-  v -> {w x};
-  r -> y;
-  f -> {z aa};
-  z -> {ab ac};
-  ab -> ad;
-  ac -> ae;
-  ae -> {af ag};
-  aa -> ah;
+  "digraph Example2 {
+    a[label=Assign];
+    b[label=main];
+    c[label=If];
+    d[label=\"R.\"];
+    e[label=Let];
+    f[label=Let];
+    g[label=BinOp];
+    h[label=BinOp];
+    i[label=BinOp];
+    j[label=\">\"];
+    k[label=3];
+    l[label=5];
+    m[label=\"+\"];
+    n[label=2];
+    o[label=1];
+    p[label=\"-\"];
+    q[label=Assign];
+    r[label=\"R.\"];
+    s[label=\"R.\"];
+    t[label=\"Send: R\"];
+    u[label=Res];
+    v[label=Pair]; //check
+    w[label=0];
+    x[label=false];
+    y[label=\"\"Why\"\"];
+    z[label=Assign];
+    aa[label=\"R.\"];
+    ab[label=\"R.\"];
+    ac[label=\"Send: R\"];
+    ad[label=Res];
+    ae[label=Pair]; //check
+    af[label=1];
+    ag[label=true];
+    ah[label=\"\"Sent\"\"];
+    ai[label=\"Sync: R[R] -> S\"];
+    aj[label=\"Sync: R[L] -> S\"];
+    
+    a -> {b c};
+    c -> {d ai aj};
+    d -> g;
+    g -> {h i j};
+    h -> {k l m};
+    i -> {n o p};
+    e -> {q r};
+    q -> {s t};
+    s -> u;
+    t -> v;
+    v -> {w x};
+    r -> y;
+    f -> {z aa};
+    z -> {ab ac};
+    ab -> ad;
+    ac -> ae;
+    ae -> {af ag};
+    aa -> ah;
+    ai -> e;
+    aj -> f
 }"
 ;;
 
