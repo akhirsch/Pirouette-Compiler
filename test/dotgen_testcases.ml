@@ -383,4 +383,40 @@ let dot_5 =
     ai -> e;
     aj -> f
 }"
+
+let pir_6 =
+  "main := let R.x := [S] S.3 ~> R; in \n\n\
+   if R.(x<5) \n\n\
+   then R[L] ~> S; \n\n\
+   S.\"Hello\"\n\n\
+   else R[R] ~> S; \n\n\
+   S.\"Bye\";\n"
+;;
+
+let pir_7 =
+  "main := let R.x := [S] S.3 ~> R; in \n\n\
+   if R.(x<=5) \n\n\
+   then R[L] ~> S; \n\n\
+   S.\"Hello\"\n\n\
+   else R[R] ~> S; \n\n\
+   S.\"Bye\";\n"
+;;
+let pir_8 =
+  "main := let R.x := [S] S.3 ~> R; in \n\n\
+   if R.(x>=5) \n\n\
+   then R[L] ~> S; \n\n\
+   S.\"Hello\"\n\n\
+   else R[R] ~> S; \n\n\
+   S.\"Bye\";\n"
+;;
+
+let pir_9 =
+  "main := let R.x := [S] S.3 ~> R; in \n\n\
+   if R.(x=5) \n\n\
+   then R[L] ~> S; \n\n\
+   S.\"Hello\"\n\n\
+   else R[R] ~> S; \n\n\
+   S.\"Bye\";\n"
+;;
+
 ;;
