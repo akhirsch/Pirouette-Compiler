@@ -1,10 +1,11 @@
 let pir_1 =
-  "main := let R.x := S.3 ~> R; in 
-  if R.(x>5) 
-  then R[L] ~> S;
-       S.\"Hello\"
-  else R[R] ~> S;
-       S.\"Bye\";"
+  "main := let \n\n\
+   R.x := S.3 ~> R; in \n\n\
+   if R.(x>5) \n\n\
+   then R[L] ~> S; \n\n\
+   S.\"Hello\"\n\n\
+   else R[R] ~> S; \n\n\
+   S.\"Bye\";"
 ;;
 
 let dot_1 = 
