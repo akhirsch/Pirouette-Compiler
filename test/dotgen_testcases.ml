@@ -136,43 +136,45 @@ let pir_3 =
     P2.9
 ;"
 ;;
-  let dot_3 =
-    "digraph G {\n\
-    n0 [label=\"Decl [1:0-1:10]\"];\n\
-    n0 -> n1;\n\
-    n0 -> n2;\n\
-    n1 [label=\"y [1:0-1:1]\"];\n\
-    n2 [label=\"P2 [1:3-1:9]\"];\n\
-    n2 -> n3;\n\
-    n3 [label=\"Int [1:6-1:9]\"];\n\n\
-    n4 [label=\"Assign [2:2-7:1]\"];\n\
-    n4 -> n5;\n\
-    n4 -> n6;\n\
-    n5 [label=\"y [2:2-2:3]\"];\n\
-    n6 [label=\"If [2:7-6:8]\"];\n\
-    n6 -> n7;\n\
-    n6 -> n12;\n\
-    n6 -> n15;\n\
-    n7 [label=\"P1 [2:10-2:18]\"];\n\
-    n7 -> n8;\n\
-    n8 [label=\"BinOp [2:13-2:18]\"];\n\
-    n8 -> n9;\n\
-    n8 -> n10;\n\
-    n8 -> n11;\n\
-    n9 [label=\"3 [2:14-2:15]\"];\n\
-    n10 [label=\"5 [2:16-2:17]\"];\n\
-    n11 [label=\"> [2:15-2:16]\"];\n\
-    n12 [label=\"Sync: P1[L] -> P2 [3:7-4:8]\"];\n\
-    n12 -> n13;\n\
-    n13 [label=\"P2 [4:4-4:8]\"];\n\
-    n13 -> n14;\n\
-    n14 [label=\"5 [4:7-4:8]\"];\n\
-    n15 [label=\"Sync: P1[R] -> P2 [5:7-6:8]\"];\n\
-    n15 -> n16;\n\
-    n16 [label=\"P2 [6:4-6:8]\"];\n\
-    n16 -> n17;\n\
-    n17 [label=\"9 [6:7-6:8]\"];\n\n\
-    }"
+
+let dot_3 = "digraph G {\nn0 [label=\"Decl [1:0-1:10]\"];\nn0 -> n1;\nn0 -> n2;\nn1 [label=\"y [1:0-1:1]\"];\nn2 [label=\"P2 [1:3-1:9]\"];\nn2 -> n3;\nn3 [label=\"Int [1:6-1:9]\"];\n\nn4 [label=\"Assign [2:2-7:1]\"];\nn4 -> n5;\nn4 -> n6;\nn5 [label=\"y [2:2-2:3]\"];\nn6 [label=\"If [2:7-6:8]\"];\nn6 -> n7;\nn6 -> n12;\nn6 -> n15;\nn7 [label=\"P1 [2:10-2:18]\"];\nn7 -> n8;\nn8 [label=\"BinOp [2:13-2:18]\"];\nn8 -> n9;\nn8 -> n10;\nn8 -> n11;\nn9 [label=\"3 [2:14-2:15]\"];\nn10 [label=\"5 [2:16-2:17]\"];\nn11 [label=\"> [2:15-2:16]\"];\nn12 [label=\"Sync: P1[L] -> P2 [3:7-4:8]\"];\nn12 -> n13;\nn13 [label=\"P2 [4:4-4:8]\"];\nn13 -> n14;\nn14 [label=\"5 [4:7-4:8]\"];\nn15 [label=\"Sync: P1[R] -> P2 [5:7-6:8]\"];\nn15 -> n16;\nn16 [label=\"P2 [6:4-6:8]\"];\nn16 -> n17;\nn17 [label=\"9 [6:7-6:8]\"];\n\n}"
+  let dot_3_proper =
+  "digraph G {\n\
+  n0 [label=\"Decl [1:0-1:10]\"];\n\
+  n0 -> n1;\n\
+  n0 -> n2;\n\
+  n1 [label=\"y [1:0-1:1]\"];\n\
+  n2 [label=\"P2 [1:3-1:9]\"];\n\
+  n2 -> n3;\n\
+  n3 [label=\"Int [1:6-1:9]\"];\n\n\
+  n4 [label=\"Assign [2:2-7:1]\"];\n\
+  n4 -> n5;\n\
+  n4 -> n6;\n\
+  n5 [label=\"y [2:2-2:3]\"];\n\
+  n6 [label=\"If [2:7-6:8]\"];\n\
+  n6 -> n7;\n\
+  n6 -> n12;\n\
+  n6 -> n15;\n\
+  n7 [label=\"P1 [2:10-2:18]\"];\n\
+  n7 -> n8;\n\
+  n8 [label=\"BinOp [2:13-2:18]\"];\n\
+  n8 -> n9;\n\
+  n8 -> n10;\n\
+  n8 -> n11;\n\
+  n9 [label=\"3 [2:14-2:15]\"];\n\
+  n10 [label=\"5 [2:16-2:17]\"];\n\
+  n11 [label=\"> [2:15-2:16]\"];\n\
+  n12 [label=\"Sync: P1[L] -> P2 [3:7-4:8]\"];\n\
+  n12 -> n13;\n\
+  n13 [label=\"P2 [4:4-4:8]\"];\n\
+  n13 -> n14;\n\
+  n14 [label=\"5 [4:7-4:8]\"];\n\
+  n15 [label=\"Sync: P1[R] -> P2 [5:7-6:8]\"];\n\
+  n15 -> n16;\n\
+  n16 [label=\"P2 [6:4-6:8]\"];\n\
+  n16 -> n17;\n\
+  n17 [label=\"9 [6:7-6:8]\"];\n\n\
+  }"
   
 let dot_3_example =
 "digraph Example3 {
