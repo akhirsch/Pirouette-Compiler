@@ -29,6 +29,7 @@
   menhir
   ounit2
   ppxlib
+  bisect
   yojson yaml lwt_ppx)
  (allow_empty))
 

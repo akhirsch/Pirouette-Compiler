@@ -58,21 +58,20 @@
   ounit2 
   ast_core 
   netgen 
-  ast_utils
-  yojson)
+  codegen)
  (preprocess
-  (pps bisect_ppx ppxlib.metaquot)))
+  (pps ppxlib.metaquot)))
 
-  (
-    test
-    (name choreo_test)
-    (modules choreo_test)
-    (libraries
-      ounit2
-      ast_core
-      netgen
-      ast_utils
-      yojson)
-    (preprocess
-      (pps bisect_ppx ppxlib.metaquot))
-  )
+  ; (
+  ;   test
+  ;   (name choreo_test)
+  ;   (modules choreo_test)
+  ;   (libraries
+  ;     ounit2
+  ;     ast_core
+  ;     netgen
+  ;     ast_utils
+  ;     yojson)
+  ;   (preprocess
+  ;     (pps bisect_ppx ppxlib.metaquot))
+  ; )
