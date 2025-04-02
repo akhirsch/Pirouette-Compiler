@@ -62,9 +62,9 @@ let pir_2 =
   "main :=
     if R.(3+5 > 2-1)
     then R[L] ~> S;
-  	  let R.res := S.(1,true) ~> R; in R.\"Sent\"
+  	  let R.res := [S] S.(1,true) ~> R; in R.\"Sent\"
     else R[R] ~> S;
-  	  let R.res := S.(0,false) ~> R; in R.\"why\";"
+  	  let R.res := [S] S.(0,false) ~> R; in R.\"why\";"
 ;;
 
 let dot_2 =
@@ -215,7 +215,7 @@ let pir_4 =
 	if P.(y > 3) then
 		P.(1)
 	else 
-		let P2.a := P1.(z) ~> P2; in
+		let P2.a := [P1] P1.(z) ~> P2; in
 	y;"
 ;;
 
