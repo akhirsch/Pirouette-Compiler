@@ -1,6 +1,6 @@
 open OUnit2
 
-let diff_dot_strings expected actual =
+(* let diff_dot_strings expected actual =
   (* First, try to see if they're identical *)
   if expected = actual then
     Printf.printf "Strings are identical\n"
@@ -30,18 +30,24 @@ let diff_dot_strings expected actual =
           Printf.printf "Line %d:\n  Expected: %s\n  Actual:   %s\n\n" 
             line_num exp act)
     end
-  end
+  end *)
+let word_compare a b = if a = b then true else false;;
 
   let deq (pir) (dot_expected) =
     let program = Parsing.Parse.parse_with_error (Lexing.from_string pir) in
     let dot_actual = Ast_utils.stringify_dot_choreo_ast Parsing.Parsed_ast.Pos_info.string_of_pos program in
-    print_string ("\nExpected:\n" ^ dot_expected ^ "\nActual:\n" ^ dot_actual ^ "\n");
-    diff_dot_strings dot_expected dot_actual;
-    try
-      assert_equal dot_expected dot_actual
-    with _ ->
-      Printf.printf "Assertion failed but continuing tests\n";
-      ()
+    let words_actual = String.split_on_char ' ' dot_actual in
+    let words_expected = String.split_on_char ' ' dot_expected in
+    (* print_string ("\nExpected:\n" ^ words_expected ^ "\nActual:\n"^ words_actual_actual ^ "\n"); *)
+    (* diff_dot_strings dot_expected dot_actual; *)
+    (* let lengths =  List.compare_lengths words_expected words_actual in
+    let equal = List.equal word_compare words_expected words_actual in *)
+    (* if (lengths = 0) then
+    assert_equal equal true
+    else
+    Printf.printf "lengths are not equal\n"; *)
+    assert_equal words_actual words_expected ~printer: (fun str -> List.fold_right (fun x xs -> x ^ xs) str "")
+    
   ;;
 let test_1_dot _ = deq Dotgen_testcases.pir_1 Dotgen_testcases.dot_1
 ;;(* put the dot ast test here *)
@@ -72,23 +78,24 @@ let test_11_dot _ = deq Dotgen_testcases.pir_11 Dotgen_testcases.dot_11
 let test_12_dot _ = deq Dotgen_testcases.pir_12 Dotgen_testcases.dot_12
 
 let test_13_dot _ = deq Dotgen_testcases.pir_13 Dotgen_testcases.dot_13
+
 let suite =
-  "Dot Tests"
-  >::: [ "Examples"
+  "dot test"
+  >::: [ "lengths"
          >::: [ ("testcase1" >:: test_1_dot )
-              ; ("testcase2" >:: test_2_dot)
-              ; ("testcase3" >:: test_3_dot)
-              ; ("testcase4" >:: test_4_dot)
-              ; ("testcase5" >:: test_5_dot)
-              ; ("testcase6" >:: test_6_dot)
-              ; ("testcase7" >:: test_7_dot)
-              ; ("testcase8" >:: test_8_dot)
-              ; ("testcase9" >:: test_9_dot)
-              ; ("testcase10" >:: test_10_dot)
-              ; ("testcase11" >:: test_11_dot)
-              ; ("testcase12" >:: test_12_dot)
-              ; ("testcase13" >:: test_13_dot)
+         ; ("testcase2" >:: test_2_dot)
+         ; ("testcase3" >:: test_3_dot)
+         ; ("testcase4" >:: test_4_dot)
+         ; ("testcase5" >:: test_5_dot)
+         ; ("testcase6" >:: test_6_dot)
+         ; ("testcase7" >:: test_7_dot)
+         ; ("testcase8" >:: test_8_dot)
+         ; ("testcase9" >:: test_9_dot)
+         ; ("testcase10" >:: test_10_dot)
+         ; ("testcase11" >:: test_11_dot)
+         ; ("testcase12" >:: test_12_dot)
+         ; ("testcase13" >:: test_13_dot)
               ]
        ]
-;; 
+;;
 let () = run_test_tt_main suite 
