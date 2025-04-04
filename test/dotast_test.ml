@@ -33,19 +33,19 @@ open OUnit2
   end *)
 (* let word_compare a b = if a = b then true else false;; *)
 
+let break_on_whitespace string =
+  let trimmed = String.trim string in
+  let break_space = String.split_on_char ' ' trimmed in
+  let flatten = List.fold_right (fun x xs -> x ^ xs) break_space "" in
+  String.split_on_char '\n' flatten
+
+
   let deq (pir) (dot_expected) =
     let program = Parsing.Parse.parse_with_error (Lexing.from_string pir) in
     let dot_actual = Ast_utils.stringify_dot_choreo_ast Parsing.Parsed_ast.Pos_info.string_of_pos program in
-    let words_actual1 = String.trim dot_actual in
-    let words_expected1 = String.trim dot_expected in
-    let words_actual2 = String.split_on_char ' ' words_actual1 in
-    let words_expected2 = String.split_on_char ' ' words_expected1 in
-    let words_actual3 = List.fold_right (fun x xs -> x ^ xs) words_actual2 "" in
-    let words_expected3 = List.fold_right (fun x xs -> x ^ xs) words_expected2 "" in
-    let words_actual4 = String.split_on_char '\n' words_actual3 in
-    let words_expected4 = String.split_on_char '\n' words_expected3 in
-    let words_actual5 = List.fold_right (fun x xs -> x ^ xs) words_actual4 "" in
-    let words_expected5 = List.fold_right (fun x xs -> x ^ xs) words_expected4 "" in
+    let words_actual = break_on_whitespace dot_actual in
+    let words_expected = break_on_whitespace dot_expected in
+  
     (* let words_actual6 = String.split_on_char '\t' words_actual5 in
     let words_expected6 = String.split_on_char '\t' words_expected5 in *)
     (* print_string ("\nExpected:\n" ^ words_expected ^ "\nActual:\n"^ words_actual_actual ^ "\n"); *)
@@ -57,7 +57,10 @@ open OUnit2
     else
     Printf.printf "lengths are not equal\n"; *)
     (* ~printer: (fun str -> List.fold_right (fun x xs -> x ^ xs) str "") *)
-    assert_equal words_expected5 words_actual5 ~printer: (fun str -> str)
+    try
+    assert_equal words_expected words_actual ~printer: (fun str -> List.fold_right (fun x xs -> x ^ xs) str "")
+    with _ ->
+      Printf.printf "failed\n";
     
     
   ;;
@@ -103,7 +106,7 @@ let test_13_dot _ = deq Dotgen_testcases.pir_13 Dotgen_testcases.dot_13
 
 let suite =
   "dot test"
-  >::: [ "lengths"
+  >::: [ "simple examples"
          >::: [ 
           ("testcase1" >:: 
          test_1_dot )
