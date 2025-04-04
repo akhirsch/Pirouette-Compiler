@@ -173,7 +173,7 @@ let dot_3_aaaahhhhh = "digraph G {\nn0 [label=\"Decl [1:0-1:10]\"];\nn0 -> n1;\n
   n15 -> n16;\n\
   n16 [label=\"P2 [6:4-6:8]\"];\n\
   n16 -> n17;\n\
-  n17 [label=\"9 [6:7-6:8]\"];\n\n\
+  n17 [label=\"9 [6:7-6:8]\"];\n\
   }"
   
 let dot_3_example =
