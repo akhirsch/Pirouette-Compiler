@@ -37,7 +37,8 @@ let break_on_whitespace string =
   let trimmed = String.trim string in
   let break_space = String.split_on_char ' ' trimmed in
   let flatten = List.fold_right (fun x xs -> x ^ xs) break_space "" in
-  String.split_on_char '\n' flatten
+  let break_newline = String.split_on_char '\n' flatten in
+  List.fold_right (fun x xs -> x ^ xs) break_newline ""
 
 
   let deq (pir) (dot_expected) =
@@ -57,10 +58,11 @@ let break_on_whitespace string =
     else
     Printf.printf "lengths are not equal\n"; *)
     (* ~printer: (fun str -> List.fold_right (fun x xs -> x ^ xs) str "") *)
-    try
-    assert_equal words_expected words_actual ~printer: (fun str -> List.fold_right (fun x xs -> x ^ xs) str "")
-    with _ ->
-      Printf.printf "failed\n";
+    (* try *)
+    (* if (String.equal words_expected words_actual) then assert_equal true true else assert_equal true false; *)
+    assert_equal words_expected words_actual ~printer: (fun str -> str)
+    (* with _ ->
+      Printf.printf "failed\n"; *)
     
     
   ;;
@@ -104,25 +106,35 @@ let test_12_dot _ = deq Dotgen_testcases.pir_12 Dotgen_testcases.dot_12
 let test_13_dot _ = deq Dotgen_testcases.pir_13 Dotgen_testcases.dot_13
 ;;
 
+
 let suite =
-  "dot test"
-  >::: [ "simple examples"
-         >::: [ 
-          ("testcase1" >:: 
-         test_1_dot )
-         ; ("testcase2" >:: test_2_dot)
-         ;("testcase3" >:: test_3_dot)
-         ; ("testcase4" >:: test_4_dot)
-         ; ("testcase5" >:: test_5_dot)
-         ; ("testcase6" >:: test_6_dot)
-         ; ("testcase7" >:: test_7_dot)
-         ; ("testcase8" >:: test_8_dot)
-         ; ("testcase9" >:: test_9_dot)
-         ; ("testcase10" >:: test_10_dot)
-         (* ; ("testcase11" >:: test_11_dot) *)
-         ; ("testcase12" >:: test_12_dot)
-         ; ("testcase13" >:: test_13_dot)
-              ]
+  "Dot Tests"
+  >::: [ "testcase1"
+         >::: [ ("testcase1" >:: test_1_dot )]
+        ; "testcase2"
+         >::: [ ("testcase2" >:: test_2_dot) ]
+        ; "testcase3"
+         >::: [ ("testcase3" >:: test_3_dot)]
+        ; "testcase4"
+         >::: [ ("testcase4" >:: test_4_dot) ]
+        ; "testcase5"
+         >::: [ ("testcase5" >:: test_5_dot) ]
+        ; "testcase6"
+         >::: [ ("testcase6" >:: test_6_dot) ]
+        ; "testcase7"
+         >::: [ ("testcase7" >:: test_7_dot) ]
+         ; "testcase8"
+         >::: [ ("testcase8" >:: test_8_dot) ]
+         ; "testcase9"
+         >::: [ ("testcase9" >:: test_9_dot) ]
+         ; "testcase10"
+         >::: [ ("testcase10" >:: test_10_dot) ]
+         (* ; "testcase11"
+         >::: [ ("testcase11" >:: test_11_dot) ] *)
+         ; "testcase12"
+         >::: [ ("testcase12" >:: test_12_dot) ]
+         ; "testcase13"
+         >::: [ ("testcase13" >:: test_13_dot) ]
        ]
 ;;
 let () = run_test_tt_main suite 

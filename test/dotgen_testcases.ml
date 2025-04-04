@@ -64,8 +64,8 @@ let pir_2 =
     else R[R] ~> S;
   	  let R.res := [S] S.(0,false) ~> R; in R.\"why\";"
 ;;
-
-let dot_2 =
+let dot_2 = "digraphG{n0[label=\"Assign[1:0-6:51]\"];n0->n1;n0->n2;n1[label=\"main[1:0-1:4]\"];n2[label=\"If[2:4-6:50]\"];n2->n3;n2->n14;n2->n26;n3[label=\"R[2:7-2:20]\"];n3->n4;n4[label=\"BinOp[2:9-2:20]\"];n4->n5;n4->n9;n4->n13;n5[label=\"BinOp[2:10-2:13]\"];n5->n6;n5->n7;n5->n8;n6[label=\"3[2:10-2:11]\"];n7[label=\"5[2:12-2:13]\"];n8[label=\"+[2:11-2:12]\"];n9[label=\"BinOp[2:16-2:19]\"];n9->n10;n9->n11;n9->n12;n10[label=\"2[2:16-2:17]\"];n11[label=\"1[2:18-2:19]\"];n12[label=\"-[2:17-2:18]\"];n13[label=\">[2:14-2:15]\"];n14[label=\"Sync:R[L]->S[3:9-4:50]\"];n14->n15;n15[label=\"Let[4:5-4:50]\"];n15->n16;n15->n24;n16[label=\"Assign[4:9-4:38]\"];n16->n17;n16->n19;n17[label=\"R[4:9-4:14]\"];n17->n18;n18[label=\"res[4:11-4:14]\"];n19[label=\"Sendfrom:S[4:18-4:37]\"];n19[label=\"Sendto:R[4:18-4:37]\"];n19->n20;n20[label=\"S[4:22-4:32]\"];n20->n21;n21[label=\"Pair[4:24-4:32]\"];n21->n22;n21->n23;n22[label=\"1[4:25-4:26]\"];n23[label=\"true[4:27-4:31]\"];n24[label=\"R[4:42-4:50]\"];n24->n25;n25[label=\"Sent[4:49-4:50]\"];n26[label=\"Sync:R[R]->S[5:9-6:50]\"];n26->n27;n27[label=\"Let[6:5-6:50]\"];n27->n28;n27->n36;n28[label=\"Assign[6:9-6:39]\"];n28->n29;n28->n31;n29[label=\"R[6:9-6:14]\"];n29->n30;n30[label=\"res[6:11-6:14]\"];n31[label=\"Sendfrom:S[6:18-6:38]\"];n31[label=\"Sendto:R[6:18-6:38]\"];n31->n32;n32[label=\"S[6:22-6:33]\"];n32->n33;n33[label=\"Pair[6:24-6:33]\"];n33->n34;n33->n35;n34[label=\"0[6:25-6:26]\"];n35[label=\"false[6:27-6:32]\"];n36[label=\"R[6:43-6:50]\"];n36->n37;n37[label=\"why[6:49-6:50]\"];}"
+let dot_2_pretty =
   "digraph Example2 {
     a[label=Assign];
     b[label=main];
