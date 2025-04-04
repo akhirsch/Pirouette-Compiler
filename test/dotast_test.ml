@@ -73,23 +73,33 @@ let test_3_dot _ = deq Dotgen_testcases.pir_3 Dotgen_testcases.dot_3
 let test_4_dot _ = deq Dotgen_testcases.pir_4 Dotgen_testcases.dot_4
 ;;
 
-(* let test_5_dot _ = deq Dotgen_testcases.pir_5 Dotgen_testcases.dot_5
+let test_5_dot _ = deq Dotgen_testcases.pir_5 Dotgen_testcases.dot_5
+;;
 
 let test_6_dot _ = deq Dotgen_testcases.pir_6 Dotgen_testcases.dot_6
+;;
 
 let test_7_dot _ = deq Dotgen_testcases.pir_7 Dotgen_testcases.dot_7
+;;
 
 let test_8_dot _ = deq Dotgen_testcases.pir_8 Dotgen_testcases.dot_8
+;;
 
 let test_9_dot _ = deq Dotgen_testcases.pir_9 Dotgen_testcases.dot_9
+;;
 
 let test_10_dot _ = deq Dotgen_testcases.pir_10 Dotgen_testcases.dot_10
+;;
 
-let test_11_dot _ = deq Dotgen_testcases.pir_11 Dotgen_testcases.dot_11
+(* heartrate *)
+(* let test_11_dot _ = deq Dotgen_testcases.pir_11 Dotgen_testcases.dot_11
+;; *)
 
 let test_12_dot _ = deq Dotgen_testcases.pir_12 Dotgen_testcases.dot_12
+;;
 
-let test_13_dot _ = deq Dotgen_testcases.pir_13 Dotgen_testcases.dot_13 *)
+let test_13_dot _ = deq Dotgen_testcases.pir_13 Dotgen_testcases.dot_13
+;;
 
 let suite =
   "dot test"
@@ -100,15 +110,15 @@ let suite =
          ; ("testcase2" >:: test_2_dot)
          ;("testcase3" >:: test_3_dot)
          ; ("testcase4" >:: test_4_dot)
-         (* ; ("testcase5" >:: test_5_dot)
+         ; ("testcase5" >:: test_5_dot)
          ; ("testcase6" >:: test_6_dot)
          ; ("testcase7" >:: test_7_dot)
          ; ("testcase8" >:: test_8_dot)
          ; ("testcase9" >:: test_9_dot)
          ; ("testcase10" >:: test_10_dot)
-         ; ("testcase11" >:: test_11_dot)
+         (* ; ("testcase11" >:: test_11_dot) *)
          ; ("testcase12" >:: test_12_dot)
-         ; ("testcase13" >:: test_13_dot) *)
+         ; ("testcase13" >:: test_13_dot)
               ]
        ]
 ;;
