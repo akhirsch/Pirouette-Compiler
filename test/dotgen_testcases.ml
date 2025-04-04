@@ -481,4 +481,16 @@ let LPF.x := [AGC] AGC.x ~> LPF; in
   ;;
 
   let dot_13 = ""
+
+  let pir_14 =
+      "y: P2.string;
+      y := if P1.(\"hi\" != \"bye\")
+      then P1[L] ~> P2;
+        P2.\"hello\"
+      else P1[R] ~> P2;
+        P2.\"bye\"
+    ;"
+
+  let dot_14 = ""
+    ;;
 ;;
