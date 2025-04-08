@@ -33,10 +33,10 @@
 %right OR
 %right AND
 %left EQ NEQ LT LEQ GT GEQ
-%left PLUS MINUS
 %left FPLUS FMINUS
-%left TIMES DIV
+%left PLUS MINUS
 %left FTIMES FDIV
+%left TIMES DIV
 %nonassoc UNARY
 %left DOT
 

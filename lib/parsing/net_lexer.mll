@@ -29,6 +29,10 @@ rule read = parse
   | '.'                { DOT }
   | ':'                { COLON }
   | ';'                { SEMICOLON }
+  | "+."               { FPLUS }
+  | "-."               { FMINUS }
+  | "*."               { FTIMES }
+  | "/."               { FDIV }
   | '+'                { PLUS }
   | '-'                { MINUS }
   | '*'                { TIMES }

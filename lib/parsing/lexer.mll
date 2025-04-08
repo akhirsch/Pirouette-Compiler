@@ -72,6 +72,7 @@ rule read = parse
   | "int"              { INT_T }
   | "string"           { STRING_T }
   | "bool"             { BOOL_T }
+  | "float"            { FLOAT_T }
   | "not"              { NOT }
   | "fun"              { FUN }
   | "type"             { TYPE }
