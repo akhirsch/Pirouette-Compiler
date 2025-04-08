@@ -1,5 +1,5 @@
 main :=
-if R.(3.5 *. 5.5 > 2.1 *. 1.1)
+if R.(3.5 +. 5.5 > 2.1 -. 1.1)
 then R[L] ~> S;
   	 let R.res := [S] S.(1,true) ~> R; in R."Sent"
 else R[R] ~> S;
@@ -14,7 +14,7 @@ NetIR:
   | R => send (0,false) to R
 
   R:
-  if 3*5 > 2/1
+  if 3+.5 > 2-.1
   then choose L for S
     "Sent"
     receive from S
