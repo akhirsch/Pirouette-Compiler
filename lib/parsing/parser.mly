@@ -244,10 +244,10 @@ value:
   | MINUS { Minus (gen_pos $startpos $endpos) }
   | TIMES { Times (gen_pos $startpos $endpos) }
   | DIV { Div (gen_pos $startpos $endpos) }
-  | FPLUS { Plus (gen_pos $startpos $endpos) }
-  | FMINUS { Minus (gen_pos $startpos $endpos) }
-  | FTIMES { Times (gen_pos $startpos $endpos) }
-  | FDIV { Div (gen_pos $startpos $endpos) }
+  | FPLUS { FPlus (gen_pos $startpos $endpos) }
+  | FMINUS { FMinus (gen_pos $startpos $endpos) }
+  | FTIMES { FTimes (gen_pos $startpos $endpos) }
+  | FDIV { FDiv (gen_pos $startpos $endpos) }
   | AND { And (gen_pos $startpos $endpos) }
   | OR { Or (gen_pos $startpos $endpos) }
   | EQ { Eq (gen_pos $startpos $endpos) }
