@@ -19,6 +19,10 @@ module M = struct
     | Minus of 'a
     | Times of 'a
     | Div of 'a
+    | FPlus of 'a
+    | FMinus of 'a
+    | FTimes of 'a
+    | FDiv of 'a
     | And of 'a
     | Or of 'a
     | Eq of 'a
@@ -105,6 +109,10 @@ struct
     | Minus i -> i
     | Times i -> i
     | Div i -> i
+    | FPlus i -> i
+    | FMinus i -> i
+    | FTimes i -> i
+    | FDiv i -> i
     | And i -> i
     | Or i -> i
     | Eq i -> i
@@ -185,6 +193,10 @@ struct
     | Minus _ -> Minus i
     | Times _ -> Times i
     | Div _ -> Div i
+    | FPlus _ -> FPlus i
+    | FMinus _ -> FMinus i
+    | FTimes _ -> FTimes i
+    | FDiv _ -> FDiv i
     | And _ -> And i
     | Or _ -> Or i
     | Eq _ -> Eq i

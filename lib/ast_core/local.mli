@@ -19,6 +19,10 @@ module M : sig
     | Minus of 'a
     | Times of 'a
     | Div of 'a
+    | FPlus of 'a
+    | FMinus of 'a
+    | FTimes of 'a
+    | FDiv of 'a
     | And of 'a
     | Or of 'a
     | Eq of 'a

@@ -29,6 +29,10 @@ let dot_bin_op (string_of_info : 'a -> string) (op : 'a Local.bin_op) : string *
   | Minus info -> spf "%s [label=\"- %s\"];\n" node_name (string_of_info info), node_name
   | Times info -> spf "%s [label=\"* %s\"];\n" node_name (string_of_info info), node_name
   | Div info -> spf "%s [label=\"/ %s\"];\n" node_name (string_of_info info), node_name
+  | FPlus info -> spf "%s [label=\"+. %s\"];\n" node_name (string_of_info info), node_name
+  | FMinus info -> spf "%s [label=\"-. %s\"];\n" node_name (string_of_info info), node_name
+  | FTimes info -> spf "%s [label=\"*. %s\"];\n" node_name (string_of_info info), node_name
+  | FDiv info -> spf "%s [label=\"/. %s\"];\n" node_name (string_of_info info), node_name
   | And info -> spf "%s [label=\"&& %s\"];\n" node_name (string_of_info info), node_name
   | Or info -> spf "%s [label=\"|| %s\"];\n" node_name (string_of_info info), node_name
   | Eq info -> spf "%s [label=\"= %s\"];\n" node_name (string_of_info info), node_name

@@ -50,7 +50,7 @@ rule read = parse
   | "+."               { FPLUS }
   | "-."               { FMINUS }
   | "*."               { FTIMES }
-  | "./"               { FDIV }
+  | "/."               { FDIV }
   | '+'                { PLUS }
   | '-'                { MINUS }
   | '*'                { TIMES }
