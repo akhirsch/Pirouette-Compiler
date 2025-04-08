@@ -64,7 +64,7 @@ and unify_choreo t1 t2 : choreo_subst =
 (*occurs check: ensure t1 does not occur in t2*)
 and occurs_in_local var_name t2 =
   match t2 with
-  | Local.TInt _ | Local.TBool _ | Local.TString _ | Local.TUnit _ -> false
+  | Local.TInt _ | Local.TFloat _ |Local.TBool _ | Local.TString _ | Local.TUnit _ -> false
   | Local.TVar (Local.TypId (var_name', _), _) -> var_name = var_name'
   | Local.TProd (t2a, t2b, _) | Local.TSum (t2a, t2b, _) ->
     occurs_in_local var_name t2a || occurs_in_local var_name t2b
@@ -81,7 +81,7 @@ and occurs_in_choreo var_name t2 =
 (*traverse the substitution list `s`, apply all occurences of subst to `t`*)
 and apply_subst_typ_local s t =
   match t with
-  | (Local.TInt _ | Local.TBool _ | Local.TString _ | Local.TUnit _) as t' -> t'
+  | (Local.TInt _ | Local.TFloat _ | Local.TBool _ | Local.TString _ | Local.TUnit _) as t' -> t'
   | Local.TVar (Local.TypId (var_name, _), _) ->
     (match List.assoc_opt var_name s with
      | Some t' -> t'
@@ -294,6 +294,7 @@ let rec infer_local_expr local_ctx = function
 
 and typeof_Val = function
   | Int _ -> TInt m
+  | Float _ -> TFloat m
   | Bool _ -> TBool m
   | String _ -> TString m
 
