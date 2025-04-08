@@ -51,6 +51,10 @@ rule read = parse
   | '-'                { MINUS }
   | '*'                { TIMES }
   | '/'                { DIV }
+  | "+."               { FPLUS }
+  | "-."               { FMINUS }
+  | "*."               { FTIMES }
+  | "./"               { FDIV }
   | "&&"               { AND }
   | "||"               { OR }
   | "="                { EQ }

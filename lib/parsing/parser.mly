@@ -8,6 +8,7 @@
 %token UNDERSCORE
 %token COLONEQ
 %token PLUS MINUS TIMES DIV
+%token FPLUS FMINUS FTIMES FDIV
 %token NOT
 %token AND OR
 %token EQ NEQ LT LEQ GT GEQ
@@ -33,7 +34,9 @@
 %right AND
 %left EQ NEQ LT LEQ GT GEQ
 %left PLUS MINUS
+%left FPLUS FMINUS
 %left TIMES DIV
+%left FTIMES FDIV
 %nonassoc UNARY
 %left DOT
 
@@ -240,6 +243,10 @@ value:
   | PLUS { Plus (gen_pos $startpos $endpos) }
   | MINUS { Minus (gen_pos $startpos $endpos) }
   | TIMES { Times (gen_pos $startpos $endpos) }
+  | DIV { Div (gen_pos $startpos $endpos) }
+  | FPLUS { Plus (gen_pos $startpos $endpos) }
+  | FMINUS { Minus (gen_pos $startpos $endpos) }
+  | FTIMES { Times (gen_pos $startpos $endpos) }
   | DIV { Div (gen_pos $startpos $endpos) }
   | AND { And (gen_pos $startpos $endpos) }
   | OR { Or (gen_pos $startpos $endpos) }
