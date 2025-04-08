@@ -47,14 +47,14 @@ rule read = parse
   | '.'                { DOT }
   | ':'                { COLON }
   | ';'                { SEMICOLON }
-  | '+'                { PLUS }
-  | '-'                { MINUS }
-  | '*'                { TIMES }
-  | '/'                { DIV }
   | "+."               { FPLUS }
   | "-."               { FMINUS }
   | "*."               { FTIMES }
   | "./"               { FDIV }
+  | '+'                { PLUS }
+  | '-'                { MINUS }
+  | '*'                { TIMES }
+  | '/'                { DIV }
   | "&&"               { AND }
   | "||"               { OR }
   | "="                { EQ }
