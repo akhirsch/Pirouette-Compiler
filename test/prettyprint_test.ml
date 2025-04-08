@@ -10,27 +10,32 @@ let peq (s : string) =
   assert_equal json_ast json_ast'
 ;;
 
+let net_peq (net_s : string) = assert_equal net_s net_s (* TO DO *)
+
 let suite =
   "Pretty print Tests"
   >::: [ "Examples"
-         >::: [ ("testcase1" >:: fun _ -> peq Testcases.testcase_1)
-              ; ("testcase2" >:: fun _ -> peq Testcases.testcase_2)
-              ; ("testcase3" >:: fun _ -> peq Testcases.testcase_3)
-              ; ("testcase4" >:: fun _ -> peq Testcases.testcase_4)
+         >::: [ ("testcase1" >:: fun _ -> peq Astutils_testcases.testcase_1)
+              ; ("testcase2" >:: fun _ -> peq Astutils_testcases.testcase_2)
+              ; ("testcase3" >:: fun _ -> peq Astutils_testcases.testcase_3)
+              ; ("testcase4" >:: fun _ -> peq Astutils_testcases.testcase_4)
               ]
        ; "Type Decls"
-         >::: [ ("choreo_typs" >:: fun _ -> peq Testcases.choreo_typs)
-              ; ("local_typs" >:: fun _ -> peq Testcases.local_typs)
+         >::: [ ("choreo_typs" >:: fun _ -> peq Astutils_testcases.choreo_typs)
+              ; ("local_typs" >:: fun _ -> peq Astutils_testcases.local_typs)
               ]
        ; "Functions"
-         >::: [ ("define a function" >:: fun _ -> peq Testcases.choreo_fundef) ]
+         >::: [ ("define a function" >:: fun _ -> peq Astutils_testcases.choreo_fundef) ]
        ; "Pattern Matching"
-         >::: [ ("choreo_pat_match" >:: fun _ -> peq Testcases.choreo_pat_match)
-              ; ("local_pat_match" >:: fun _ -> peq Testcases.lcl_pat_match)
-              ; ("local_pat_match_2" >:: fun _ -> peq Testcases.lcl_pat_match_2)
+         >::: [ ("choreo_pat_match" >:: fun _ -> peq Astutils_testcases.choreo_pat_match)
+              ; ("local_pat_match" >:: fun _ -> peq Astutils_testcases.lcl_pat_match)
+              ; ("local_pat_match_2" >:: fun _ -> peq Astutils_testcases.lcl_pat_match_2)
               ]
        ; "Foreign Declarations"
-         >::: [ ("foreign_decl" >:: fun _ -> peq Testcases.foreign_decl) ]
+         >::: [ ("foreign_decl" >:: fun _ -> peq Astutils_testcases.foreign_decl) ]
+       ; "Net IR"
+         >::: [ ("test_net_peq" >:: fun _ -> net_peq Astutils_testcases.net_test_1) ]
+         (* ADD more net_peq tests here *)
        ]
 ;;
 

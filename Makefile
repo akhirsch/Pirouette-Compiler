@@ -1,14 +1,27 @@
 FILE := $(word 2, $(MAKECMDGOALS))
-LATEX_DOCS := $(wildcard docs/*.tex)
+LATEX_DOCS := $(shell find docs -name '*.tex')
 
-.PHONY: build docs pp json dot test-pp bisect-pp clean cleandoc cleanall
+.PHONY: build docs check-env pp json dot test-infer test-pp bisect-pp clean cleandocs cleanall
 
 build:
 	dune build
 
-docs: 
-	for file in $(LATEX_DOCS); do \
-		pdflatex -output-directory=docs $$file; \
+check-env:
+	@command -v pdflatex >/dev/null 2>&1 || { echo "Error: pdflatex is not installed. Please install TeX Live or MacTeX."; exit 1; }
+	@command -v biber >/dev/null 2>&1 || { echo "Error: biber is not installed. Please install biber."; exit 1; }
+
+docs: check-env
+	@for file in $(LATEX_DOCS); do \
+		base=$$(basename $$file .tex); \
+		dir=$$(dirname $$file); \
+		if [ -f "$${dir}/$$base.bib" ]; then \
+			pdflatex -output-directory=$$dir $$file; \
+			biber --input-directory $$dir --output-directory $$dir $$base; \
+			pdflatex -output-directory=$$dir $$file; \
+			pdflatex -output-directory=$$dir $$file; \
+		else \
+			pdflatex -output-directory=$$dir $$file; \
+		fi; \
 	done
 
 pp:
@@ -20,6 +33,10 @@ json:
 dot: 
 	dune exec pirc -- -dot $(FILE)
 
+test-infer: cleanall
+	dune exec --instrument-with bisect_ppx test/typcheck_test.exe
+	bisect-ppx-report html
+
 test-pp: cleanall
 	dune exec test/prettyprint_test.exe
 
@@ -27,14 +44,33 @@ bisect-pp: cleanall
 	dune exec --instrument-with bisect_ppx test/prettyprint_test.exe
 	bisect-ppx-report html
 
-clean:
+test-msg-intf: cleanall
+	dune exec --instrument-with bisect_ppx test/msg_intf_test.exe
+	bisect-ppx-report html
+
+test-emit-core: cleanall
+	dune exec --instrument-with bisect_ppx test/emit_core_test.exe
+	bisect-ppx-report html
+
+test-toplevel-shm: cleanall
+	dune exec --instrument-with bisect_ppx test/toplevel_shm_test.exe
+	bisect-ppx-report html
+bisect-all: cleanall
+	dune runtest --instrument-with bisect_ppx
+	bisect-ppx-report html
+	open _coverage/index.html
+
+
+cleandocs:
+	rm -rf $(shell find docs -name '*.aux' -o -name '*.log' -o -name '*.out' \
+	-o -name '*.bbl' -o -name '*.bcf' -o -name '*.blg' -o -name '*.run.xml' \
+	-o -name '*.lox' -o -name '*.toc')
+
+clean: cleandocs
 	dune clean
 
-cleandoc:
-	rm -rf docs/*.aux docs/*.log docs/*.out
-
-cleanall: clean cleandoc
-	rm -rf _build _coverage bisect*.coverage docs/*.pdf
+cleanall: clean
+	rm -rf _build _coverage bisect*.coverage $(shell find docs -name '*.pdf')
 
 %:
 	@:

@@ -4,12 +4,12 @@
 ;  (action (copy %{deps} %{target}))
 ;  (mode (promote (until-clean))))
 
-(ocamllex lexer)
+(ocamllex lexer net_lexer)
 
 (menhir
- (modules parser))
+ (modules parser net_parser))
 
 (library
  (name parsing)
- (private_modules lexer parser)
+ (private_modules  net_lexer lexer parser net_parser)
  (libraries ast_core))

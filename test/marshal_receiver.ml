@@ -1,6 +1,6 @@
 open OUnit2
 open Lwt.Infix
-open Http
+open Http_pirc
 open Types_test
 
 let setup_logs () =

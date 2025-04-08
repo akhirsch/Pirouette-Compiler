@@ -1,13 +1,7 @@
-locations:
-  - location: Bob
-    http_address: http://localhost:8080/send
-  - location: Alice
-    http_address: http://localhost:8080/receive
-  - location: S
-    http_address: http://localhost:8080/send
-  - location: R
-    http_address: http://localhost:8080/receive
-  - location: P1
-    http_address: http://localhost:8080/send
-  - location: P2
-    http_address: http://localhost:8080/receive
+  locations:
+    - location: "R"
+      http_address: "http://localhost:8080/receive"
+    - location: "S"
+      http_address: "http://localhost:8080/send"
+    - location: "init"
+      http_address: "http://localhost:8080/init"

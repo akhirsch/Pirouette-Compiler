@@ -1,2 +1,4 @@
 (library
- (name ast_core))
+ (name ast_core)
+ (instrumentation
+  (backend bisect_ppx)))

@@ -1,5 +1,5 @@
 (*
-   File: testcases.ml
+   File: astutils_testcases.ml
    Date: 04-25-2024
 
    Strings for testing Pirouette modules.
@@ -81,6 +81,5 @@ let lcl_pat_match_2 =
   "y := P.let y : int := 3 in\n\nmatch (x,z) with\n\n|(left 1,right \"None\")->();\n"
 ;;
 
-let foreign_decl =
-  "foreign myFunc : unit -> unit := \"external_function\";\n"
-;;
+let foreign_decl = "foreign myFunc : unit -> unit := \"external_function\";\n"
+let net_test_1 = ""

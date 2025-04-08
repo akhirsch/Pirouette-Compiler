@@ -33,6 +33,7 @@ let rec pprint_local_type ppf (typ : 'a Local.typ) =
   | TFloat _ -> fprintf ppf "@[<h>float@]"
   | TString _ -> fprintf ppf "@[<h>string@]"
   | TBool _ -> fprintf ppf "@[<h>bool@]"
+  | TVar (TypId (id, _), _) -> fprintf ppf "@[<h>%s@]" id
   | TProd (t1, t2, _) ->
     fprintf ppf "@[<h>%a * %a@]" pprint_local_type t1 pprint_local_type t2
   | TSum (t1, t2, _) ->
@@ -160,6 +161,7 @@ let rec pprint_choreo_type ppf (typ : 'a Choreo.typ) =
   match typ with
   | TUnit _ -> fprintf ppf "@[<h>unit@]"
   | TLoc (LocId (loc, _), t, _) -> fprintf ppf "@[<h>%s.(%a)@]" loc pprint_local_type t
+  | TVar (Typ_Id (id, _), _) -> fprintf ppf "@[<h>%s@]" id
   | TMap (t1, t2, _) ->
     fprintf ppf "@[<h>%a ->@ %a@]" pprint_choreo_type t1 pprint_choreo_type t2
   | TProd (t1, t2, _) ->

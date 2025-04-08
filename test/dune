@@ -1,42 +1,112 @@
+;runs test case prettyprint_test.ml (with astutils_testcases.ml as helper)
+; TESTED FILES 2/25
+; 4% (3 / 64) -> lib/ast_core/choreo.ml
+; 12% (11 / 90) -> lib/ast_core/local.ml
+; 0% (0 / 65) -> lib/ast_utils/ast_locs.ml
+; 16% (4 / 24) -> lib/ast_utils/ast_utils.ml
+; 0% (0 / 417) -> lib/ast_utils/dot_ast.ml
+; 66% (142 / 213) -> lib/ast_utils/jsonify_ast.ml (focus)
+; 67% (90 / 134) ->lib/ast_utils/pprint_ast.ml (focus)
+; 63% (67 / 105) -> lib/parsing/lexer.ml
+; 18% (2 / 11) -> lib/parsing/parse.ml
+; 0% (0 / 5) -> lib/parsing/parsed_ast.ml
+; 40% (949 / 2362) -> lib/parsing/parser.ml
+
 (test
  (name prettyprint_test)
- (preprocess (pps bisect_ppx))
- (modules prettyprint_test testcases)
- (libraries parsing ounit2 ast_utils))
+ (modules prettyprint_test astutils_testcases)
+ (libraries ounit2 parsing ast_utils))
 
-; (test
-;  (name send_receive_test)
-;  (modules send_receive_test)
-;  (libraries ounit2 http cohttp-lwt-unix logs types_test)
+;(test
+;(name send_receive_test)
+;(modules send_receive_test)
+;(libraries ounit2 http cohttp-lwt-unix logs types_test)
 ; (deps ../test/example.yaml))
 
-(test
- (name marshal_test)
- (modules marshal_test)
- (libraries ounit2 http types_test))
+;(test
+;(name marshal_test)
+;(modules marshal_test)
+;(libraries ounit2 http types_test))
+;runs typcheck_test.ml
+; TESTED FILES 2/25
+; 0% (0 / 64) -> lib/ast_core/choreo.ml
+; 0% (0 / 90) -> lib/ast_core/local.ml
+; 20% (21 / 105) -> lib/parsing/lexer.ml
+; 18% (2 / 11) -> lib/parsing/parse.ml
+; 0% (0 / 5) -> lib/parsing/parsed_ast.ml
+; 2% (67 / 2362) -> lib/parsing/parser.ml
+; 78% (344 / 437) -> lib/typing/typ_infer.ml (focus)
 
-; (test
-;  (name typcheck_test)
-;  (modules typcheck_test testcases)
-;  (libraries parsing ounit2 type_check))
+(test
+ (name typcheck_test)
+ (modules typcheck_test)
+ (libraries parsing ounit2 typing))
+
+;runs parsing_test.ml
+; -- currently only testing stuff covered by prettyprint_test and typcheck_test
+; TESTED FILES 2/25
+; 0% (0 / 64) -> lib/ast_core/choreo.ml
+; 0% (0 / 90) -> lib/ast_core/local.ml
+; 20% (21 / 105) -> lib/parsing/lexer.ml (focus)
+; 18% (2 / 11) -> lib/parsing/parse.ml (focus)
+; 0% (0 / 5) -> lib/parsing/parsed_ast.ml
+; 2% (67 / 2362) -> lib/parsing/parser.m (focus)
 
 (test
  (name parsing_test)
  (modules parsing_test)
- (libraries parsing ounit2 ast_core))
+ (libraries ounit2 parsing ast_core))
+
+;this library is a requisite for marshal_test
 
 (library
  (name types_test)
  (modules types_test))
 
-(executable
-(name marshal_sender)
-(modules marshal_sender)
-(libraries ounit2 http cohttp-lwt-unix logs types_test))
+;runs marshal_test.ml
+; TESTED FILES 2/25
+; 0% (0 / 65) -> lib/ast_utils/ast_locs.ml
+; 0% (0 / 24) -> lib/ast_utils/ast_utils.ml
+; 0% (0 / 417) -> lib/ast_utils/dot_ast.ml
+; 0% (0 / 213) -> lib/ast_utils/jsonify_ast.ml
+; 0% (0 / 134) -> lib/ast_utils/pprint_ast.ml
+; 0% (0 / 27) -> lib/config/config_parser.ml
+; 12% (15 / 123) -> lib/http/send_receive.ml (focus)
+
+(test
+ (name marshal_test)
+ (modules marshal_test)
+ (libraries ounit2 http_pirc types_test))
 
 (executable
-(name marshal_receiver)
-(modules marshal_receiver)
-(libraries ounit2 http cohttp-lwt-unix logs types_test))
+ (name marshal_sender)
+ (modules marshal_sender)
+ (libraries ounit2 http_pirc cohttp-lwt-unix logs types_test))
 
+;(executable
+; (name marshal_receiver)
+; (modules marshal_receiver)
+; (libraries ounit2 http cohttp-lwt-unix logs types_test))
 
+;runs dotast_test.ml
+
+(test
+ (name dotast_test)
+ (modules dotast_test)
+ (libraries ounit2 parsing ast_utils))
+
+;runs core_test.ml
+
+(test
+ (name emit_core_test)
+ (modules emit_core_test)
+ (libraries ounit2 ppxlib ast_core codegen)
+ (preprocess
+  (pps ppxlib.metaquot)))
+
+(test
+ (name msg_intf_test)
+ (modules msg_intf_test)
+ (libraries ounit2 ppxlib ast_core codegen)
+ (preprocess
+  (pps ppxlib.metaquot)))

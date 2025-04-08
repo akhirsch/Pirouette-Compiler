@@ -1,4 +1,4 @@
 (executable
  (name main)
  (public_name pirc)
- (libraries ast_utils parsing netgen codegen http lwt))
+ (libraries ast_utils parsing netgen codegen http_pirc lwt))

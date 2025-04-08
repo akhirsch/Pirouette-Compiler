@@ -34,6 +34,7 @@ module M = struct
     | TFloat of 'a
     | TString of 'a
     | TBool of 'a
+    | TVar of 'a typ_id * 'a
     | TProd of 'a typ * 'a typ * 'a
     | TSum of 'a typ * 'a typ * 'a
 
@@ -120,6 +121,7 @@ struct
     | TFloat i -> i
     | TString i -> i
     | TBool i -> i
+    | TVar (_, i) -> i
     | TProd (_, _, i) -> i
     | TSum (_, _, i) -> i
   ;;
@@ -200,6 +202,7 @@ struct
     | TFloat _ -> TFloat i
     | TString _ -> TString i
     | TBool _ -> TBool i
+    | TVar (t, _) -> TVar (t, i)
     | TProd (t1, t2, _) -> TProd (t1, t2, i)
     | TSum (t1, t2, _) -> TSum (t1, t2, i)
   ;;

@@ -34,6 +34,7 @@ module M : sig
     | TFloat of 'a
     | TString of 'a
     | TBool of 'a
+    | TVar of 'a typ_id * 'a
     | TProd of 'a typ * 'a typ * 'a
     | TSum of 'a typ * 'a typ * 'a
 

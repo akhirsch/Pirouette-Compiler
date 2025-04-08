@@ -1,5 +1,5 @@
 open OUnit2
-open Http.Send_receive
+open Http_pirc.Send_receive
 open Types_test
 
 let test_marshal_unmarshal_int _ =

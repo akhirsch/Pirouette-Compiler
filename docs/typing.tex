@@ -1,0 +1,521 @@
+\documentclass{article}
+% \documentclass{notes}
+% \usepackage{graphicx} % Required for inserting images
+\usepackage{amsmath} % Required for some math elements
+\usepackage{amsfonts} 
+\usepackage{pl-syntax/pl-syntax} 
+\usepackage{mathpartir} % Required for the math environment
+\usepackage{stmaryrd}
+\usepackage{appendix} % Required for the appendices
+\usepackage{adjustbox} % Used to center the code snippets
+\usepackage{indentfirst} % Indent the first paragraph of a section
+\usepackage{tikz} % Required for drawing the syntax tree
+\usepackage[draft]{fixme}  % change [draft] to [final] to hide fixme notes
+\usepackage{xcolor} % Required for the color
+\usepackage{soul} % Required for the highlight
+\usepackage[backend=biber,style=numeric,sorting=none]{biblatex} % bibliography, install biber otherwise it will not work
+\addbibresource{typing.bib}
+\usepackage[colorlinks=true, linkcolor=cyan, citecolor=cyan, urlcolor=blue]{hyperref} % hyperlink
+
+
+\DefineBibliographyStrings{english}{
+    % add bibliography page to table of contents
+    bibliography = {References},
+}
+
+\setlength{\parskip}{1ex} % space between paragraphs
+
+\newcommand{\highlighttexttt}[2][black]{ % \backgroundtexttt[<color>]{<text>}, black in default
+  \sethlcolor{cyan!10} % set the background color
+  \texttt{\textcolor{#1}{\hl{#2}}}
+}
+
+
+\title{Pirouette - Type Inference}
+\author{\textbf{Alex Kim} \and \textbf{Vincent Chan}}
+\date{November 2024}
+
+
+\begin{document}
+
+\maketitle
+
+\listoffixmes{} % list of fixme notes that need to be fixed in the doc
+
+\section{Background}
+
+\subsection{Introduction of Type Inference}\label{intro_type_infer}
+    Type inference is the process of automatically deducing the types of expressions in a program.
+    For example, in the following code snippet, the type of the whole expression can be inferred to be \texttt{int}:
+
+    \begin{center}
+        \setlength{\fboxsep}{5pt}
+        \adjustbox{valign=t,margin=1ex,center}{
+            \begin{minipage}{1\textwidth}
+                \begin{verbatim}
+                        let x := 5 + 2 in
+                            x + 3
+                    \end{verbatim}
+            \end{minipage}
+        }
+    \end{center}
+
+    To get the type of \texttt{x}, we can infer the type of the expression \texttt{5 + 2}, and then assign that type to \texttt{x}.
+    To get the type of \texttt{5 + 2}, we can infer the type of \texttt{5} to be \texttt{int} and the type of \texttt{2} to be \texttt{int}
+    because they are both constants, and in our type scheme, we have the rule that the type of \texttt{+} is \texttt{int -> int -> int}, so the type of \texttt{5 + 2} is \texttt{int}.
+    Therefore, the type of \texttt{x} is \texttt{int}, and the type of the whole expression of let binding is \texttt{int}. After the binding of \texttt{x:int}, we now examine the type of expression \texttt{x + 3},
+    we need to bring the type binding of \texttt{x} into the scope of the expression. The data structure that we use to store the type bindings \texttt{variable\_name:type} is called the \textit{context}.
+    Follow the same process as before, when we infer the function body \texttt{x + 3}, we know that the type of {+} is \texttt{int -> int -> int}, and the type of \texttt{3} is \texttt{int},
+    and since \texttt{x} is a variable, we look up the type of \texttt{x} in the context, and we find that the type of \texttt{x} is \texttt{int}, so the type of the whole expression is \texttt{int}.
+
+    But things can get more complicated when we have more complex expressions, such as function definition, function applications, and polymorphic types.
+    Because we may not know the type of a program yet, and we can certainly collect constraints on the types of expressions,
+    our approach to type inference is to collect constraints on the types of expressions, and then solve these constraints to get the type of the program.
+    The way to solve these constraints is to use the \textit{unification algorithm}.
+
+    Consider the following code snippet from the lecture note of Northeastern University\cite{NEU1}:
+
+    \begin{center}
+        \setlength{\fboxsep}{5pt}
+        \adjustbox{valign=t,margin=1ex,center}{
+            \begin{minipage}{0.9\textwidth}
+                \begin{verbatim}
+                        def f(x) := 
+                            x + 6
+
+                        f 38
+                    \end{verbatim}
+            \end{minipage}
+        }
+    \end{center}
+
+    At the beginning, we need to infer the type of the parameter \texttt{x} in the function \texttt{f}.
+    Since we don't know the type of \texttt{x} yet, we can assign a type variable \texttt{T1} to it, and add it into the context.
+    Then we go to function body \texttt{x + 6}, and we know that the type of \texttt{6} is \texttt{int}, since the type of \texttt{+} is \texttt{int -> int -> int},
+    and the type of \texttt{x} is \texttt{T1}, we unify our conclusion with the type \texttt{T1} to produce a constraint/substitution \texttt{T1 = int}, the return type of the function body
+    is the type of the last expression, which is \texttt{int}. Therefore, the type of the function \texttt{f} is \texttt{int -> int}.
+
+    When we infer the type of the function application \texttt{f 38}, we infer the type of the function \texttt{f} to be \texttt{int -> int}, and
+    the type of the argument \texttt{38} to be \texttt{int}, and we unify the type of the argument with the type of the parameter in the function type,
+    and the return type of the function application is the return type of the function, which is \texttt{int}.
+
+    Since Pirouette separates the local language and the choreographic language, we need to find a way to connect the type inference of different languages layers.
+    The way to do this is to use a global context that stores the type bindings of all the variables on different locations in the program. Suppose we have an expression 
+    \texttt{Alice.\(x > 5\)}, we first extract the local context of the location \texttt{Alice} from the global context by traversing the global context, and pick all the type bindings of the location \texttt{Alice}.
+    Then we infer the type of the expression \texttt{\(x > 5\)} by using the local context of the location \texttt{Alice}, if \texttt{x} has been bound to \texttt{int} in the local context of the location \texttt{Alice},
+    then the type of \texttt{\(x > 5\)} is \texttt{bool}. When we return the whole expression, we need to add the location \texttt{Alice} to our local type to get the choreographic type. So the type of the whole expression is \texttt{Alice.bool}.
+
+    There are some other resources that may help in understanding the unification algorithm and the type inference process.
+    The note from Cornell\cite{Cornell} provides an explanation of the type inference process,
+    the terms used in Cornell note are not the same as the terms used in this note, but it gives the general idea of how unification and substitution work.
+    The cornerstone of our implementation of the unification algorithm is another note from Northeastern University\cite{NEU2}.
+    We follow the formal rules for the unification, generation, and solution of the substitution, which are given in Section 3 of the note.
+    If the above resources are confusing, this blog post\cite{TypInferBlog} provides a more intuitive explanation of type inference.
+    The good thing is that the blog post uses the Abstract Syntax Tree $(AST)$\cite{ASTBlog} to represent the program,
+    which is the same as our implementation, it may help to understand the type inference process by visualizing the $AST$.
+    Also we would like to refactor our code to annotate the nodes in the $AST$ with types, it is more intuitive to understand
+    the process of type annotation by bottom-up traversal of the $AST$. This blog post also talks a bit about inferring polymorphic types,
+    which is one of the goals of this type inference library.
+
+
+\subsection{The Syntax of the Language}
+    The syntax of Pirouette is divided into three parts: the local language, the choreographic language, and the network language.
+    Here we just pick the binary operation expression from the local language as an example to show how to represent the language in syntax tree.
+
+    Suppose we have a string \texttt{5 + 2} in the source code.
+    The lexer will tokenize the string into a list of tokens, and the parser will parse the list of tokens into a syntax tree.
+    Lexer and parser are implemented in the \texttt{lib/parsing/lexer.mll} and \texttt{lib/parsing/parser.mly} respectively.
+    The definition of the syntax tree is in the \texttt{lib/ast\_core/local.ml \& choreo.ml}. In \texttt{local.ml},
+    we can find the definition of the binary operation expression:
+
+    \begin{center}
+        \setlength{\fboxsep}{5pt}
+        \adjustbox{valign=t,margin=1em,center}{
+            \begin{minipage}{1.2\textwidth}
+                \begin{verbatim}
+                    type 'a expr =
+                        | ...
+                        | BinOp of 'a expr * 'a bin_op * 'a expr * 'a
+                        | ...
+                    \end{verbatim}
+            \end{minipage}
+        }
+    \end{center}
+
+    The \texttt{BinOp} constructor takes three arguments, the left-hand side expression, the binary operator, and the right-hand side expression.
+    the syntax tree of the expression \texttt{5 + 2} will be represented as:
+
+    \begin{center}
+        \begin{tikzpicture}
+            \node {+}
+            child {node {5}}
+            child {node {2}};
+        \end{tikzpicture}
+    \end{center}
+
+
+\subsection{Understanding the Type System}\label{understand_type_system}
+    The type system is a set of rules that define the types of expressions in the program.
+    The rules are written in the form of inference rules, which are a set of premises and a conclusion.
+    Consider the following example:
+
+    \[
+        \inferrule [ Loc - binop mat ]
+        { \Gamma \vdash e_1 : int \quad \Gamma \vdash e_2 : int \quad \odot \in \{+,-,\times, /\}}
+        { \Gamma \vdash e_1 \odot e_2 : int} \and
+    \]
+
+    The above rule is the rule for the binary operation of mathematical operators. Generally, the top line of the rule is the premise, and the bottom line is the conclusion.
+    The Gamma $\Gamma$ is the local context that stores the type bindings of local variables in the program (we use Delta $\Delta$ for choreographic context).
+    The turnstile $\vdash$ means that the type of the expression on the right-hand side of $\vdash$ can be inferred from the context on the left-hand side of $\vdash$.
+    So, in the premise of the binop rule, if we infer the type of the left-hand side expression $e_1$ and the right-hand side expression $e_2$ to be \texttt{int} from the context $\Gamma$,
+    and the operator $\odot$ is one of these four mathematical operators, then in the conclusion of the rule, we can infer the type of the whole expression
+    $e_1 \odot e_2$ to be \texttt{int} from the context $\Gamma$.
+
+    Consider another example:
+
+    \[
+        \inferrule [ Loc - def ]
+        { \Gamma \vdash e_1 : t \quad \Gamma, x : t \vdash e_2 : t_2 }
+        { \Gamma \vdash \textsf{let}\ x := e_1 \ \textsf{in}\ e_2 : t_2  } \and
+    \]
+
+    The above rule is the rule for the let binding expression. The let binding expression is used to bind a value to a variable name,
+    and then use the variable in the expression that follows the \texttt{in} keyword.
+    In terms of the scoping, the variable name $x$ is only available in the expression $e_2$.
+    In the premise, we first infer the type of the expression $e_1$ to be $t$ from the context $\Gamma$ first.
+    Then when we infer the type of the expression $e_2$, the $\Gamma, x:t$ means that we extend the context $\Gamma$ by adding the type binding $x:t$ to it,
+    so that we can access the type of $x$ in the expression $e_2$ by looking up the type of $x$ in the updated context $\Gamma, x:t$, and infer the type of $e_2$ to be $t_2$.
+    So in the conclusion of the rule, we can infer the type of the whole let binding expression to be $t_2$ from the context $\Gamma$.
+
+    \newpage % end of section
+
+
+\section{Details}
+\subsection{Type Definition}
+    \begin{itemize}
+        \item \textbf{typvar} \texttt{: string}\\
+              A type variable is a placeholder for a type that we don't know yet. We use type variables to represent unknown types in our type inference process.
+        \item \textbf{local\_subst \& choreo\_subst} \\\texttt{: (typvar * Local.typ) list \& (typvar * Choreo.typ) list}\\
+              A substitution is a mapping from type variables to types. We use substitutions to represent the constraints on the types of expressions.
+              The example of a local substitution is \highlighttexttt{[(T1, int), (T2, int -> int)]}.
+        \item \textbf{local\_ctx \& choreo\_ctx} \\\texttt{: (string * Local.typ) list \& (striing * Choreo.typ) list}\\
+              A context is a mapping from variable names to types. We use contexts to store the type bindings of variables in the program.
+              The example of a local context is \highlighttexttt{[(foo, int), (bar, bool)]}.
+              The choreographic context is the context that stores the choreographic type bindings in the choreographic language.
+        \item \textbf{global\_ctx} \texttt{: (string * string * Local.typ) list}\\
+              The global context is the context that stores the type bindings of all the variables on different locations in the program.
+              The example of a global context is \highlighttexttt{[(Alice, foo, int), (Bob, foo, bool), (Alice, bar, string)]}.
+    \end{itemize}
+
+\subsection{Auxiliary Functions}
+    \begin{itemize}
+        \item \textbf{extract\_local\_ctx} \texttt{: global\_ctx -> string -> local\_ctx}\\
+              \highlighttexttt{extract\_local\_ctx global\_ctx loc} return the local context of location \highlighttexttt{loc} in the global context \highlighttexttt{global\_ctx}.
+              That is, \highlighttexttt{extract\_local\_ctx [\ldots; (Alice, foo, int); \ldots; (Alice, bar, string) \ldots] Alice = [(foo, int), (bar, string)]}.
+
+              Use \href{https://ocaml.org/manual/5.2/api/List.html#VALfold_right}{\highlighttexttt[orange]{List.fold\_right}}
+              to preserve the order of the context since the program update the context by adding the new type binding to the front of the context.
+        \item \textbf{get\_choreo\_subst} \texttt{: local\_subst -> Local.loc\_id -> choreo\_subst}\\
+              \highlighttexttt{get\_choreo\_subst local\_subst loc} return the choreographic substitution of location \highlighttexttt{loc}
+              by adding the location id \highlighttexttt{loc} to the type variables in the substitution \highlighttexttt{local\_subst}.
+              That is, \highlighttexttt{get\_choreo\_ctx [(T1, int -> int)] Alice = [(T1, (Choreo.TLoc (Alice), int -> int))]}.
+
+              Use \href{https://ocaml.org/manual/5.2/api/List.html#VALfold_right}{\highlighttexttt[orange]{List.fold\_right}}
+              to preserve the order of the context since the program update the context by adding the new type binding to the front of the substitution.
+        \item \textbf{get\_choreo\_ctx} \texttt{: local\_ctx -> Local.loc\_id -> choreo\_ctx}\\
+              \highlighttexttt{get\_choreo\_ctx local\_ctx loc} return the choreographic context of location \highlighttexttt{loc}
+              by adding the location id \highlighttexttt{loc} to the type variables in the context \highlighttexttt{local\_ctx}.
+              That is, \highlighttexttt{get\_choreo\_ctx [(foo, int)] Alice = [(foo, (Choreo.TLoc ((Alice), int)))]}.
+
+              Use \href{https://ocaml.org/manual/5.2/api/List.html#VALfold_right}{\highlighttexttt[orange]{List.fold\_right}}
+              to preserve the order of the context since the program update the context by adding the new type binding to the front of the context.
+        \item \textbf{gen\_ftv} \texttt{: unit -> typvar}\\
+              Return a fresh type variables of a type. The fresh type variables of a type are
+              the type variables that appear in the type but are not bound by the type.
+              This function is stateful because it increments the global reference counter each time it is called.
+        \item \textbf{occurs\_in\_local \& occurs\_in\_choreo}\\
+              \texttt{: typvar -> Local.typ -> bool \& typvar -> Choreo.typ -> bool}\\
+              \highlighttexttt{occurs\_in\_local t typ} return true if the type variable \highlighttexttt{t} occurs in the type \highlighttexttt{typ}.
+              That is, \highlighttexttt{occurs\_in\_local T1 (int -> T1)} return \highlighttexttt[orange]{true}.
+              This function is used to check if the type variable occurs in the type, which is a necessary condition for the unification algorithm.
+              Consider unifying \highlighttexttt{T1} with \highlighttexttt{T1 -> T2}, since \highlighttexttt{T1} occurs in the type \highlighttexttt{T1 -> T2},
+              this is a self-referential type, it will be \highlighttexttt{T1 -> (T1 -> (T1 -> \ldots))}, which cause an infinite loop.
+              Therefore, unification will fail if the type variable occurs in the type.
+
+              The functionality of \highlighttexttt{occurs\_in\_choreo} is the same as the local version.
+        \item \textbf{unify\_local \& unify\_choreo}\\
+              \texttt{: Local.typ -> Local.typ -> local\_subst \&\\Choreo.typ -> Choreo.typ -> choreo\_subst}\\
+              \highlighttexttt{unify\_local typ1 typ2} return the substitution that unifies the type \highlighttexttt{typ1} with the type \highlighttexttt{typ2}
+              and return the result substitution.
+
+              The logic of the local unification algorithm is as follows:
+              \begin{itemize}
+                  \item If the two types are the same, return the empty substitution.
+                  \item If one of the types is a type variable, check if they are the same,
+                        if they are the same, return the empty substitution, otherwise,
+                        check if the type variable occurs in the other type, if it does, the unification fails,
+                        otherwise, return the substitution that binds the type variable to the other type.
+                  \item If both types are product/tuple types or sum types, unify the element types.
+                  \item If the above conditions are not met, the unification fails.
+              \end{itemize}
+
+              These can also be found in the NEU note\cite{NEU2}.
+
+              The functionality of \highlighttexttt{unify\_choreo} is the same as the local version,
+              the only difference is that the \highlighttexttt{unify\_choreo} can handle the choreographic
+              \highlighttexttt{TMaps} type which is used to represent the type of the function.
+        \item \textbf{apply\_subst\_typ\_local \& apply\_subst\_typ\_choreo}\\
+              \texttt{: local\_subst -> Local.typ -> Local.typ \&\\ choreo\_subst -> Choreo.typ -> Choreo.typ}\\
+              \highlighttexttt{apply\_subst\_typ\_local subst typ} apply the substitution \highlighttexttt{subst} to the type \highlighttexttt{typ},
+              and return the type after applying the substitution.
+              That is, \highlighttexttt{apply\_subst\_typ\_local [(T1, int)] (int -> T1)} return \highlighttexttt{int -> int}.
+              This function is used to apply the substitution to the type after the unification algorithm,
+              it solve the constraints on the types of expressions by traversing the substitution and apply all occurence of the type variable to the type.
+
+              The functionality of \highlighttexttt{apply\_subst\_typ\_choreo} is the same as the local version,
+              the only difference is that the \highlighttexttt{apply\_subst\_typ\_choreo} can handle the choreographic \highlighttexttt{TMaps} type.
+
+        \item \textbf{apply\_subst\_ctx\_local \& apply\_subst\_ctx\_choreo}\\
+              \texttt{: local\_subst -> local\_ctx -> local\_ctx \&\\ choreo\_subst -> choreo\_ctx -> choreo\_ctx}\\
+              Both functions use \href{https://ocaml.org/manual/5.2/api/List.html#VALmap}{\highlighttexttt[orange]{List.map}}
+              with the \highlighttexttt{apply\_subst\_typ\_local} and \highlighttexttt{apply\_subst\_typ\_choreo} functions
+              to apply the substitution to the types in the context.
+        \item \textbf{apply\_subst\_substs\_local \& apply\_subst\_subst\_choreo}\\
+              \texttt{: local\_subst -> local\_subst -> local\_subst \&\\ choreo\_subst -> choreo\_subst -> choreo\_subst}\\
+              Similar to the \highlighttexttt{apply\_subst\_ctx\_local} and \highlighttexttt{apply\_subst\_ctx\_choreo} functions,
+              but these functions apply the substitution to the substitution.
+        \item \textbf{compose\_subst\_local \& compose\_subst\_choreo}\\
+              \texttt{: local\_subst -> local\_subst -> local\_subst \&\\ choreo\_subst -> choreo\_subst -> choreo\_subst}\\
+              \highlighttexttt{compose\_substs\_local s1 s2} use \highlighttexttt{apply\_subst\_substs\_local s1 s2}
+              to apply the substitution \highlighttexttt{s1} to the substitution \highlighttexttt{s2}, then return the combination of the two substitutions.
+
+              The functionality of \highlighttexttt{compose\_substs\_choreo} is the same as the local version.
+    \end{itemize}
+
+\subsection{Type Inference for Local Language}
+    The type system for the local language can be found in the \hyperref[appendix:local_typ]{Appendix B}.
+
+    \subsubsection{Type Inference for Local Expression}\label{local_expr}
+        We list some of the cases for the type inference of the local expression:
+        \begin{itemize}
+            \item \textbf{Local Variable} \texttt{Local.Var (Local.VarId var\_name)}\\
+                  The type of the variable \texttt{var\_name} is the type binding of the variable in the local context, we look up the type of the variable in the context
+                  using \href{https://ocaml.org/manual/5.2/api/List.html#VALassoc_opt}{\highlighttexttt[orange]{List.assoc\_opt}}. We either
+                  return the type of the variable with empty substitution if it is found in the context, or we raise an variable not found exception.
+            \item \textbf{Binary Operation} \texttt{Local.BinOp (e1, op, e2)}\\
+                  The type of the binary operation expression depends on the type of the operator and the operands.
+                  At the beginning, we infer the type of the left-hand side expression \texttt{e1} by \highlighttexttt{infer\_local\_expr}.
+                  We then apply the substitution returned by infer \texttt{e1} to the local context, and call \highlighttexttt{infer\_local\_expr}
+                  to infer the type of the right-hand side expression \texttt{e2} by using the updated context and the substitution.
+                  Suppose the operator is \texttt{||}, we then unify the type of both \texttt{e1} and \texttt{e2} with expected type \texttt{TBool}.
+                  At the end, we return the type \texttt{TBool} with the combination of all substitutions.
+            \item \textbf{Let \ldots in} \texttt{Local.Let (var\_name, local\_type, e1, e2)}\\
+                  The type of the let binding expression is the type of the expression \texttt{e2}. We haved talked about the type inference of the
+                  let binding expression in the \hyperref[understand_type_system]{Understanding the Type System} section. In here,
+                  we infer the type of the expression \texttt{e1} first, and we check if the type of the expression \texttt{e1}
+                  is the same as the type annotation \texttt{local\_type}, if they are not the same, we raise a type mismatch exception.
+                  Then we add the type binding \texttt{var\_name:local\_type} to the local context, and do the remaining type inference of the expression \texttt{e2}.
+            \item \textbf{Left \& Right} \texttt{Local.Left e} \& \texttt{Local.Right e}\\
+                  The type of the \texttt{left} expression is the sum type, with one of the types being the type of the expression \texttt{e}.
+                  Assume the expression is \texttt{Left e}, we infer the type of the expression \texttt{e} first.
+                  Since we don't know the right side of the sum type, we give it a fresh type variable \texttt{T\_n} by \highlighttexttt{gen\_ftv}.
+                  The return type of the expression is \texttt{TSum (typ\_of\_e, T\_n)}.
+            \item \textbf{Match} \texttt{Local.Match (e, cases)}\\
+                  It is recommended that you read the \hyperref[local_pattern]{local pattern} first before reading the pattern matching.
+
+                  The type of the \texttt{match} expression is the type of the sub-expressions in the cases. At first we
+                  split the cases into the list of patterns and list of sub-expressions. Then we infer each pattern in the list of patterns
+                  by using \href{https://ocaml.org/manual/5.2/api/List.html#VALmap}{\highlighttexttt[orange]{List.map}} with the \highlighttexttt{infer\_local\_pattern} function to collect the combination of substitutions,
+                  the type of patterns, and the list of each context of the pattern. We then apply the substitution to each of the type of the pattern
+                  to get the final type of the pattern list, The list of the final type of the pattern must be the sum type. From \highlighttexttt{infer\_local\_pattern},
+                  we give a fresh new type variable to left and right side of the sum type when we encounter the \texttt{Local.Left} and \texttt{Local.Right} pattern,
+                  here we unify the type of left and right side of the sum type to get the final type of the sum type,
+                  and we add the binding of sum type and the type of match expression to the context.
+
+                  When we infer the type of the sub-expressions in the cases,
+                  for each sub-expression, we first combine the context from each pattern with the local context, and then use substitution to rewrite it,
+                  and then use it to infer the type of the corresponding sub-expression by \highlighttexttt{infer\_local\_expr},
+                  after this we collect the combination of substitutions and the list of type of the sub-expressions. We compose the substitution of the pattern
+                  with the substitution of the sub-expression by \highlighttexttt{compose\_subst\_local} to get the final substitution, and then apply the final substitution
+                  to the type of the sub-expression to rewrite the list of types. At the end, we unify the list of types of the sub-expressions with the
+                  head of the list because all the types of the sub-expressions must be the same, and we compose the final substitution with the head of the list of types.
+        \end{itemize}
+
+    \subsubsection{Type Inference for Local Pattern}\label{local_pattern}
+        Infer the type of pattern in local language is different from infer the type of expression.
+        The difference is that the pattern is used to match the value of the expression, and we need to
+        create the ad-hoc binding for any variable in the pattern with fresh type variables, as we will use them in the sub-expression.
+        So the return type of the pattern is the substitution, the type of the pattern, and a context that stores the type bindings of the variables in the pattern.
+
+        The way to infer the type of the pattern is most similar to the way to infer the type of the expression,
+        but whenever we encounter a variable in the pattern, we create a fresh type variable by \highlighttexttt{gen\_ftv},
+        and add the type binding of the variable to the context. So the return of the \texttt{Local.Var var\_name} pattern is
+        \texttt{([], T\_n, [(var\_name, T\_n)])}. The return of the \texttt{Local.Left p} pattern and \texttt{Local.Right p} pattern is similar to
+        how we infer the type of the \texttt{Local.Left} and \texttt{Local.Right} expression in the \hyperref[local_expr]{local expression} section.
+
+\subsection{Type inference for Choreographic Language}
+    The type system for the choreographic language can be found in the \hyperref[appendix:choreo_typ]{Appendix C}.
+
+    \subsubsection{Type Inference for Choreo Expression}\label{choreo_expr}
+        We list only some of the cases for the type inference of the choreographic expression that are
+        significantly different from the local expression:
+        \begin{itemize}
+            \item \textbf{LocExpr} \texttt{Choreo.LocExpr (Local.LocId loc\_id, local\_expr)}\\
+                  The type of the \texttt{LocExpr} is the type of \texttt{local\_expr} with \texttt{loc\_id}.
+                  To infer the type of the location expression, we first extract the local context of the location \texttt{loc\_id} from \texttt{global\_ctx}
+                  by \highlighttexttt{extract\_local\_ctx}, and then we infer the type of the local expression by \highlighttexttt{infer\_local\_expr}.
+                  After we apply the substitution to the local type, we add \texttt{loc\_id} to each of the type variables in the substitution by
+                  \highlighttexttt{get\_choreo\_subst} to construct the choreographic substitution.
+            \item \textbf{Send} \texttt{Choreo.Send (src, e, dst)}\\
+                  The type of the \texttt{Send} expression is the type of the expression \texttt{e} with destination location.
+                  We infer the type of the expression \texttt{e} first, then we extract the type to check if the location of the expression \texttt{e}
+                  is the same as the source location \texttt{src}, if not we raise a source location mismatch exception.
+                  We then unify the type of the expression \texttt{e} with the expected type of the source location \texttt{src} by \highlighttexttt{unify\_choreo}.
+                  At the end, we return the type of the expression \texttt{e} with the destination location \texttt{dst}, and the combination of all substitutions.
+            \item \textbf{Function Definition} \texttt{Choreo.FunDef (args, e)}\\
+                  The type of the function definition is the type of input arguments with return type of the function body \texttt{e}.
+                  We first use \href{https://ocaml.org/manual/5.2/api/List.html#VALfold_right}{\highlighttexttt[orange]{List.fold\_right}}
+                  to infer the type of the input arguments by \highlighttexttt{infer\_choreo\_pattern} and collect the combination of substitutions,
+                  list of arguments types, and the combination of contexts. We then infer the type of the expression \texttt{e} by using the updated context.
+                  We use \href{https://ocaml.org/manual/5.2/api/List.html#VALfold_right}{\highlighttexttt[orange]{List.fold\_right}} to
+                  combine the type of input arguments with the return type of the function body and return it as the type of the function definition.
+                  The reason we use \href{https://ocaml.org/manual/5.2/api/List.html#VALfold_right}{\highlighttexttt[orange]{List.fold\_right}} is that the
+                  function type in functional programming is right-associative, so we need to combine the type of the input arguments with the return type of the function body from right to left.
+                  For example, the function type of \texttt{int -> bool -> string -> int} is \texttt{int -> (bool -> (string -> int))}.
+                  And we use the \texttt{Choreo.TMaps} type to represent the function type, so \texttt{int -> (bool -> (string -> int))}
+                  would be represented as \texttt{TMaps (int, TMaps (bool, TMaps (string, int)))}.
+            \item \textbf{Function Application} \texttt{Choreo.FunApp (func, param)}\\
+                  The type of the function application is the return type of the function.
+                  We first infer the type of the function and parameter by \highlighttexttt{infer\_choreo\_expr}.
+                  After we rewrite the type of the function by applying the combined substitution to the function type,
+                  we need to check if the type of the function is a \texttt{TMaps} type, if not we raise an expected function type exception.
+                  We then unify the type of the parameter with the input type of the function by \highlighttexttt{unify\_choreo},
+                  and return the return type of the function as the type of the function application with the combination of all substitutions.
+        \end{itemize}
+
+    \subsubsection{Type Inference for Choreo Pattern}\label{choreo_pattern}
+        Infer the type of pattern in choreographic language is similar to infer the type of pattern in local language,
+        the only thing new in the choreographic pattern is the \texttt{Choreo.LocPat} pattern,
+        and the idea is the same as the \texttt{Choreo.LocExpr} expression in \hyperref[choreo_expr]{choreo expression} section.
+
+    \subsubsection{Type Inference for Choreo Statement}\label{choreo_stmt}
+        We have three different types of statements in the choreographic language:
+        \begin{itemize}
+            \item \textbf{Decl} \texttt{Choreo.Decl (pattn, choreo\_typ)}\\
+                  \texttt{Decl} is used to declare the type of the variable in the choreographic context.
+                  We first check if the pattern is a variable name, if not we raise a pattern mismatch exception.
+                  We then add the binding \texttt{var\_name:choreo\_typ} to the choreographic context and return.
+            \item \textbf{Assign} \texttt{Choreo.Assign (pattn\_ls, expr)}\\
+                  \texttt{Assign} is used to define a main function in the choreographic language. The main function is the function that is executed when the program starts. 
+                  The idea of inferring the type of the \texttt{Assign} statement is similar to the \texttt{FunDef} expression in the \hyperref[choreo_expr]{choreo expression} section. 
+            \item \textbf{TypeDecl} \texttt{Choreo.TypeDecl (typ\_id, choreo\_typ)}\\
+                  Not implemented yet.
+        \end{itemize}
+
+        \newpage % end of section
+
+\section{Appendices}
+    \begin{appendices}
+        \renewcommand{\thesubsection}{Appendix \Alph{subsection}}
+
+        \subsection{Type System for Local Language}\label{appendix:local_typ}
+            \begin{mathpar}
+                \inferrule [ Loc - unit ]
+                { \; }
+                { \Gamma \vdash \textsf{() : unit} } \and
+                \inferrule [ Loc - var ]
+                { x : t \in \Gamma }
+                { \Gamma \vdash x : t  } \and
+                \inferrule [ Loc - binop mat ]
+                { \Gamma \vdash e_1 : int \quad \Gamma \vdash e_2 : int \quad \odot \in \{+,-,\times, /\}}
+                { \Gamma \vdash e_1 \odot e_2 : int} \and
+                \inferrule [ Loc - binop comp ]
+                { \Gamma \vdash e_1 : int \quad \Gamma \vdash e_2 : int \quad \odot \in \{=, !=, <, >, <=, >=\}}
+                { \Gamma \vdash e_1 \odot e_2 : bool} \and
+                \inferrule [ Loc - binop bool ]
+                { \Gamma \vdash e_1 : bool \quad \Gamma \vdash e_2 : bool \quad \odot \in \{\& \&, \parallel\}}
+                { \Gamma \vdash e_1 \odot e_2 : bool} \and
+                \inferrule [ Loc - def ]
+                { \Gamma \vdash e_1 : t \quad \Gamma, x : t \vdash e_2 : t_2 }
+                { \Gamma \vdash \textsf{let}\ x := e_1 \ \textsf{in}\ e_2 : t_2  } \and
+                \inferrule [ Loc - pair ]
+                { \Gamma \vdash e_1 : t_1 \quad \Gamma \vdash e_2 : t_2}
+                { \Gamma \vdash (e_1, e_2) : t_1 \times t_2 } \\
+                \inferrule [ Loc - fst ]
+                { \Gamma \vdash e : t_1 \times t_2 }
+                { \Gamma \vdash \textsf{fst} \  e : t_1 } \and
+                \inferrule [ Loc - snd ]
+                { \Gamma \vdash e : t_1 \times t_2 }
+                { \Gamma \vdash \textsf{snd} \ e : t_2 } \\
+                \inferrule [ Loc - left ]
+                { \Gamma \vdash e_1 : t_1 }
+                { \Gamma \vdash \textsf{left} \ e_1 : t_1 + t_2 } \and
+                \inferrule [ Loc - right ]
+                { \Gamma \vdash e_2 : t_2 }
+                { \Gamma \vdash \textsf{right} \ e_2 : t_1 + t_2 } \and
+                \inferrule [ Loc - match ]
+                { \Gamma \vdash e : t_1+t_2 \quad \Gamma , \ x : t_1 \vdash e_1 : t_3 \quad \Gamma , \ y : t_2 \vdash e_2 : t_3  }
+                { \Gamma \vdash (\textsf{match e with left} \ x \Rightarrow e_1 ; \textsf{right} \ y \Rightarrow e_2) :t_3  }
+
+            \end{mathpar}
+            \newpage % end of section
+
+
+        \subsection{Type System for Choreography}\label{appendix:choreo_typ}
+            \begin{mathpar}
+                \inferrule [ unit ]
+                { \; }
+                { \Gamma ; \Delta \vdash \textsf{() : unit} } \and
+                \inferrule [ var ]
+                { X : \tau \in \Delta }
+                { \Gamma ;\Delta \vdash X : \tau } \and
+                \inferrule [ done ]
+                { \Gamma_{|\ell} \vdash e : t }
+                { \Gamma ; \Delta \vdash \ell.e : \ell.t } \and
+                \inferrule [ send ]
+                { \Gamma ; \Delta \vdash C : \ell.t}
+                { \Gamma;\Delta \vdash C \leadsto \ell_2 : \ell_2.t} \and
+                \inferrule [ sync ]
+                { \Gamma;\Delta \vdash C : \tau}
+                { \Gamma;\Delta \vdash \ell_1[d] \leadsto \ell_2 ; C : \tau} \and
+                \inferrule [ if ]
+                { \Gamma;\Delta \vdash C_1 : \ell.bool \quad \Gamma;\Delta\vdash C_2 : \tau_2 \quad \Gamma;\Delta \vdash C_3 : \tau_2 }
+                { \Gamma;\Delta \vdash \textsf{if } C_1 \textsf{ then } C_2 \textsf{ else } C_3: \tau_2  } \and
+                \inferrule [ def ]
+                { \Gamma;\Delta \vdash C_1 : \ell.t \quad \Gamma;\Delta, X : \ell.t \vdash C_2 : \tau_2 }
+                { \Gamma;\Delta \vdash \textsf{let } X = C_1 \textsf{ in } C_2 : \tau_2 } \and
+                \inferrule [ fun ]
+                { \Gamma ;\Delta , X : \tau_1, F : \tau_1 \to \tau_2\vdash C : \tau_2 }
+                { \Gamma ;\Delta \vdash \textsf{fun}\ F \ X \Rightarrow C : \tau_1 \to \tau_2  } \and
+                \inferrule [ app ]
+                { \Gamma;\Delta \vdash C_1 : \tau_1 \to \tau_2 \quad \Gamma;\Delta \vdash C_2 : \tau_1 }
+                { \Gamma;\Delta \vdash C_1 C_2 : \tau_2  } \and
+                \inferrule [ pair ]
+                { \Gamma ; \Delta \vdash C_1 : \tau_1 \quad \Gamma ; \Delta \vdash C_2 : \tau_2 }
+                { \Gamma ; \Delta \vdash (C_1, C_2) : \tau_1 \times \tau_2  } \and
+                \inferrule [ fst ]
+                { \Gamma ; \Delta \vdash C : \tau_1 \times \tau_2 }
+                { \Gamma ; \Delta \vdash \textsf{fst}\ C : \tau_1 } \and
+                \inferrule [ snd ]
+                { \Gamma ; \Delta \vdash C : \tau_1 \times \tau_2 }
+                { \Gamma ; \Delta \vdash \textsf{snd}\ C : \tau_2 } \\
+                \inferrule [ left ]
+                { \Gamma ; \Delta \vdash C : \tau_1 }
+                { \Gamma ; \Delta \vdash \textsf{left}\ C : \tau_1 + \tau_2 } \and
+                \inferrule [ right ]
+                { \Gamma ; \Delta \vdash C : \tau_2 }
+                { \Gamma ; \Delta \vdash \textsf{right}\ C : \tau_1 + \tau_2 } \and
+                \inferrule [ match ]
+                { \Gamma ; \Delta \vdash C : \tau_1+\tau_2 \quad \Gamma ; \Delta , X : \tau_1 \vdash C_1 : \tau_3 \quad \Gamma ; \Delta , Y : \tau_2 \vdash C_2 : \tau_3  }
+                { \Gamma ; \Delta \vdash (\textsf{match}\ C \ \textsf{with left}\ X \Rightarrow C_1 ; \textsf{right}\ Y \Rightarrow C_2) : \tau_3 }
+
+            \end{mathpar}
+            \newpage % end of section
+
+    \end{appendices}
+
+
+    \printbibliography[heading=bibintoc]
+
+\end{document}

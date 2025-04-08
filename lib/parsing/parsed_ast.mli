@@ -56,3 +56,18 @@ module Choreo : sig
   val set_info_expr : Pos_info.t -> expr -> expr
   val set_info_stmt : Pos_info.t -> stmt -> stmt
 end
+
+module Net : sig
+  type nonrec typ = Pos_info.t Ast_core.Net.M.typ
+  type nonrec expr = Pos_info.t Ast_core.Net.M.expr
+  type nonrec stmt = Pos_info.t Ast_core.Net.M.stmt
+  type nonrec stmt_block = stmt list
+
+  val get_info_typ : typ -> Pos_info.t
+  val get_info_expr : expr -> Pos_info.t
+  val get_info_stmt : stmt -> Pos_info.t
+
+  val set_info_typ : Pos_info.t -> typ -> typ
+  val set_info_expr : Pos_info.t -> expr -> expr
+  val set_info_stmt : Pos_info.t -> stmt -> stmt
+end

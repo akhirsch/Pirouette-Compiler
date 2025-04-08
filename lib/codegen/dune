@@ -1,6 +1,8 @@
 (library
  (name codegen)
  (libraries ast_core ppxlib)
- (private_modules emit_core)
+ (modules emit_core msg_intf toplevel_shm)
  (preprocess
-  (pps ppxlib.metaquot)))
+  (pps ppxlib.metaquot))
+ (instrumentation
+  (backend bisect_ppx)))
