@@ -516,7 +516,7 @@ let pir_16 =
     P2.\"bye\"
 ;"
 
-let dot_16 = ""
+let dot_16 = "digraphG{n0[label=\"Decl[1:0-1:11]\"];n0->n1;n0->n2;n1[label=\"y[1:0-1:1]\"];n2[label=\"P2[1:3-1:10]\"];n2->n3;n3[label=\"Bool[1:6-1:10]\"];n4[label=\"Assign[2:2-7:1]\"];n4->n5;n4->n6;n5[label=\"y[2:2-2:3]\"];n6[label=\"If[2:7-6:12]\"];n6->n7;n6->n12;n6->n15;n7[label=\"P1[2:10-2:28]\"];n7->n8;n8[label=\"BinOp[2:13-2:28]\"];n8->n9;n8->n10;n8->n11;n9[label=\"true[2:14-2:18]\"];n10[label=\"false[2:22-2:27]\"];n11[label=\"!=[2:19-2:21]\"];n12[label=\"Sync:P1[L]->P2[3:7-4:14]\"];n12->n13;n13[label=\"P2[4:4-4:14]\"];n13->n14;n14[label=\"hello[4:13-4:14]\"];n15[label=\"Sync:P1[R]->P2[5:7-6:12]\"];n15->n16;n16[label=\"P2[6:4-6:12]\"];n16->n17;n17[label=\"bye[6:11-6:12]\"];}"
 
 let pir_17 =
   "y: P2.unit;
