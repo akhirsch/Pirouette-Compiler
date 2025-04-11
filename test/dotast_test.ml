@@ -58,11 +58,11 @@ let break_on_whitespace string =
     else
     Printf.printf "lengths are not equal\n"; *)
     (* ~printer: (fun str -> List.fold_right (fun x xs -> x ^ xs) str "") *)
-    try
+    (* try *)
     (* if (String.equal words_expected words_actual) then assert_equal true true else assert_equal true false; *)
     assert_equal words_expected words_actual ~printer: (fun str -> str)
-    with _ ->
-      Printf.printf "failed\n";
+    (* with _ ->
+      Printf.printf "failed\n"; *)
     
     
   ;;
