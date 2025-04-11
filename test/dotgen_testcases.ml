@@ -393,7 +393,7 @@ let pir_6 =
    S.\"Bye\";\n"
 ;;
 
-let dot_6 = ""
+let dot_6 = "digraphG{n0[label=\"Assign[1:0-11:8]\"];n0->n1;n0->n2;n1[label=\"main[1:0-1:4]\"];n2[label=\"Let[1:8-11:7]\"];n2->n3;n2->n9;n3[label=\"Assign[1:12-1:32]\"];n3->n4;n3->n6;n4[label=\"R[1:12-1:15]\"];n4->n5;n5[label=\"x[1:14-1:15]\"];n6[label=\"Sendfrom:S[1:19-1:31]\"];n6[label=\"Sendto:R[1:19-1:31]\"];n6->n7;n7[label=\"S[1:23-1:26]\"];n7->n8;n8[label=\"3[1:25-1:26]\"];n9[label=\"If[3:0-11:7]\"];n9->n10;n9->n15;n9->n18;n10[label=\"R[3:3-3:10]\"];n10->n11;n11[label=\"BinOp[3:5-3:10]\"];n11->n12;n11->n13;n11->n14;n12[label=\"x[3:6-3:7]\"];n13[label=\"5[3:8-3:9]\"];n14[label=\"<[3:7-3:8]\"];n15[label=\"Sync:R[L]->S[5:5-7:9]\"];n15->n16;n16[label=\"S[7:0-7:9]\"];n16->n17;n17[label=\"Hello[7:8-7:9]\"];n18[label=\"Sync:R[R]->S[9:5-11:7]\"];n18->n19;n19[label=\"S[11:0-11:7]\"];n19->n20;n20[label=\"Bye[11:6-11:7]\"];}"
 
 let pir_7 =
   "main := let R.x := [S] S.3 ~> R; in \n\n\
@@ -404,7 +404,8 @@ let pir_7 =
    S.\"Bye\";\n"
 ;;
 
-let dot_7 = ""
+let dot_8 = "digraphG{n0[label=\"Assign[1:0-11:8]\"];n0->n1;n0->n2;n1[label=\"main[1:0-1:4]\"];n2[label=\"Let[1:8-11:7]\"];n2->n3;n2->n9;n3[label=\"Assign[1:12-1:32]\"];n3->n4;n3->n6;n4[label=\"R[1:12-1:15]\"];n4->n5;n5[label=\"x[1:14-1:15]\"];n6[label=\"Sendfrom:S[1:19-1:31]\"];n6[label=\"Sendto:R[1:19-1:31]\"];n6->n7;n7[label=\"S[1:23-1:26]\"];n7->n8;n8[label=\"3[1:25-1:26]\"];n9[label=\"If[3:0-11:7]\"];n9->n10;n9->n15;n9->n18;n10[label=\"R[3:3-3:11]\"];n10->n11;n11[label=\"BinOp[3:5-3:11]\"];n11->n12;n11->n13;n11->n14;n12[label=\"x[3:6-3:7]\"];n13[label=\"5[3:9-3:10]\"];n14[label=\">=[3:7-3:9]\"];n15[label=\"Sync:R[L]->S[5:5-7:9]\"];n15->n16;n16[label=\"S[7:0-7:9]\"];n16->n17;n17[label=\"Hello[7:8-7:9]\"];n18[label=\"Sync:R[R]->S[9:5-11:7]\"];n18->n19;n19[label=\"S[11:0-11:7]\"];n19->n20;n20[label=\"Bye[11:6-11:7]\"];}"
+
 let pir_8 =
   "main := let R.x := [S] S.3 ~> R; in \n\n\
    if R.(x>=5) \n\n\
@@ -414,7 +415,7 @@ let pir_8 =
    S.\"Bye\";\n"
 ;;
 
-let dot_8 = ""
+let dot_7 = "digraphG{n0[label=\"Assign[1:0-11:8]\"];n0->n1;n0->n2;n1[label=\"main[1:0-1:4]\"];n2[label=\"Let[1:8-11:7]\"];n2->n3;n2->n9;n3[label=\"Assign[1:12-1:32]\"];n3->n4;n3->n6;n4[label=\"R[1:12-1:15]\"];n4->n5;n5[label=\"x[1:14-1:15]\"];n6[label=\"Sendfrom:S[1:19-1:31]\"];n6[label=\"Sendto:R[1:19-1:31]\"];n6->n7;n7[label=\"S[1:23-1:26]\"];n7->n8;n8[label=\"3[1:25-1:26]\"];n9[label=\"If[3:0-11:7]\"];n9->n10;n9->n15;n9->n18;n10[label=\"R[3:3-3:11]\"];n10->n11;n11[label=\"BinOp[3:5-3:11]\"];n11->n12;n11->n13;n11->n14;n12[label=\"x[3:6-3:7]\"];n13[label=\"5[3:9-3:10]\"];n14[label=\"<=[3:7-3:9]\"];n15[label=\"Sync:R[L]->S[5:5-7:9]\"];n15->n16;n16[label=\"S[7:0-7:9]\"];n16->n17;n17[label=\"Hello[7:8-7:9]\"];n18[label=\"Sync:R[R]->S[9:5-11:7]\"];n18->n19;n19[label=\"S[11:0-11:7]\"];n19->n20;n20[label=\"Bye[11:6-11:7]\"];}"
 
 let pir_9 =
   "main := let R.x := [S] S.3 ~> R; in \n\n\
@@ -425,7 +426,7 @@ let pir_9 =
    S.false;\n"
 ;;
 
-let dot_9 = ""
+let dot_9 = "digraphG{n0[label=\"Assign[1:0-11:8]\"];n0->n1;n0->n2;n1[label=\"main[1:0-1:4]\"];n2[label=\"Let[1:8-11:7]\"];n2->n3;n2->n9;n3[label=\"Assign[1:12-1:32]\"];n3->n4;n3->n6;n4[label=\"R[1:12-1:15]\"];n4->n5;n5[label=\"x[1:14-1:15]\"];n6[label=\"Sendfrom:S[1:19-1:31]\"];n6[label=\"Sendto:R[1:19-1:31]\"];n6->n7;n7[label=\"S[1:23-1:26]\"];n7->n8;n8[label=\"3[1:25-1:26]\"];n9[label=\"If[3:0-11:7]\"];n9->n10;n9->n15;n9->n18;n10[label=\"R[3:3-3:10]\"];n10->n11;n11[label=\"BinOp[3:5-3:10]\"];n11->n12;n11->n13;n11->n14;n12[label=\"x[3:6-3:7]\"];n13[label=\"5[3:8-3:9]\"];n14[label=\"=[3:7-3:8]\"];n15[label=\"Sync:R[L]->S[5:5-7:6]\"];n15->n16;n16[label=\"S[7:0-7:6]\"];n16->n17;n17[label=\"true[7:2-7:6]\"];n18[label=\"Sync:R[R]->S[9:5-11:7]\"];n18->n19;n19[label=\"S[11:0-11:7]\"];n19->n20;n20[label=\"false[11:2-11:7]\"];}"
 
 let pir_10 =
   "main := let R.x := [S] S.-3 ~> R; in \n\n\
@@ -469,7 +470,7 @@ let LPF.x := [AGC] AGC.x ~> LPF; in
      S.\"Bye\";\n"
   ;;
 
-  let dot_12 = ""
+  let dot_12 = "digraphG{n0[label=\"Assign[1:0-11:8]\"];n0->n1;n0->n2;n1[label=\"main[1:0-1:4]\"];n2[label=\"Let[1:8-11:7]\"];n2->n3;n2->n9;n3[label=\"Assign[1:12-1:35]\"];n3->n4;n3->n6;n4[label=\"R[1:12-1:15]\"];n4->n5;n5[label=\"x[1:14-1:15]\"];n6[label=\"Sendfrom:S[1:19-1:34]\"];n6[label=\"Sendto:R[1:19-1:34]\"];n6->n7;n7[label=\"S[1:23-1:29]\"];n7->n8;n8[label=\"true[1:25-1:29]\"];n9[label=\"If[3:0-11:7]\"];n9->n10;n9->n15;n9->n18;n10[label=\"R[3:3-3:16]\"];n10->n11;n11[label=\"BinOp[3:5-3:16]\"];n11->n12;n11->n13;n11->n14;n12[label=\"x[3:6-3:7]\"];n13[label=\"true[3:11-3:15]\"];n14[label=\"&&[3:8-3:10]\"];n15[label=\"Sync:R[L]->S[5:5-7:9]\"];n15->n16;n16[label=\"S[7:0-7:9]\"];n16->n17;n17[label=\"Hello[7:8-7:9]\"];n18[label=\"Sync:R[R]->S[9:5-11:7]\"];n18->n19;n19[label=\"S[11:0-11:7]\"];n19->n20;n20[label=\"Bye[11:6-11:7]\"];}"
 
   let pir_13 =
     "main := let R.x := [S] S.true ~> R; in \n\n\
@@ -480,7 +481,7 @@ let LPF.x := [AGC] AGC.x ~> LPF; in
      S.\"Bye\";\n"
   ;;
 
-  let dot_13 = ""
+  let dot_13 = "digraphG{n0[label=\"Assign[1:0-11:8]\"];n0->n1;n0->n2;n1[label=\"main[1:0-1:4]\"];n2[label=\"Let[1:8-11:7]\"];n2->n3;n2->n9;n3[label=\"Assign[1:12-1:35]\"];n3->n4;n3->n6;n4[label=\"R[1:12-1:15]\"];n4->n5;n5[label=\"x[1:14-1:15]\"];n6[label=\"Sendfrom:S[1:19-1:34]\"];n6[label=\"Sendto:R[1:19-1:34]\"];n6->n7;n7[label=\"S[1:23-1:29]\"];n7->n8;n8[label=\"true[1:25-1:29]\"];n9[label=\"If[3:0-11:7]\"];n9->n10;n9->n15;n9->n18;n10[label=\"R[3:3-3:14]\"];n10->n11;n11[label=\"BinOp[3:5-3:14]\"];n11->n12;n11->n13;n11->n14;n12[label=\"x[3:6-3:7]\"];n13[label=\"true[3:9-3:13]\"];n14[label=\"||[3:7-3:9]\"];n15[label=\"Sync:R[L]->S[5:5-7:9]\"];n15->n16;n16[label=\"S[7:0-7:9]\"];n16->n17;n17[label=\"Hello[7:8-7:9]\"];n18[label=\"Sync:R[R]->S[9:5-11:7]\"];n18->n19;n19[label=\"S[11:0-11:7]\"];n19->n20;n20[label=\"Bye[11:6-11:7]\"];}"
 
   let pir_14 =
       "y: P2.string;
