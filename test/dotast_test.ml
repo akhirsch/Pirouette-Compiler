@@ -106,6 +106,22 @@ let test_12_dot _ = deq Dotgen_testcases.pir_12 Dotgen_testcases.dot_12
 let test_13_dot _ = deq Dotgen_testcases.pir_13 Dotgen_testcases.dot_13
 ;;
 
+let test_14_dot _ = deq Dotgen_testcases.pir_14 Dotgen_testcases.dot_14
+;;
+
+let test_15_dot _ = deq Dotgen_testcases.pir_15 Dotgen_testcases.dot_15
+;;
+
+let test_16_dot _ = deq Dotgen_testcases.pir_16 Dotgen_testcases.dot_16
+;;
+
+let test_17_dot _ = deq Dotgen_testcases.pir_17 Dotgen_testcases.dot_17
+;;
+
+(* function used, fundef not called but fun app is *)
+let test_18_dot _ = deq Dotgen_testcases.pir_18 Dotgen_testcases.dot_18
+;;
+
 
 let suite =
   "Dot Tests"
@@ -135,6 +151,16 @@ let suite =
          >::: [ ("testcase12" >:: test_12_dot) ]
          ; "testcase13"
          >::: [ ("testcase13" >:: test_13_dot) ]
+         ; "testcase14"
+         >::: [ ("testcase14" >:: test_14_dot) ]
+         ; "testcase15"
+         >::: [ ("testcase15" >:: test_15_dot) ]
+         ; "testcase16"
+         >::: [ ("testcase16" >:: test_16_dot) ]
+         ; "testcase17"
+         >::: [ ("testcase17" >:: test_17_dot) ]
+         ; "testcase18"
+         >::: [ ("testcase18" >:: test_18_dot) ]
        ]
 ;;
 let () = run_test_tt_main suite 

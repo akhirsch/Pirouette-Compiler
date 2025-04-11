@@ -493,4 +493,52 @@ let LPF.x := [AGC] AGC.x ~> LPF; in
 
   let dot_14 = ""
     ;;
+
+  let pir_15 =
+    "main :=
+      if R.(not true = true)
+      then R[L] ~> S;
+        let R.res := [S] S.(1,true) ~> R; in R.\"Sent\"
+      else R[R] ~> S;
+        let R.res := [S] S.(0,false) ~> R; in R.\"why\";"
+  ;;
+
+  let dot_15 = ""
 ;;
+
+let pir_16 =
+  "y: P2.bool;
+  y := if P1.(true != false)
+  then P1[L] ~> P2;
+    P2.\"hello\"
+  else P1[R] ~> P2;
+    P2.\"bye\"
+;"
+
+let dot_16 = ""
+
+let pir_17 =
+  "y: P2.unit;
+  y := if P1.(true != false)
+  then P1[L] ~> P2;
+    P2.\"hi\"
+  else P1[R] ~> P2;
+    P2.\"bye\"
+;"
+
+let dot_17 = ""
+
+let pir_18 =
+  "main := 
+  helper R.3
+;
+
+helper a := if R.(a > 2-1)
+    then R[L] ~> S;
+  	  let R.res := [S] S.(1,true) ~> R; in R.\"Sent\"
+    else R[R] ~> S;
+  	  let R.res := [S] S.(0,false) ~> R; in R.\"why\"
+;
+"
+
+let dot_18 = ""
