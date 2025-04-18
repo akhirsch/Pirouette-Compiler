@@ -543,3 +543,25 @@ helper a := if R.(a > 2-1)
 "
 
 let dot_18 = ""
+
+let pir_19 =
+  "main := let x := P2.(1,2);
+  y := if P1.(true != false)
+  then P1[L] ~> P2;
+    P2.(fst x)
+  else P1[R] ~> P2;
+    P2.(snd x)
+;"
+
+let dot_19 = ""
+
+let pir_20 =
+  "main := let x := P2.(1,2);
+  y := if P1.(true != false)
+  then P1[L] ~> P2;
+    P2.(snd x)
+  else P1[R] ~> P2;
+    P2.(fst x)
+;"
+
+let dot_20 = ""
