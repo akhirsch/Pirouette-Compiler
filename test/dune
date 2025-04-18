@@ -42,6 +42,11 @@
  (modules typcheck_test)
  (libraries parsing ounit2 typing))
 
+ (test
+ (name floats_test)
+ (modules floats_test floats_testcases)
+ (libraries parsing ounit2 typing ast_utils))
+
 ;runs parsing_test.ml
 ; -- currently only testing stuff covered by prettyprint_test and typcheck_test
 ; TESTED FILES 2/25
