@@ -42,8 +42,8 @@ let dot_bin_op (string_of_info : 'a -> string) (op : 'a Local.bin_op) : string *
 let dot_un_op (string_of_info : 'a -> string) (op : 'a Local.un_op) : string * string =
   let node_name = generate_node_name () in
   match op with
-  | Not info -> spf "%s [label=\"! %s\"];\n" node_name (string_of_info info), node_name
-  | Neg info -> spf "%s [label=\"¬ %s\"];\n" node_name (string_of_info info), node_name
+  | Not info -> spf "%s [label=\"not %s\"];\n" node_name (string_of_info info), node_name
+  | Neg info -> spf "%s [label=\"- %s\"];\n" node_name (string_of_info info), node_name
 ;;
 
 (** [dot_local_type typ] creates the dot code for local types [typ]
@@ -145,7 +145,7 @@ let rec dot_local_expr (string_of_info : 'a -> string) (loc_expr : 'a Local.expr
   =
   let node_name = generate_node_name () in
   match loc_expr with
-  | Unit info -> spf "%s [label=\"() %s\"];\n" node_name (string_of_info info), node_name
+  | Unit info -> spf "%s [label=\"Unit %s\"];\n" node_name (string_of_info info), node_name
   | Val (v, _) ->
     (match v with
      | Int (i, info) ->
@@ -265,7 +265,7 @@ let rec dot_choreo_type (string_of_info : 'a -> string) (typ : 'a Choreo.typ)
   =
   let node_name = generate_node_name () in
   match typ with
-  | TUnit info -> spf "%s [label=\"() %s\"];\n" node_name (string_of_info info), node_name
+  | TUnit info -> spf "%s [label=\"TUnit %s\"];\n" node_name (string_of_info info), node_name
   | TLoc (LocId (id, _), typ, info) ->
     let locid_node = spf "%s [label=\"%s %s\"];\n" node_name id (string_of_info info) in
     let c, n = dot_local_type string_of_info typ in
@@ -283,14 +283,14 @@ let rec dot_choreo_type (string_of_info : 'a -> string) (typ : 'a Choreo.typ)
   | TProd (typ1, typ2, info) ->
     let c1, n1 = dot_choreo_type string_of_info typ1 in
     let c2, n2 = dot_choreo_type string_of_info typ2 in
-    let prod_node = spf "%s [label=\"Product %s\"];\n" node_name (string_of_info info) in
+    let prod_node = spf "%s [label=\"TProd %s\"];\n" node_name (string_of_info info) in
     let edge1 = spf "%s -> %s;\n" node_name n1 in
     let edge2 = spf "%s -> %s;\n" node_name n2 in
     prod_node ^ edge1 ^ edge2 ^ c1 ^ c2, node_name
   | TSum (typ1, typ2, info) ->
     let c1, n1 = dot_choreo_type string_of_info typ1 in
     let c2, n2 = dot_choreo_type string_of_info typ2 in
-    let sum_node = spf "%s [label=\"Sum %s\"];\n" node_name (string_of_info info) in
+    let sum_node = spf "%s [label=\"TSum %s\"];\n" node_name (string_of_info info) in
     let edge1 = spf "%s -> %s;\n" node_name n1 in
     let edge2 = spf "%s -> %s;\n" node_name n2 in
     sum_node ^ edge1 ^ edge2 ^ c1 ^ c2, node_name
@@ -422,7 +422,7 @@ and dot_choreo_expr (string_of_info : 'a -> string) (expr : 'a Choreo.expr)
   =
   let node_name = generate_node_name () in
   match expr with
-  | Unit info -> spf "%s [label=\"() %s\"];\n" node_name (string_of_info info), node_name
+  | Unit info -> spf "%s [label=\"Unit %s\"];\n" node_name (string_of_info info), node_name
   | Var (VarId (id, _), info) ->
     spf "%s [label=\"%s %s\"];\n" node_name id (string_of_info info), node_name
   | LocExpr (LocId (id, _), le, info) ->
