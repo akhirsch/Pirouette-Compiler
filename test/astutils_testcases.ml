@@ -96,3 +96,6 @@ y2 := allow choice from P1 with
       | R -> ret (9);
 "
 
+(* String representing invalid Net IR syntax (missing semicolon) *)
+let net_invalid_missing_semicolon = "x : unit"
+

@@ -67,9 +67,19 @@ let suite =
          >::: [ ("foreign_decl" >:: fun _ -> peq Astutils_testcases.foreign_decl) ]
        ; "Net IR"
          >::: [
-               ("simple_net">:: fun _ -> net_peq Astutils_testcases.simple_net);
-               ("ex3_netir" >:: fun _ -> net_peq Astutils_testcases.netir_ex3)
-              ]
+               ("simple_net" >:: fun _ -> net_peq Astutils_testcases.simple_net);
+               ("ex3_netir" >:: fun _ -> net_peq Astutils_testcases.netir_ex3);
+               ( "invalid_net_missing_semicolon"
+               >:: fun _ ->
+                 assert_raises
+                   (Failure
+                      "Parse error at [Ln 1, Col 8] with token ''.\n\
+                       Error:    x : unit\n\
+                       \                  ^\n")
+                   (fun () ->
+                     Parsing.Parse.parse_net_with_error
+                       (Lexing.from_string Astutils_testcases.net_invalid_missing_semicolon)) );
+             ]
        ]
 ;;
 
