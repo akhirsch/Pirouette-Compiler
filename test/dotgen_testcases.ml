@@ -613,12 +613,14 @@ let pir_24 =
 let dot_24 = "digraphG{n0[label=\"Assign[1:0-14:1]\"];n0->n1;n0->n2;n1[label=\"main[1:0-1:4]\"];n2[label=\"Let[3:0-12:18]\"];n2->n3;n2->n8;n3[label=\"Assign[3:4-3:17]\"];n3->n4;n3->n6;n4[label=\"P1[3:4-3:8]\"];n4->n5;n5[label=\"x[3:7-3:8]\"];n6[label=\"P2[3:12-3:16]\"];n6->n7;n7[label=\"6[3:15-3:16]\"];n8[label=\"Match[5:0-12:18]\"];n8->n9;n8->n11n16n21;n9[label=\"P1[5:6-5:10]\"];n9->n10;n10[label=\"x[5:9-5:10]\"];n11[label=\"Case\"];n11->n12;n11->n14;n12[label=\"P2[7:1-7:5]\"];n12->n13;n13[label=\"0[7:4-7:5]\"];n14[label=\"P1[7:9-7:18]\"];n14->n15;n15[label=\"Zero[7:17-7:18]\"];n16[label=\"Case\"];n16->n17;n16->n19;n17[label=\"P2[9:1-9:5]\"];n17->n18;n18[label=\"1[9:4-9:5]\"];n19[label=\"P1[9:9-9:17]\"];n19->n20;n20[label=\"One[9:16-9:17]\"];n21[label=\"Case\"];n21->n22;n21->n23;n22[label=\"Default[12:3-12:4]\"];n23[label=\"P1[12:8-12:18]\"];n23->n24;n24[label=\"Other[12:17-12:18]\"];}"
 
 let pir_25 =
-  "main :=\n\n\
-  let P1.x := P1.6; in\n\n\
-  match P1.x with\n\n\
-  |P1.0 -> P1.\"Zero\"\n\n\
-  |P1.1 -> P1.\"One\"\n\n\ 
-  |_ -> P1.\"Other\"\n\n\
+  "main :=
+  let P1.x := P1.6; in
+  let P1.y :=
+  P1.(match x with
+  |0 -> \"Zero\"
+  |1 -> \"One\"
+  |_ -> \"Other\"); in
+P1.y
 ;"
 
-let dot_25 = "digraphG{n0[label=\"Assign[1:0-14:1]\"];n0->n1;n0->n2;n1[label=\"main[1:0-1:4]\"];n2[label=\"Let[3:0-12:18]\"];n2->n3;n2->n8;n3[label=\"Assign[3:4-3:17]\"];n3->n4;n3->n6;n4[label=\"P1[3:4-3:8]\"];n4->n5;n5[label=\"x[3:7-3:8]\"];n6[label=\"P1[3:12-3:16]\"];n6->n7;n7[label=\"6[3:15-3:16]\"];n8[label=\"Match[5:0-12:18]\"];n8->n9;n8->n11n16n21;n9[label=\"P1[5:6-5:10]\"];n9->n10;n10[label=\"x[5:9-5:10]\"];n11[label=\"Case\"];n11->n12;n11->n14;n12[label=\"P1[7:1-7:5]\"];n12->n13;n13[label=\"0[7:4-7:5]\"];n14[label=\"P1[7:9-7:18]\"];n14->n15;n15[label=\"Zero[7:17-7:18]\"];n16[label=\"Case\"];n16->n17;n16->n19;n17[label=\"P1[9:1-9:5]\"];n17->n18;n18[label=\"1[9:4-9:5]\"];n19[label=\"P1[9:9-9:17]\"];n19->n20;n20[label=\"One[9:16-9:17]\"];n21[label=\"Case\"];n21->n22;n21->n23;n22[label=\"Default[12:3-12:4]\"];n23[label=\"P1[12:8-12:18]\"];n23->n24;n24[label=\"Other[12:17-12:18]\"];}"
+let dot_25 = "digraphG{n0[label=\"Assign[1:0-9:1]\"];n0->n1;n0->n2;n1[label=\"main[1:0-1:4]\"];n2[label=\"Let[2:2-8:4]\"];n2->n3;n2->n8;n3[label=\"Assign[2:6-2:19]\"];n3->n4;n3->n6;n4[label=\"P1[2:6-2:10]\"];n4->n5;n5[label=\"x[2:9-2:10]\"];n6[label=\"P1[2:14-2:18]\"];n6->n7;n7[label=\"6[2:17-2:18]\"];n8[label=\"Let[3:2-8:4]\"];n8->n9;n8->n24;n9[label=\"Assign[3:6-7:17]\"];n9->n10;n9->n12;n10[label=\"P1[3:6-3:10]\"];n10->n11;n11[label=\"y[3:9-3:10]\"];n12[label=\"P1[4:2-7:16]\"];n12->n13;n13[label=\"Match[4:5-7:16]\"];n13->n14;n13->n15n18n21;n14[label=\"x[4:12-4:13]\"];n15[label=\"Case\"];n15->n16;n15->n17;n16[label=\"0[5:3-5:4]\"];n17[label=\"Zero[5:13-5:14]\"];n18[label=\"Case\"];n18->n19;n18->n20;n19[label=\"1[6:3-6:4]\"];n20[label=\"One[6:12-6:13]\"];n21[label=\"Case\"];n21->n22;n21->n23;n22[label=\"Default[7:3-7:4]\"];n23[label=\"Other[7:14-7:15]\"];n24[label=\"P1[8:0-8:4]\"];n24->n25;n25[label=\"y[8:3-8:4]\"];}"
