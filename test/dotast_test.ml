@@ -137,6 +137,12 @@ let test_22_dot _ = deq Dotgen_testcases.pir_22 Dotgen_testcases.dot_22
 let test_23_dot _ = deq Dotgen_testcases.pir_23 Dotgen_testcases.dot_23
 ;;
 
+let test_24_dot _ = deq Dotgen_testcases.pir_24 Dotgen_testcases.dot_24
+;;
+
+let test_25_dot _ = deq Dotgen_testcases.pir_25 Dotgen_testcases.dot_25
+;;
+
 let suite =
   "Dot Tests"
   >::: [ "testcase1"
@@ -185,6 +191,10 @@ let suite =
          >::: [ ("testcase22" >:: test_22_dot) ]
          ; "testcase23"
          >::: [ ("testcase23" >:: test_23_dot) ]
+         ; "testcase24"
+         >::: [ ("testcase24" >:: test_24_dot) ]
+         ; "testcase25"
+         >::: [ ("testcase25" >:: test_25_dot) ]
        ]
 ;;
 let () = run_test_tt_main suite 

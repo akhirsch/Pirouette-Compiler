@@ -59,7 +59,7 @@ let rec dot_local_type (string_of_info : 'a -> string) (typ : 'a Local.typ)
   =
   let node_name = generate_node_name () in
   match typ with
-  | TUnit info -> spf "%s [label=\"() %s\"];\n" node_name (string_of_info info), node_name
+  | TUnit info -> spf "%s [label=\"Unit %s\"];\n" node_name (string_of_info info), node_name
   | TInt info -> spf "%s [label=\"Int %s\"];\n" node_name (string_of_info info), node_name
   | TString info ->
     spf "%s [label=\"String %s\"];\n" node_name (string_of_info info), node_name
@@ -145,7 +145,7 @@ let rec dot_local_expr (string_of_info : 'a -> string) (loc_expr : 'a Local.expr
   =
   let node_name = generate_node_name () in
   match loc_expr with
-  | Unit info -> spf "%s [label=\"Unit %s\"];\n" node_name (string_of_info info), node_name
+  | Unit info -> spf "%s [label=\"() %s\"];\n" node_name (string_of_info info), node_name
   | Val (v, _) ->
     (match v with
      | Int (i, info) ->
@@ -422,7 +422,7 @@ and dot_choreo_expr (string_of_info : 'a -> string) (expr : 'a Choreo.expr)
   =
   let node_name = generate_node_name () in
   match expr with
-  | Unit info -> spf "%s [label=\"Unit %s\"];\n" node_name (string_of_info info), node_name
+  | Unit info -> spf "%s [label=\"() %s\"];\n" node_name (string_of_info info), node_name
   | Var (VarId (id, _), info) ->
     spf "%s [label=\"%s %s\"];\n" node_name id (string_of_info info), node_name
   | LocExpr (LocId (id, _), le, info) ->
