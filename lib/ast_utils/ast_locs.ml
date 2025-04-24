@@ -6,6 +6,8 @@ let rec extract_pattern : 'a Choreo.pattern -> LocSet.t = function
   | Pair (p1, p2, _) -> LocSet.union (extract_pattern p1) (extract_pattern p2)
   | LocPat (LocId (id, _), _, _) -> LocSet.singleton id
   | Left (p, _) | Right (p, _) -> extract_pattern p
+  | PConstruct (_, ps, _) ->
+    List.fold_left (fun acc p -> LocSet.union acc (extract_pattern p)) LocSet.empty ps
 ;;
 
 let rec extract_type : 'a Choreo.typ -> LocSet.t = function
@@ -14,6 +16,18 @@ let rec extract_type : 'a Choreo.typ -> LocSet.t = function
   | TVar (Typ_Id (id, _), _) -> LocSet.singleton id
   | TMap (t1, t2, _) | TProd (t1, t2, _) | TSum (t1, t2, _) ->
     LocSet.union (extract_type t1) (extract_type t2)
+  | TVariant (constructors, _) ->
+    List.fold_left
+      (fun acc constructor ->
+        let { Choreo.name = _; args; info = _ } = constructor in
+        LocSet.union
+          acc
+          (List.fold_left
+             (fun acc_arg typ -> LocSet.union acc_arg (extract_type typ))
+             LocSet.empty
+             args))
+      LocSet.empty
+      constructors
 ;;
 
 let[@specialise] rec extract_stmt_block (stmts : 'a Choreo.stmt_block) =
@@ -51,4 +65,6 @@ and extract_expr : 'a Choreo.expr -> LocSet.t = function
         LocSet.union acc (LocSet.union (extract_pattern p) (extract_expr e)))
       (extract_expr e)
       cases
+  | Construct (_, es, _) ->
+    List.fold_left (fun acc e -> LocSet.union acc (extract_expr e)) LocSet.empty es
 ;;

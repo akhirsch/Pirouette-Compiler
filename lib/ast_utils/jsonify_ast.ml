@@ -32,6 +32,18 @@ let rec jsonify_local_type = function
     `Assoc [ "TProd", `List [ jsonify_local_type t1; jsonify_local_type t2 ] ]
   | Local.TSum (t1, t2, _) ->
     `Assoc [ "TSum", `List [ jsonify_local_type t1; jsonify_local_type t2 ] ]
+  | Local.TVariant (constructors, _) ->
+    `Assoc
+      [ ( "TVariant"
+        , `List
+            (List.map
+               (fun { Local.name; args; info = _ } ->
+                 `Assoc
+                   [ "name", `String name
+                   ; "args", `List (List.map jsonify_local_type args)
+                   ])
+               constructors) )
+      ]
 ;;
 
 let rec jsonify_local_pattern = function
@@ -49,6 +61,14 @@ let rec jsonify_local_pattern = function
   | Local.Right (p, _) -> `Assoc [ "Right", jsonify_local_pattern p ]
   | Local.Pair (p1, p2, _) ->
     `Assoc [ "Pair", `List [ jsonify_local_pattern p1; jsonify_local_pattern p2 ] ]
+  | Local.PConstruct (name, patterns, _) ->
+    `Assoc
+      [ ( "PConstruct"
+        , `Assoc
+            [ "name", `String name
+            ; "patterns", `List (List.map jsonify_local_pattern patterns)
+            ] )
+      ]
 ;;
 
 let rec jsonify_local_expr = function
@@ -105,6 +125,12 @@ let rec jsonify_local_expr = function
                      cases) )
             ] )
       ]
+  | Local.Construct (name, exprs, _) ->
+    `Assoc
+      [ ( "Construct"
+        , `Assoc
+            [ "name", `String name; "exprs", `List (List.map jsonify_local_expr exprs) ] )
+      ]
 ;;
 
 (* ============================== Choreo ============================== *)
@@ -119,6 +145,18 @@ let rec jsonify_choreo_type = function
     `Assoc [ "TProd", `List [ jsonify_choreo_type t1; jsonify_choreo_type t2 ] ]
   | Choreo.TSum (t1, t2, _) ->
     `Assoc [ "TSum", `List [ jsonify_choreo_type t1; jsonify_choreo_type t2 ] ]
+  | Choreo.TVariant (constructors, _) ->
+    `Assoc
+      [ ( "TVariant"
+        , `List
+            (List.map
+               (fun { Choreo.name; args; info = _ } ->
+                 `Assoc
+                   [ "name", `String name
+                   ; "args", `List (List.map jsonify_choreo_type args)
+                   ])
+               constructors) )
+      ]
 ;;
 
 let rec jsonify_choreo_pattern = function
@@ -131,6 +169,14 @@ let rec jsonify_choreo_pattern = function
   | Choreo.LocPat (LocId (loc, _), p, _) ->
     `Assoc
       [ "LocPat", `Assoc [ "loc", `String loc; "local_patt", jsonify_local_pattern p ] ]
+  | Choreo.PConstruct (name, patterns, _) ->
+    `Assoc
+      [ ( "PConstruct"
+        , `Assoc
+            [ "name", `String name
+            ; "patterns", `List (List.map jsonify_choreo_pattern patterns)
+            ] )
+      ]
 ;;
 
 let rec jsonify_choreo_stmt = function
@@ -236,6 +282,13 @@ and jsonify_choreo_expr = function
             [ "choreo_expr", jsonify_choreo_expr e
             ; "cases", `List (List.map jsonify_choreo_case cases)
             ] )
+      ]
+  | Choreo.Construct (name, exprs, _) ->
+    `Assoc
+      [ ( "Construct"
+        , `Assoc
+            [ "name", `String name; "exprs", `List (List.map jsonify_choreo_expr exprs) ]
+        )
       ]
 ;;
 

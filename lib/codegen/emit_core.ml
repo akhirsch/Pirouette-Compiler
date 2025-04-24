@@ -73,6 +73,8 @@ let rec emit_local_pexp (expr : 'a Local.expr) =
         cases
     in
     Ast_builder.Default.pexp_match ~loc (emit_local_pexp e) cases
+  | _ ->
+    failwith "Not implemented ---------------------------------------------------------"
 
 and emit_local_ppat (pat : 'a Local.pattern) =
   match pat with
@@ -84,6 +86,8 @@ and emit_local_ppat (pat : 'a Local.pattern) =
   | Pair (p1, p2, _) -> [%pat? [%p emit_local_ppat p1], [%p emit_local_ppat p2]]
   | Left (p, _) -> [%pat? Either.Left [%p emit_local_ppat p]]
   | Right (p, _) -> [%pat? Either.Right [%p emit_local_ppat p]]
+  | _ ->
+    failwith "Not implemented ---------------------------------------------------------"
 ;;
 
 let rec emit_net_fun_body

@@ -35,9 +35,9 @@ module M = struct
     | TVar of 'a typ_id * 'a
     | TProd of 'a typ * 'a typ * 'a
     | TSum of 'a typ * 'a typ * 'a
-    | TVariant of 'a constructors list * 'a
+    | TVariant of 'a constructor list * 'a
 
-  and 'a constructors =
+  and 'a constructor =
     { name : string
     ; args : 'a typ list
     ; info : 'a
@@ -82,7 +82,7 @@ struct
   type nonrec typ = Info.t M.typ
   type nonrec pattern = Info.t M.pattern
   type nonrec expr = Info.t M.expr
-  type nonrec constructors = Info.t M.constructors
+  type nonrec constructor = Info.t M.constructor
 
   let get_info_value : value -> Info.t = function
     | Int (_, i) -> i
@@ -159,7 +159,7 @@ struct
     | Construct (_, _, i) -> i
   ;;
 
-  let get_info_constructors : constructors -> Info.t = function
+  let get_info_constructor : constructor -> Info.t = function
     | { name = _; args = _; info = i } -> i
   ;;
 
@@ -247,7 +247,7 @@ struct
     | Construct (s, es, _) -> Construct (s, es, i)
   ;;
 
-  let set_info_constructors : Info.t -> constructors -> constructors =
+  let set_info_constructor : Info.t -> constructor -> constructor =
     fun i -> function
     | { name; args; info = _ } -> { name; args; info = i }
   ;;
