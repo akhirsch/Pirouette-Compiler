@@ -624,3 +624,12 @@ P1.y
 ;"
 
 let dot_25 = "digraphG{n0[label=\"Assign[1:0-9:1]\"];n0->n1;n0->n2;n1[label=\"main[1:0-1:4]\"];n2[label=\"Let[2:2-8:4]\"];n2->n3;n2->n8;n3[label=\"Assign[2:6-2:19]\"];n3->n4;n3->n6;n4[label=\"P1[2:6-2:10]\"];n4->n5;n5[label=\"x[2:9-2:10]\"];n6[label=\"P1[2:14-2:18]\"];n6->n7;n7[label=\"6[2:17-2:18]\"];n8[label=\"Let[3:2-8:4]\"];n8->n9;n8->n24;n9[label=\"Assign[3:6-7:17]\"];n9->n10;n9->n12;n10[label=\"P1[3:6-3:10]\"];n10->n11;n11[label=\"y[3:9-3:10]\"];n12[label=\"P1[4:2-7:16]\"];n12->n13;n13[label=\"Match[4:5-7:16]\"];n13->n14;n13->n15n18n21;n14[label=\"x[4:12-4:13]\"];n15[label=\"Case\"];n15->n16;n15->n17;n16[label=\"0[5:3-5:4]\"];n17[label=\"Zero[5:13-5:14]\"];n18[label=\"Case\"];n18->n19;n18->n20;n19[label=\"1[6:3-6:4]\"];n20[label=\"One[6:12-6:13]\"];n21[label=\"Case\"];n21->n22;n21->n23;n22[label=\"Default[7:3-7:4]\"];n23[label=\"Other[7:14-7:15]\"];n24[label=\"P1[8:0-8:4]\"];n24->n25;n25[label=\"y[8:3-8:4]\"];}"
+(* 
+let pir_26 =  
+  "main :=
+  let R.y := S.(let y : S.Int; in); in
+  let R.y := [S] S.6 ~> R; in
+  R.y
+  ;" 
+   
+let dot_26 = "digraphG{n0[label=\"Assign[1:0-5:3]\"];n0->n1;n0->n2;n1[label=\"main[1:0-1:4]\"];n2[label=\"Let[2:2-4:5]\"];n2->n3;n2->n8;n3[label=\"Assign[2:6-2:23]\"];n3->n4;n3->n6;n4[label=\"R[2:6-2:9]\"];n4->n5;n5[label=\"y[2:8-2:9]\"];n6[label=\"R[2:13-2:22]\"];n6->n7;n7[label=\"hello[2:21-2:22]\"];n8[label=\"Let[3:2-4:5]\"];n8->n9;n8->n17;n9[label=\"Assign[3:6-3:37]\"];n9->n10;n9->n12;n10[label=\"R[3:6-3:9]\"];n10->n11;n11[label=\"x[3:8-3:9]\"];n12[label=\"Sendfrom:S[3:13-3:36]\"];n12[label=\"Sendto:R[3:13-3:36]\"];n12->n13;n13[label=\"S[3:17-3:31]\"];n13->n14;n14[label=\"Pair[3:19-3:31]\"];n14->n15;n14->n16;n15[label=\"true[3:20-3:24]\"];n16[label=\"false[3:25-3:30]\"];n17[label=\"R[4:2-4:5]\"];n17->n18;n18[label=\"x[4:4-4:5]\"];}" *)
