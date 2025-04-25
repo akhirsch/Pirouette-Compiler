@@ -73,11 +73,13 @@ rule read = parse
   | "true"             { TRUE }
   | "false"            { FALSE }
   | "foreign"          { FOREIGN }
+  | "variant"          { VARIANT }
   | "if"               { IF }
   | "then"             { THEN }
   | "else"             { ELSE }
   | "match"            { MATCH }
   | "with"             { WITH }
+  | "of"               { OF }
   | "let"              { LET }
   | "in"               { IN }
   | "fst"              { FST }

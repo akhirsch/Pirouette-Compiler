@@ -166,10 +166,10 @@ let rec dot_local_pattern (string_of_info : 'a -> string) (pat : 'a Local.patter
       spf "%s [label=\"Constructor %s %s\"];\n" node_name name (string_of_info info)
     in
     let pat_code =
-      List.mapi
-        (fun i pat ->
+      List.map
+        (fun pat ->
           let c, n = dot_local_pattern string_of_info pat in
-          let edge = spf "%s -> %s [label=\"arg%d\"];\n" node_name n i in
+          let edge = spf "%s -> %s;\n" node_name n in
           edge ^ c)
         patterns
     in
@@ -281,25 +281,25 @@ let rec dot_local_expr (string_of_info : 'a -> string) (loc_expr : 'a Local.expr
       let case_nodes, case_node_names =
         List.split (List.map (dot_local_case string_of_info) cases)
       in
-      String.concat "" case_nodes, String.concat " " case_node_names
+      let case_edges =
+        List.map (fun name -> spf "%s -> %s;\n" node_name name) case_node_names
+      in
+      String.concat "" case_nodes, String.concat "" case_edges
     in
-    (* Because of type matching error / List.iter is a type unit
-       List.append also seems to be wrong *)
     let c1, n1 = dot_local_expr string_of_info e in
     let match_node = spf "%s [label=\"Match %s\"];\n" node_name (string_of_info info) in
-    let c2, n2 = dot_local_cases cases in
+    let c2, case_edges = dot_local_cases cases in
     let edge1 = spf "%s -> %s;\n" node_name n1 in
-    let edge2 = spf "%s -> %s;\n" node_name n2 in
-    match_node ^ edge1 ^ edge2 ^ c1 ^ c2, node_name
+    match_node ^ edge1 ^ case_edges ^ c1 ^ c2, node_name
   | Construct (name, exprs, info) ->
     let construct_node =
       spf "%s [label=\"Construct %s %s\"];\n" node_name name (string_of_info info)
     in
     let exprs_code =
-      List.mapi
-        (fun i expr ->
+      List.map
+        (fun expr ->
           let c, n = dot_local_expr string_of_info expr in
-          let edge = spf "%s -> %s [label=\"arg%d\"];\n" node_name n i in
+          let edge = spf "%s -> %s;\n" node_name n in
           edge ^ c)
         exprs
     in
@@ -430,10 +430,10 @@ let rec dot_choreo_pattern (string_of_info : 'a -> string) (pat : 'a Choreo.patt
       spf "%s [label=\"Constructor %s %s\"];\n" node_name name (string_of_info info)
     in
     let pat_code =
-      List.mapi
-        (fun i pat ->
+      List.map
+        (fun pat ->
           let c, n = dot_choreo_pattern string_of_info pat in
-          let edge = spf "%s -> %s [label=\"arg%d\"];\n" node_name n i in
+          let edge = spf "%s -> %s;\n" node_name n in
           edge ^ c)
         patterns
     in
@@ -644,23 +644,25 @@ and dot_choreo_expr (string_of_info : 'a -> string) (expr : 'a Choreo.expr)
          node name of the choreo cases in [cases]. *)
     let[@inline] dot_choreo_cases cases =
       let case_nodes, case_node_names = List.split (List.map dot_choreo_case cases) in
-      String.concat "" case_nodes, String.concat " " case_node_names
+      let case_edges =
+        List.map (fun name -> spf "%s -> %s;\n" node_name name) case_node_names
+      in
+      String.concat "" case_nodes, String.concat "" case_edges
     in
     let c1, n1 = dot_choreo_expr string_of_info e in
     let match_node = spf "%s [label=\"Match %s\"];\n" node_name (string_of_info info) in
-    let c2, n2 = dot_choreo_cases cases in
+    let c2, case_edges = dot_choreo_cases cases in
     let edge1 = spf "%s -> %s;\n" node_name n1 in
-    let edge2 = spf "%s -> %s;\n" node_name n2 in
-    match_node ^ edge1 ^ edge2 ^ c1 ^ c2, node_name
+    match_node ^ edge1 ^ case_edges ^ c1 ^ c2, node_name
   | Construct (name, exprs, info) ->
     let construct_node =
       spf "%s [label=\"Construct %s %s\"];\n" node_name name (string_of_info info)
     in
     let exprs_code =
-      List.mapi
-        (fun i expr ->
+      List.map
+        (fun expr ->
           let c, n = dot_choreo_expr string_of_info expr in
-          let edge = spf "%s -> %s [label=\"arg%d\"];\n" node_name n i in
+          let edge = spf "%s -> %s;\n" node_name n in
           edge ^ c)
         exprs
     in

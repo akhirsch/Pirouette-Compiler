@@ -18,8 +18,10 @@
 %token IF THEN ELSE
 %token FST SND LEFT RIGHT
 %token MATCH WITH
+%token OF
 %token EOF
 %token FOREIGN
+%token VARIANT
 
 (** Operator Precedence and Associativity:
     - Defines the precedence and associativity rules for operators to resolve ambiguities in expressions.
@@ -115,6 +117,7 @@ choreo_expr2:
   | id=var_id { Var (id, gen_pos $startpos $endpos) }
   | id=loc_id DOT e=local_expr { LocExpr (id, e, gen_pos $startpos $endpos) }
   | LPAREN e=choreo_expr RPAREN { Choreo.set_info_expr (gen_pos $startpos $endpos) e }
+  | name=ID LPAREN args=separated_list(COMMA, choreo_expr) RPAREN { Construct (name, args, gen_pos $startpos $endpos) }
 
 (** [local_expr] parses local expressions and constructs corresponding AST nodes.
 
@@ -133,6 +136,7 @@ local_expr:
   | RIGHT e=local_expr { Right (e, gen_pos $startpos $endpos) }
   | MATCH e=local_expr WITH cases=nonempty_list(local_case) { Match (e, cases, gen_pos $startpos $endpos) }
   | LPAREN e=local_expr RPAREN { Local.set_info_expr (gen_pos $startpos $endpos) e }
+  | name=ID LPAREN args=separated_list(COMMA, local_expr) RPAREN { Construct (name, args, gen_pos $startpos $endpos) }
 
 (** [choreo_pattern] parses patterns used in choreography expressions and constructs corresponding AST nodes.*)
 choreo_pattern:
@@ -143,6 +147,7 @@ choreo_pattern:
   | LEFT p=choreo_pattern { Left (p, gen_pos $startpos $endpos) }
   | RIGHT p=choreo_pattern { Right (p, gen_pos $startpos $endpos) }
   | LPAREN p=choreo_pattern RPAREN { Choreo.set_info_pattern (gen_pos $startpos $endpos) p }
+  | name=ID LPAREN args=separated_list(COMMA, choreo_pattern) RPAREN { PConstruct (name, args, gen_pos $startpos $endpos) }
   
   (** [local_pattern] parses patterns used in local expressions within choreographies and constructs corresponding AST nodes.*)
 local_pattern:
@@ -153,6 +158,7 @@ local_pattern:
   | LEFT p=local_pattern { Left (p, gen_pos $startpos $endpos) }
   | RIGHT p=local_pattern { Right (p, gen_pos $startpos $endpos) }
   | LPAREN p=local_pattern RPAREN { Local.set_info_pattern (gen_pos $startpos $endpos) p }
+  | name=ID LPAREN args=separated_list(COMMA, local_pattern) RPAREN { PConstruct (name, args, gen_pos $startpos $endpos) }
 
 (** [choreo_type] parses choreography types and constructs corresponding AST nodes.
 
@@ -165,6 +171,7 @@ choreo_type:
   | t1=choreo_type TIMES t2=choreo_type { TProd (t1, t2, gen_pos $startpos $endpos) }
   | t1=choreo_type PLUS t2=choreo_type { TSum (t1, t2, gen_pos $startpos $endpos) }
   | LPAREN t=choreo_type RPAREN { Choreo.set_info_typ (gen_pos $startpos $endpos) t }
+  | constructors=nonempty_list(choreo_constructor_def) { Ast_core.Choreo.M.TVariant (constructors, gen_pos $startpos $endpos) }
 
 (** [local_type] parses local types and constructs corresponding AST nodes.
 
@@ -178,6 +185,7 @@ local_type:
   | t1=local_type TIMES t2=local_type { TProd (t1, t2, gen_pos $startpos $endpos) }
   | t1=local_type PLUS t2=local_type { TSum (t1, t2, gen_pos $startpos $endpos) }
   | LPAREN t=local_type RPAREN { Local.set_info_typ (gen_pos $startpos $endpos) t }
+  | constructors=nonempty_list(local_constructor_def) { Ast_core.Local.M.TVariant (constructors, gen_pos $startpos $endpos) }
   
 loc_id:
   | id=ID { LocId (id, gen_pos $startpos $endpos) }
@@ -251,3 +259,59 @@ value:
 foreign_decl:
   | FOREIGN id=var_id COLON t=choreo_type COLONEQ s=STRING SEMICOLON 
     { ForeignDecl (id, t, s, gen_pos $startpos $endpos) }
+
+(** [constructor_arg_list_choreo] parses a list of choreography types for variant constructor arguments.
+    
+    - Returns: A list of choreography type AST nodes.
+    - Example: "int * bool * string" gets turned into a list [int; bool; string]
+*)
+constructor_arg_list_choreo:
+  | t=choreo_type { [t] }
+  | t=choreo_type TIMES rest=constructor_arg_list_choreo { t :: rest }
+  
+(** [constructor_arg_list_local] parses a list of local types for variant constructor arguments.
+    
+    We need this separate rule because the '*' symbol is used both for product types 
+    and for separating constructor arguments, which confuses the parser. This tells
+    the parser how to differentiate between the 2 usages.
+
+    - Returns: A list of local type AST nodes.
+    - Example: "int * bool * string" gets turned into a list [int; bool; string]
+*)
+constructor_arg_list_local:
+  | t=local_type { [t] }
+  | t=local_type TIMES rest=constructor_arg_list_local { t :: rest }
+
+(** [local_constructor_def] parses constructor definitions for variant types in the local language.
+   
+    Each constructor has a name and optional argument types separated by '*'.
+    Supports constructors with no arguments, single-argument constructors, and 
+    multi-argument constructors with parentheses around the argument lists.
+    
+    - Returns: A constructor record with name, argument types, and location info.
+    - Example: Parsing a vertical bar, a constructor name, and optional type arguments results 
+               in a constructor definition with the specified name and arguments.
+*)
+%inline local_constructor_def:
+  | BAR name=ID 
+    { Ast_core.Local.M.{ name = name; args = []; info = gen_pos $startpos $endpos } }
+  | BAR name=ID OF t=local_type
+    { Ast_core.Local.M.{ name = name; args = [t]; info = gen_pos $startpos $endpos } }
+  | BAR name=ID OF LPAREN args=constructor_arg_list_local RPAREN
+    { Ast_core.Local.M.{ name = name; args = args; info = gen_pos $startpos $endpos } }
+
+(** [choreo_constructor_def] parses constructor definitions for variant types in the choreography language.
+    
+    Similar to [local_constructor_def], but for constructors in the choreography language.
+    
+    - Returns: A constructor record with name, argument types, and location info.
+    - Example: Parsing a vertical bar, a constructor name, a colon, and type arguments results 
+               in a constructor definition for use in choreography variant types.
+*)
+%inline choreo_constructor_def:
+  | BAR name=ID 
+    { Ast_core.Choreo.M.{ name = name; args = []; info = gen_pos $startpos $endpos } }
+  | BAR name=ID OF t=choreo_type
+    { Ast_core.Choreo.M.{ name = name; args = [t]; info = gen_pos $startpos $endpos } }
+  | BAR name=ID OF LPAREN args=constructor_arg_list_choreo RPAREN
+    { Ast_core.Choreo.M.{ name = name; args = args; info = gen_pos $startpos $endpos } }
