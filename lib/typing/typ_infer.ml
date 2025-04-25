@@ -22,6 +22,7 @@ let rec unify_local t1 t2 : local_subst =
   | Local.TInt _, Local.TInt _
   | Local.TBool _, Local.TBool _
   | Local.TString _, Local.TString _
+  | Local.TFloat _, Local.TFloat _
   | Local.TUnit _, Local.TUnit _ -> []
   | Local.TVar (Local.TypId (var_name, _), _), t
   | t, Local.TVar (Local.TypId (var_name, _), _) ->
@@ -197,7 +198,7 @@ let rec infer_local_expr local_ctx = function
        let unif_s1 = unify_local t1' (Local.TInt m) in
        let unif_s2 = unify_local t2' (Local.TInt m) in
        compose_subst_local (compose_subst_local s_comp unif_s1) unif_s2, Local.TInt m
-       | Local.FPlus _ | Local.FMinus _ | Local.FTimes _ | Local.FDiv _ ->
+    | Local.FPlus _ | Local.FMinus _ | Local.FTimes _ | Local.FDiv _ ->
         let e1_s, t1 = infer_local_expr local_ctx e1 in
         let e2_s, t2 = infer_local_expr (apply_subst_ctx_local e1_s local_ctx) e2 in
         let s_comp = compose_subst_local e1_s e2_s in
@@ -205,7 +206,7 @@ let rec infer_local_expr local_ctx = function
         let t2' = apply_subst_typ_local s_comp t2 in
         let unif_s1 = unify_local t1' (Local.TFloat m) in
         let unif_s2 = unify_local t2' (Local.TFloat m) in
-        compose_subst_local (compose_subst_local s_comp unif_s1) unif_s2, Local.TInt m
+        compose_subst_local (compose_subst_local s_comp unif_s1) unif_s2, Local.TFloat m
      | Local.Eq _ | Local.Neq _ | Local.Lt _ | Local.Leq _ | Local.Gt _ | Local.Geq _ ->
        let e1_s, t1 = infer_local_expr local_ctx e1 in
        let e2_s, t2 = infer_local_expr (apply_subst_ctx_local e1_s local_ctx) e2 in
