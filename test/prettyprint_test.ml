@@ -74,6 +74,9 @@ let suite =
        ; "Net IR"
          >::: [ ("simple_net" >:: fun _ -> net_peq Astutils_testcases.simple_net)
               ; ("ex3_netir" >:: fun _ -> net_peq Astutils_testcases.netir_ex3)
+              ; ("map_net_audvy" >:: fun _ -> net_peq Astutils_testcases.map_net_audvy)
+              ; ("prod_net_audvy" >:: fun _ -> net_peq Astutils_testcases.prod_net_audvy)
+              ; ("sum_net_audvy" >:: fun _ -> net_peq Astutils_testcases.sum_net_audvy)
               ]
        ]
 ;;
