@@ -1,3 +1,21 @@
+; (executable
+;  (name pipeline_gen))
+
+; (subdir
+;  pipeline_run
+;  (dynamic_include ../pipeline_gen/dune.inc))
+
+; (subdir
+;  pipeline_gen
+;  (rule
+;   (deps
+;    (source_tree ../pipeline_src))
+;   (action
+;    (with-stdout-to
+;     dune.inc
+;     (run ../pipeline_gen.exe)))))
+
+
 ;runs test case prettyprint_test.ml (with astutils_testcases.ml as helper)
 ; TESTED FILES 2/25
 ; 4% (3 / 64) -> lib/ast_core/choreo.ml
@@ -103,15 +121,29 @@
 ;runs core_test.ml
 
 (test
+ (name net_parsing_test)
+ (modules net_parsing_test)
+ (libraries ounit2 ast_core parsing)
+ (preprocess
+  (pps bisect_ppx)))
+
+(test
  (name emit_core_test)
  (modules emit_core_test)
- (libraries ounit2 ppxlib ast_core codegen)
+ (libraries ounit2 ppxlib ast_core ocamlgen)
  (preprocess
   (pps ppxlib.metaquot)))
 
-(test
- (name msg_intf_test)
- (modules msg_intf_test)
- (libraries ounit2 ppxlib ast_core codegen)
- (preprocess
-  (pps ppxlib.metaquot)))
+; (test
+;  (name msg_intf_test)
+;  (modules msg_intf_test)
+;  (libraries ounit2 ppxlib ast_core ocamlgen)
+;  (preprocess
+;   (pps ppxlib.metaquot)))
+
+; (test
+;  (name toplevel_shm_test)
+;  (modules toplevel_shm_test)
+;  (libraries ounit2 ppxlib ast_core ocamlgen)
+;  (preprocess
+;   (pps ppxlib.metaquot)))

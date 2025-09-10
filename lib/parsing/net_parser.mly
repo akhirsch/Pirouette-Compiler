@@ -69,6 +69,12 @@
 %type <Parsed_ast.Local.typ_id> typ_id
 %type <Parsed_ast.Local.sync_label> sync_label
 %type <Parsed_ast.Net.stmt> foreign_decl
+%type <Parsed_ast.Net.stmt list> list(stmt)
+%type <(Parsed_ast.Local.pattern * Parsed_ast.Local.expr) list> nonempty_list(local_case)
+%type <Parsed_ast.Local.pattern list> nonempty_list(local_pattern)
+%type <(Parsed_ast.Local.pattern * Parsed_ast.Net.expr) list> nonempty_list(net_case)
+%type <(Parsed_ast.Local.sync_label * Parsed_ast.Net.expr) list> nonempty_list(sync_choice_case)
+%type <unit option> option(SEMICOLON)
 
 %start prog
 
@@ -132,7 +138,7 @@ local_pattern:
 
 net_type:
   | UNIT_T { TUnit (gen_pos $startpos $endpos) }
-  | loc_id DOT t=local_type { TLoc (t, gen_pos $startpos $endpos) }
+  | id=loc_id DOT t=local_type { TLoc (id, t, gen_pos $startpos $endpos) }
   | t1=net_type ARROW t2=net_type { TMap (t1, t2, gen_pos $startpos $endpos) }
   | t1=net_type TIMES t2=net_type { TProd (t1, t2, gen_pos $startpos $endpos) }
   | t1=net_type PLUS t2=net_type { TSum (t1, t2, gen_pos $startpos $endpos) }

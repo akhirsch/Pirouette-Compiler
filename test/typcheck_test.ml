@@ -133,7 +133,7 @@ let local_ctx_eq ctx expected_ctx =
   try
     List.for_all2
       (fun (var_name, typ) (expected_var_name, expected_typ) ->
-        var_name = expected_var_name && local_typ_eq typ expected_typ)
+         var_name = expected_var_name && local_typ_eq typ expected_typ)
       ctx
       expected_ctx
   with
@@ -293,7 +293,7 @@ let choreo_ctx_eq ctx expected_ctx =
   try
     List.for_all2
       (fun (var_name, typ) (expected_var_name, expected_typ) ->
-        var_name = expected_var_name && chreo_typ_eq typ expected_typ)
+         var_name = expected_var_name && chreo_typ_eq typ expected_typ)
       ctx
       expected_ctx
   with

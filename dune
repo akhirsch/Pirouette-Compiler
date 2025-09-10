@@ -1,0 +1,5 @@
+(alias
+ (name default)
+ (deps
+  (alias_rec bin/default)
+  pirc.opam))

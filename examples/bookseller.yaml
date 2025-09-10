@@ -1,0 +1,7 @@
+  locations:
+    - location: "init"
+      http_address: "http://127.0.0.1:8080/init"
+    - location: "Buyer"
+      http_address: "http://127.0.0.1:8081/buyer"
+    - location: "Seller"
+      http_address: "http://127.0.0.1:8082/seller"

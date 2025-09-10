@@ -32,16 +32,18 @@ val jsonify_local_expr
 val jsonify_choreo_type
   :  'a Ast_core.Choreo.M.typ
   -> ([> `Assoc of
-         (string
-         * [> `Assoc of
-              (string
-              * ([> `Assoc of (string * [> `List of 'c list ]) list | `String of string ]
-                 as
-                 'c))
-                list
-           | `List of 'b list
-           ])
-           list
+           (string
+           * [> `Assoc of
+                  (string
+                  * ([> `Assoc of (string * [> `List of 'c list ]) list
+                     | `String of string
+                     ]
+                     as
+                     'c))
+                    list
+             | `List of 'b list
+             ])
+             list
       | `String of string
       ]
       as
@@ -152,3 +154,9 @@ val jsonify_net_stmt_block
          'b)
           list
      ]
+
+val jsonify_net_type : 'a Ast_core.Net.M.typ -> Yojson.Safe.t
+val jsonify_net_stmt : 'a Ast_core.Net.M.stmt -> Yojson.Safe.t
+val jsonify_net_expr : 'a Ast_core.Net.M.expr -> Yojson.Safe.t
+val jsonify_net_stmt_block : 'a Ast_core.Net.M.stmt_block -> Yojson.Safe.t
+

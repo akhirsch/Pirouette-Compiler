@@ -3,7 +3,7 @@ module Local = Local.M
 module M = struct
   type 'a typ =
     | TUnit of 'a
-    | TLoc of 'a Local.typ * 'a
+    | TLoc of 'a Local.loc_id * 'a Local.typ * 'a
     | TMap of 'a typ * 'a typ * 'a
     | TProd of 'a typ * 'a typ * 'a
     | TSum of 'a typ * 'a typ * 'a
@@ -47,7 +47,7 @@ struct
 
   let get_info_typ : typ -> Info.t = function
     | TUnit i -> i
-    | TLoc (_, i) -> i
+    | TLoc (_, _, i) -> i
     | TMap (_, _, i) -> i
     | TProd (_, _, i) -> i
     | TSum (_, _, i) -> i
@@ -83,10 +83,10 @@ struct
   let set_info_typ : Info.t -> typ -> typ =
     fun i -> function
     | TUnit _ -> TUnit i
-    | TLoc (loc, _) -> TLoc (loc, i)
-    | TMap (t1, t2, i) -> TMap (t1, t2, i)
-    | TProd (t1, t2, i) -> TProd (t1, t2, i)
-    | TSum (t1, t2, i) -> TSum (t1, t2, i)
+    | TLoc (loc, t, _) -> TLoc (loc, t, i)
+    | TMap (t1, t2, _) -> TMap (t1, t2, i)
+    | TProd (t1, t2, _) -> TProd (t1, t2, i)
+    | TSum (t1, t2, _) -> TSum (t1, t2, i)
   ;;
 
   let set_info_expr : Info.t -> expr -> expr =

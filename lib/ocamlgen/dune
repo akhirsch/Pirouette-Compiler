@@ -1,0 +1,8 @@
+(library
+ (name ocamlgen)
+ (libraries ast_core ast_utils ppxlib)
+ (modules emit_core msg_intf toplevel_domain toplevel_http toplevel_mpi)
+ (preprocess
+  (pps ppxlib.metaquot))
+ (instrumentation
+  (backend bisect_ppx)))

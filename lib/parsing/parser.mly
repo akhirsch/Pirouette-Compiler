@@ -107,11 +107,11 @@ choreo_expr:
   | LBRACKET id1=loc_id RBRACKET e=choreo_expr TILDE_ARROW id2=loc_id { Send (id1, e, id2, gen_pos $startpos $endpos) }
   | LBRACKET id1=loc_id RBRACKET e1=choreo_expr TILDE_ARROW id2=loc_id DOT p=local_pattern SEMICOLON e2=choreo_expr
       { Let ([Assign ([LocPat (id2, p, gen_pos $startpos(id2) $endpos(p))], Send (id1, e1, id2, gen_pos $startpos($1) $endpos(id2)), gen_pos $startpos($1) $endpos(p))], e2, gen_pos $startpos $endpos) }
+  | e1=choreo_expr1 COMMA e2=choreo_expr1 { Pair (e1, e2, gen_pos $startpos $endpos) }
   | choreo_expr1 { $1 }
 
 choreo_expr1:
   | e1=choreo_expr1 e2=choreo_expr2 { FunApp (e1, e2, gen_pos $startpos $endpos) }
-  | e1=choreo_expr2 COMMA e2=choreo_expr2 { Pair (e1, e2, gen_pos $startpos $endpos) }
   | choreo_expr2 { $1 }
 
 choreo_expr2:

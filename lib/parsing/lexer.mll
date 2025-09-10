@@ -134,6 +134,7 @@ and read_string buf = parse
     - If EOF is reached during a comment, it returns an EOF token with metadata.
 *)
 and read_single_line_comment = parse
+  | "--"    { read lexbuf }
   | newline { next_line lexbuf; read lexbuf }
   | _       { read_single_line_comment lexbuf }
   | eof     { EOF }

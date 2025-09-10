@@ -333,11 +333,11 @@ let test_set_info_send_CH (meta1 : int) (meta2 : int) (meta3 : int) (new_meta : 
 ;;
 
 let test_set_info_sync_CH
-  (meta1 : int)
-  (meta2 : int)
-  (meta3 : int)
-  (meta4 : int)
-  (new_meta : int)
+      (meta1 : int)
+      (meta2 : int)
+      (meta3 : int)
+      (meta4 : int)
+      (new_meta : int)
   =
   let loc_id1 = Local.M.LocId ("meta1", meta1) in
   let label = Local.M.LabelId ("meta2", meta2) in
@@ -349,11 +349,11 @@ let test_set_info_sync_CH
 ;;
 
 let test_set_info_if_CH
-  (meta1 : int)
-  (meta2 : int)
-  (meta3 : int)
-  (meta4 : int)
-  (new_meta : int)
+      (meta1 : int)
+      (meta2 : int)
+      (meta3 : int)
+      (meta4 : int)
+      (new_meta : int)
   =
   let m1 = Local.M.VarId ("m1", meta1) in
   let e1 = Choreo.M.Var (m1, meta1) in
