@@ -109,3 +109,33 @@ let netir_ex4_audvy =
   x : P2.string;\n
   x := P2 <~ y;\n"
 ;;
+
+let netir_exprint_jackie = 
+  "\n\
+   x : R.int;\n\
+   x := ret (3);\n\
+   y : unit;\n\
+   y := if ret (x > 5)\n\
+        then choose L for S in unit\n\
+        else choose R for S in unit;\n\n\
+   msg : S.string;\n\
+   msg := allow choice from R with\n\
+          | L -> ret (\"Hello\")\n\
+          | R -> ret (\"Bye\");\n"
+;;
+
+let netir_ex5_jackie = 
+   "\n\
+    x : R.int;\n\
+    x := ret (3);\n\
+    y : S.string;\n\
+    p1 : unit;\n\
+    p1 := if ret(3 > fst 5)\n\
+        then choose L for S in unit\n\
+        else choose R for S in Unit;\n"
+
+let netir_ex6_audvy =
+  "\n\
+  main := let _ := ret 3 ~> R; in allow choice from R with\n\
+  \   | R -> ret \"Bye\"\n\
+  \   | L -> ret \"Hello\";\n"
