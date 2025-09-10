@@ -11,18 +11,22 @@ doc: "https://dl.acm.org/doi/10.1145/3498684"
 bug-reports:
   "https://github.com/Foundations-of-Decentralization-Group/Pirouette-Compiler/issues"
 depends: [
+  "cohttp-lwt-unix" {build}
+  "dune" {>= "3.14" & build}
+  "lwt" {build}
+  "lwt_ppx" {build}
+  "menhir" {build}
   "ocaml" {>= "5.0.0"}
-  "dune" {>= "3.14"}
-  "cohttp-lwt-unix"
-  "logs"
-  "lwt"
-  "menhir"
-  "ounit2"
-  "bisect_ppx"
-  "ppxlib"
-  "yojson"
-  "yaml"
-  "lwt_ppx"
+  "ppxlib" {= "0.35.0" & build}
+  "yaml" {build}
+  "yojson" {build}
+  "bisect_ppx" {with-test}
+  "domainslib" {with-test}
+  "mpi" {with-test}
+  "logs" {with-test}
+  "ocamlfind" {with-test}
+  "ounit2" {with-test}
+  "ocamlformat" {>= "0.27.0" & dev}
   "odoc" {with-doc}
 ]
 build: [

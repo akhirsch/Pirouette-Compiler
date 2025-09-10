@@ -1,4 +1,5 @@
 (executable
  (name main)
  (public_name pirc)
- (libraries ast_utils parsing netgen codegen http_pirc lwt))
+ (package pirc)
+ (libraries ast_utils parsing netgen ocamlgen http_pirc lwt))

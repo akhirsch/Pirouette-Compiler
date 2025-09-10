@@ -1,3 +1,0 @@
-#!/bin/sh
-
-opam exec -- dune build @fmt --auto-promote

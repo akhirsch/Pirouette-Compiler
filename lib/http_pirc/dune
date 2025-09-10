@@ -1,11 +1,14 @@
 (library
  (name http_pirc)
- (modules send_receive)
- (libraries cohttp-lwt-unix lwt config_parser)
+ (public_name http_pirc)
+ (modules send_receive config_parser)
+ (libraries cohttp-lwt-unix lwt lwt.unix yaml ast_utils parsing netgen)
  (preprocess
   (pps lwt_ppx)))
 
 (executable
  (name mock_server)
+ (public_name mock_server)
+ (package http_pirc)
  (modules mock_server)
  (libraries cohttp cohttp-lwt-unix lwt))

@@ -16,6 +16,5 @@ val dot_choreo_ast
   -> unit
 
 (* FFI extraction utilities *)
-val extract_ffi_file : string -> string option
-val collect_ffi_files : 'a Ast_core.Net.M.stmt list -> string list
-val generate_ffi_libraries : 'a Ast_core.Net.M.stmt list -> string
+val parse_external_name : string -> (string option * string * string option)
+val collect_ffi_info : 'a Ast_core.Choreo.M.stmt list -> (string option * string * string option) list

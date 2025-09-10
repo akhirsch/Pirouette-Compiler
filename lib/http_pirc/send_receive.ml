@@ -96,7 +96,7 @@ let send_message ~location ~data =
 ;;
 
 (* Initialize HTTP servers for all locations *)
-let init_http_servers ?(current_location = "") () =
+let init_http_servers current_location () =
   match !config with
   | None -> ()
   | Some cfg ->
@@ -112,35 +112,9 @@ let init_http_servers ?(current_location = "") () =
       cfg.Config_parser.locations;
     (* Filter locations to only include the current location if specified *)
     let locations_to_serve =
-      if current_location <> ""
-      then
-        List.filter
-          (fun loc_cfg -> loc_cfg.Config_parser.location = current_location)
-          cfg.Config_parser.locations
-      else (
-        (* For backward compatibility, if no location is specified,
-           we'll use the hostname to determine which server to start *)
-        let hostname = Unix.gethostname () in
-        Printf.printf "Current hostname: %s\n" hostname;
-        match String.lowercase_ascii hostname with
-        | "r" | "r-host" ->
-          List.filter
-            (fun loc_cfg -> loc_cfg.Config_parser.location = "R")
-            cfg.Config_parser.locations
-        | "s" | "s-host" ->
-          List.filter
-            (fun loc_cfg -> loc_cfg.Config_parser.location = "S")
-            cfg.Config_parser.locations
-        | "init" | "init-host" ->
-          List.filter
-            (fun loc_cfg -> loc_cfg.Config_parser.location = "init")
-            cfg.Config_parser.locations
-        | _ ->
-          Printf.printf
-            "WARNING: No current_location specified and couldn't determine from hostname.\n";
-          Printf.printf
-            "Starting servers for all locations. This may cause message loopback issues.\n";
-          cfg.Config_parser.locations)
+      List.filter
+        (fun loc_cfg -> loc_cfg.Config_parser.location = current_location)
+        cfg.Config_parser.locations
     in
     Printf.printf
       "Starting servers for locations: %s\n"

@@ -11,6 +11,7 @@
 
 (library
  (name parsing)
+ (package http_pirc)
  (private_modules lexer parser)
  (libraries ast_core)
  (preprocess

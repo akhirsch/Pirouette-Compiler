@@ -60,40 +60,53 @@ let dot_choreo_ast
 
 (* FFI (Foreign Function Interface) utilities *)
 
-(* Extract the module file path from a foreign declaration string *)
-let extract_ffi_file external_name =
-  if String.starts_with ~prefix:"@" external_name
-  then (
-    match
-      String.split_on_char
-        ':'
-        (String.sub external_name 1 (String.length external_name - 1))
-    with
-    | [ file; _ ] when file <> "" -> Some file
-    | _ -> None)
-  else None
-;;
+(* Extract the package name, submodule(s)/function name, and search path from a foreign
+   declaration string *)
+let parse_external_name name =
+  let rest, search_path =
+    match String.split_on_char '@' name with
+    | [ rest; search_path  ] -> rest, Some search_path
+    | [ rest ] -> rest, None
+    | _ -> failwith "Impossible Failure"
+  in
+  let package_name, function_name =
+    match String.split_on_char ':' rest with
+    | [pack; submods_func] when pack <> "" && submods_func <> ""
+      -> Some pack, submods_func
+    | [submods_func] when submods_func <> ""
+      -> None, submods_func
+    | _ -> failwith "Invalid external function format. Expected [Package:][Submodule.]function[@searchpath]"
+  in
+  (package_name, function_name, search_path)
 
-(* Extract all unique FFI file references from a list of statements *)
-let collect_ffi_files stmts =
+(* Extract all unique FFI information from a list of statements *)
+let collect_ffi_info stmts =
   let rec collect acc = function
     | [] -> acc
-    | Net.ForeignDecl (_, _, external_name, _) :: rest ->
-      let acc' =
-        match extract_ffi_file external_name with
-        | Some file -> file :: acc
-        | None -> acc
-      in
+    | Choreo.ForeignDecl (_, _, external_name, _) :: rest ->
+      let acc' = (parse_external_name external_name) :: acc in
       collect acc' rest
     | _ :: rest -> collect acc rest
   in
-  collect [] stmts |> List.sort_uniq String.compare
-;;
-
-(* Generate dune libraries string from FFI files *)
-let generate_ffi_libraries stmts =
-  let files = collect_ffi_files stmts in
-  String.concat
-    " "
-    (List.map (fun file -> Filename.basename file |> Filename.remove_extension) files)
+  List.sort_uniq (fun (a, b, c) (a', b', c') ->
+      match (a, a') with
+      | Some a, Some a' -> begin
+          match String.compare a a' with
+          | 0 -> begin
+              match String.compare b b' with
+              | 0 -> begin
+                  match c, c' with
+                  | Some c, Some c' -> String.compare c c'
+                  | Some _, None -> 1
+                  | None, Some _ -> -1
+                  | None, None -> 0
+                end
+              | n -> n
+            end
+          |n -> n
+        end
+      | Some _, None -> 1
+      | None, Some _ -> -1
+      | None, None -> 0)
+    (collect [] stmts)
 ;;

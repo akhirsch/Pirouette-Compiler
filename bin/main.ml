@@ -1,109 +1,61 @@
 (* Pirouette Compiler (pirc) main entry point *)
 
 (* Command line configuration *)
-let usage_msg = "USAGE: pirc <file> [-ast-dump <pprint|json|dot>] [-backend <shm|http>]"
-let ast_dump_format = ref "pprint"
-let backend = ref "shm"
+let usage_msg = "USAGE: pirc <file> [-ast-dump <pprint|json|dot>] [-msg-backend <domain|http|mpi>]"
+let ast_dump_format = ref None
+let msg_backend = ref "domain"
 let file_ic = ref None
 let input_filename = ref "" (* Original input filename with path *)
-let basename = ref "" (* Base name without directory/extension *)
+let package_list = ref ""
+let projections_only = ref false
+let ml_files = ref ""
+let ocamlopt_warn_flags = ref ""
 
 (* Process anonymous command line argument (input file) *)
 let process_input_file filename =
   input_filename := filename;
-  basename := Filename.basename (Filename.remove_extension filename);
   file_ic := Some (open_in filename)
 ;;
+
+(* Check that (String.trim s) does not start or end with commas *)
+let check_no_start_end_commas s =
+  let s = String.trim s in
+  if String.length s = 0 then
+    ()
+  else
+    let first = String.get s 0 in
+    let last = String.get s (-1 + String.length s) in
+    match first, last with
+    | ',', _ | _, ',' ->
+      failwith "List provided to flag must not start or end with comma!"
+    | _,_ -> ()
 
 (* Command line options specification *)
 let speclist =
   [ "-", Arg.Unit (fun () -> file_ic := Some stdin), "Read source from stdin"
-  ; ( "-ast-dump"
-    , Arg.Symbol ([ "pprint"; "json"; "dot" ], fun s -> ast_dump_format := s)
+  ; ( "--ast-dump"
+    , Arg.Symbol ([ "pprint"; "json"; "dot" ], fun s -> ast_dump_format := Some s)
     , "Dump the AST in the specified format (pprint, json, dot)" )
-  ; ( "-backend"
-    , Arg.Symbol ([ "shm"; "http" ], fun s -> backend := s)
-    , "Choose communication backend (shm: shared memory, http: HTTP)" )
+  ; ( "--msg-backend"
+    , Arg.Symbol ([ "domain"; "http"; "mpi" ], fun s -> msg_backend := s)
+    , "Choose communication backend (domain: shared memory, http: HTTP, mpi: MPI)" )
+  ; ( "--package"
+    , Arg.String (fun s -> check_no_start_end_commas s; package_list := s)
+    , "List of OCaml packages to link in")
+  ; ( "--no-binaries"
+    , Arg.Unit (fun () -> projections_only := true)
+    , "Don't compile the resulting ml files")
+  ; ( "--ml-files"
+    , Arg.String (fun s -> check_no_start_end_commas s; ml_files := s)
+    , "Include extra ml files to compile with")
+  ; ( "-w"
+    , Arg.String (fun s -> check_no_start_end_commas s; ocamlopt_warn_flags := s)
+    , "Enable/disable ocamlopt warning flags")
   ]
 ;;
 
-(* Extract FFI libraries from network ASTs *)
-let extract_ffi_libraries netir_l =
-  List.fold_left
-    (fun acc ir ->
-       let files = Ast_utils.collect_ffi_files ir in
-       List.fold_left (fun acc' file -> file :: acc') acc files)
-    []
-    netir_l
-  |> List.sort_uniq String.compare
-  |> List.map Filename.basename
-  |> List.map (fun file ->
-    if Filename.check_suffix file ".ml" then Filename.remove_extension file else file)
-;;
-
-(* Generate dune file based on backend type *)
-let generate_dune_file base_name locs backend netir_l =
-  (* Extract FFI libraries *)
-  let ffi_libs = extract_ffi_libraries netir_l in
-  let common_libs = "ast_core parsing codegen ast_utils netgen ppxlib" in
-  match backend with
-  | "shm" ->
-    (* For SHM backend, skip dune file generation *)
-    ()
-  | "http" ->
-    (* For HTTP backend, create a new dune file in examples/ directory *)
-    let dune_path = "examples/dune" in
-    (* Create executable names for each location *)
-    let executable_names =
-      List.map (fun loc -> Printf.sprintf "%s_%s" base_name loc) locs |> String.concat " "
-    in
-    (* Create library section for FFI files *)
-    let lib_section =
-      if List.length ffi_libs > 0
-      then
-        Printf.sprintf
-          {|(library
- (name ffi_lib)
- (modules %s)
- (libraries %s))
-|}
-          (String.concat " " ffi_libs)
-          common_libs
-      else
-        Printf.sprintf
-          {|(library
- (name ffi_lib)
- (modules)
- (libraries %s))
-|}
-          common_libs
-    in
-    (* Create executables section *)
-    let exec_section =
-      Printf.sprintf
-        {|(executables
- (names %s)
- (modules %s)
- (libraries %s ffi_lib http_pirc lwt cohttp-lwt-unix yojson)
- (flags (:standard -w -26)))
-|}
-        executable_names
-        executable_names
-        common_libs
-    in
-    (* Write the content to the dune file *)
-    let final_content = lib_section ^ "\n" ^ exec_section in
-    let oc = open_out dune_path in
-    output_string oc final_content;
-    close_out oc
-  | _ -> invalid_arg "Invalid backend for dune generation"
-;;
-
-(* Create path for output files *)
-let create_output_path input_file base suffix =
-  let output_dir = Filename.dirname input_file in
-  Filename.concat output_dir (base ^ suffix)
-;;
+(* Change the extension of a filename *)
+let change_extension filename new_suffix = (Filename.remove_extension filename) ^ new_suffix ;;
 
 (* Dump AST in specified format *)
 let dump_choreo_ast format output_path program =
@@ -125,49 +77,37 @@ let dump_net_ast format output_path ir =
   | _ -> invalid_arg "Invalid ast-dump format"
 ;;
 
-(* Generate code for shared memory backend *)
-let generate_shm_code basename locs netir_l =
-  let msg_module = (module Codegen.Msg_intf.Msg_chan_intf : Codegen.Msg_intf.M) in
-  let examples_dir = "examples" in
-  (* Ensure the examples directory exists *)
-  if not (Sys.file_exists examples_dir && Sys.is_directory examples_dir)
-  then Unix.mkdir examples_dir 0o755;
-  let out_path = Filename.concat examples_dir (basename ^ ".ml") in
-  Codegen.Toplevel_shm.emit_toplevel_shm (open_out out_path) msg_module locs netir_l
+(* Generate code for domains backend *)
+let generate_domain_code filename locs netir_l =
+  let out_path = change_extension filename ".domain.ml" in
+  Ocamlgen.Toplevel_domain.emit_toplevel_domain (open_out out_path) locs netir_l;
+  out_path
 ;;
 
 (* Generate code for HTTP backend *)
-let generate_http_code basename locs netir_l =
-  let msg_module = (module Codegen.Msg_intf.Msg_http_intf : Codegen.Msg_intf.M) in
-  let examples_dir = "examples" in
-  (* Ensure the examples directory exists *)
-  if not (Sys.file_exists examples_dir && Sys.is_directory examples_dir)
-  then Unix.mkdir examples_dir 0o755;
-  (* Extract FFI libraries *)
-  let ffi_libs =
-    List.fold_left
-      (fun acc ir ->
-         let files = Ast_utils.collect_ffi_files ir in
-         List.fold_left (fun acc' file -> file :: acc') acc files)
-      []
-      netir_l
-    |> List.sort_uniq String.compare
-  in
+let generate_http_code filename locs netir_l =
   (* Generate one file per location *)
-  let has_ffi_files = List.length ffi_libs > 0 in
-  List.iter2
-    (fun loc ir ->
-       let ml_filename = Printf.sprintf "%s_%s.ml" basename loc in
-       let out_path = Filename.concat examples_dir ml_filename in
+  List.fold_left2
+    (fun acc loc ir ->
+       let out_path = change_extension filename ("_" ^ loc ^ ".ml") in
        let out_file = open_out out_path in
        (* Add appropriate imports *)
-       if has_ffi_files
-       then output_string out_file "open Http_pirc\nopen Ffi_lib\n\n"
-       else output_string out_file "open Http_pirc\n\n";
-       Codegen.Toplevel_shm.emit_toplevel_http out_file msg_module [ loc ] [ ir ];
-       close_out out_file)
+       output_string out_file "open Http_pirc\n\n";
+       let config_file_path = change_extension filename ".yaml" in
+       Ocamlgen.Toplevel_http.emit_toplevel_http out_file [ loc ] [ ir ] config_file_path;
+       close_out out_file;
+       out_path :: acc
+    )
+    []
     locs
     netir_l
+;;
+
+(* Generate code for MPI backend *)
+let generate_mpi_code filename locs netir_l =
+  let out_path = change_extension filename ".mpi.ml" in
+  Ocamlgen.Toplevel_mpi.emit_toplevel_mpi (open_out out_path) locs netir_l;
+  out_path
 ;;
 
 (* Main entry point *)
@@ -175,49 +115,113 @@ let () =
   (* Parse command line arguments *)
   Arg.parse speclist process_input_file usage_msg;
   (* Check if input file was provided *)
-  if !file_ic = None || !basename = ""
+  if !file_ic = None || !input_filename = ""
   then (
     prerr_endline (Sys.argv.(0) ^ ": No input file");
     exit 1);
-  (* Create helper for generating output paths *)
-  let get_output_path suffix = create_output_path !input_filename !basename suffix in
   (* Parse the input file *)
   let lexbuf = Lexing.from_channel (Option.get !file_ic) in
   let program = Parsing.Parse.parse_with_error lexbuf in
   (* Dump the choreography AST *)
-  dump_choreo_ast
-    !ast_dump_format
-    (get_output_path
-       (match !ast_dump_format with
-        | "json" -> ".json"
-        | "pprint" -> ".ast"
-        | "dot" -> ".dot"
-        | _ -> invalid_arg "Invalid ast-dump format"))
-    program;
-  (* Extract locations and generate network IR *)
+  match !ast_dump_format with
+  | Some format -> begin
+      dump_choreo_ast
+        format
+        (change_extension
+           !input_filename
+           (match format with
+            | "json" -> ".json"
+            | "pprint" -> ".ast"
+            | "dot" -> ".dot"
+            | _ -> invalid_arg "Invalid ast-dump format"))
+        program;
+    end
+  | None -> ();
+  (* Extract locations, ffi information, and generate network IR *)
   let locs = Ast_utils.extract_locs program in
+  let ffi_info = Ast_utils.collect_ffi_info program in
+  let package_names =
+    List.fold_left (fun package_names (package_name, _, _) ->
+        match package_name with
+        | Some name -> String.lowercase_ascii name ^ "," ^ package_names
+        | None -> package_names)
+      ""
+      ffi_info
+  in
+  let search_paths =
+    List.fold_left (fun search_paths (_, _, search_path) ->
+        match search_path with
+        | Some path -> path ^ ":" ^ search_paths
+        | None -> search_paths)
+      ""
+      ffi_info
+  in
   let netir_l = List.map (fun loc -> Netgen.epp_choreo_to_net program loc) locs in
   (* Dump network ASTs *)
-  List.iter2
-    (fun loc ir ->
-       dump_net_ast
-         !ast_dump_format
-         (get_output_path
-            ("."
-             ^ loc
-             ^
-             match !ast_dump_format with
-             | "json" -> ".json"
-             | "pprint" -> ".ast"
-             | _ -> ""))
-         ir)
-    locs
-    netir_l;
+  match !ast_dump_format with
+  | Some format -> begin
+      List.iter2
+        (fun loc ir ->
+           dump_net_ast
+             format
+             (change_extension
+                !input_filename
+                ("."
+                 ^ loc
+                 ^
+                 match format with
+                 | "json" -> ".json"
+                 | "pprint" -> ".ast"
+                 | _ -> ""))
+             ir)
+        locs
+        netir_l;
+    end
+  | None -> ();
   (* Generate code based on selected backend *)
-  (match !backend with
-   | "shm" -> generate_shm_code !basename locs netir_l
-   | "http" -> generate_http_code !basename locs netir_l
-   | _ -> invalid_arg "Invalid backend");
-  (* Generate the dune file after generating all ml files *)
-  generate_dune_file !basename locs !backend netir_l
+  let gen_ml_files =
+    match !msg_backend with
+    | "domain" -> [ generate_domain_code !input_filename locs netir_l ]
+    | "http" -> generate_http_code !input_filename locs netir_l
+    | "mpi" -> [ generate_mpi_code !input_filename locs netir_l ]
+    | _ -> invalid_arg "Invalid backend"
+  in
+  if !projections_only then
+    ()
+  else
+    (* Compile the resulting ml files *)
+    List.iter (fun ml_file ->
+        let out_file_exe = change_extension ml_file ".exe" in
+        let packages =
+          let package_list' =
+            !package_list ^
+            if String.trim !package_list <> "" then "," else ""
+          in
+          (* Invariants:
+             String.trim package_names :
+               - is the empty string, or
+               - does not start with a comma and ends with a comma
+             String.trim package_list' :
+               - is the empty string, or
+               - does not start with a comma and ends with a comma
+          *)
+          String.trim package_names ^ String.trim package_list' ^
+          match !msg_backend with
+          | "domain" -> "domainslib"
+          | "http" -> "http_pirc"
+          | "mpi" -> "mpi"
+          | _ -> invalid_arg "Invalid backend"
+        in
+        let cmd =
+          Format.sprintf
+            "OCAMLPATH='%s' ocamlfind ocamlopt -w '%s' -o %s -linkpkg -package '%s' %s %s"
+            search_paths
+            !ocamlopt_warn_flags
+            out_file_exe
+            packages
+            !ml_files
+            ml_file
+        in
+        let _ = Sys.command cmd in ())
+      gen_ml_files
 ;;
