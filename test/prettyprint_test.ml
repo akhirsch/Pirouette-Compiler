@@ -1,16 +1,54 @@
 open OUnit2
 
 let peq (s : string) =
-  let program = Parsing.Parse.parse_with_error (Lexing.from_string s) in
-  let pprint_s = Ast_utils.stringify_pprint_choreo_ast program in
-  let _ = print_string ("\n" ^ pprint_s ^ "\n") in
-  let program' = Parsing.Parse.parse_with_error (Lexing.from_string pprint_s) in
-  let json_ast = Ast_utils.stringify_jsonify_choreo_ast program in
-  let json_ast' = Ast_utils.stringify_jsonify_choreo_ast program' in
-  assert_equal json_ast json_ast'
+  let pprint_s_ref = ref "" in
+  let json_ast_ref = ref "" in
+  try
+    let program = Parsing.Parse.parse_with_error (Lexing.from_string s) in
+    let pprint_s = Ast_utils.stringify_pprint_choreo_ast program in
+    pprint_s_ref := pprint_s;
+    (* Store potentially problematic pretty-printed string *)
+    let program' = Parsing.Parse.parse_with_error (Lexing.from_string pprint_s) in
+    let json_ast = Ast_utils.stringify_jsonify_choreo_ast program in
+    json_ast_ref := json_ast;
+    (* Store original AST *)
+    let json_ast' = Ast_utils.stringify_jsonify_choreo_ast program' in
+    assert_equal json_ast json_ast'
+  with
+  | Failure msg ->
+    print_endline "\nError in choreography pretty printing:";
+    print_endline ("Original: " ^ s);
+    print_endline ("Pretty printed: " ^ !pprint_s_ref);
+    print_endline ("Original AST: " ^ !json_ast_ref);
+    (* We might not have json_ast' if parsing pprint_s failed *)
+    print_endline ("Failure message: " ^ msg);
+    raise (Failure ("Pretty printing failed: " ^ msg))
 ;;
 
-let net_peq (net_s : string) = assert_equal net_s net_s (* TO DO *)
+let net_peq (s : string) =
+  let pprint_s_ref = ref "" in
+  let json_ast_ref = ref "" in
+  try
+    let program = Parsing.Parse.parse_net_with_error (Lexing.from_string s) in
+    let pprint_s = Ast_utils.stringify_pprint_net_ast program in
+    pprint_s_ref := pprint_s;
+    (* Store potentially problematic pretty-printed string *)
+    let program' = Parsing.Parse.parse_net_with_error (Lexing.from_string pprint_s) in
+    let json_ast = Ast_utils.stringify_jsonify_net_ast program in
+    json_ast_ref := json_ast;
+    (* Store original AST *)
+    let json_ast' = Ast_utils.stringify_jsonify_net_ast program' in
+    assert_equal json_ast json_ast'
+  with
+  | Failure msg ->
+    print_endline "\nError in network pretty printing:";
+    print_endline ("Original: " ^ s);
+    print_endline ("Pretty printed: " ^ !pprint_s_ref);
+    print_endline ("Original AST: " ^ !json_ast_ref);
+    (* We might not have json_ast' if parsing pprint_s failed *)
+    print_endline ("Failure message: " ^ msg);
+    raise (Failure ("Pretty printing failed: " ^ msg))
+;;
 
 let suite =
   "Pretty print Tests"
@@ -34,8 +72,9 @@ let suite =
        ; "Foreign Declarations"
          >::: [ ("foreign_decl" >:: fun _ -> peq Astutils_testcases.foreign_decl) ]
        ; "Net IR"
-         >::: [ ("test_net_peq" >:: fun _ -> net_peq Astutils_testcases.net_test_1) ]
-         (* ADD more net_peq tests here *)
+         >::: [ ("simple_net" >:: fun _ -> net_peq Astutils_testcases.simple_net)
+              ; ("ex3_netir" >:: fun _ -> net_peq Astutils_testcases.netir_ex3)
+              ]
        ]
 ;;
 

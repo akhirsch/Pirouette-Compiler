@@ -1,4 +1,4 @@
-foreign print : unit -> unit := "@printer.ml:print_string_unit";
+foreign print : unit -> unit := "Printer.print_string_unit";
 
 main := let R.x := [S] S.3 ~> R; in 
   if R.(x>5) 

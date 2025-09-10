@@ -1,7 +1,7 @@
   locations:
     - location: "R"
-      http_address: "http://localhost:8080/receive"
+      http_address: "http://127.0.0.1:8080/receive"
     - location: "S"
-      http_address: "http://localhost:8080/send"
+      http_address: "http://127.0.0.1:8081/send"
     - location: "init"
-      http_address: "http://localhost:8080/init"
+      http_address: "http://127.0.0.1:8082/init"

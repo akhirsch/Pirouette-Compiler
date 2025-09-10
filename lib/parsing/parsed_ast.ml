@@ -12,3 +12,4 @@ end
 
 module Local = Ast_core.Local.With (Pos_info)
 module Choreo = Ast_core.Choreo.With (Pos_info)
+module Net = Ast_core.Net.With (Pos_info)

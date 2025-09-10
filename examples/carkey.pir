@@ -57,10 +57,8 @@ if CAR.(locked)
         else CAR[R] ~> KEY;
           CAR.locked);
 
-main := 
-
-CAR.carkey CAR.true KEY.true
-KEY.carkey CAR.true KEY.true
+main :=
+  carkey CAR.true KEY.true
 
           
 

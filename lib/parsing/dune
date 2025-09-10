@@ -4,14 +4,15 @@
 ;  (action (copy %{deps} %{target}))
 ;  (mode (promote (until-clean))))
 
-(ocamllex lexer)
+(ocamllex lexer net_lexer)
 
 (menhir
- (modules parser))
+ (modules parser net_parser))
 
 (library
  (name parsing)
+ (package http_pirc)
  (private_modules lexer parser)
- (instrumentation
-  (backend bisect_ppx))
- (libraries ast_core))
+ (libraries ast_core)
+ (preprocess
+  (pps bisect_ppx)))

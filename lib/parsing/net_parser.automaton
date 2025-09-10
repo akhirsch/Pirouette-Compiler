@@ -1,0 +1,3405 @@
+State 0:
+## Known stack suffix:
+##
+## LR(1) items:
+prog' -> . prog [ # ]
+## Transitions:
+-- On UNDERSCORE shift to state 1
+-- On TYPE shift to state 2
+-- On TRUE shift to state 34
+-- On STRING shift to state 35
+-- On RIGHT shift to state 36
+-- On LPAREN shift to state 37
+-- On LEFT shift to state 38
+-- On INT shift to state 39
+-- On ID shift to state 40
+-- On FOREIGN shift to state 51
+-- On FALSE shift to state 41
+-- On var_id shift to state 42
+-- On value shift to state 43
+-- On stmt_block shift to state 58
+-- On stmt shift to state 60
+-- On prog shift to state 202
+-- On nonempty_list(local_pattern) shift to state 61
+-- On local_pattern shift to state 175
+-- On list(stmt) shift to state 179
+-- On foreign_decl shift to state 180
+## Reductions:
+-- On EOF
+--   reduce production list(stmt) ->
+
+State 1:
+## Known stack suffix:
+## UNDERSCORE
+## LR(1) items:
+local_pattern -> UNDERSCORE . [ UNDERSCORE TRUE STRING RPAREN RIGHT LPAREN LEFT INT ID FALSE COMMA COLONEQ COLON ARROW ]
+## Transitions:
+## Reductions:
+-- On UNDERSCORE TRUE STRING RPAREN RIGHT LPAREN LEFT INT ID FALSE COMMA COLONEQ COLON ARROW
+--   reduce production local_pattern -> UNDERSCORE
+
+State 2:
+## Known stack suffix:
+## TYPE
+## LR(1) items:
+stmt -> TYPE . typ_id COLONEQ net_type option(SEMICOLON) [ UNDERSCORE TYPE TRUE STRING RIGHT LPAREN LEFT INT IN ID FOREIGN FALSE EOF ]
+## Transitions:
+-- On ID shift to state 3
+-- On typ_id shift to state 4
+## Reductions:
+
+State 3:
+## Known stack suffix:
+## ID
+## LR(1) items:
+typ_id -> ID . [ COLONEQ ]
+## Transitions:
+## Reductions:
+-- On COLONEQ
+--   reduce production typ_id -> ID
+
+State 4:
+## Known stack suffix:
+## TYPE typ_id
+## LR(1) items:
+stmt -> TYPE typ_id . COLONEQ net_type option(SEMICOLON) [ UNDERSCORE TYPE TRUE STRING RIGHT LPAREN LEFT INT IN ID FOREIGN FALSE EOF ]
+## Transitions:
+-- On COLONEQ shift to state 5
+## Reductions:
+
+State 5:
+## Known stack suffix:
+## TYPE typ_id COLONEQ
+## LR(1) items:
+stmt -> TYPE typ_id COLONEQ . net_type option(SEMICOLON) [ UNDERSCORE TYPE TRUE STRING RIGHT LPAREN LEFT INT IN ID FOREIGN FALSE EOF ]
+## Transitions:
+-- On UNIT_T shift to state 6
+-- On LPAREN shift to state 7
+-- On ID shift to state 8
+-- On net_type shift to state 31
+-- On loc_id shift to state 12
+## Reductions:
+
+State 6:
+## Known stack suffix:
+## UNIT_T
+## LR(1) items:
+net_type -> UNIT_T . [ UNDERSCORE TYPE TRUE TIMES STRING SEMICOLON RPAREN RIGHT PLUS LPAREN LEFT INT IN ID FOREIGN FALSE EOF COLONEQ ARROW ]
+## Transitions:
+## Reductions:
+-- On UNDERSCORE TYPE TRUE TIMES STRING SEMICOLON RPAREN RIGHT PLUS LPAREN LEFT INT IN ID FOREIGN FALSE EOF COLONEQ ARROW
+--   reduce production net_type -> UNIT_T
+
+State 7:
+## Known stack suffix:
+## LPAREN
+## LR(1) items:
+net_type -> LPAREN . net_type RPAREN [ UNDERSCORE TYPE TRUE TIMES STRING SEMICOLON RPAREN RIGHT PLUS LPAREN LEFT INT IN ID FOREIGN FALSE EOF COLONEQ ARROW ]
+## Transitions:
+-- On UNIT_T shift to state 6
+-- On LPAREN shift to state 7
+-- On ID shift to state 8
+-- On net_type shift to state 9
+-- On loc_id shift to state 12
+## Reductions:
+
+State 8:
+## Known stack suffix:
+## ID
+## LR(1) items:
+loc_id -> ID . [ WITH TILDE_ARROW THEN SEMICOLON RPAREN IN ELSE DOT COMMA BAR ]
+## Transitions:
+## Reductions:
+-- On WITH TILDE_ARROW THEN SEMICOLON RPAREN IN ELSE DOT COMMA BAR
+--   reduce production loc_id -> ID
+
+State 9:
+## Known stack suffix:
+## LPAREN net_type
+## LR(1) items:
+net_type -> net_type . ARROW net_type [ TIMES RPAREN PLUS ARROW ]
+net_type -> net_type . TIMES net_type [ TIMES RPAREN PLUS ARROW ]
+net_type -> net_type . PLUS net_type [ TIMES RPAREN PLUS ARROW ]
+net_type -> LPAREN net_type . RPAREN [ UNDERSCORE TYPE TRUE TIMES STRING SEMICOLON RPAREN RIGHT PLUS LPAREN LEFT INT IN ID FOREIGN FALSE EOF COLONEQ ARROW ]
+## Transitions:
+-- On TIMES shift to state 10
+-- On RPAREN shift to state 26
+-- On PLUS shift to state 27
+-- On ARROW shift to state 29
+## Reductions:
+
+State 10:
+## Known stack suffix:
+## net_type TIMES
+## LR(1) items:
+net_type -> net_type TIMES . net_type [ UNDERSCORE TYPE TRUE TIMES STRING SEMICOLON RPAREN RIGHT PLUS LPAREN LEFT INT IN ID FOREIGN FALSE EOF COLONEQ ARROW ]
+## Transitions:
+-- On UNIT_T shift to state 6
+-- On LPAREN shift to state 7
+-- On ID shift to state 8
+-- On net_type shift to state 11
+-- On loc_id shift to state 12
+## Reductions:
+
+State 11:
+## Known stack suffix:
+## net_type TIMES net_type
+## LR(1) items:
+net_type -> net_type . ARROW net_type [ UNDERSCORE TYPE TRUE TIMES STRING SEMICOLON RPAREN RIGHT PLUS LPAREN LEFT INT IN ID FOREIGN FALSE EOF COLONEQ ARROW ]
+net_type -> net_type . TIMES net_type [ UNDERSCORE TYPE TRUE TIMES STRING SEMICOLON RPAREN RIGHT PLUS LPAREN LEFT INT IN ID FOREIGN FALSE EOF COLONEQ ARROW ]
+net_type -> net_type TIMES net_type . [ UNDERSCORE TYPE TRUE TIMES STRING SEMICOLON RPAREN RIGHT PLUS LPAREN LEFT INT IN ID FOREIGN FALSE EOF COLONEQ ARROW ]
+net_type -> net_type . PLUS net_type [ UNDERSCORE TYPE TRUE TIMES STRING SEMICOLON RPAREN RIGHT PLUS LPAREN LEFT INT IN ID FOREIGN FALSE EOF COLONEQ ARROW ]
+## Transitions:
+## Reductions:
+-- On UNDERSCORE TYPE TRUE TIMES STRING SEMICOLON RPAREN RIGHT PLUS LPAREN LEFT INT IN ID FOREIGN FALSE EOF COLONEQ ARROW
+--   reduce production net_type -> net_type TIMES net_type
+
+State 12:
+## Known stack suffix:
+## loc_id
+## LR(1) items:
+net_type -> loc_id . DOT local_type [ UNDERSCORE TYPE TRUE TIMES STRING SEMICOLON RPAREN RIGHT PLUS LPAREN LEFT INT IN ID FOREIGN FALSE EOF COLONEQ ARROW ]
+## Transitions:
+-- On DOT shift to state 13
+## Reductions:
+
+State 13:
+## Known stack suffix:
+## loc_id DOT
+## LR(1) items:
+net_type -> loc_id DOT . local_type [ UNDERSCORE TYPE TRUE TIMES STRING SEMICOLON RPAREN RIGHT PLUS LPAREN LEFT INT IN ID FOREIGN FALSE EOF COLONEQ ARROW ]
+## Transitions:
+-- On UNIT_T shift to state 14
+-- On STRING_T shift to state 15
+-- On LPAREN shift to state 16
+-- On INT_T shift to state 17
+-- On BOOL_T shift to state 18
+-- On local_type shift to state 25
+## Reductions:
+
+State 14:
+## Known stack suffix:
+## UNIT_T
+## LR(1) items:
+local_type -> UNIT_T . [ UNDERSCORE TYPE TRUE TIMES STRING SEMICOLON RPAREN RIGHT PLUS LPAREN LEFT INT IN ID FOREIGN FALSE EOF COLONEQ ARROW ]
+## Transitions:
+## Reductions:
+-- On UNDERSCORE TYPE TRUE TIMES STRING SEMICOLON RPAREN RIGHT PLUS LPAREN LEFT INT IN ID FOREIGN FALSE EOF COLONEQ ARROW
+--   reduce production local_type -> UNIT_T
+
+State 15:
+## Known stack suffix:
+## STRING_T
+## LR(1) items:
+local_type -> STRING_T . [ UNDERSCORE TYPE TRUE TIMES STRING SEMICOLON RPAREN RIGHT PLUS LPAREN LEFT INT IN ID FOREIGN FALSE EOF COLONEQ ARROW ]
+## Transitions:
+## Reductions:
+-- On UNDERSCORE TYPE TRUE TIMES STRING SEMICOLON RPAREN RIGHT PLUS LPAREN LEFT INT IN ID FOREIGN FALSE EOF COLONEQ ARROW
+--   reduce production local_type -> STRING_T
+
+State 16:
+## Known stack suffix:
+## LPAREN
+## LR(1) items:
+local_type -> LPAREN . local_type RPAREN [ UNDERSCORE TYPE TRUE TIMES STRING SEMICOLON RPAREN RIGHT PLUS LPAREN LEFT INT IN ID FOREIGN FALSE EOF COLONEQ ARROW ]
+## Transitions:
+-- On UNIT_T shift to state 14
+-- On STRING_T shift to state 15
+-- On LPAREN shift to state 16
+-- On INT_T shift to state 17
+-- On BOOL_T shift to state 18
+-- On local_type shift to state 19
+## Reductions:
+
+State 17:
+## Known stack suffix:
+## INT_T
+## LR(1) items:
+local_type -> INT_T . [ UNDERSCORE TYPE TRUE TIMES STRING SEMICOLON RPAREN RIGHT PLUS LPAREN LEFT INT IN ID FOREIGN FALSE EOF COLONEQ ARROW ]
+## Transitions:
+## Reductions:
+-- On UNDERSCORE TYPE TRUE TIMES STRING SEMICOLON RPAREN RIGHT PLUS LPAREN LEFT INT IN ID FOREIGN FALSE EOF COLONEQ ARROW
+--   reduce production local_type -> INT_T
+
+State 18:
+## Known stack suffix:
+## BOOL_T
+## LR(1) items:
+local_type -> BOOL_T . [ UNDERSCORE TYPE TRUE TIMES STRING SEMICOLON RPAREN RIGHT PLUS LPAREN LEFT INT IN ID FOREIGN FALSE EOF COLONEQ ARROW ]
+## Transitions:
+## Reductions:
+-- On UNDERSCORE TYPE TRUE TIMES STRING SEMICOLON RPAREN RIGHT PLUS LPAREN LEFT INT IN ID FOREIGN FALSE EOF COLONEQ ARROW
+--   reduce production local_type -> BOOL_T
+
+State 19:
+## Known stack suffix:
+## LPAREN local_type
+## LR(1) items:
+local_type -> local_type . TIMES local_type [ TIMES RPAREN PLUS ]
+local_type -> local_type . PLUS local_type [ TIMES RPAREN PLUS ]
+local_type -> LPAREN local_type . RPAREN [ UNDERSCORE TYPE TRUE TIMES STRING SEMICOLON RPAREN RIGHT PLUS LPAREN LEFT INT IN ID FOREIGN FALSE EOF COLONEQ ARROW ]
+## Transitions:
+-- On TIMES shift to state 20
+-- On RPAREN shift to state 22
+-- On PLUS shift to state 23
+## Reductions:
+
+State 20:
+## Known stack suffix:
+## local_type TIMES
+## LR(1) items:
+local_type -> local_type TIMES . local_type [ UNDERSCORE TYPE TRUE TIMES STRING SEMICOLON RPAREN RIGHT PLUS LPAREN LEFT INT IN ID FOREIGN FALSE EOF COLONEQ ARROW ]
+## Transitions:
+-- On UNIT_T shift to state 14
+-- On STRING_T shift to state 15
+-- On LPAREN shift to state 16
+-- On INT_T shift to state 17
+-- On BOOL_T shift to state 18
+-- On local_type shift to state 21
+## Reductions:
+
+State 21:
+## Known stack suffix:
+## local_type TIMES local_type
+## LR(1) items:
+local_type -> local_type . TIMES local_type [ UNDERSCORE TYPE TRUE TIMES STRING SEMICOLON RPAREN RIGHT PLUS LPAREN LEFT INT IN ID FOREIGN FALSE EOF COLONEQ ARROW ]
+local_type -> local_type TIMES local_type . [ UNDERSCORE TYPE TRUE TIMES STRING SEMICOLON RPAREN RIGHT PLUS LPAREN LEFT INT IN ID FOREIGN FALSE EOF COLONEQ ARROW ]
+local_type -> local_type . PLUS local_type [ UNDERSCORE TYPE TRUE TIMES STRING SEMICOLON RPAREN RIGHT PLUS LPAREN LEFT INT IN ID FOREIGN FALSE EOF COLONEQ ARROW ]
+## Transitions:
+## Reductions:
+-- On UNDERSCORE TYPE TRUE TIMES STRING SEMICOLON RPAREN RIGHT PLUS LPAREN LEFT INT IN ID FOREIGN FALSE EOF COLONEQ ARROW
+--   reduce production local_type -> local_type TIMES local_type
+
+State 22:
+## Known stack suffix:
+## LPAREN local_type RPAREN
+## LR(1) items:
+local_type -> LPAREN local_type RPAREN . [ UNDERSCORE TYPE TRUE TIMES STRING SEMICOLON RPAREN RIGHT PLUS LPAREN LEFT INT IN ID FOREIGN FALSE EOF COLONEQ ARROW ]
+## Transitions:
+## Reductions:
+-- On UNDERSCORE TYPE TRUE TIMES STRING SEMICOLON RPAREN RIGHT PLUS LPAREN LEFT INT IN ID FOREIGN FALSE EOF COLONEQ ARROW
+--   reduce production local_type -> LPAREN local_type RPAREN
+
+State 23:
+## Known stack suffix:
+## local_type PLUS
+## LR(1) items:
+local_type -> local_type PLUS . local_type [ UNDERSCORE TYPE TRUE TIMES STRING SEMICOLON RPAREN RIGHT PLUS LPAREN LEFT INT IN ID FOREIGN FALSE EOF COLONEQ ARROW ]
+## Transitions:
+-- On UNIT_T shift to state 14
+-- On STRING_T shift to state 15
+-- On LPAREN shift to state 16
+-- On INT_T shift to state 17
+-- On BOOL_T shift to state 18
+-- On local_type shift to state 24
+## Reductions:
+
+State 24:
+## Known stack suffix:
+## local_type PLUS local_type
+## LR(1) items:
+local_type -> local_type . TIMES local_type [ UNDERSCORE TYPE TRUE TIMES STRING SEMICOLON RPAREN RIGHT PLUS LPAREN LEFT INT IN ID FOREIGN FALSE EOF COLONEQ ARROW ]
+local_type -> local_type . PLUS local_type [ UNDERSCORE TYPE TRUE TIMES STRING SEMICOLON RPAREN RIGHT PLUS LPAREN LEFT INT IN ID FOREIGN FALSE EOF COLONEQ ARROW ]
+local_type -> local_type PLUS local_type . [ UNDERSCORE TYPE TRUE TIMES STRING SEMICOLON RPAREN RIGHT PLUS LPAREN LEFT INT IN ID FOREIGN FALSE EOF COLONEQ ARROW ]
+## Transitions:
+-- On TIMES shift to state 20
+## Reductions:
+-- On UNDERSCORE TYPE TRUE STRING SEMICOLON RPAREN RIGHT PLUS LPAREN LEFT INT IN ID FOREIGN FALSE EOF COLONEQ ARROW
+--   reduce production local_type -> local_type PLUS local_type
+
+State 25:
+## Known stack suffix:
+## loc_id DOT local_type
+## LR(1) items:
+local_type -> local_type . TIMES local_type [ UNDERSCORE TYPE TRUE TIMES STRING SEMICOLON RPAREN RIGHT PLUS LPAREN LEFT INT IN ID FOREIGN FALSE EOF COLONEQ ARROW ]
+local_type -> local_type . PLUS local_type [ UNDERSCORE TYPE TRUE TIMES STRING SEMICOLON RPAREN RIGHT PLUS LPAREN LEFT INT IN ID FOREIGN FALSE EOF COLONEQ ARROW ]
+net_type -> loc_id DOT local_type . [ UNDERSCORE TYPE TRUE TIMES STRING SEMICOLON RPAREN RIGHT PLUS LPAREN LEFT INT IN ID FOREIGN FALSE EOF COLONEQ ARROW ]
+## Transitions:
+## Reductions:
+-- On UNDERSCORE TYPE TRUE TIMES STRING SEMICOLON RPAREN RIGHT PLUS LPAREN LEFT INT IN ID FOREIGN FALSE EOF COLONEQ ARROW
+--   reduce production net_type -> loc_id DOT local_type
+
+State 26:
+## Known stack suffix:
+## LPAREN net_type RPAREN
+## LR(1) items:
+net_type -> LPAREN net_type RPAREN . [ UNDERSCORE TYPE TRUE TIMES STRING SEMICOLON RPAREN RIGHT PLUS LPAREN LEFT INT IN ID FOREIGN FALSE EOF COLONEQ ARROW ]
+## Transitions:
+## Reductions:
+-- On UNDERSCORE TYPE TRUE TIMES STRING SEMICOLON RPAREN RIGHT PLUS LPAREN LEFT INT IN ID FOREIGN FALSE EOF COLONEQ ARROW
+--   reduce production net_type -> LPAREN net_type RPAREN
+
+State 27:
+## Known stack suffix:
+## net_type PLUS
+## LR(1) items:
+net_type -> net_type PLUS . net_type [ UNDERSCORE TYPE TRUE TIMES STRING SEMICOLON RPAREN RIGHT PLUS LPAREN LEFT INT IN ID FOREIGN FALSE EOF COLONEQ ARROW ]
+## Transitions:
+-- On UNIT_T shift to state 6
+-- On LPAREN shift to state 7
+-- On ID shift to state 8
+-- On net_type shift to state 28
+-- On loc_id shift to state 12
+## Reductions:
+
+State 28:
+## Known stack suffix:
+## net_type PLUS net_type
+## LR(1) items:
+net_type -> net_type . ARROW net_type [ UNDERSCORE TYPE TRUE TIMES STRING SEMICOLON RPAREN RIGHT PLUS LPAREN LEFT INT IN ID FOREIGN FALSE EOF COLONEQ ARROW ]
+net_type -> net_type . TIMES net_type [ UNDERSCORE TYPE TRUE TIMES STRING SEMICOLON RPAREN RIGHT PLUS LPAREN LEFT INT IN ID FOREIGN FALSE EOF COLONEQ ARROW ]
+net_type -> net_type . PLUS net_type [ UNDERSCORE TYPE TRUE TIMES STRING SEMICOLON RPAREN RIGHT PLUS LPAREN LEFT INT IN ID FOREIGN FALSE EOF COLONEQ ARROW ]
+net_type -> net_type PLUS net_type . [ UNDERSCORE TYPE TRUE TIMES STRING SEMICOLON RPAREN RIGHT PLUS LPAREN LEFT INT IN ID FOREIGN FALSE EOF COLONEQ ARROW ]
+## Transitions:
+-- On TIMES shift to state 10
+## Reductions:
+-- On UNDERSCORE TYPE TRUE STRING SEMICOLON RPAREN RIGHT PLUS LPAREN LEFT INT IN ID FOREIGN FALSE EOF COLONEQ ARROW
+--   reduce production net_type -> net_type PLUS net_type
+
+State 29:
+## Known stack suffix:
+## net_type ARROW
+## LR(1) items:
+net_type -> net_type ARROW . net_type [ UNDERSCORE TYPE TRUE TIMES STRING SEMICOLON RPAREN RIGHT PLUS LPAREN LEFT INT IN ID FOREIGN FALSE EOF COLONEQ ARROW ]
+## Transitions:
+-- On UNIT_T shift to state 6
+-- On LPAREN shift to state 7
+-- On ID shift to state 8
+-- On net_type shift to state 30
+-- On loc_id shift to state 12
+## Reductions:
+
+State 30:
+## Known stack suffix:
+## net_type ARROW net_type
+## LR(1) items:
+net_type -> net_type . ARROW net_type [ UNDERSCORE TYPE TRUE TIMES STRING SEMICOLON RPAREN RIGHT PLUS LPAREN LEFT INT IN ID FOREIGN FALSE EOF COLONEQ ARROW ]
+net_type -> net_type ARROW net_type . [ UNDERSCORE TYPE TRUE TIMES STRING SEMICOLON RPAREN RIGHT PLUS LPAREN LEFT INT IN ID FOREIGN FALSE EOF COLONEQ ARROW ]
+net_type -> net_type . TIMES net_type [ UNDERSCORE TYPE TRUE TIMES STRING SEMICOLON RPAREN RIGHT PLUS LPAREN LEFT INT IN ID FOREIGN FALSE EOF COLONEQ ARROW ]
+net_type -> net_type . PLUS net_type [ UNDERSCORE TYPE TRUE TIMES STRING SEMICOLON RPAREN RIGHT PLUS LPAREN LEFT INT IN ID FOREIGN FALSE EOF COLONEQ ARROW ]
+## Transitions:
+-- On TIMES shift to state 10
+-- On PLUS shift to state 27
+-- On ARROW shift to state 29
+## Reductions:
+-- On UNDERSCORE TYPE TRUE STRING SEMICOLON RPAREN RIGHT LPAREN LEFT INT IN ID FOREIGN FALSE EOF COLONEQ
+--   reduce production net_type -> net_type ARROW net_type
+
+State 31:
+## Known stack suffix:
+## TYPE typ_id COLONEQ net_type
+## LR(1) items:
+net_type -> net_type . ARROW net_type [ UNDERSCORE TYPE TRUE TIMES STRING SEMICOLON RIGHT PLUS LPAREN LEFT INT IN ID FOREIGN FALSE EOF ARROW ]
+net_type -> net_type . TIMES net_type [ UNDERSCORE TYPE TRUE TIMES STRING SEMICOLON RIGHT PLUS LPAREN LEFT INT IN ID FOREIGN FALSE EOF ARROW ]
+net_type -> net_type . PLUS net_type [ UNDERSCORE TYPE TRUE TIMES STRING SEMICOLON RIGHT PLUS LPAREN LEFT INT IN ID FOREIGN FALSE EOF ARROW ]
+stmt -> TYPE typ_id COLONEQ net_type . option(SEMICOLON) [ UNDERSCORE TYPE TRUE STRING RIGHT LPAREN LEFT INT IN ID FOREIGN FALSE EOF ]
+## Transitions:
+-- On TIMES shift to state 10
+-- On SEMICOLON shift to state 32
+-- On PLUS shift to state 27
+-- On ARROW shift to state 29
+-- On option(SEMICOLON) shift to state 33
+## Reductions:
+-- On UNDERSCORE TYPE TRUE STRING RIGHT LPAREN LEFT INT IN ID FOREIGN FALSE EOF
+--   reduce production option(SEMICOLON) ->
+
+State 32:
+## Known stack suffix:
+## SEMICOLON
+## LR(1) items:
+option(SEMICOLON) -> SEMICOLON . [ UNDERSCORE TYPE TRUE STRING RIGHT LPAREN LEFT INT IN ID FOREIGN FALSE EOF ]
+## Transitions:
+## Reductions:
+-- On UNDERSCORE TYPE TRUE STRING RIGHT LPAREN LEFT INT IN ID FOREIGN FALSE EOF
+--   reduce production option(SEMICOLON) -> SEMICOLON
+
+State 33:
+## Known stack suffix:
+## TYPE typ_id COLONEQ net_type option(SEMICOLON)
+## LR(1) items:
+stmt -> TYPE typ_id COLONEQ net_type option(SEMICOLON) . [ UNDERSCORE TYPE TRUE STRING RIGHT LPAREN LEFT INT IN ID FOREIGN FALSE EOF ]
+## Transitions:
+## Reductions:
+-- On UNDERSCORE TYPE TRUE STRING RIGHT LPAREN LEFT INT IN ID FOREIGN FALSE EOF
+--   reduce production stmt -> TYPE typ_id COLONEQ net_type option(SEMICOLON)
+
+State 34:
+## Known stack suffix:
+## TRUE
+## LR(1) items:
+value -> TRUE . [ WITH UNDERSCORE TRUE TIMES TILDE_ARROW THEN STRING SEMICOLON RPAREN RIGHT PLUS OR NEQ MINUS LT LPAREN LEQ LEFT INT IN ID GT GEQ FALSE EQ ELSE DIV COMMA COLONEQ COLON BAR ARROW AND ]
+## Transitions:
+## Reductions:
+-- On WITH UNDERSCORE TRUE TIMES TILDE_ARROW THEN STRING SEMICOLON RPAREN RIGHT PLUS OR NEQ MINUS LT LPAREN LEQ LEFT INT IN ID GT GEQ FALSE EQ ELSE DIV COMMA COLONEQ COLON BAR ARROW AND
+--   reduce production value -> TRUE
+
+State 35:
+## Known stack suffix:
+## STRING
+## LR(1) items:
+value -> STRING . [ WITH UNDERSCORE TRUE TIMES TILDE_ARROW THEN STRING SEMICOLON RPAREN RIGHT PLUS OR NEQ MINUS LT LPAREN LEQ LEFT INT IN ID GT GEQ FALSE EQ ELSE DIV COMMA COLONEQ COLON BAR ARROW AND ]
+## Transitions:
+## Reductions:
+-- On WITH UNDERSCORE TRUE TIMES TILDE_ARROW THEN STRING SEMICOLON RPAREN RIGHT PLUS OR NEQ MINUS LT LPAREN LEQ LEFT INT IN ID GT GEQ FALSE EQ ELSE DIV COMMA COLONEQ COLON BAR ARROW AND
+--   reduce production value -> STRING
+
+State 36:
+## Known stack suffix:
+## RIGHT
+## LR(1) items:
+local_pattern -> RIGHT . local_pattern [ UNDERSCORE TRUE STRING RPAREN RIGHT LPAREN LEFT INT ID FALSE COMMA COLONEQ COLON ARROW ]
+## Transitions:
+-- On UNDERSCORE shift to state 1
+-- On TRUE shift to state 34
+-- On STRING shift to state 35
+-- On RIGHT shift to state 36
+-- On LPAREN shift to state 37
+-- On LEFT shift to state 38
+-- On INT shift to state 39
+-- On ID shift to state 40
+-- On FALSE shift to state 41
+-- On var_id shift to state 42
+-- On value shift to state 43
+-- On local_pattern shift to state 50
+## Reductions:
+
+State 37:
+## Known stack suffix:
+## LPAREN
+## LR(1) items:
+local_pattern -> LPAREN . local_pattern COMMA local_pattern RPAREN [ UNDERSCORE TRUE STRING RPAREN RIGHT LPAREN LEFT INT ID FALSE COMMA COLONEQ COLON ARROW ]
+local_pattern -> LPAREN . local_pattern RPAREN [ UNDERSCORE TRUE STRING RPAREN RIGHT LPAREN LEFT INT ID FALSE COMMA COLONEQ COLON ARROW ]
+## Transitions:
+-- On UNDERSCORE shift to state 1
+-- On TRUE shift to state 34
+-- On STRING shift to state 35
+-- On RIGHT shift to state 36
+-- On LPAREN shift to state 37
+-- On LEFT shift to state 38
+-- On INT shift to state 39
+-- On ID shift to state 40
+-- On FALSE shift to state 41
+-- On var_id shift to state 42
+-- On value shift to state 43
+-- On local_pattern shift to state 45
+## Reductions:
+
+State 38:
+## Known stack suffix:
+## LEFT
+## LR(1) items:
+local_pattern -> LEFT . local_pattern [ UNDERSCORE TRUE STRING RPAREN RIGHT LPAREN LEFT INT ID FALSE COMMA COLONEQ COLON ARROW ]
+## Transitions:
+-- On UNDERSCORE shift to state 1
+-- On TRUE shift to state 34
+-- On STRING shift to state 35
+-- On RIGHT shift to state 36
+-- On LPAREN shift to state 37
+-- On LEFT shift to state 38
+-- On INT shift to state 39
+-- On ID shift to state 40
+-- On FALSE shift to state 41
+-- On var_id shift to state 42
+-- On value shift to state 43
+-- On local_pattern shift to state 44
+## Reductions:
+
+State 39:
+## Known stack suffix:
+## INT
+## LR(1) items:
+value -> INT . [ WITH UNDERSCORE TRUE TIMES TILDE_ARROW THEN STRING SEMICOLON RPAREN RIGHT PLUS OR NEQ MINUS LT LPAREN LEQ LEFT INT IN ID GT GEQ FALSE EQ ELSE DIV COMMA COLONEQ COLON BAR ARROW AND ]
+## Transitions:
+## Reductions:
+-- On WITH UNDERSCORE TRUE TIMES TILDE_ARROW THEN STRING SEMICOLON RPAREN RIGHT PLUS OR NEQ MINUS LT LPAREN LEQ LEFT INT IN ID GT GEQ FALSE EQ ELSE DIV COMMA COLONEQ COLON BAR ARROW AND
+--   reduce production value -> INT
+
+State 40:
+## Known stack suffix:
+## ID
+## LR(1) items:
+var_id -> ID . [ WITH UNDERSCORE TRUE TIMES TILDE_ARROW THEN STRING SEMICOLON RPAREN RIGHT PLUS OR NEQ MINUS LT LPAREN LEQ LEFT INT IN ID GT GEQ FALSE EQ ELSE DIV COMMA COLONEQ COLON BAR ARROW AND ]
+## Transitions:
+## Reductions:
+-- On WITH UNDERSCORE TRUE TIMES TILDE_ARROW THEN STRING SEMICOLON RPAREN RIGHT PLUS OR NEQ MINUS LT LPAREN LEQ LEFT INT IN ID GT GEQ FALSE EQ ELSE DIV COMMA COLONEQ COLON BAR ARROW AND
+--   reduce production var_id -> ID
+
+State 41:
+## Known stack suffix:
+## FALSE
+## LR(1) items:
+value -> FALSE . [ WITH UNDERSCORE TRUE TIMES TILDE_ARROW THEN STRING SEMICOLON RPAREN RIGHT PLUS OR NEQ MINUS LT LPAREN LEQ LEFT INT IN ID GT GEQ FALSE EQ ELSE DIV COMMA COLONEQ COLON BAR ARROW AND ]
+## Transitions:
+## Reductions:
+-- On WITH UNDERSCORE TRUE TIMES TILDE_ARROW THEN STRING SEMICOLON RPAREN RIGHT PLUS OR NEQ MINUS LT LPAREN LEQ LEFT INT IN ID GT GEQ FALSE EQ ELSE DIV COMMA COLONEQ COLON BAR ARROW AND
+--   reduce production value -> FALSE
+
+State 42:
+## Known stack suffix:
+## var_id
+## LR(1) items:
+local_pattern -> var_id . [ UNDERSCORE TRUE STRING RPAREN RIGHT LPAREN LEFT INT ID FALSE COMMA COLONEQ COLON ARROW ]
+## Transitions:
+## Reductions:
+-- On UNDERSCORE TRUE STRING RPAREN RIGHT LPAREN LEFT INT ID FALSE COMMA COLONEQ COLON ARROW
+--   reduce production local_pattern -> var_id
+
+State 43:
+## Known stack suffix:
+## value
+## LR(1) items:
+local_pattern -> value . [ UNDERSCORE TRUE STRING RPAREN RIGHT LPAREN LEFT INT ID FALSE COMMA COLONEQ COLON ARROW ]
+## Transitions:
+## Reductions:
+-- On UNDERSCORE TRUE STRING RPAREN RIGHT LPAREN LEFT INT ID FALSE COMMA COLONEQ COLON ARROW
+--   reduce production local_pattern -> value
+
+State 44:
+## Known stack suffix:
+## LEFT local_pattern
+## LR(1) items:
+local_pattern -> LEFT local_pattern . [ UNDERSCORE TRUE STRING RPAREN RIGHT LPAREN LEFT INT ID FALSE COMMA COLONEQ COLON ARROW ]
+## Transitions:
+## Reductions:
+-- On UNDERSCORE TRUE STRING RPAREN RIGHT LPAREN LEFT INT ID FALSE COMMA COLONEQ COLON ARROW
+--   reduce production local_pattern -> LEFT local_pattern
+
+State 45:
+## Known stack suffix:
+## LPAREN local_pattern
+## LR(1) items:
+local_pattern -> LPAREN local_pattern . COMMA local_pattern RPAREN [ UNDERSCORE TRUE STRING RPAREN RIGHT LPAREN LEFT INT ID FALSE COMMA COLONEQ COLON ARROW ]
+local_pattern -> LPAREN local_pattern . RPAREN [ UNDERSCORE TRUE STRING RPAREN RIGHT LPAREN LEFT INT ID FALSE COMMA COLONEQ COLON ARROW ]
+## Transitions:
+-- On RPAREN shift to state 46
+-- On COMMA shift to state 47
+## Reductions:
+
+State 46:
+## Known stack suffix:
+## LPAREN local_pattern RPAREN
+## LR(1) items:
+local_pattern -> LPAREN local_pattern RPAREN . [ UNDERSCORE TRUE STRING RPAREN RIGHT LPAREN LEFT INT ID FALSE COMMA COLONEQ COLON ARROW ]
+## Transitions:
+## Reductions:
+-- On UNDERSCORE TRUE STRING RPAREN RIGHT LPAREN LEFT INT ID FALSE COMMA COLONEQ COLON ARROW
+--   reduce production local_pattern -> LPAREN local_pattern RPAREN
+
+State 47:
+## Known stack suffix:
+## LPAREN local_pattern COMMA
+## LR(1) items:
+local_pattern -> LPAREN local_pattern COMMA . local_pattern RPAREN [ UNDERSCORE TRUE STRING RPAREN RIGHT LPAREN LEFT INT ID FALSE COMMA COLONEQ COLON ARROW ]
+## Transitions:
+-- On UNDERSCORE shift to state 1
+-- On TRUE shift to state 34
+-- On STRING shift to state 35
+-- On RIGHT shift to state 36
+-- On LPAREN shift to state 37
+-- On LEFT shift to state 38
+-- On INT shift to state 39
+-- On ID shift to state 40
+-- On FALSE shift to state 41
+-- On var_id shift to state 42
+-- On value shift to state 43
+-- On local_pattern shift to state 48
+## Reductions:
+
+State 48:
+## Known stack suffix:
+## LPAREN local_pattern COMMA local_pattern
+## LR(1) items:
+local_pattern -> LPAREN local_pattern COMMA local_pattern . RPAREN [ UNDERSCORE TRUE STRING RPAREN RIGHT LPAREN LEFT INT ID FALSE COMMA COLONEQ COLON ARROW ]
+## Transitions:
+-- On RPAREN shift to state 49
+## Reductions:
+
+State 49:
+## Known stack suffix:
+## LPAREN local_pattern COMMA local_pattern RPAREN
+## LR(1) items:
+local_pattern -> LPAREN local_pattern COMMA local_pattern RPAREN . [ UNDERSCORE TRUE STRING RPAREN RIGHT LPAREN LEFT INT ID FALSE COMMA COLONEQ COLON ARROW ]
+## Transitions:
+## Reductions:
+-- On UNDERSCORE TRUE STRING RPAREN RIGHT LPAREN LEFT INT ID FALSE COMMA COLONEQ COLON ARROW
+--   reduce production local_pattern -> LPAREN local_pattern COMMA local_pattern RPAREN
+
+State 50:
+## Known stack suffix:
+## RIGHT local_pattern
+## LR(1) items:
+local_pattern -> RIGHT local_pattern . [ UNDERSCORE TRUE STRING RPAREN RIGHT LPAREN LEFT INT ID FALSE COMMA COLONEQ COLON ARROW ]
+## Transitions:
+## Reductions:
+-- On UNDERSCORE TRUE STRING RPAREN RIGHT LPAREN LEFT INT ID FALSE COMMA COLONEQ COLON ARROW
+--   reduce production local_pattern -> RIGHT local_pattern
+
+State 51:
+## Known stack suffix:
+## FOREIGN
+## LR(1) items:
+foreign_decl -> FOREIGN . var_id COLON net_type COLONEQ STRING SEMICOLON [ UNDERSCORE TYPE TRUE STRING RIGHT LPAREN LEFT INT IN ID FOREIGN FALSE EOF ]
+## Transitions:
+-- On ID shift to state 40
+-- On var_id shift to state 52
+## Reductions:
+
+State 52:
+## Known stack suffix:
+## FOREIGN var_id
+## LR(1) items:
+foreign_decl -> FOREIGN var_id . COLON net_type COLONEQ STRING SEMICOLON [ UNDERSCORE TYPE TRUE STRING RIGHT LPAREN LEFT INT IN ID FOREIGN FALSE EOF ]
+## Transitions:
+-- On COLON shift to state 53
+## Reductions:
+
+State 53:
+## Known stack suffix:
+## FOREIGN var_id COLON
+## LR(1) items:
+foreign_decl -> FOREIGN var_id COLON . net_type COLONEQ STRING SEMICOLON [ UNDERSCORE TYPE TRUE STRING RIGHT LPAREN LEFT INT IN ID FOREIGN FALSE EOF ]
+## Transitions:
+-- On UNIT_T shift to state 6
+-- On LPAREN shift to state 7
+-- On ID shift to state 8
+-- On net_type shift to state 54
+-- On loc_id shift to state 12
+## Reductions:
+
+State 54:
+## Known stack suffix:
+## FOREIGN var_id COLON net_type
+## LR(1) items:
+foreign_decl -> FOREIGN var_id COLON net_type . COLONEQ STRING SEMICOLON [ UNDERSCORE TYPE TRUE STRING RIGHT LPAREN LEFT INT IN ID FOREIGN FALSE EOF ]
+net_type -> net_type . ARROW net_type [ TIMES PLUS COLONEQ ARROW ]
+net_type -> net_type . TIMES net_type [ TIMES PLUS COLONEQ ARROW ]
+net_type -> net_type . PLUS net_type [ TIMES PLUS COLONEQ ARROW ]
+## Transitions:
+-- On TIMES shift to state 10
+-- On PLUS shift to state 27
+-- On COLONEQ shift to state 55
+-- On ARROW shift to state 29
+## Reductions:
+
+State 55:
+## Known stack suffix:
+## FOREIGN var_id COLON net_type COLONEQ
+## LR(1) items:
+foreign_decl -> FOREIGN var_id COLON net_type COLONEQ . STRING SEMICOLON [ UNDERSCORE TYPE TRUE STRING RIGHT LPAREN LEFT INT IN ID FOREIGN FALSE EOF ]
+## Transitions:
+-- On STRING shift to state 56
+## Reductions:
+
+State 56:
+## Known stack suffix:
+## FOREIGN var_id COLON net_type COLONEQ STRING
+## LR(1) items:
+foreign_decl -> FOREIGN var_id COLON net_type COLONEQ STRING . SEMICOLON [ UNDERSCORE TYPE TRUE STRING RIGHT LPAREN LEFT INT IN ID FOREIGN FALSE EOF ]
+## Transitions:
+-- On SEMICOLON shift to state 57
+## Reductions:
+
+State 57:
+## Known stack suffix:
+## FOREIGN var_id COLON net_type COLONEQ STRING SEMICOLON
+## LR(1) items:
+foreign_decl -> FOREIGN var_id COLON net_type COLONEQ STRING SEMICOLON . [ UNDERSCORE TYPE TRUE STRING RIGHT LPAREN LEFT INT IN ID FOREIGN FALSE EOF ]
+## Transitions:
+## Reductions:
+-- On UNDERSCORE TYPE TRUE STRING RIGHT LPAREN LEFT INT IN ID FOREIGN FALSE EOF
+--   reduce production foreign_decl -> FOREIGN var_id COLON net_type COLONEQ STRING SEMICOLON
+
+State 58:
+## Known stack suffix:
+## stmt_block
+## LR(1) items:
+prog -> stmt_block . EOF [ # ]
+## Transitions:
+-- On EOF shift to state 59
+## Reductions:
+
+State 59:
+## Known stack suffix:
+## stmt_block EOF
+## LR(1) items:
+prog -> stmt_block EOF . [ # ]
+## Transitions:
+## Reductions:
+-- On #
+--   reduce production prog -> stmt_block EOF
+
+State 60:
+## Known stack suffix:
+## stmt
+## LR(1) items:
+list(stmt) -> stmt . list(stmt) [ IN EOF ]
+## Transitions:
+-- On UNDERSCORE shift to state 1
+-- On TYPE shift to state 2
+-- On TRUE shift to state 34
+-- On STRING shift to state 35
+-- On RIGHT shift to state 36
+-- On LPAREN shift to state 37
+-- On LEFT shift to state 38
+-- On INT shift to state 39
+-- On ID shift to state 40
+-- On FOREIGN shift to state 51
+-- On FALSE shift to state 41
+-- On var_id shift to state 42
+-- On value shift to state 43
+-- On stmt shift to state 60
+-- On nonempty_list(local_pattern) shift to state 61
+-- On local_pattern shift to state 175
+-- On list(stmt) shift to state 201
+-- On foreign_decl shift to state 180
+## Reductions:
+-- On IN EOF
+--   reduce production list(stmt) ->
+
+State 61:
+## Known stack suffix:
+## nonempty_list(local_pattern)
+## LR(1) items:
+stmt -> nonempty_list(local_pattern) . COLONEQ net_expr SEMICOLON [ UNDERSCORE TYPE TRUE STRING RIGHT LPAREN LEFT INT IN ID FOREIGN FALSE EOF ]
+## Transitions:
+-- On COLONEQ shift to state 62
+## Reductions:
+
+State 62:
+## Known stack suffix:
+## nonempty_list(local_pattern) COLONEQ
+## LR(1) items:
+stmt -> nonempty_list(local_pattern) COLONEQ . net_expr SEMICOLON [ UNDERSCORE TYPE TRUE STRING RIGHT LPAREN LEFT INT IN ID FOREIGN FALSE EOF ]
+## Transitions:
+-- On UNIT_T shift to state 63
+-- On SND shift to state 64
+-- On SEND shift to state 65
+-- On RIGHT shift to state 66
+-- On RET shift to state 67
+-- On RECV shift to state 131
+-- On MATCH shift to state 134
+-- On LPAREN shift to state 135
+-- On LET shift to state 136
+-- On LEFT shift to state 139
+-- On IF shift to state 140
+-- On ID shift to state 40
+-- On FUN shift to state 141
+-- On FST shift to state 144
+-- On CHOOSE shift to state 145
+-- On ALLOW shift to state 151
+-- On var_id shift to state 159
+-- On net_expr shift to state 199
+## Reductions:
+
+State 63:
+## Known stack suffix:
+## UNIT_T
+## LR(1) items:
+net_expr -> UNIT_T . [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+## Transitions:
+## Reductions:
+-- On WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR
+--   reduce production net_expr -> UNIT_T
+
+State 64:
+## Known stack suffix:
+## SND
+## LR(1) items:
+net_expr -> SND . net_expr [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+## Transitions:
+-- On UNIT_T shift to state 63
+-- On SND shift to state 64
+-- On SEND shift to state 65
+-- On RIGHT shift to state 66
+-- On RET shift to state 67
+-- On RECV shift to state 131
+-- On MATCH shift to state 134
+-- On LPAREN shift to state 135
+-- On LET shift to state 136
+-- On LEFT shift to state 139
+-- On IF shift to state 140
+-- On ID shift to state 40
+-- On FUN shift to state 141
+-- On FST shift to state 144
+-- On CHOOSE shift to state 145
+-- On ALLOW shift to state 151
+-- On var_id shift to state 159
+-- On net_expr shift to state 198
+## Reductions:
+
+State 65:
+## Known stack suffix:
+## SEND
+## LR(1) items:
+net_expr -> SEND . net_expr TILDE_ARROW loc_id [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+## Transitions:
+-- On UNIT_T shift to state 63
+-- On SND shift to state 64
+-- On SEND shift to state 65
+-- On RIGHT shift to state 66
+-- On RET shift to state 67
+-- On RECV shift to state 131
+-- On MATCH shift to state 134
+-- On LPAREN shift to state 135
+-- On LET shift to state 136
+-- On LEFT shift to state 139
+-- On IF shift to state 140
+-- On ID shift to state 40
+-- On FUN shift to state 141
+-- On FST shift to state 144
+-- On CHOOSE shift to state 145
+-- On ALLOW shift to state 151
+-- On var_id shift to state 159
+-- On net_expr shift to state 195
+## Reductions:
+
+State 66:
+## Known stack suffix:
+## RIGHT
+## LR(1) items:
+net_expr -> RIGHT . net_expr [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+## Transitions:
+-- On UNIT_T shift to state 63
+-- On SND shift to state 64
+-- On SEND shift to state 65
+-- On RIGHT shift to state 66
+-- On RET shift to state 67
+-- On RECV shift to state 131
+-- On MATCH shift to state 134
+-- On LPAREN shift to state 135
+-- On LET shift to state 136
+-- On LEFT shift to state 139
+-- On IF shift to state 140
+-- On ID shift to state 40
+-- On FUN shift to state 141
+-- On FST shift to state 144
+-- On CHOOSE shift to state 145
+-- On ALLOW shift to state 151
+-- On var_id shift to state 159
+-- On net_expr shift to state 194
+## Reductions:
+
+State 67:
+## Known stack suffix:
+## RET
+## LR(1) items:
+net_expr -> RET . local_expr [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+## Transitions:
+-- On TRUE shift to state 34
+-- On STRING shift to state 35
+-- On SND shift to state 68
+-- On RIGHT shift to state 69
+-- On NOT shift to state 70
+-- On MINUS shift to state 71
+-- On MATCH shift to state 72
+-- On LPAREN shift to state 73
+-- On LET shift to state 75
+-- On LEFT shift to state 80
+-- On INT shift to state 39
+-- On ID shift to state 40
+-- On FST shift to state 81
+-- On FALSE shift to state 41
+-- On var_id shift to state 82
+-- On value shift to state 83
+-- On local_expr shift to state 130
+## Reductions:
+
+State 68:
+## Known stack suffix:
+## SND
+## LR(1) items:
+local_expr -> SND . local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+## Transitions:
+-- On TRUE shift to state 34
+-- On STRING shift to state 35
+-- On SND shift to state 68
+-- On RIGHT shift to state 69
+-- On NOT shift to state 70
+-- On MINUS shift to state 71
+-- On MATCH shift to state 72
+-- On LPAREN shift to state 73
+-- On LET shift to state 75
+-- On LEFT shift to state 80
+-- On INT shift to state 39
+-- On ID shift to state 40
+-- On FST shift to state 81
+-- On FALSE shift to state 41
+-- On var_id shift to state 82
+-- On value shift to state 83
+-- On local_expr shift to state 129
+## Reductions:
+
+State 69:
+## Known stack suffix:
+## RIGHT
+## LR(1) items:
+local_expr -> RIGHT . local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+## Transitions:
+-- On TRUE shift to state 34
+-- On STRING shift to state 35
+-- On SND shift to state 68
+-- On RIGHT shift to state 69
+-- On NOT shift to state 70
+-- On MINUS shift to state 71
+-- On MATCH shift to state 72
+-- On LPAREN shift to state 73
+-- On LET shift to state 75
+-- On LEFT shift to state 80
+-- On INT shift to state 39
+-- On ID shift to state 40
+-- On FST shift to state 81
+-- On FALSE shift to state 41
+-- On var_id shift to state 82
+-- On value shift to state 83
+-- On local_expr shift to state 128
+## Reductions:
+
+State 70:
+## Known stack suffix:
+## NOT
+## LR(1) items:
+local_expr -> NOT . local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+## Transitions:
+-- On TRUE shift to state 34
+-- On STRING shift to state 35
+-- On SND shift to state 68
+-- On RIGHT shift to state 69
+-- On NOT shift to state 70
+-- On MINUS shift to state 71
+-- On MATCH shift to state 72
+-- On LPAREN shift to state 73
+-- On LET shift to state 75
+-- On LEFT shift to state 80
+-- On INT shift to state 39
+-- On ID shift to state 40
+-- On FST shift to state 81
+-- On FALSE shift to state 41
+-- On var_id shift to state 82
+-- On value shift to state 83
+-- On local_expr shift to state 127
+## Reductions:
+
+State 71:
+## Known stack suffix:
+## MINUS
+## LR(1) items:
+local_expr -> MINUS . local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+## Transitions:
+-- On TRUE shift to state 34
+-- On STRING shift to state 35
+-- On SND shift to state 68
+-- On RIGHT shift to state 69
+-- On NOT shift to state 70
+-- On MINUS shift to state 71
+-- On MATCH shift to state 72
+-- On LPAREN shift to state 73
+-- On LET shift to state 75
+-- On LEFT shift to state 80
+-- On INT shift to state 39
+-- On ID shift to state 40
+-- On FST shift to state 81
+-- On FALSE shift to state 41
+-- On var_id shift to state 82
+-- On value shift to state 83
+-- On local_expr shift to state 126
+## Reductions:
+
+State 72:
+## Known stack suffix:
+## MATCH
+## LR(1) items:
+local_expr -> MATCH . local_expr WITH nonempty_list(local_case) [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+## Transitions:
+-- On TRUE shift to state 34
+-- On STRING shift to state 35
+-- On SND shift to state 68
+-- On RIGHT shift to state 69
+-- On NOT shift to state 70
+-- On MINUS shift to state 71
+-- On MATCH shift to state 72
+-- On LPAREN shift to state 73
+-- On LET shift to state 75
+-- On LEFT shift to state 80
+-- On INT shift to state 39
+-- On ID shift to state 40
+-- On FST shift to state 81
+-- On FALSE shift to state 41
+-- On var_id shift to state 82
+-- On value shift to state 83
+-- On local_expr shift to state 118
+## Reductions:
+
+State 73:
+## Known stack suffix:
+## LPAREN
+## LR(1) items:
+local_expr -> LPAREN . RPAREN [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> LPAREN . local_expr COMMA local_expr RPAREN [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> LPAREN . local_expr RPAREN [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+## Transitions:
+-- On TRUE shift to state 34
+-- On STRING shift to state 35
+-- On SND shift to state 68
+-- On RPAREN shift to state 74
+-- On RIGHT shift to state 69
+-- On NOT shift to state 70
+-- On MINUS shift to state 71
+-- On MATCH shift to state 72
+-- On LPAREN shift to state 73
+-- On LET shift to state 75
+-- On LEFT shift to state 80
+-- On INT shift to state 39
+-- On ID shift to state 40
+-- On FST shift to state 81
+-- On FALSE shift to state 41
+-- On var_id shift to state 82
+-- On value shift to state 83
+-- On local_expr shift to state 113
+## Reductions:
+
+State 74:
+## Known stack suffix:
+## LPAREN RPAREN
+## LR(1) items:
+local_expr -> LPAREN RPAREN . [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+## Transitions:
+## Reductions:
+-- On WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND
+--   reduce production local_expr -> LPAREN RPAREN
+
+State 75:
+## Known stack suffix:
+## LET
+## LR(1) items:
+local_expr -> LET . var_id COLON local_type COLONEQ local_expr IN local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+## Transitions:
+-- On ID shift to state 40
+-- On var_id shift to state 76
+## Reductions:
+
+State 76:
+## Known stack suffix:
+## LET var_id
+## LR(1) items:
+local_expr -> LET var_id . COLON local_type COLONEQ local_expr IN local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+## Transitions:
+-- On COLON shift to state 77
+## Reductions:
+
+State 77:
+## Known stack suffix:
+## LET var_id COLON
+## LR(1) items:
+local_expr -> LET var_id COLON . local_type COLONEQ local_expr IN local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+## Transitions:
+-- On UNIT_T shift to state 14
+-- On STRING_T shift to state 15
+-- On LPAREN shift to state 16
+-- On INT_T shift to state 17
+-- On BOOL_T shift to state 18
+-- On local_type shift to state 78
+## Reductions:
+
+State 78:
+## Known stack suffix:
+## LET var_id COLON local_type
+## LR(1) items:
+local_expr -> LET var_id COLON local_type . COLONEQ local_expr IN local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_type -> local_type . TIMES local_type [ TIMES PLUS COLONEQ ]
+local_type -> local_type . PLUS local_type [ TIMES PLUS COLONEQ ]
+## Transitions:
+-- On TIMES shift to state 20
+-- On PLUS shift to state 23
+-- On COLONEQ shift to state 79
+## Reductions:
+
+State 79:
+## Known stack suffix:
+## LET var_id COLON local_type COLONEQ
+## LR(1) items:
+local_expr -> LET var_id COLON local_type COLONEQ . local_expr IN local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+## Transitions:
+-- On TRUE shift to state 34
+-- On STRING shift to state 35
+-- On SND shift to state 68
+-- On RIGHT shift to state 69
+-- On NOT shift to state 70
+-- On MINUS shift to state 71
+-- On MATCH shift to state 72
+-- On LPAREN shift to state 73
+-- On LET shift to state 75
+-- On LEFT shift to state 80
+-- On INT shift to state 39
+-- On ID shift to state 40
+-- On FST shift to state 81
+-- On FALSE shift to state 41
+-- On var_id shift to state 82
+-- On value shift to state 83
+-- On local_expr shift to state 110
+## Reductions:
+
+State 80:
+## Known stack suffix:
+## LEFT
+## LR(1) items:
+local_expr -> LEFT . local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+## Transitions:
+-- On TRUE shift to state 34
+-- On STRING shift to state 35
+-- On SND shift to state 68
+-- On RIGHT shift to state 69
+-- On NOT shift to state 70
+-- On MINUS shift to state 71
+-- On MATCH shift to state 72
+-- On LPAREN shift to state 73
+-- On LET shift to state 75
+-- On LEFT shift to state 80
+-- On INT shift to state 39
+-- On ID shift to state 40
+-- On FST shift to state 81
+-- On FALSE shift to state 41
+-- On var_id shift to state 82
+-- On value shift to state 83
+-- On local_expr shift to state 109
+## Reductions:
+
+State 81:
+## Known stack suffix:
+## FST
+## LR(1) items:
+local_expr -> FST . local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+## Transitions:
+-- On TRUE shift to state 34
+-- On STRING shift to state 35
+-- On SND shift to state 68
+-- On RIGHT shift to state 69
+-- On NOT shift to state 70
+-- On MINUS shift to state 71
+-- On MATCH shift to state 72
+-- On LPAREN shift to state 73
+-- On LET shift to state 75
+-- On LEFT shift to state 80
+-- On INT shift to state 39
+-- On ID shift to state 40
+-- On FST shift to state 81
+-- On FALSE shift to state 41
+-- On var_id shift to state 82
+-- On value shift to state 83
+-- On local_expr shift to state 84
+## Reductions:
+
+State 82:
+## Known stack suffix:
+## var_id
+## LR(1) items:
+local_expr -> var_id . [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+## Transitions:
+## Reductions:
+-- On WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND
+--   reduce production local_expr -> var_id
+
+State 83:
+## Known stack suffix:
+## value
+## LR(1) items:
+local_expr -> value . [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+## Transitions:
+## Reductions:
+-- On WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND
+--   reduce production local_expr -> value
+
+State 84:
+## Known stack suffix:
+## FST local_expr
+## LR(1) items:
+local_expr -> local_expr . PLUS local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . MINUS local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . TIMES local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . DIV local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . AND local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . OR local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . EQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . NEQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . LT local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . LEQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . GT local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . GEQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> FST local_expr . [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+## Transitions:
+-- On TIMES shift to state 85
+-- On PLUS shift to state 87
+-- On OR shift to state 91
+-- On NEQ shift to state 93
+-- On MINUS shift to state 95
+-- On LT shift to state 97
+-- On LEQ shift to state 99
+-- On GT shift to state 101
+-- On GEQ shift to state 103
+-- On EQ shift to state 105
+-- On DIV shift to state 89
+-- On AND shift to state 107
+## Reductions:
+-- On WITH TILDE_ARROW THEN SEMICOLON RPAREN IN ELSE COMMA BAR
+--   reduce production local_expr -> FST local_expr
+
+State 85:
+## Known stack suffix:
+## local_expr TIMES
+## LR(1) items:
+local_expr -> local_expr TIMES . local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+## Transitions:
+-- On TRUE shift to state 34
+-- On STRING shift to state 35
+-- On SND shift to state 68
+-- On RIGHT shift to state 69
+-- On NOT shift to state 70
+-- On MINUS shift to state 71
+-- On MATCH shift to state 72
+-- On LPAREN shift to state 73
+-- On LET shift to state 75
+-- On LEFT shift to state 80
+-- On INT shift to state 39
+-- On ID shift to state 40
+-- On FST shift to state 81
+-- On FALSE shift to state 41
+-- On var_id shift to state 82
+-- On value shift to state 83
+-- On local_expr shift to state 86
+## Reductions:
+
+State 86:
+## Known stack suffix:
+## local_expr TIMES local_expr
+## LR(1) items:
+local_expr -> local_expr . PLUS local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . MINUS local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . TIMES local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr TIMES local_expr . [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . DIV local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . AND local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . OR local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . EQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . NEQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . LT local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . LEQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . GT local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . GEQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+## Transitions:
+## Reductions:
+-- On WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND
+--   reduce production local_expr -> local_expr TIMES local_expr
+
+State 87:
+## Known stack suffix:
+## local_expr PLUS
+## LR(1) items:
+local_expr -> local_expr PLUS . local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+## Transitions:
+-- On TRUE shift to state 34
+-- On STRING shift to state 35
+-- On SND shift to state 68
+-- On RIGHT shift to state 69
+-- On NOT shift to state 70
+-- On MINUS shift to state 71
+-- On MATCH shift to state 72
+-- On LPAREN shift to state 73
+-- On LET shift to state 75
+-- On LEFT shift to state 80
+-- On INT shift to state 39
+-- On ID shift to state 40
+-- On FST shift to state 81
+-- On FALSE shift to state 41
+-- On var_id shift to state 82
+-- On value shift to state 83
+-- On local_expr shift to state 88
+## Reductions:
+
+State 88:
+## Known stack suffix:
+## local_expr PLUS local_expr
+## LR(1) items:
+local_expr -> local_expr . PLUS local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr PLUS local_expr . [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . MINUS local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . TIMES local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . DIV local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . AND local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . OR local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . EQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . NEQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . LT local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . LEQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . GT local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . GEQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+## Transitions:
+-- On TIMES shift to state 85
+-- On DIV shift to state 89
+## Reductions:
+-- On WITH TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE COMMA BAR AND
+--   reduce production local_expr -> local_expr PLUS local_expr
+
+State 89:
+## Known stack suffix:
+## local_expr DIV
+## LR(1) items:
+local_expr -> local_expr DIV . local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+## Transitions:
+-- On TRUE shift to state 34
+-- On STRING shift to state 35
+-- On SND shift to state 68
+-- On RIGHT shift to state 69
+-- On NOT shift to state 70
+-- On MINUS shift to state 71
+-- On MATCH shift to state 72
+-- On LPAREN shift to state 73
+-- On LET shift to state 75
+-- On LEFT shift to state 80
+-- On INT shift to state 39
+-- On ID shift to state 40
+-- On FST shift to state 81
+-- On FALSE shift to state 41
+-- On var_id shift to state 82
+-- On value shift to state 83
+-- On local_expr shift to state 90
+## Reductions:
+
+State 90:
+## Known stack suffix:
+## local_expr DIV local_expr
+## LR(1) items:
+local_expr -> local_expr . PLUS local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . MINUS local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . TIMES local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . DIV local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr DIV local_expr . [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . AND local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . OR local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . EQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . NEQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . LT local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . LEQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . GT local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . GEQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+## Transitions:
+## Reductions:
+-- On WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND
+--   reduce production local_expr -> local_expr DIV local_expr
+
+State 91:
+## Known stack suffix:
+## local_expr OR
+## LR(1) items:
+local_expr -> local_expr OR . local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+## Transitions:
+-- On TRUE shift to state 34
+-- On STRING shift to state 35
+-- On SND shift to state 68
+-- On RIGHT shift to state 69
+-- On NOT shift to state 70
+-- On MINUS shift to state 71
+-- On MATCH shift to state 72
+-- On LPAREN shift to state 73
+-- On LET shift to state 75
+-- On LEFT shift to state 80
+-- On INT shift to state 39
+-- On ID shift to state 40
+-- On FST shift to state 81
+-- On FALSE shift to state 41
+-- On var_id shift to state 82
+-- On value shift to state 83
+-- On local_expr shift to state 92
+## Reductions:
+
+State 92:
+## Known stack suffix:
+## local_expr OR local_expr
+## LR(1) items:
+local_expr -> local_expr . PLUS local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . MINUS local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . TIMES local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . DIV local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . AND local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . OR local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr OR local_expr . [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . EQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . NEQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . LT local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . LEQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . GT local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . GEQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+## Transitions:
+-- On TIMES shift to state 85
+-- On PLUS shift to state 87
+-- On OR shift to state 91
+-- On NEQ shift to state 93
+-- On MINUS shift to state 95
+-- On LT shift to state 97
+-- On LEQ shift to state 99
+-- On GT shift to state 101
+-- On GEQ shift to state 103
+-- On EQ shift to state 105
+-- On DIV shift to state 89
+-- On AND shift to state 107
+## Reductions:
+-- On WITH TILDE_ARROW THEN SEMICOLON RPAREN IN ELSE COMMA BAR
+--   reduce production local_expr -> local_expr OR local_expr
+
+State 93:
+## Known stack suffix:
+## local_expr NEQ
+## LR(1) items:
+local_expr -> local_expr NEQ . local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+## Transitions:
+-- On TRUE shift to state 34
+-- On STRING shift to state 35
+-- On SND shift to state 68
+-- On RIGHT shift to state 69
+-- On NOT shift to state 70
+-- On MINUS shift to state 71
+-- On MATCH shift to state 72
+-- On LPAREN shift to state 73
+-- On LET shift to state 75
+-- On LEFT shift to state 80
+-- On INT shift to state 39
+-- On ID shift to state 40
+-- On FST shift to state 81
+-- On FALSE shift to state 41
+-- On var_id shift to state 82
+-- On value shift to state 83
+-- On local_expr shift to state 94
+## Reductions:
+
+State 94:
+## Known stack suffix:
+## local_expr NEQ local_expr
+## LR(1) items:
+local_expr -> local_expr . PLUS local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . MINUS local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . TIMES local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . DIV local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . AND local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . OR local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . EQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . NEQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr NEQ local_expr . [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . LT local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . LEQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . GT local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . GEQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+## Transitions:
+-- On TIMES shift to state 85
+-- On PLUS shift to state 87
+-- On MINUS shift to state 95
+-- On DIV shift to state 89
+## Reductions:
+-- On WITH TILDE_ARROW THEN SEMICOLON RPAREN OR NEQ LT LEQ IN GT GEQ EQ ELSE COMMA BAR AND
+--   reduce production local_expr -> local_expr NEQ local_expr
+
+State 95:
+## Known stack suffix:
+## local_expr MINUS
+## LR(1) items:
+local_expr -> local_expr MINUS . local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+## Transitions:
+-- On TRUE shift to state 34
+-- On STRING shift to state 35
+-- On SND shift to state 68
+-- On RIGHT shift to state 69
+-- On NOT shift to state 70
+-- On MINUS shift to state 71
+-- On MATCH shift to state 72
+-- On LPAREN shift to state 73
+-- On LET shift to state 75
+-- On LEFT shift to state 80
+-- On INT shift to state 39
+-- On ID shift to state 40
+-- On FST shift to state 81
+-- On FALSE shift to state 41
+-- On var_id shift to state 82
+-- On value shift to state 83
+-- On local_expr shift to state 96
+## Reductions:
+
+State 96:
+## Known stack suffix:
+## local_expr MINUS local_expr
+## LR(1) items:
+local_expr -> local_expr . PLUS local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . MINUS local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr MINUS local_expr . [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . TIMES local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . DIV local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . AND local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . OR local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . EQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . NEQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . LT local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . LEQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . GT local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . GEQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+## Transitions:
+-- On TIMES shift to state 85
+-- On DIV shift to state 89
+## Reductions:
+-- On WITH TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE COMMA BAR AND
+--   reduce production local_expr -> local_expr MINUS local_expr
+
+State 97:
+## Known stack suffix:
+## local_expr LT
+## LR(1) items:
+local_expr -> local_expr LT . local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+## Transitions:
+-- On TRUE shift to state 34
+-- On STRING shift to state 35
+-- On SND shift to state 68
+-- On RIGHT shift to state 69
+-- On NOT shift to state 70
+-- On MINUS shift to state 71
+-- On MATCH shift to state 72
+-- On LPAREN shift to state 73
+-- On LET shift to state 75
+-- On LEFT shift to state 80
+-- On INT shift to state 39
+-- On ID shift to state 40
+-- On FST shift to state 81
+-- On FALSE shift to state 41
+-- On var_id shift to state 82
+-- On value shift to state 83
+-- On local_expr shift to state 98
+## Reductions:
+
+State 98:
+## Known stack suffix:
+## local_expr LT local_expr
+## LR(1) items:
+local_expr -> local_expr . PLUS local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . MINUS local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . TIMES local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . DIV local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . AND local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . OR local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . EQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . NEQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . LT local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr LT local_expr . [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . LEQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . GT local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . GEQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+## Transitions:
+-- On TIMES shift to state 85
+-- On PLUS shift to state 87
+-- On MINUS shift to state 95
+-- On DIV shift to state 89
+## Reductions:
+-- On WITH TILDE_ARROW THEN SEMICOLON RPAREN OR NEQ LT LEQ IN GT GEQ EQ ELSE COMMA BAR AND
+--   reduce production local_expr -> local_expr LT local_expr
+
+State 99:
+## Known stack suffix:
+## local_expr LEQ
+## LR(1) items:
+local_expr -> local_expr LEQ . local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+## Transitions:
+-- On TRUE shift to state 34
+-- On STRING shift to state 35
+-- On SND shift to state 68
+-- On RIGHT shift to state 69
+-- On NOT shift to state 70
+-- On MINUS shift to state 71
+-- On MATCH shift to state 72
+-- On LPAREN shift to state 73
+-- On LET shift to state 75
+-- On LEFT shift to state 80
+-- On INT shift to state 39
+-- On ID shift to state 40
+-- On FST shift to state 81
+-- On FALSE shift to state 41
+-- On var_id shift to state 82
+-- On value shift to state 83
+-- On local_expr shift to state 100
+## Reductions:
+
+State 100:
+## Known stack suffix:
+## local_expr LEQ local_expr
+## LR(1) items:
+local_expr -> local_expr . PLUS local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . MINUS local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . TIMES local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . DIV local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . AND local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . OR local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . EQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . NEQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . LT local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . LEQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr LEQ local_expr . [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . GT local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . GEQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+## Transitions:
+-- On TIMES shift to state 85
+-- On PLUS shift to state 87
+-- On MINUS shift to state 95
+-- On DIV shift to state 89
+## Reductions:
+-- On WITH TILDE_ARROW THEN SEMICOLON RPAREN OR NEQ LT LEQ IN GT GEQ EQ ELSE COMMA BAR AND
+--   reduce production local_expr -> local_expr LEQ local_expr
+
+State 101:
+## Known stack suffix:
+## local_expr GT
+## LR(1) items:
+local_expr -> local_expr GT . local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+## Transitions:
+-- On TRUE shift to state 34
+-- On STRING shift to state 35
+-- On SND shift to state 68
+-- On RIGHT shift to state 69
+-- On NOT shift to state 70
+-- On MINUS shift to state 71
+-- On MATCH shift to state 72
+-- On LPAREN shift to state 73
+-- On LET shift to state 75
+-- On LEFT shift to state 80
+-- On INT shift to state 39
+-- On ID shift to state 40
+-- On FST shift to state 81
+-- On FALSE shift to state 41
+-- On var_id shift to state 82
+-- On value shift to state 83
+-- On local_expr shift to state 102
+## Reductions:
+
+State 102:
+## Known stack suffix:
+## local_expr GT local_expr
+## LR(1) items:
+local_expr -> local_expr . PLUS local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . MINUS local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . TIMES local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . DIV local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . AND local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . OR local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . EQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . NEQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . LT local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . LEQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . GT local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr GT local_expr . [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . GEQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+## Transitions:
+-- On TIMES shift to state 85
+-- On PLUS shift to state 87
+-- On MINUS shift to state 95
+-- On DIV shift to state 89
+## Reductions:
+-- On WITH TILDE_ARROW THEN SEMICOLON RPAREN OR NEQ LT LEQ IN GT GEQ EQ ELSE COMMA BAR AND
+--   reduce production local_expr -> local_expr GT local_expr
+
+State 103:
+## Known stack suffix:
+## local_expr GEQ
+## LR(1) items:
+local_expr -> local_expr GEQ . local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+## Transitions:
+-- On TRUE shift to state 34
+-- On STRING shift to state 35
+-- On SND shift to state 68
+-- On RIGHT shift to state 69
+-- On NOT shift to state 70
+-- On MINUS shift to state 71
+-- On MATCH shift to state 72
+-- On LPAREN shift to state 73
+-- On LET shift to state 75
+-- On LEFT shift to state 80
+-- On INT shift to state 39
+-- On ID shift to state 40
+-- On FST shift to state 81
+-- On FALSE shift to state 41
+-- On var_id shift to state 82
+-- On value shift to state 83
+-- On local_expr shift to state 104
+## Reductions:
+
+State 104:
+## Known stack suffix:
+## local_expr GEQ local_expr
+## LR(1) items:
+local_expr -> local_expr . PLUS local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . MINUS local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . TIMES local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . DIV local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . AND local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . OR local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . EQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . NEQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . LT local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . LEQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . GT local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . GEQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr GEQ local_expr . [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+## Transitions:
+-- On TIMES shift to state 85
+-- On PLUS shift to state 87
+-- On MINUS shift to state 95
+-- On DIV shift to state 89
+## Reductions:
+-- On WITH TILDE_ARROW THEN SEMICOLON RPAREN OR NEQ LT LEQ IN GT GEQ EQ ELSE COMMA BAR AND
+--   reduce production local_expr -> local_expr GEQ local_expr
+
+State 105:
+## Known stack suffix:
+## local_expr EQ
+## LR(1) items:
+local_expr -> local_expr EQ . local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+## Transitions:
+-- On TRUE shift to state 34
+-- On STRING shift to state 35
+-- On SND shift to state 68
+-- On RIGHT shift to state 69
+-- On NOT shift to state 70
+-- On MINUS shift to state 71
+-- On MATCH shift to state 72
+-- On LPAREN shift to state 73
+-- On LET shift to state 75
+-- On LEFT shift to state 80
+-- On INT shift to state 39
+-- On ID shift to state 40
+-- On FST shift to state 81
+-- On FALSE shift to state 41
+-- On var_id shift to state 82
+-- On value shift to state 83
+-- On local_expr shift to state 106
+## Reductions:
+
+State 106:
+## Known stack suffix:
+## local_expr EQ local_expr
+## LR(1) items:
+local_expr -> local_expr . PLUS local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . MINUS local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . TIMES local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . DIV local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . AND local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . OR local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . EQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr EQ local_expr . [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . NEQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . LT local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . LEQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . GT local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . GEQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+## Transitions:
+-- On TIMES shift to state 85
+-- On PLUS shift to state 87
+-- On MINUS shift to state 95
+-- On DIV shift to state 89
+## Reductions:
+-- On WITH TILDE_ARROW THEN SEMICOLON RPAREN OR NEQ LT LEQ IN GT GEQ EQ ELSE COMMA BAR AND
+--   reduce production local_expr -> local_expr EQ local_expr
+
+State 107:
+## Known stack suffix:
+## local_expr AND
+## LR(1) items:
+local_expr -> local_expr AND . local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+## Transitions:
+-- On TRUE shift to state 34
+-- On STRING shift to state 35
+-- On SND shift to state 68
+-- On RIGHT shift to state 69
+-- On NOT shift to state 70
+-- On MINUS shift to state 71
+-- On MATCH shift to state 72
+-- On LPAREN shift to state 73
+-- On LET shift to state 75
+-- On LEFT shift to state 80
+-- On INT shift to state 39
+-- On ID shift to state 40
+-- On FST shift to state 81
+-- On FALSE shift to state 41
+-- On var_id shift to state 82
+-- On value shift to state 83
+-- On local_expr shift to state 108
+## Reductions:
+
+State 108:
+## Known stack suffix:
+## local_expr AND local_expr
+## LR(1) items:
+local_expr -> local_expr . PLUS local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . MINUS local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . TIMES local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . DIV local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . AND local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr AND local_expr . [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . OR local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . EQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . NEQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . LT local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . LEQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . GT local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . GEQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+## Transitions:
+-- On TIMES shift to state 85
+-- On PLUS shift to state 87
+-- On NEQ shift to state 93
+-- On MINUS shift to state 95
+-- On LT shift to state 97
+-- On LEQ shift to state 99
+-- On GT shift to state 101
+-- On GEQ shift to state 103
+-- On EQ shift to state 105
+-- On DIV shift to state 89
+-- On AND shift to state 107
+## Reductions:
+-- On WITH TILDE_ARROW THEN SEMICOLON RPAREN OR IN ELSE COMMA BAR
+--   reduce production local_expr -> local_expr AND local_expr
+
+State 109:
+## Known stack suffix:
+## LEFT local_expr
+## LR(1) items:
+local_expr -> local_expr . PLUS local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . MINUS local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . TIMES local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . DIV local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . AND local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . OR local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . EQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . NEQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . LT local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . LEQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . GT local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . GEQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> LEFT local_expr . [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+## Transitions:
+-- On TIMES shift to state 85
+-- On PLUS shift to state 87
+-- On OR shift to state 91
+-- On NEQ shift to state 93
+-- On MINUS shift to state 95
+-- On LT shift to state 97
+-- On LEQ shift to state 99
+-- On GT shift to state 101
+-- On GEQ shift to state 103
+-- On EQ shift to state 105
+-- On DIV shift to state 89
+-- On AND shift to state 107
+## Reductions:
+-- On WITH TILDE_ARROW THEN SEMICOLON RPAREN IN ELSE COMMA BAR
+--   reduce production local_expr -> LEFT local_expr
+
+State 110:
+## Known stack suffix:
+## LET var_id COLON local_type COLONEQ local_expr
+## LR(1) items:
+local_expr -> local_expr . PLUS local_expr [ TIMES PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ DIV AND ]
+local_expr -> local_expr . MINUS local_expr [ TIMES PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ DIV AND ]
+local_expr -> local_expr . TIMES local_expr [ TIMES PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ DIV AND ]
+local_expr -> local_expr . DIV local_expr [ TIMES PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ DIV AND ]
+local_expr -> local_expr . AND local_expr [ TIMES PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ DIV AND ]
+local_expr -> local_expr . OR local_expr [ TIMES PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ DIV AND ]
+local_expr -> local_expr . EQ local_expr [ TIMES PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ DIV AND ]
+local_expr -> local_expr . NEQ local_expr [ TIMES PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ DIV AND ]
+local_expr -> local_expr . LT local_expr [ TIMES PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ DIV AND ]
+local_expr -> local_expr . LEQ local_expr [ TIMES PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ DIV AND ]
+local_expr -> local_expr . GT local_expr [ TIMES PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ DIV AND ]
+local_expr -> local_expr . GEQ local_expr [ TIMES PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ DIV AND ]
+local_expr -> LET var_id COLON local_type COLONEQ local_expr . IN local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+## Transitions:
+-- On TIMES shift to state 85
+-- On PLUS shift to state 87
+-- On OR shift to state 91
+-- On NEQ shift to state 93
+-- On MINUS shift to state 95
+-- On LT shift to state 97
+-- On LEQ shift to state 99
+-- On IN shift to state 111
+-- On GT shift to state 101
+-- On GEQ shift to state 103
+-- On EQ shift to state 105
+-- On DIV shift to state 89
+-- On AND shift to state 107
+## Reductions:
+
+State 111:
+## Known stack suffix:
+## LET var_id COLON local_type COLONEQ local_expr IN
+## LR(1) items:
+local_expr -> LET var_id COLON local_type COLONEQ local_expr IN . local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+## Transitions:
+-- On TRUE shift to state 34
+-- On STRING shift to state 35
+-- On SND shift to state 68
+-- On RIGHT shift to state 69
+-- On NOT shift to state 70
+-- On MINUS shift to state 71
+-- On MATCH shift to state 72
+-- On LPAREN shift to state 73
+-- On LET shift to state 75
+-- On LEFT shift to state 80
+-- On INT shift to state 39
+-- On ID shift to state 40
+-- On FST shift to state 81
+-- On FALSE shift to state 41
+-- On var_id shift to state 82
+-- On value shift to state 83
+-- On local_expr shift to state 112
+## Reductions:
+
+State 112:
+## Known stack suffix:
+## LET var_id COLON local_type COLONEQ local_expr IN local_expr
+## LR(1) items:
+local_expr -> local_expr . PLUS local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . MINUS local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . TIMES local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . DIV local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . AND local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . OR local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . EQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . NEQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . LT local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . LEQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . GT local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . GEQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> LET var_id COLON local_type COLONEQ local_expr IN local_expr . [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+## Transitions:
+-- On TIMES shift to state 85
+-- On PLUS shift to state 87
+-- On OR shift to state 91
+-- On NEQ shift to state 93
+-- On MINUS shift to state 95
+-- On LT shift to state 97
+-- On LEQ shift to state 99
+-- On GT shift to state 101
+-- On GEQ shift to state 103
+-- On EQ shift to state 105
+-- On DIV shift to state 89
+-- On AND shift to state 107
+## Reductions:
+-- On WITH TILDE_ARROW THEN SEMICOLON RPAREN IN ELSE COMMA BAR
+--   reduce production local_expr -> LET var_id COLON local_type COLONEQ local_expr IN local_expr
+
+State 113:
+## Known stack suffix:
+## LPAREN local_expr
+## LR(1) items:
+local_expr -> local_expr . PLUS local_expr [ TIMES RPAREN PLUS OR NEQ MINUS LT LEQ GT GEQ EQ DIV COMMA AND ]
+local_expr -> local_expr . MINUS local_expr [ TIMES RPAREN PLUS OR NEQ MINUS LT LEQ GT GEQ EQ DIV COMMA AND ]
+local_expr -> local_expr . TIMES local_expr [ TIMES RPAREN PLUS OR NEQ MINUS LT LEQ GT GEQ EQ DIV COMMA AND ]
+local_expr -> local_expr . DIV local_expr [ TIMES RPAREN PLUS OR NEQ MINUS LT LEQ GT GEQ EQ DIV COMMA AND ]
+local_expr -> local_expr . AND local_expr [ TIMES RPAREN PLUS OR NEQ MINUS LT LEQ GT GEQ EQ DIV COMMA AND ]
+local_expr -> local_expr . OR local_expr [ TIMES RPAREN PLUS OR NEQ MINUS LT LEQ GT GEQ EQ DIV COMMA AND ]
+local_expr -> local_expr . EQ local_expr [ TIMES RPAREN PLUS OR NEQ MINUS LT LEQ GT GEQ EQ DIV COMMA AND ]
+local_expr -> local_expr . NEQ local_expr [ TIMES RPAREN PLUS OR NEQ MINUS LT LEQ GT GEQ EQ DIV COMMA AND ]
+local_expr -> local_expr . LT local_expr [ TIMES RPAREN PLUS OR NEQ MINUS LT LEQ GT GEQ EQ DIV COMMA AND ]
+local_expr -> local_expr . LEQ local_expr [ TIMES RPAREN PLUS OR NEQ MINUS LT LEQ GT GEQ EQ DIV COMMA AND ]
+local_expr -> local_expr . GT local_expr [ TIMES RPAREN PLUS OR NEQ MINUS LT LEQ GT GEQ EQ DIV COMMA AND ]
+local_expr -> local_expr . GEQ local_expr [ TIMES RPAREN PLUS OR NEQ MINUS LT LEQ GT GEQ EQ DIV COMMA AND ]
+local_expr -> LPAREN local_expr . COMMA local_expr RPAREN [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> LPAREN local_expr . RPAREN [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+## Transitions:
+-- On TIMES shift to state 85
+-- On RPAREN shift to state 114
+-- On PLUS shift to state 87
+-- On OR shift to state 91
+-- On NEQ shift to state 93
+-- On MINUS shift to state 95
+-- On LT shift to state 97
+-- On LEQ shift to state 99
+-- On GT shift to state 101
+-- On GEQ shift to state 103
+-- On EQ shift to state 105
+-- On DIV shift to state 89
+-- On COMMA shift to state 115
+-- On AND shift to state 107
+## Reductions:
+
+State 114:
+## Known stack suffix:
+## LPAREN local_expr RPAREN
+## LR(1) items:
+local_expr -> LPAREN local_expr RPAREN . [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+## Transitions:
+## Reductions:
+-- On WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND
+--   reduce production local_expr -> LPAREN local_expr RPAREN
+
+State 115:
+## Known stack suffix:
+## LPAREN local_expr COMMA
+## LR(1) items:
+local_expr -> LPAREN local_expr COMMA . local_expr RPAREN [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+## Transitions:
+-- On TRUE shift to state 34
+-- On STRING shift to state 35
+-- On SND shift to state 68
+-- On RIGHT shift to state 69
+-- On NOT shift to state 70
+-- On MINUS shift to state 71
+-- On MATCH shift to state 72
+-- On LPAREN shift to state 73
+-- On LET shift to state 75
+-- On LEFT shift to state 80
+-- On INT shift to state 39
+-- On ID shift to state 40
+-- On FST shift to state 81
+-- On FALSE shift to state 41
+-- On var_id shift to state 82
+-- On value shift to state 83
+-- On local_expr shift to state 116
+## Reductions:
+
+State 116:
+## Known stack suffix:
+## LPAREN local_expr COMMA local_expr
+## LR(1) items:
+local_expr -> local_expr . PLUS local_expr [ TIMES RPAREN PLUS OR NEQ MINUS LT LEQ GT GEQ EQ DIV AND ]
+local_expr -> local_expr . MINUS local_expr [ TIMES RPAREN PLUS OR NEQ MINUS LT LEQ GT GEQ EQ DIV AND ]
+local_expr -> local_expr . TIMES local_expr [ TIMES RPAREN PLUS OR NEQ MINUS LT LEQ GT GEQ EQ DIV AND ]
+local_expr -> local_expr . DIV local_expr [ TIMES RPAREN PLUS OR NEQ MINUS LT LEQ GT GEQ EQ DIV AND ]
+local_expr -> local_expr . AND local_expr [ TIMES RPAREN PLUS OR NEQ MINUS LT LEQ GT GEQ EQ DIV AND ]
+local_expr -> local_expr . OR local_expr [ TIMES RPAREN PLUS OR NEQ MINUS LT LEQ GT GEQ EQ DIV AND ]
+local_expr -> local_expr . EQ local_expr [ TIMES RPAREN PLUS OR NEQ MINUS LT LEQ GT GEQ EQ DIV AND ]
+local_expr -> local_expr . NEQ local_expr [ TIMES RPAREN PLUS OR NEQ MINUS LT LEQ GT GEQ EQ DIV AND ]
+local_expr -> local_expr . LT local_expr [ TIMES RPAREN PLUS OR NEQ MINUS LT LEQ GT GEQ EQ DIV AND ]
+local_expr -> local_expr . LEQ local_expr [ TIMES RPAREN PLUS OR NEQ MINUS LT LEQ GT GEQ EQ DIV AND ]
+local_expr -> local_expr . GT local_expr [ TIMES RPAREN PLUS OR NEQ MINUS LT LEQ GT GEQ EQ DIV AND ]
+local_expr -> local_expr . GEQ local_expr [ TIMES RPAREN PLUS OR NEQ MINUS LT LEQ GT GEQ EQ DIV AND ]
+local_expr -> LPAREN local_expr COMMA local_expr . RPAREN [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+## Transitions:
+-- On TIMES shift to state 85
+-- On RPAREN shift to state 117
+-- On PLUS shift to state 87
+-- On OR shift to state 91
+-- On NEQ shift to state 93
+-- On MINUS shift to state 95
+-- On LT shift to state 97
+-- On LEQ shift to state 99
+-- On GT shift to state 101
+-- On GEQ shift to state 103
+-- On EQ shift to state 105
+-- On DIV shift to state 89
+-- On AND shift to state 107
+## Reductions:
+
+State 117:
+## Known stack suffix:
+## LPAREN local_expr COMMA local_expr RPAREN
+## LR(1) items:
+local_expr -> LPAREN local_expr COMMA local_expr RPAREN . [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+## Transitions:
+## Reductions:
+-- On WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND
+--   reduce production local_expr -> LPAREN local_expr COMMA local_expr RPAREN
+
+State 118:
+## Known stack suffix:
+## MATCH local_expr
+## LR(1) items:
+local_expr -> local_expr . PLUS local_expr [ WITH TIMES PLUS OR NEQ MINUS LT LEQ GT GEQ EQ DIV AND ]
+local_expr -> local_expr . MINUS local_expr [ WITH TIMES PLUS OR NEQ MINUS LT LEQ GT GEQ EQ DIV AND ]
+local_expr -> local_expr . TIMES local_expr [ WITH TIMES PLUS OR NEQ MINUS LT LEQ GT GEQ EQ DIV AND ]
+local_expr -> local_expr . DIV local_expr [ WITH TIMES PLUS OR NEQ MINUS LT LEQ GT GEQ EQ DIV AND ]
+local_expr -> local_expr . AND local_expr [ WITH TIMES PLUS OR NEQ MINUS LT LEQ GT GEQ EQ DIV AND ]
+local_expr -> local_expr . OR local_expr [ WITH TIMES PLUS OR NEQ MINUS LT LEQ GT GEQ EQ DIV AND ]
+local_expr -> local_expr . EQ local_expr [ WITH TIMES PLUS OR NEQ MINUS LT LEQ GT GEQ EQ DIV AND ]
+local_expr -> local_expr . NEQ local_expr [ WITH TIMES PLUS OR NEQ MINUS LT LEQ GT GEQ EQ DIV AND ]
+local_expr -> local_expr . LT local_expr [ WITH TIMES PLUS OR NEQ MINUS LT LEQ GT GEQ EQ DIV AND ]
+local_expr -> local_expr . LEQ local_expr [ WITH TIMES PLUS OR NEQ MINUS LT LEQ GT GEQ EQ DIV AND ]
+local_expr -> local_expr . GT local_expr [ WITH TIMES PLUS OR NEQ MINUS LT LEQ GT GEQ EQ DIV AND ]
+local_expr -> local_expr . GEQ local_expr [ WITH TIMES PLUS OR NEQ MINUS LT LEQ GT GEQ EQ DIV AND ]
+local_expr -> MATCH local_expr . WITH nonempty_list(local_case) [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+## Transitions:
+-- On WITH shift to state 119
+-- On TIMES shift to state 85
+-- On PLUS shift to state 87
+-- On OR shift to state 91
+-- On NEQ shift to state 93
+-- On MINUS shift to state 95
+-- On LT shift to state 97
+-- On LEQ shift to state 99
+-- On GT shift to state 101
+-- On GEQ shift to state 103
+-- On EQ shift to state 105
+-- On DIV shift to state 89
+-- On AND shift to state 107
+## Reductions:
+
+State 119:
+## Known stack suffix:
+## MATCH local_expr WITH
+## LR(1) items:
+local_expr -> MATCH local_expr WITH . nonempty_list(local_case) [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+## Transitions:
+-- On BAR shift to state 120
+-- On nonempty_list(local_case) shift to state 125
+## Reductions:
+
+State 120:
+## Known stack suffix:
+## BAR
+## LR(1) items:
+nonempty_list(local_case) -> BAR . local_pattern ARROW local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+nonempty_list(local_case) -> BAR . local_pattern ARROW local_expr nonempty_list(local_case) [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+## Transitions:
+-- On UNDERSCORE shift to state 1
+-- On TRUE shift to state 34
+-- On STRING shift to state 35
+-- On RIGHT shift to state 36
+-- On LPAREN shift to state 37
+-- On LEFT shift to state 38
+-- On INT shift to state 39
+-- On ID shift to state 40
+-- On FALSE shift to state 41
+-- On var_id shift to state 42
+-- On value shift to state 43
+-- On local_pattern shift to state 121
+## Reductions:
+
+State 121:
+## Known stack suffix:
+## BAR local_pattern
+## LR(1) items:
+nonempty_list(local_case) -> BAR local_pattern . ARROW local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+nonempty_list(local_case) -> BAR local_pattern . ARROW local_expr nonempty_list(local_case) [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+## Transitions:
+-- On ARROW shift to state 122
+## Reductions:
+
+State 122:
+## Known stack suffix:
+## BAR local_pattern ARROW
+## LR(1) items:
+nonempty_list(local_case) -> BAR local_pattern ARROW . local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+nonempty_list(local_case) -> BAR local_pattern ARROW . local_expr nonempty_list(local_case) [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+## Transitions:
+-- On TRUE shift to state 34
+-- On STRING shift to state 35
+-- On SND shift to state 68
+-- On RIGHT shift to state 69
+-- On NOT shift to state 70
+-- On MINUS shift to state 71
+-- On MATCH shift to state 72
+-- On LPAREN shift to state 73
+-- On LET shift to state 75
+-- On LEFT shift to state 80
+-- On INT shift to state 39
+-- On ID shift to state 40
+-- On FST shift to state 81
+-- On FALSE shift to state 41
+-- On var_id shift to state 82
+-- On value shift to state 83
+-- On local_expr shift to state 123
+## Reductions:
+
+State 123:
+## Known stack suffix:
+## BAR local_pattern ARROW local_expr
+## LR(1) items:
+local_expr -> local_expr . PLUS local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . MINUS local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . TIMES local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . DIV local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . AND local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . OR local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . EQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . NEQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . LT local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . LEQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . GT local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . GEQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+nonempty_list(local_case) -> BAR local_pattern ARROW local_expr . [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+nonempty_list(local_case) -> BAR local_pattern ARROW local_expr . nonempty_list(local_case) [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+## Transitions:
+-- On TIMES shift to state 85
+-- On PLUS shift to state 87
+-- On OR shift to state 91
+-- On NEQ shift to state 93
+-- On MINUS shift to state 95
+-- On LT shift to state 97
+-- On LEQ shift to state 99
+-- On GT shift to state 101
+-- On GEQ shift to state 103
+-- On EQ shift to state 105
+-- On DIV shift to state 89
+-- On BAR shift to state 120
+-- On AND shift to state 107
+-- On nonempty_list(local_case) shift to state 124
+## Reductions:
+-- On WITH TILDE_ARROW THEN SEMICOLON RPAREN IN ELSE COMMA
+--   reduce production nonempty_list(local_case) -> BAR local_pattern ARROW local_expr
+
+State 124:
+## Known stack suffix:
+## BAR local_pattern ARROW local_expr nonempty_list(local_case)
+## LR(1) items:
+nonempty_list(local_case) -> BAR local_pattern ARROW local_expr nonempty_list(local_case) . [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+## Transitions:
+## Reductions:
+-- On WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND
+--   reduce production nonempty_list(local_case) -> BAR local_pattern ARROW local_expr nonempty_list(local_case)
+
+State 125:
+## Known stack suffix:
+## MATCH local_expr WITH nonempty_list(local_case)
+## LR(1) items:
+local_expr -> MATCH local_expr WITH nonempty_list(local_case) . [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+## Transitions:
+## Reductions:
+-- On WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND
+--   reduce production local_expr -> MATCH local_expr WITH nonempty_list(local_case)
+
+State 126:
+## Known stack suffix:
+## MINUS local_expr
+## LR(1) items:
+local_expr -> MINUS local_expr . [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . PLUS local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . MINUS local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . TIMES local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . DIV local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . AND local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . OR local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . EQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . NEQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . LT local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . LEQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . GT local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . GEQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+## Transitions:
+## Reductions:
+-- On WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND
+--   reduce production local_expr -> MINUS local_expr
+
+State 127:
+## Known stack suffix:
+## NOT local_expr
+## LR(1) items:
+local_expr -> NOT local_expr . [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . PLUS local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . MINUS local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . TIMES local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . DIV local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . AND local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . OR local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . EQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . NEQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . LT local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . LEQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . GT local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . GEQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+## Transitions:
+## Reductions:
+-- On WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND
+--   reduce production local_expr -> NOT local_expr
+
+State 128:
+## Known stack suffix:
+## RIGHT local_expr
+## LR(1) items:
+local_expr -> local_expr . PLUS local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . MINUS local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . TIMES local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . DIV local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . AND local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . OR local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . EQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . NEQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . LT local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . LEQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . GT local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . GEQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> RIGHT local_expr . [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+## Transitions:
+-- On TIMES shift to state 85
+-- On PLUS shift to state 87
+-- On OR shift to state 91
+-- On NEQ shift to state 93
+-- On MINUS shift to state 95
+-- On LT shift to state 97
+-- On LEQ shift to state 99
+-- On GT shift to state 101
+-- On GEQ shift to state 103
+-- On EQ shift to state 105
+-- On DIV shift to state 89
+-- On AND shift to state 107
+## Reductions:
+-- On WITH TILDE_ARROW THEN SEMICOLON RPAREN IN ELSE COMMA BAR
+--   reduce production local_expr -> RIGHT local_expr
+
+State 129:
+## Known stack suffix:
+## SND local_expr
+## LR(1) items:
+local_expr -> local_expr . PLUS local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . MINUS local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . TIMES local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . DIV local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . AND local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . OR local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . EQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . NEQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . LT local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . LEQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . GT local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . GEQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> SND local_expr . [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ IN GT GEQ EQ ELSE DIV COMMA BAR AND ]
+## Transitions:
+-- On TIMES shift to state 85
+-- On PLUS shift to state 87
+-- On OR shift to state 91
+-- On NEQ shift to state 93
+-- On MINUS shift to state 95
+-- On LT shift to state 97
+-- On LEQ shift to state 99
+-- On GT shift to state 101
+-- On GEQ shift to state 103
+-- On EQ shift to state 105
+-- On DIV shift to state 89
+-- On AND shift to state 107
+## Reductions:
+-- On WITH TILDE_ARROW THEN SEMICOLON RPAREN IN ELSE COMMA BAR
+--   reduce production local_expr -> SND local_expr
+
+State 130:
+## Known stack suffix:
+## RET local_expr
+## LR(1) items:
+local_expr -> local_expr . PLUS local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . MINUS local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . TIMES local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . DIV local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . AND local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . OR local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . EQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . NEQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . LT local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . LEQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . GT local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ GT GEQ EQ ELSE DIV COMMA BAR AND ]
+local_expr -> local_expr . GEQ local_expr [ WITH TIMES TILDE_ARROW THEN SEMICOLON RPAREN PLUS OR NEQ MINUS LT LEQ GT GEQ EQ ELSE DIV COMMA BAR AND ]
+net_expr -> RET local_expr . [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+## Transitions:
+-- On TIMES shift to state 85
+-- On PLUS shift to state 87
+-- On OR shift to state 91
+-- On NEQ shift to state 93
+-- On MINUS shift to state 95
+-- On LT shift to state 97
+-- On LEQ shift to state 99
+-- On GT shift to state 101
+-- On GEQ shift to state 103
+-- On EQ shift to state 105
+-- On DIV shift to state 89
+-- On AND shift to state 107
+## Reductions:
+-- On WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR
+--   reduce production net_expr -> RET local_expr
+
+State 131:
+## Known stack suffix:
+## RECV
+## LR(1) items:
+net_expr -> RECV . FROM loc_id [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+## Transitions:
+-- On FROM shift to state 132
+## Reductions:
+
+State 132:
+## Known stack suffix:
+## RECV FROM
+## LR(1) items:
+net_expr -> RECV FROM . loc_id [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+## Transitions:
+-- On ID shift to state 8
+-- On loc_id shift to state 133
+## Reductions:
+
+State 133:
+## Known stack suffix:
+## RECV FROM loc_id
+## LR(1) items:
+net_expr -> RECV FROM loc_id . [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+## Transitions:
+## Reductions:
+-- On WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR
+--   reduce production net_expr -> RECV FROM loc_id
+
+State 134:
+## Known stack suffix:
+## MATCH
+## LR(1) items:
+net_expr -> MATCH . net_expr WITH nonempty_list(net_case) [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+## Transitions:
+-- On UNIT_T shift to state 63
+-- On SND shift to state 64
+-- On SEND shift to state 65
+-- On RIGHT shift to state 66
+-- On RET shift to state 67
+-- On RECV shift to state 131
+-- On MATCH shift to state 134
+-- On LPAREN shift to state 135
+-- On LET shift to state 136
+-- On LEFT shift to state 139
+-- On IF shift to state 140
+-- On ID shift to state 40
+-- On FUN shift to state 141
+-- On FST shift to state 144
+-- On CHOOSE shift to state 145
+-- On ALLOW shift to state 151
+-- On var_id shift to state 159
+-- On net_expr shift to state 186
+## Reductions:
+
+State 135:
+## Known stack suffix:
+## LPAREN
+## LR(1) items:
+net_expr -> LPAREN . net_expr COMMA net_expr RPAREN [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+net_expr -> LPAREN . net_expr RPAREN [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+## Transitions:
+-- On UNIT_T shift to state 63
+-- On SND shift to state 64
+-- On SEND shift to state 65
+-- On RIGHT shift to state 66
+-- On RET shift to state 67
+-- On RECV shift to state 131
+-- On MATCH shift to state 134
+-- On LPAREN shift to state 135
+-- On LET shift to state 136
+-- On LEFT shift to state 139
+-- On IF shift to state 140
+-- On ID shift to state 40
+-- On FUN shift to state 141
+-- On FST shift to state 144
+-- On CHOOSE shift to state 145
+-- On ALLOW shift to state 151
+-- On var_id shift to state 159
+-- On net_expr shift to state 181
+## Reductions:
+
+State 136:
+## Known stack suffix:
+## LET
+## LR(1) items:
+net_expr -> LET . stmt_block IN net_expr [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+## Transitions:
+-- On UNDERSCORE shift to state 1
+-- On TYPE shift to state 2
+-- On TRUE shift to state 34
+-- On STRING shift to state 35
+-- On RIGHT shift to state 36
+-- On LPAREN shift to state 37
+-- On LEFT shift to state 38
+-- On INT shift to state 39
+-- On ID shift to state 40
+-- On FOREIGN shift to state 51
+-- On FALSE shift to state 41
+-- On var_id shift to state 42
+-- On value shift to state 43
+-- On stmt_block shift to state 137
+-- On stmt shift to state 60
+-- On nonempty_list(local_pattern) shift to state 61
+-- On local_pattern shift to state 175
+-- On list(stmt) shift to state 179
+-- On foreign_decl shift to state 180
+## Reductions:
+-- On IN
+--   reduce production list(stmt) ->
+
+State 137:
+## Known stack suffix:
+## LET stmt_block
+## LR(1) items:
+net_expr -> LET stmt_block . IN net_expr [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+## Transitions:
+-- On IN shift to state 138
+## Reductions:
+
+State 138:
+## Known stack suffix:
+## LET stmt_block IN
+## LR(1) items:
+net_expr -> LET stmt_block IN . net_expr [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+## Transitions:
+-- On UNIT_T shift to state 63
+-- On SND shift to state 64
+-- On SEND shift to state 65
+-- On RIGHT shift to state 66
+-- On RET shift to state 67
+-- On RECV shift to state 131
+-- On MATCH shift to state 134
+-- On LPAREN shift to state 135
+-- On LET shift to state 136
+-- On LEFT shift to state 139
+-- On IF shift to state 140
+-- On ID shift to state 40
+-- On FUN shift to state 141
+-- On FST shift to state 144
+-- On CHOOSE shift to state 145
+-- On ALLOW shift to state 151
+-- On var_id shift to state 159
+-- On net_expr shift to state 174
+## Reductions:
+
+State 139:
+## Known stack suffix:
+## LEFT
+## LR(1) items:
+net_expr -> LEFT . net_expr [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+## Transitions:
+-- On UNIT_T shift to state 63
+-- On SND shift to state 64
+-- On SEND shift to state 65
+-- On RIGHT shift to state 66
+-- On RET shift to state 67
+-- On RECV shift to state 131
+-- On MATCH shift to state 134
+-- On LPAREN shift to state 135
+-- On LET shift to state 136
+-- On LEFT shift to state 139
+-- On IF shift to state 140
+-- On ID shift to state 40
+-- On FUN shift to state 141
+-- On FST shift to state 144
+-- On CHOOSE shift to state 145
+-- On ALLOW shift to state 151
+-- On var_id shift to state 159
+-- On net_expr shift to state 173
+## Reductions:
+
+State 140:
+## Known stack suffix:
+## IF
+## LR(1) items:
+net_expr -> IF . net_expr THEN net_expr ELSE net_expr [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+## Transitions:
+-- On UNIT_T shift to state 63
+-- On SND shift to state 64
+-- On SEND shift to state 65
+-- On RIGHT shift to state 66
+-- On RET shift to state 67
+-- On RECV shift to state 131
+-- On MATCH shift to state 134
+-- On LPAREN shift to state 135
+-- On LET shift to state 136
+-- On LEFT shift to state 139
+-- On IF shift to state 140
+-- On ID shift to state 40
+-- On FUN shift to state 141
+-- On FST shift to state 144
+-- On CHOOSE shift to state 145
+-- On ALLOW shift to state 151
+-- On var_id shift to state 159
+-- On net_expr shift to state 168
+## Reductions:
+
+State 141:
+## Known stack suffix:
+## FUN
+## LR(1) items:
+net_expr -> FUN . nonempty_list(local_pattern) ARROW net_expr [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+## Transitions:
+-- On UNDERSCORE shift to state 1
+-- On TRUE shift to state 34
+-- On STRING shift to state 35
+-- On RIGHT shift to state 36
+-- On LPAREN shift to state 37
+-- On LEFT shift to state 38
+-- On INT shift to state 39
+-- On ID shift to state 40
+-- On FALSE shift to state 41
+-- On var_id shift to state 42
+-- On value shift to state 43
+-- On nonempty_list(local_pattern) shift to state 142
+-- On local_pattern shift to state 166
+## Reductions:
+
+State 142:
+## Known stack suffix:
+## FUN nonempty_list(local_pattern)
+## LR(1) items:
+net_expr -> FUN nonempty_list(local_pattern) . ARROW net_expr [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+## Transitions:
+-- On ARROW shift to state 143
+## Reductions:
+
+State 143:
+## Known stack suffix:
+## FUN nonempty_list(local_pattern) ARROW
+## LR(1) items:
+net_expr -> FUN nonempty_list(local_pattern) ARROW . net_expr [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+## Transitions:
+-- On UNIT_T shift to state 63
+-- On SND shift to state 64
+-- On SEND shift to state 65
+-- On RIGHT shift to state 66
+-- On RET shift to state 67
+-- On RECV shift to state 131
+-- On MATCH shift to state 134
+-- On LPAREN shift to state 135
+-- On LET shift to state 136
+-- On LEFT shift to state 139
+-- On IF shift to state 140
+-- On ID shift to state 40
+-- On FUN shift to state 141
+-- On FST shift to state 144
+-- On CHOOSE shift to state 145
+-- On ALLOW shift to state 151
+-- On var_id shift to state 159
+-- On net_expr shift to state 165
+## Reductions:
+
+State 144:
+## Known stack suffix:
+## FST
+## LR(1) items:
+net_expr -> FST . net_expr [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+## Transitions:
+-- On UNIT_T shift to state 63
+-- On SND shift to state 64
+-- On SEND shift to state 65
+-- On RIGHT shift to state 66
+-- On RET shift to state 67
+-- On RECV shift to state 131
+-- On MATCH shift to state 134
+-- On LPAREN shift to state 135
+-- On LET shift to state 136
+-- On LEFT shift to state 139
+-- On IF shift to state 140
+-- On ID shift to state 40
+-- On FUN shift to state 141
+-- On FST shift to state 144
+-- On CHOOSE shift to state 145
+-- On ALLOW shift to state 151
+-- On var_id shift to state 159
+-- On net_expr shift to state 164
+## Reductions:
+
+State 145:
+## Known stack suffix:
+## CHOOSE
+## LR(1) items:
+net_expr -> CHOOSE . sync_label FOR loc_id IN net_expr [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+## Transitions:
+-- On ID shift to state 146
+-- On sync_label shift to state 147
+## Reductions:
+
+State 146:
+## Known stack suffix:
+## ID
+## LR(1) items:
+sync_label -> ID . [ FOR ARROW ]
+## Transitions:
+## Reductions:
+-- On FOR ARROW
+--   reduce production sync_label -> ID
+
+State 147:
+## Known stack suffix:
+## CHOOSE sync_label
+## LR(1) items:
+net_expr -> CHOOSE sync_label . FOR loc_id IN net_expr [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+## Transitions:
+-- On FOR shift to state 148
+## Reductions:
+
+State 148:
+## Known stack suffix:
+## CHOOSE sync_label FOR
+## LR(1) items:
+net_expr -> CHOOSE sync_label FOR . loc_id IN net_expr [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+## Transitions:
+-- On ID shift to state 8
+-- On loc_id shift to state 149
+## Reductions:
+
+State 149:
+## Known stack suffix:
+## CHOOSE sync_label FOR loc_id
+## LR(1) items:
+net_expr -> CHOOSE sync_label FOR loc_id . IN net_expr [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+## Transitions:
+-- On IN shift to state 150
+## Reductions:
+
+State 150:
+## Known stack suffix:
+## CHOOSE sync_label FOR loc_id IN
+## LR(1) items:
+net_expr -> CHOOSE sync_label FOR loc_id IN . net_expr [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+## Transitions:
+-- On UNIT_T shift to state 63
+-- On SND shift to state 64
+-- On SEND shift to state 65
+-- On RIGHT shift to state 66
+-- On RET shift to state 67
+-- On RECV shift to state 131
+-- On MATCH shift to state 134
+-- On LPAREN shift to state 135
+-- On LET shift to state 136
+-- On LEFT shift to state 139
+-- On IF shift to state 140
+-- On ID shift to state 40
+-- On FUN shift to state 141
+-- On FST shift to state 144
+-- On CHOOSE shift to state 145
+-- On ALLOW shift to state 151
+-- On var_id shift to state 159
+-- On net_expr shift to state 163
+## Reductions:
+
+State 151:
+## Known stack suffix:
+## ALLOW
+## LR(1) items:
+net_expr -> ALLOW . CHOICE FROM loc_id WITH nonempty_list(sync_choice_case) [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+## Transitions:
+-- On CHOICE shift to state 152
+## Reductions:
+
+State 152:
+## Known stack suffix:
+## ALLOW CHOICE
+## LR(1) items:
+net_expr -> ALLOW CHOICE . FROM loc_id WITH nonempty_list(sync_choice_case) [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+## Transitions:
+-- On FROM shift to state 153
+## Reductions:
+
+State 153:
+## Known stack suffix:
+## ALLOW CHOICE FROM
+## LR(1) items:
+net_expr -> ALLOW CHOICE FROM . loc_id WITH nonempty_list(sync_choice_case) [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+## Transitions:
+-- On ID shift to state 8
+-- On loc_id shift to state 154
+## Reductions:
+
+State 154:
+## Known stack suffix:
+## ALLOW CHOICE FROM loc_id
+## LR(1) items:
+net_expr -> ALLOW CHOICE FROM loc_id . WITH nonempty_list(sync_choice_case) [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+## Transitions:
+-- On WITH shift to state 155
+## Reductions:
+
+State 155:
+## Known stack suffix:
+## ALLOW CHOICE FROM loc_id WITH
+## LR(1) items:
+net_expr -> ALLOW CHOICE FROM loc_id WITH . nonempty_list(sync_choice_case) [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+## Transitions:
+-- On BAR shift to state 156
+-- On nonempty_list(sync_choice_case) shift to state 162
+## Reductions:
+
+State 156:
+## Known stack suffix:
+## BAR
+## LR(1) items:
+nonempty_list(sync_choice_case) -> BAR . sync_label ARROW net_expr [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+nonempty_list(sync_choice_case) -> BAR . sync_label ARROW net_expr nonempty_list(sync_choice_case) [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+## Transitions:
+-- On ID shift to state 146
+-- On sync_label shift to state 157
+## Reductions:
+
+State 157:
+## Known stack suffix:
+## BAR sync_label
+## LR(1) items:
+nonempty_list(sync_choice_case) -> BAR sync_label . ARROW net_expr [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+nonempty_list(sync_choice_case) -> BAR sync_label . ARROW net_expr nonempty_list(sync_choice_case) [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+## Transitions:
+-- On ARROW shift to state 158
+## Reductions:
+
+State 158:
+## Known stack suffix:
+## BAR sync_label ARROW
+## LR(1) items:
+nonempty_list(sync_choice_case) -> BAR sync_label ARROW . net_expr [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+nonempty_list(sync_choice_case) -> BAR sync_label ARROW . net_expr nonempty_list(sync_choice_case) [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+## Transitions:
+-- On UNIT_T shift to state 63
+-- On SND shift to state 64
+-- On SEND shift to state 65
+-- On RIGHT shift to state 66
+-- On RET shift to state 67
+-- On RECV shift to state 131
+-- On MATCH shift to state 134
+-- On LPAREN shift to state 135
+-- On LET shift to state 136
+-- On LEFT shift to state 139
+-- On IF shift to state 140
+-- On ID shift to state 40
+-- On FUN shift to state 141
+-- On FST shift to state 144
+-- On CHOOSE shift to state 145
+-- On ALLOW shift to state 151
+-- On var_id shift to state 159
+-- On net_expr shift to state 160
+## Reductions:
+
+State 159:
+## Known stack suffix:
+## var_id
+## LR(1) items:
+net_expr -> var_id . [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+## Transitions:
+## Reductions:
+-- On WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR
+--   reduce production net_expr -> var_id
+
+State 160:
+## Known stack suffix:
+## BAR sync_label ARROW net_expr
+## LR(1) items:
+nonempty_list(sync_choice_case) -> BAR sync_label ARROW net_expr . [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+nonempty_list(sync_choice_case) -> BAR sync_label ARROW net_expr . nonempty_list(sync_choice_case) [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+## Transitions:
+-- On BAR shift to state 156
+-- On nonempty_list(sync_choice_case) shift to state 161
+## Reductions:
+-- On WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA
+--   reduce production nonempty_list(sync_choice_case) -> BAR sync_label ARROW net_expr
+
+State 161:
+## Known stack suffix:
+## BAR sync_label ARROW net_expr nonempty_list(sync_choice_case)
+## LR(1) items:
+nonempty_list(sync_choice_case) -> BAR sync_label ARROW net_expr nonempty_list(sync_choice_case) . [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+## Transitions:
+## Reductions:
+-- On WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR
+--   reduce production nonempty_list(sync_choice_case) -> BAR sync_label ARROW net_expr nonempty_list(sync_choice_case)
+
+State 162:
+## Known stack suffix:
+## ALLOW CHOICE FROM loc_id WITH nonempty_list(sync_choice_case)
+## LR(1) items:
+net_expr -> ALLOW CHOICE FROM loc_id WITH nonempty_list(sync_choice_case) . [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+## Transitions:
+## Reductions:
+-- On WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR
+--   reduce production net_expr -> ALLOW CHOICE FROM loc_id WITH nonempty_list(sync_choice_case)
+
+State 163:
+## Known stack suffix:
+## CHOOSE sync_label FOR loc_id IN net_expr
+## LR(1) items:
+net_expr -> CHOOSE sync_label FOR loc_id IN net_expr . [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+## Transitions:
+## Reductions:
+-- On WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR
+--   reduce production net_expr -> CHOOSE sync_label FOR loc_id IN net_expr
+
+State 164:
+## Known stack suffix:
+## FST net_expr
+## LR(1) items:
+net_expr -> FST net_expr . [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+## Transitions:
+## Reductions:
+-- On WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR
+--   reduce production net_expr -> FST net_expr
+
+State 165:
+## Known stack suffix:
+## FUN nonempty_list(local_pattern) ARROW net_expr
+## LR(1) items:
+net_expr -> FUN nonempty_list(local_pattern) ARROW net_expr . [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+## Transitions:
+## Reductions:
+-- On WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR
+--   reduce production net_expr -> FUN nonempty_list(local_pattern) ARROW net_expr
+
+State 166:
+## Known stack suffix:
+## local_pattern
+## LR(1) items:
+nonempty_list(local_pattern) -> local_pattern . [ COLONEQ ARROW ]
+nonempty_list(local_pattern) -> local_pattern . nonempty_list(local_pattern) [ COLONEQ ARROW ]
+## Transitions:
+-- On UNDERSCORE shift to state 1
+-- On TRUE shift to state 34
+-- On STRING shift to state 35
+-- On RIGHT shift to state 36
+-- On LPAREN shift to state 37
+-- On LEFT shift to state 38
+-- On INT shift to state 39
+-- On ID shift to state 40
+-- On FALSE shift to state 41
+-- On var_id shift to state 42
+-- On value shift to state 43
+-- On nonempty_list(local_pattern) shift to state 167
+-- On local_pattern shift to state 166
+## Reductions:
+-- On COLONEQ ARROW
+--   reduce production nonempty_list(local_pattern) -> local_pattern
+
+State 167:
+## Known stack suffix:
+## local_pattern nonempty_list(local_pattern)
+## LR(1) items:
+nonempty_list(local_pattern) -> local_pattern nonempty_list(local_pattern) . [ COLONEQ ARROW ]
+## Transitions:
+## Reductions:
+-- On COLONEQ ARROW
+--   reduce production nonempty_list(local_pattern) -> local_pattern nonempty_list(local_pattern)
+
+State 168:
+## Known stack suffix:
+## IF net_expr
+## LR(1) items:
+net_expr -> IF net_expr . THEN net_expr ELSE net_expr [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+## Transitions:
+-- On THEN shift to state 169
+## Reductions:
+
+State 169:
+## Known stack suffix:
+## IF net_expr THEN
+## LR(1) items:
+net_expr -> IF net_expr THEN . net_expr ELSE net_expr [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+## Transitions:
+-- On UNIT_T shift to state 63
+-- On SND shift to state 64
+-- On SEND shift to state 65
+-- On RIGHT shift to state 66
+-- On RET shift to state 67
+-- On RECV shift to state 131
+-- On MATCH shift to state 134
+-- On LPAREN shift to state 135
+-- On LET shift to state 136
+-- On LEFT shift to state 139
+-- On IF shift to state 140
+-- On ID shift to state 40
+-- On FUN shift to state 141
+-- On FST shift to state 144
+-- On CHOOSE shift to state 145
+-- On ALLOW shift to state 151
+-- On var_id shift to state 159
+-- On net_expr shift to state 170
+## Reductions:
+
+State 170:
+## Known stack suffix:
+## IF net_expr THEN net_expr
+## LR(1) items:
+net_expr -> IF net_expr THEN net_expr . ELSE net_expr [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+## Transitions:
+-- On ELSE shift to state 171
+## Reductions:
+
+State 171:
+## Known stack suffix:
+## IF net_expr THEN net_expr ELSE
+## LR(1) items:
+net_expr -> IF net_expr THEN net_expr ELSE . net_expr [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+## Transitions:
+-- On UNIT_T shift to state 63
+-- On SND shift to state 64
+-- On SEND shift to state 65
+-- On RIGHT shift to state 66
+-- On RET shift to state 67
+-- On RECV shift to state 131
+-- On MATCH shift to state 134
+-- On LPAREN shift to state 135
+-- On LET shift to state 136
+-- On LEFT shift to state 139
+-- On IF shift to state 140
+-- On ID shift to state 40
+-- On FUN shift to state 141
+-- On FST shift to state 144
+-- On CHOOSE shift to state 145
+-- On ALLOW shift to state 151
+-- On var_id shift to state 159
+-- On net_expr shift to state 172
+## Reductions:
+
+State 172:
+## Known stack suffix:
+## IF net_expr THEN net_expr ELSE net_expr
+## LR(1) items:
+net_expr -> IF net_expr THEN net_expr ELSE net_expr . [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+## Transitions:
+## Reductions:
+-- On WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR
+--   reduce production net_expr -> IF net_expr THEN net_expr ELSE net_expr
+
+State 173:
+## Known stack suffix:
+## LEFT net_expr
+## LR(1) items:
+net_expr -> LEFT net_expr . [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+## Transitions:
+## Reductions:
+-- On WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR
+--   reduce production net_expr -> LEFT net_expr
+
+State 174:
+## Known stack suffix:
+## LET stmt_block IN net_expr
+## LR(1) items:
+net_expr -> LET stmt_block IN net_expr . [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+## Transitions:
+## Reductions:
+-- On WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR
+--   reduce production net_expr -> LET stmt_block IN net_expr
+
+State 175:
+## Known stack suffix:
+## local_pattern
+## LR(1) items:
+nonempty_list(local_pattern) -> local_pattern . [ COLONEQ ]
+nonempty_list(local_pattern) -> local_pattern . nonempty_list(local_pattern) [ COLONEQ ]
+stmt -> local_pattern . COLON net_type SEMICOLON [ UNDERSCORE TYPE TRUE STRING RIGHT LPAREN LEFT INT IN ID FOREIGN FALSE EOF ]
+## Transitions:
+-- On UNDERSCORE shift to state 1
+-- On TRUE shift to state 34
+-- On STRING shift to state 35
+-- On RIGHT shift to state 36
+-- On LPAREN shift to state 37
+-- On LEFT shift to state 38
+-- On INT shift to state 39
+-- On ID shift to state 40
+-- On FALSE shift to state 41
+-- On COLON shift to state 176
+-- On var_id shift to state 42
+-- On value shift to state 43
+-- On nonempty_list(local_pattern) shift to state 167
+-- On local_pattern shift to state 166
+## Reductions:
+-- On COLONEQ
+--   reduce production nonempty_list(local_pattern) -> local_pattern
+
+State 176:
+## Known stack suffix:
+## local_pattern COLON
+## LR(1) items:
+stmt -> local_pattern COLON . net_type SEMICOLON [ UNDERSCORE TYPE TRUE STRING RIGHT LPAREN LEFT INT IN ID FOREIGN FALSE EOF ]
+## Transitions:
+-- On UNIT_T shift to state 6
+-- On LPAREN shift to state 7
+-- On ID shift to state 8
+-- On net_type shift to state 177
+-- On loc_id shift to state 12
+## Reductions:
+
+State 177:
+## Known stack suffix:
+## local_pattern COLON net_type
+## LR(1) items:
+net_type -> net_type . ARROW net_type [ TIMES SEMICOLON PLUS ARROW ]
+net_type -> net_type . TIMES net_type [ TIMES SEMICOLON PLUS ARROW ]
+net_type -> net_type . PLUS net_type [ TIMES SEMICOLON PLUS ARROW ]
+stmt -> local_pattern COLON net_type . SEMICOLON [ UNDERSCORE TYPE TRUE STRING RIGHT LPAREN LEFT INT IN ID FOREIGN FALSE EOF ]
+## Transitions:
+-- On TIMES shift to state 10
+-- On SEMICOLON shift to state 178
+-- On PLUS shift to state 27
+-- On ARROW shift to state 29
+## Reductions:
+
+State 178:
+## Known stack suffix:
+## local_pattern COLON net_type SEMICOLON
+## LR(1) items:
+stmt -> local_pattern COLON net_type SEMICOLON . [ UNDERSCORE TYPE TRUE STRING RIGHT LPAREN LEFT INT IN ID FOREIGN FALSE EOF ]
+## Transitions:
+## Reductions:
+-- On UNDERSCORE TYPE TRUE STRING RIGHT LPAREN LEFT INT IN ID FOREIGN FALSE EOF
+--   reduce production stmt -> local_pattern COLON net_type SEMICOLON
+
+State 179:
+## Known stack suffix:
+## list(stmt)
+## LR(1) items:
+stmt_block -> list(stmt) . [ IN EOF ]
+## Transitions:
+## Reductions:
+-- On IN EOF
+--   reduce production stmt_block -> list(stmt)
+
+State 180:
+## Known stack suffix:
+## foreign_decl
+## LR(1) items:
+stmt -> foreign_decl . [ UNDERSCORE TYPE TRUE STRING RIGHT LPAREN LEFT INT IN ID FOREIGN FALSE EOF ]
+## Transitions:
+## Reductions:
+-- On UNDERSCORE TYPE TRUE STRING RIGHT LPAREN LEFT INT IN ID FOREIGN FALSE EOF
+--   reduce production stmt -> foreign_decl
+
+State 181:
+## Known stack suffix:
+## LPAREN net_expr
+## LR(1) items:
+net_expr -> LPAREN net_expr . COMMA net_expr RPAREN [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+net_expr -> LPAREN net_expr . RPAREN [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+## Transitions:
+-- On RPAREN shift to state 182
+-- On COMMA shift to state 183
+## Reductions:
+
+State 182:
+## Known stack suffix:
+## LPAREN net_expr RPAREN
+## LR(1) items:
+net_expr -> LPAREN net_expr RPAREN . [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+## Transitions:
+## Reductions:
+-- On WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR
+--   reduce production net_expr -> LPAREN net_expr RPAREN
+
+State 183:
+## Known stack suffix:
+## LPAREN net_expr COMMA
+## LR(1) items:
+net_expr -> LPAREN net_expr COMMA . net_expr RPAREN [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+## Transitions:
+-- On UNIT_T shift to state 63
+-- On SND shift to state 64
+-- On SEND shift to state 65
+-- On RIGHT shift to state 66
+-- On RET shift to state 67
+-- On RECV shift to state 131
+-- On MATCH shift to state 134
+-- On LPAREN shift to state 135
+-- On LET shift to state 136
+-- On LEFT shift to state 139
+-- On IF shift to state 140
+-- On ID shift to state 40
+-- On FUN shift to state 141
+-- On FST shift to state 144
+-- On CHOOSE shift to state 145
+-- On ALLOW shift to state 151
+-- On var_id shift to state 159
+-- On net_expr shift to state 184
+## Reductions:
+
+State 184:
+## Known stack suffix:
+## LPAREN net_expr COMMA net_expr
+## LR(1) items:
+net_expr -> LPAREN net_expr COMMA net_expr . RPAREN [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+## Transitions:
+-- On RPAREN shift to state 185
+## Reductions:
+
+State 185:
+## Known stack suffix:
+## LPAREN net_expr COMMA net_expr RPAREN
+## LR(1) items:
+net_expr -> LPAREN net_expr COMMA net_expr RPAREN . [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+## Transitions:
+## Reductions:
+-- On WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR
+--   reduce production net_expr -> LPAREN net_expr COMMA net_expr RPAREN
+
+State 186:
+## Known stack suffix:
+## MATCH net_expr
+## LR(1) items:
+net_expr -> MATCH net_expr . WITH nonempty_list(net_case) [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+## Transitions:
+-- On WITH shift to state 187
+## Reductions:
+
+State 187:
+## Known stack suffix:
+## MATCH net_expr WITH
+## LR(1) items:
+net_expr -> MATCH net_expr WITH . nonempty_list(net_case) [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+## Transitions:
+-- On BAR shift to state 188
+-- On nonempty_list(net_case) shift to state 193
+## Reductions:
+
+State 188:
+## Known stack suffix:
+## BAR
+## LR(1) items:
+nonempty_list(net_case) -> BAR . local_pattern ARROW net_expr [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+nonempty_list(net_case) -> BAR . local_pattern ARROW net_expr nonempty_list(net_case) [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+## Transitions:
+-- On UNDERSCORE shift to state 1
+-- On TRUE shift to state 34
+-- On STRING shift to state 35
+-- On RIGHT shift to state 36
+-- On LPAREN shift to state 37
+-- On LEFT shift to state 38
+-- On INT shift to state 39
+-- On ID shift to state 40
+-- On FALSE shift to state 41
+-- On var_id shift to state 42
+-- On value shift to state 43
+-- On local_pattern shift to state 189
+## Reductions:
+
+State 189:
+## Known stack suffix:
+## BAR local_pattern
+## LR(1) items:
+nonempty_list(net_case) -> BAR local_pattern . ARROW net_expr [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+nonempty_list(net_case) -> BAR local_pattern . ARROW net_expr nonempty_list(net_case) [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+## Transitions:
+-- On ARROW shift to state 190
+## Reductions:
+
+State 190:
+## Known stack suffix:
+## BAR local_pattern ARROW
+## LR(1) items:
+nonempty_list(net_case) -> BAR local_pattern ARROW . net_expr [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+nonempty_list(net_case) -> BAR local_pattern ARROW . net_expr nonempty_list(net_case) [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+## Transitions:
+-- On UNIT_T shift to state 63
+-- On SND shift to state 64
+-- On SEND shift to state 65
+-- On RIGHT shift to state 66
+-- On RET shift to state 67
+-- On RECV shift to state 131
+-- On MATCH shift to state 134
+-- On LPAREN shift to state 135
+-- On LET shift to state 136
+-- On LEFT shift to state 139
+-- On IF shift to state 140
+-- On ID shift to state 40
+-- On FUN shift to state 141
+-- On FST shift to state 144
+-- On CHOOSE shift to state 145
+-- On ALLOW shift to state 151
+-- On var_id shift to state 159
+-- On net_expr shift to state 191
+## Reductions:
+
+State 191:
+## Known stack suffix:
+## BAR local_pattern ARROW net_expr
+## LR(1) items:
+nonempty_list(net_case) -> BAR local_pattern ARROW net_expr . [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+nonempty_list(net_case) -> BAR local_pattern ARROW net_expr . nonempty_list(net_case) [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+## Transitions:
+-- On BAR shift to state 188
+-- On nonempty_list(net_case) shift to state 192
+## Reductions:
+-- On WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA
+--   reduce production nonempty_list(net_case) -> BAR local_pattern ARROW net_expr
+
+State 192:
+## Known stack suffix:
+## BAR local_pattern ARROW net_expr nonempty_list(net_case)
+## LR(1) items:
+nonempty_list(net_case) -> BAR local_pattern ARROW net_expr nonempty_list(net_case) . [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+## Transitions:
+## Reductions:
+-- On WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR
+--   reduce production nonempty_list(net_case) -> BAR local_pattern ARROW net_expr nonempty_list(net_case)
+
+State 193:
+## Known stack suffix:
+## MATCH net_expr WITH nonempty_list(net_case)
+## LR(1) items:
+net_expr -> MATCH net_expr WITH nonempty_list(net_case) . [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+## Transitions:
+## Reductions:
+-- On WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR
+--   reduce production net_expr -> MATCH net_expr WITH nonempty_list(net_case)
+
+State 194:
+## Known stack suffix:
+## RIGHT net_expr
+## LR(1) items:
+net_expr -> RIGHT net_expr . [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+## Transitions:
+## Reductions:
+-- On WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR
+--   reduce production net_expr -> RIGHT net_expr
+
+State 195:
+## Known stack suffix:
+## SEND net_expr
+## LR(1) items:
+net_expr -> SEND net_expr . TILDE_ARROW loc_id [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+## Transitions:
+-- On TILDE_ARROW shift to state 196
+## Reductions:
+
+State 196:
+## Known stack suffix:
+## SEND net_expr TILDE_ARROW
+## LR(1) items:
+net_expr -> SEND net_expr TILDE_ARROW . loc_id [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+## Transitions:
+-- On ID shift to state 8
+-- On loc_id shift to state 197
+## Reductions:
+
+State 197:
+## Known stack suffix:
+## SEND net_expr TILDE_ARROW loc_id
+## LR(1) items:
+net_expr -> SEND net_expr TILDE_ARROW loc_id . [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+## Transitions:
+## Reductions:
+-- On WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR
+--   reduce production net_expr -> SEND net_expr TILDE_ARROW loc_id
+
+State 198:
+## Known stack suffix:
+## SND net_expr
+## LR(1) items:
+net_expr -> SND net_expr . [ WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR ]
+## Transitions:
+## Reductions:
+-- On WITH TILDE_ARROW THEN SEMICOLON RPAREN ELSE COMMA BAR
+--   reduce production net_expr -> SND net_expr
+
+State 199:
+## Known stack suffix:
+## nonempty_list(local_pattern) COLONEQ net_expr
+## LR(1) items:
+stmt -> nonempty_list(local_pattern) COLONEQ net_expr . SEMICOLON [ UNDERSCORE TYPE TRUE STRING RIGHT LPAREN LEFT INT IN ID FOREIGN FALSE EOF ]
+## Transitions:
+-- On SEMICOLON shift to state 200
+## Reductions:
+
+State 200:
+## Known stack suffix:
+## nonempty_list(local_pattern) COLONEQ net_expr SEMICOLON
+## LR(1) items:
+stmt -> nonempty_list(local_pattern) COLONEQ net_expr SEMICOLON . [ UNDERSCORE TYPE TRUE STRING RIGHT LPAREN LEFT INT IN ID FOREIGN FALSE EOF ]
+## Transitions:
+## Reductions:
+-- On UNDERSCORE TYPE TRUE STRING RIGHT LPAREN LEFT INT IN ID FOREIGN FALSE EOF
+--   reduce production stmt -> nonempty_list(local_pattern) COLONEQ net_expr SEMICOLON
+
+State 201:
+## Known stack suffix:
+## stmt list(stmt)
+## LR(1) items:
+list(stmt) -> stmt list(stmt) . [ IN EOF ]
+## Transitions:
+## Reductions:
+-- On IN EOF
+--   reduce production list(stmt) -> stmt list(stmt)
+
+State 202:
+## Known stack suffix:
+## prog
+## LR(1) items:
+prog' -> prog . [ # ]
+## Transitions:
+## Reductions:
+-- On #
+--   accept prog
+

@@ -150,10 +150,10 @@ and get_choreo_subst local_subst loc_id =
 and get_local_subst (choreo_subst : choreo_subst) (loc_id : ftv Local.loc_id) =
   List.fold_right
     (fun (var_name, t) acc ->
-      match t with
-      | Choreo.TLoc (loc_id', typ, _) ->
-        if loc_id = loc_id' then (var_name, typ) :: acc else acc
-      | _ -> acc)
+       match t with
+       | Choreo.TLoc (loc_id', typ, _) ->
+         if loc_id = loc_id' then (var_name, typ) :: acc else acc
+       | _ -> acc)
     choreo_subst
     []
 
@@ -276,10 +276,10 @@ let rec infer_local_expr local_ctx = function
        let s2, typ_ls =
          List.fold_right
            (fun (expr, ctx) (s_acc, typ_acc) ->
-             let s, typ =
-               infer_local_expr (apply_subst_ctx_local s1 ctx @ local_ctx') expr
-             in
-             compose_subst_local s_acc s, typ :: typ_acc)
+              let s, typ =
+                infer_local_expr (apply_subst_ctx_local s1 ctx @ local_ctx') expr
+              in
+              compose_subst_local s_acc s, typ :: typ_acc)
            (List.combine expr_ls ctx_ls)
            ([], [])
        in
@@ -334,8 +334,8 @@ let rec infer_choreo_stmt choreo_ctx global_ctx stmt
     let s1, t_list, ctx_list =
       List.fold_right
         (fun pat (s_acc, t_acc, ctx_acc) ->
-          let s, t, ctx = infer_choreo_pattern choreo_ctx global_ctx pat in
-          s @ s_acc, t :: t_acc, ctx @ ctx_acc)
+           let s, t, ctx = infer_choreo_pattern choreo_ctx global_ctx pat in
+           s @ s_acc, t :: t_acc, ctx @ ctx_acc)
         pattn_ls
         ([], [], [])
     in
@@ -359,8 +359,8 @@ and infer_choreo_stmt_block choreo_ctx global_ctx stmts
   =
   List.fold_left
     (fun (s_acc, _, ctx_acc) stmt ->
-      let s, t, ctx = infer_choreo_stmt ctx_acc global_ctx stmt in
-      s @ s_acc, t, ctx)
+       let s, t, ctx = infer_choreo_stmt ctx_acc global_ctx stmt in
+       s @ s_acc, t, ctx)
     ([], Choreo.TUnit m, choreo_ctx)
     stmts
 
@@ -427,8 +427,8 @@ and infer_choreo_expr choreo_ctx (global_ctx : global_ctx) = function
     let s1, t_args, ctx =
       List.fold_right
         (fun pat (s_acc, t_acc, ctx_acc) ->
-          let s, t, c = infer_choreo_pattern choreo_ctx global_ctx pat in
-          compose_subst_choreo s_acc s, t :: t_acc, c @ ctx_acc)
+           let s, t, c = infer_choreo_pattern choreo_ctx global_ctx pat in
+           compose_subst_choreo s_acc s, t :: t_acc, c @ ctx_acc)
         args
         ([], [], [])
     in
@@ -533,13 +533,13 @@ and infer_choreo_expr choreo_ctx (global_ctx : global_ctx) = function
        let s2, typ_ls =
          List.fold_right
            (fun (expr, ctx) (s_acc, typ_acc) ->
-             let s, typ =
-               infer_choreo_expr
-                 (apply_subst_ctx_choreo s1 ctx @ choreo_ctx')
-                 global_ctx
-                 expr
-             in
-             compose_subst_choreo s_acc s, typ :: typ_acc)
+              let s, typ =
+                infer_choreo_expr
+                  (apply_subst_ctx_choreo s1 ctx @ choreo_ctx')
+                  global_ctx
+                  expr
+              in
+              compose_subst_choreo s_acc s, typ :: typ_acc)
            (List.combine expr_ls ctx_ls)
            ([], [])
        in

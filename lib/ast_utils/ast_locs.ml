@@ -48,7 +48,7 @@ and extract_expr : 'a Choreo.expr -> LocSet.t = function
   | Match (e, cases, _) ->
     List.fold_left
       (fun acc (p, e) ->
-        LocSet.union acc (LocSet.union (extract_pattern p) (extract_expr e)))
+         LocSet.union acc (LocSet.union (extract_pattern p) (extract_expr e)))
       (extract_expr e)
       cases
 ;;

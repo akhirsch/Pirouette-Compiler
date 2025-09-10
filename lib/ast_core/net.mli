@@ -1,7 +1,7 @@
 module M : sig
   type 'a typ =
     | TUnit of 'a
-    | TLoc of 'a Local.M.typ * 'a
+    | TLoc of 'a Local.M.loc_id * 'a Local.M.typ * 'a
     | TMap of 'a typ * 'a typ * 'a
     | TProd of 'a typ * 'a typ * 'a
     | TSum of 'a typ * 'a typ * 'a

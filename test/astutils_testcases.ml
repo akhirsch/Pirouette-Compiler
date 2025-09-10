@@ -82,4 +82,16 @@ let lcl_pat_match_2 =
 ;;
 
 let foreign_decl = "foreign myFunc : unit -> unit := \"external_function\";\n"
-let net_test_1 = ""
+let simple_net = "y1 : unit;"
+
+let netir_ex3 =
+  "\n\
+   y1 : unit;\n\
+   y1 := if ret (3 > 5)\n\
+  \       then choose L for P2 in unit\n\
+  \       else choose R for P2 in unit;\n\n\
+   y2 : p1.int;\n\
+   y2 := allow choice from P1 with\n\
+  \      | L -> ret (5)\n\
+  \      | R -> ret (9);\n"
+;;
