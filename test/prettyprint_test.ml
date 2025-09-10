@@ -77,6 +77,7 @@ let suite =
               ; ("map_net_audvy" >:: fun _ -> net_peq Astutils_testcases.map_net_audvy)
               ; ("prod_net_audvy" >:: fun _ -> net_peq Astutils_testcases.prod_net_audvy)
               ; ("sum_net_audvy" >:: fun _ -> net_peq Astutils_testcases.sum_net_audvy)
+              ; ("netir_ex4_audvy" >:: fun _ -> net_peq Astutils_testcases.netir_ex4_audvy)
               ]
        ]
 ;;

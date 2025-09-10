@@ -102,19 +102,10 @@ let netir_ex3 =
   \      | R -> ret (9);\n"
 ;;
 
-(* let netir_ex3_audvy =
+let netir_ex4_audvy =
   "\n\
-   y1 : p1.(int*string);\n\
-   y1 := if ret (3 > 5)\n\
-  \       then choose L for P2 in unit\n\
-  \       else choose R for P2 in unit;\n\n\
-   y2 : p1.(int + string);\n\
-   y2 := allow choice from P1 with\n\
-  \      | L -> ret (5)\n\
-  \      | R -> ret (9);\n
-  y3 : p1.int -> p2.bool;\n\
-  y3 := allow choice from P1 with\n\
-  \      | L -> ret (5)\n\
-  \      | R -> ret (9);\n"
-  
-;; *)
+  y : P1.string;\n\
+  y := ret (\"Hello\");\n
+  x : P2.string;\n
+  x := P2 <~ y;\n"
+;;
