@@ -95,3 +95,16 @@ let netir_ex3 =
   \      | L -> ret (5)\n\
   \      | R -> ret (9);\n"
 ;;
+
+
+let netir_ex6_audvy =
+  "\n\
+  main := let _ := send ret 3 ~> R; in allow choice from R with\n\
+  \                                    | R -> ret \"Bye\"\n\
+  \                                    | L -> ret \"Hello\";\n"
+
+  let netir_ex7_audvy =
+  "\n\
+  main := let x := recv from S; in if ret x > 5 then choose L for S in unit else \n\
+  \                               choose R for S in unit;\n"
+  

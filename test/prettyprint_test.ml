@@ -74,6 +74,8 @@ let suite =
        ; "Net IR"
          >::: [ ("simple_net" >:: fun _ -> net_peq Astutils_testcases.simple_net)
               ; ("ex3_netir" >:: fun _ -> net_peq Astutils_testcases.netir_ex3)
+              ; ("netir_ex6_audvy" >:: fun _ -> net_peq Astutils_testcases.netir_ex6_audvy)
+              ; ("netir_ex7_audvy" >:: fun _ -> net_peq Astutils_testcases.netir_ex7_audvy)
               ]
        ]
 ;;

@@ -322,8 +322,8 @@ and pprint_net_expr ppf (expr : 'a Net.expr) =
   | Snd (e, _) -> fprintf ppf "@[<hv2>snd %a@]" pprint_net_expr e
   | Left (e, _) -> fprintf ppf "@[<hv2>left %a@]" pprint_net_expr e
   | Right (e, _) -> fprintf ppf "@[<hv2>right %a@]" pprint_net_expr e
-  | Send (e, LocId (loc, _), _) -> fprintf ppf "@[<hv2>%a ~> %s@]" pprint_net_expr e loc
-  | Recv (LocId (loc, _), _) -> fprintf ppf "@[<~ %s@]" loc
+  | Send (e, LocId (loc, _), _) -> fprintf ppf "@[<hv2>send %a ~> %s@]" pprint_net_expr e loc
+  | Recv (LocId (loc, _), _) -> fprintf ppf "@[recv from %s@]" loc
   | If (e1, e2, e3, _) ->
     fprintf
       ppf
