@@ -80,7 +80,8 @@ let suite =
               (* ; ("netir_ex4_audvy" >:: fun _ -> net_peq Astutils_testcases.netir_ex4_audvy) *)
               ; ("netir_exprint_jackie" >:: fun _ -> net_peq Astutils_testcases.netir_exprint_jackie)
               ; ("netir_ex5_jackie" >:: fun _ -> net_peq Astutils_testcases.netir_ex5_jackie)
-              (* ; ("netir_ex6_audvy" >:: fun _ -> net_peq Astutils_testcases.netir_ex6_audvy) *)
+              ; ("netir_ex6_audvy" >:: fun _ -> net_peq Astutils_testcases.netir_ex6_audvy)
+              ; ("netir_ex7_audvy" >:: fun _ -> net_peq Astutils_testcases.netir_ex7_audvy)
               ]
        ]
 ;;
