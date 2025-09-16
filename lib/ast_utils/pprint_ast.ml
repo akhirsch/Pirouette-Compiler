@@ -309,7 +309,7 @@ and pprint_net_stmt ppf (stmt : 'a Net.stmt) =
       ps
       pprint_net_expr
       e
-  | TypeDecl (TypId (id, _), t, _) -> fprintf ppf "@[<h>%s : %a;@]" id pprint_net_type t
+  | TypeDecl (TypId (id, _), t, _) -> fprintf ppf "@[<h>type %s := %a;@]" id pprint_net_type t
   | ForeignDecl (VarId (id, _), t, s, _) ->
     fprintf ppf "@[<h>foreign %s : %a := \"%s\";@]" id pprint_net_type t s
 
