@@ -190,4 +190,30 @@ let netir_ex6_jackie =
   y : R.int;\n\
   y := snd p;\n"
 
+(*let netir_pair_jackie =
+  "\n\
+   p : R.(int * int);\n\
+   p := ret ((1, 2));\n\
+   x : R.int;\n\
+   x := fst p;\n\
+   y : R.int;\n\
+   y := snd p;\n
+  " not compiling with token 'int' *)
+ 
+  (*let netir_pair_jackie =
+  "\n\
+   p : int * int;\n\
+   p := ret ((1, 2));\n\
+   x : R.int;\n\
+   x := fst p;\n\
+   y : R.int;\n\
+   y := snd p;\n
+  " same as above*) 
+  
+  let netir_foreigndecl_jackie =
+    "\n\
+    foreign f : R.string := \"string\";\n"
+;;
+
+
 ;;
