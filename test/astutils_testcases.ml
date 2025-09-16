@@ -130,7 +130,7 @@ let netir_ex5_jackie =
     x := ret (3);\n\
     y : S.string;\n\
     p1 : unit;\n\
-    p1 := if ret(3 > fst 5)\n\
+    p1 := if ret(3 > 5)\n\
         then choose L for S in unit\n\
         else choose R for S in Unit;\n"
 
@@ -147,7 +147,6 @@ let netir_ex7_audvy =
 
 
 
-
 let netir_ex8_audvy =  
   "\n\
   main := let x := fst unit; in x;\n"
@@ -156,7 +155,7 @@ let netir_ex8_audvy =
  
 let netir_ex9_audvy =  
   "\n\
-  main := let x := snd unit; in x;\n"
+  main := let x := snd unit; in x;\n" 
 
 
 let netir_ex10_audvy =
@@ -181,3 +180,14 @@ let netir_ex13_audvy =
 let netir_ex14_audvy =   (* Not compiling; This may be a bug on the lexer side since ID COLONEQ NETEXPR should be valid against ID COLONEQ (NETEXPR,NETEXPR)  *)
   "\n\
   x := (unit, unit);\n"
+
+let netir_ex6_jackie =
+  "\n\
+  p : R.int * R.int;\n\
+  p := ret (1,2);\n\
+  x : R.int;\n\
+  x := fst p;\n\
+  y : R.int;\n\
+  y := snd p;\n"
+
+;;
