@@ -86,8 +86,8 @@ let foreign_decl = "foreign myFunc : unit -> unit := \"external_function\";\n"
 let simple_net = "y1 : unit;"
 
 let map_net_audvy = "net_map_typ : P1.bool -> P2.bool;"
-let prod_net_audvy = "net_prod_typ : P1.bool * P2.bool;"
-let sum_net_audvy = "net_sum_typ : P1.bool + P2.bool;"
+let prod_net_audvy = "net_prod_typ : P1.int * P2.int;"
+let sum_net_audvy = "net_sum_typ : P1.int + P2.int;"
 
 
 let netir_ex3 =
@@ -140,7 +140,44 @@ let netir_ex6_audvy =
   \                                    | R -> ret \"Bye\"\n\
   \                                    | L -> ret \"Hello\";\n"
 
-  let netir_ex7_audvy =
+let netir_ex7_audvy =
   "\n\
   main := let x := recv from S; in if ret x > 5 then choose L for S in unit else \n\
   \                               choose R for S in unit;\n"
+
+
+
+
+let netir_ex8_audvy =  
+  "\n\
+  main := let x := fst unit; in x;\n"
+
+
+ 
+let netir_ex9_audvy =  
+  "\n\
+  main := let x := snd unit; in x;\n"
+
+
+let netir_ex10_audvy =
+  "\n\
+  y := fun x -> unit;\n\
+  z := y ;"
+
+
+let netir_ex11_audvy = (* Not Effective *)
+  "\n\
+  type my_type := unit;\n"
+
+
+let netir_ex12_audvy =
+  "\n\
+  main := let x := left ret (3,2); in x;\n"
+
+let netir_ex13_audvy =
+  "\n\
+  main := let x := right ret (3,2); in x;\n"
+
+let netir_ex14_audvy =   (* Not compiling; This may be a bug on the lexer side since ID COLONEQ NETEXPR should be valid against ID COLONEQ (NETEXPR,NETEXPR)  *)
+  "\n\
+  x := (unit, unit);\n"

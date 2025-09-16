@@ -89,6 +89,7 @@ stmt:
   | TYPE id=typ_id COLONEQ t=net_type SEMICOLON? { TypeDecl (id, t, gen_pos $startpos $endpos) }
   | f=foreign_decl { f }
 
+
 net_expr:
   | UNIT_T { Unit (gen_pos $startpos $endpos) }
   | id=var_id { Var (id, gen_pos $startpos $endpos) }
