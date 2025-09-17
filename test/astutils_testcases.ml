@@ -59,6 +59,10 @@ let local_typs =
    type local_sum_typ := P1.(int+string);\n"
 ;;
 
+let local_typs_audvy = (* Not Effective *)
+  "type local_var := P1.x;"
+;;
+
 let choreo_fundef =
   "foo := fun a -> (a, a);\n\n\
    _ := let P := foo P.3; in\n\n\
@@ -158,13 +162,12 @@ let netir_ex9_audvy =
   main := let x := snd unit; in x;\n" 
 
 
-let netir_ex10_audvy =
+
+let netir_ex10_audvy = (* FunApp portion not effective *)
   "\n\
-  y := fun x -> unit;\n\
-  z := y ;"
+  main := let y := fun x -> x; in let z := ret y; in z;\n"
 
-
-let netir_ex11_audvy = (* Not Effective *)
+let netir_ex11_audvy =
   "\n\
   type my_type := unit;\n"
 
@@ -213,6 +216,12 @@ let netir_ex6_jackie =
   let netir_foreigndecl_jackie =
     "\n\
     foreign f : R.string := \"string\";\n"
+
+  let netir_match_audvy =
+    "\n\
+    p := match ret 4 with\n\
+    \         | 4 -> ret 4\n\
+    \         | _ -> ret 0;\n"
 ;;
 
 
