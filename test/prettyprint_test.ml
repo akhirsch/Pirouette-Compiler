@@ -54,7 +54,9 @@ let suite =
   "Pretty print Tests"
   >::: [ "Examples"
          >::: [ ("testcase1" >:: fun _ -> peq Astutils_testcases.testcase_1)
+              ; ("testcase_1_audvy" >:: fun _ -> peq Astutils_testcases.testcase_1_audvy)
               ; ("testcase2" >:: fun _ -> peq Astutils_testcases.testcase_2)
+              ; ("testcase_2_audvy" >:: fun _ -> peq Astutils_testcases.testcase_2_audvy)
               ; ("testcase3" >:: fun _ -> peq Astutils_testcases.testcase_3)
               ; ("testcase4" >:: fun _ -> peq Astutils_testcases.testcase_4)
               ]

@@ -16,6 +16,17 @@ let testcase_1 =
    S.\"Bye\";\n"
 ;;
 
+let testcase_1_audvy =
+  "right _ := let \n\n\
+   R.x := [S] right S.1 ~> R;\n\n\
+   R.x := [S] left S.3 ~> R; in \n\n\
+   if R.(x> fst 5) \n\n\
+   then R[L] ~> S; \n\n\
+   S.\"Hello\"\n\n\
+   else R[R] ~> S; \n\n\
+   S.\"Bye\";\n"
+;;
+
 let testcase_2 =
   "right (_,_) := \n\n\
    if R.(3+5 >= 2-1 || 3 != 3)\n\n\
@@ -23,6 +34,15 @@ let testcase_2 =
    let R.res := [S] (right x,y) ~> R; in R.\"Sent\"\n\n\
    else R[R] ~> S;\n\n\
    let R.res := [S] S.(left 0,snd false) ~> R; in R.\"why\";\n"
+;;
+
+let testcase_2_audvy =
+  "left (_,_) := \n\n\
+   if R.(3+5 >= 2-1 || 3 != 3)\n\n\
+   then R[L] ~> S;\n\n\
+   let R.res := [S] (left x,y) ~> R; in R.\"Sent\"\n\n\
+   else R[R] ~> S;\n\n\
+   let R.res := [S] S.(right 0,snd false) ~> R; in R.\"why\";\n"
 ;;
 
 let testcase_3 =
@@ -83,6 +103,10 @@ let lcl_pat_match =
 
 let lcl_pat_match_2 =
   "y := P.let y : int := 3 in\n\nmatch (x,z) with\n\n|(left 1,right \"None\")->();\n"
+;;
+
+let lcl_pat_match_2_audvy =
+  "y := P.let y : int := 3 in\n\nmatch (x,z) with\n\n|(right 1,left \"None\")->();\n"
 ;;
 
 let foreign_decl = "foreign myFunc : unit -> unit := \"external_function\";\n"
