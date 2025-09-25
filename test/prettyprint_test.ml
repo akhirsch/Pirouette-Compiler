@@ -36,6 +36,8 @@ let suite =
        ; "Net IR"
          >::: [ ("test_net_peq" >:: fun _ -> net_peq Astutils_testcases.net_test_1) ]
          (* ADD more net_peq tests here *)
+       ; "Constructors"
+         >::: [ ("constructor" >:: fun _ -> peq Astutils_testcases.net_test_1) ]
        ]
 ;;
 

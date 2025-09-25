@@ -307,6 +307,18 @@ let rec jsonify_net_type = function
     `Assoc [ "TProd", `List [ jsonify_net_type t1; jsonify_net_type t2 ] ]
   | Net.TSum (t1, t2, _) ->
     `Assoc [ "TSum", `List [ jsonify_net_type t1; jsonify_net_type t2 ] ]
+  | Net.TVariant (constructors, _) ->
+    `Assoc
+      [ ( "TVariant"
+        , `List
+            (List.map
+               (fun { Local.name; args; info = _ } ->
+                 `Assoc
+                   [ "name", `String name
+                   ; "args", `List (List.map jsonify_net_type args)
+                   ])
+               constructors) )
+      ]
 ;;
 
 let rec jsonify_net_stmt = function
@@ -406,6 +418,13 @@ and jsonify_net_expr = function
             [ "net_expr", jsonify_net_expr e
             ; "cases", `List (List.map jsonify_net_case cases)
             ] )
+      ]
+    | Net.Construct (name, exprs, _) ->
+      `Assoc
+      [ ( "Construct"
+        , `Assoc
+            [ "name", `String name; "exprs", `List (List.map jsonify_net_expr exprs) ]
+        )
       ]
 ;;
 

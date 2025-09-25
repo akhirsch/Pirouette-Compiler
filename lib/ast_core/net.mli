@@ -5,6 +5,13 @@ module M : sig
     | TMap of 'a typ * 'a typ * 'a
     | TProd of 'a typ * 'a typ * 'a
     | TSum of 'a typ * 'a typ * 'a
+    | TVariant of 'a constructor list * 'a
+
+    and 'a constructor =
+      { name : string
+      ; args : 'a typ list
+      ; info : 'a
+      }
 
   type 'a expr =
     | Unit of 'a
@@ -24,6 +31,7 @@ module M : sig
     | Left of 'a expr * 'a
     | Right of 'a expr * 'a
     | Match of 'a expr * ('a Local.M.pattern * 'a expr) list * 'a
+    | Construct of string * 'a expr list * 'a
 
   and 'a stmt =
     | Decl of 'a Local.M.pattern * 'a typ * 'a

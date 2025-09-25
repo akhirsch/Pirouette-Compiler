@@ -83,3 +83,7 @@ let lcl_pat_match_2 =
 
 let foreign_decl = "foreign myFunc : unit -> unit := \"external_function\";\n"
 let net_test_1 = ""
+
+let constructor =
+  "Construct(name, name2, name3);\n"
+;;
