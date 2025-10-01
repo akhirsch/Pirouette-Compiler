@@ -345,7 +345,7 @@ and pprint_net_expr ppf (expr : 'a Net.expr) =
       pprint_net_expr
       e
   | FunApp (e1, e2, _) ->
-    fprintf ppf "@[<hv>%a %a@]" pprint_net_expr e1 pprint_net_expr e2
+    fprintf ppf "@[<hv>%a (%a)@]" pprint_net_expr e1 pprint_net_expr e2
   | Pair (e1, e2, _) -> fprintf ppf "@[<hv>(%a, %a)@]" pprint_net_expr e1 pprint_net_expr e2
   | Match (e, cases, _) ->
     let[@inline] pprint_net_case ppf (p, e) =

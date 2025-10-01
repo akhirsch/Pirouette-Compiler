@@ -93,7 +93,7 @@ stmt:
 net_expr:
   | net_expr1 { $1 }
   | UNIT_T { Unit (gen_pos $startpos $endpos) }
-  | id=var_id { Var (id, gen_pos $startpos $endpos) }
+  // | id=var_id { Var (id, gen_pos $startpos $endpos) }
   | RET e=local_expr { Ret (e, gen_pos $startpos $endpos) }
   | IF e1=net_expr THEN e2=net_expr ELSE e3=net_expr { If (e1, e2, e3, gen_pos $startpos $endpos) }
   | LET stmts=stmt_block IN e=net_expr { Let (stmts, e, gen_pos $startpos $endpos) }
