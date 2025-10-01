@@ -91,6 +91,7 @@ stmt:
 
 
 net_expr:
+  | net_expr1 { $1 }
   | UNIT_T { Unit (gen_pos $startpos $endpos) }
   | id=var_id { Var (id, gen_pos $startpos $endpos) }
   | RET e=local_expr { Ret (e, gen_pos $startpos $endpos) }
@@ -109,6 +110,14 @@ net_expr:
   | MATCH e=net_expr WITH cases=nonempty_list(net_case) { Match (e, cases, gen_pos $startpos $endpos) }
   | LPAREN e=net_expr RPAREN { Net.set_info_expr (gen_pos $startpos $endpos) e }
 
+net_expr1:
+  | e1=net_expr1 e2=net_expr2 { FunApp (e1, e2, gen_pos $startpos $endpos) }
+  | net_expr2 { $1 }
+
+net_expr2:
+  | LPAREN RPAREN { Unit (gen_pos $startpos $endpos) }
+  | id=var_id { Var (id, gen_pos $startpos $endpos) }
+  | LPAREN e=net_expr RPAREN { Net.set_info_expr (gen_pos $startpos $endpos) e }
 
 local_expr:
   | LPAREN RPAREN { Unit (gen_pos $startpos $endpos) }

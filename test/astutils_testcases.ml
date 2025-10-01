@@ -189,7 +189,7 @@ let netir_ex9_audvy =
 
 let netir_ex10_audvy = (* FunApp portion not effective *)
   "\n\
-  main := let y := fun x -> x; in let z := ret y; in z;\n"
+  main := let y := fun x -> x; in let z := y (unit); in z;\n"
 
 let netir_ex11_audvy =
   "\n\
@@ -204,7 +204,7 @@ let netir_ex13_audvy =
   "\n\
   main := let x := right ret (3,2); in x;\n"
 
-let netir_ex14_audvy =   (* Not compiling; This may be a bug on the lexer side since ID COLONEQ NETEXPR should be valid against ID COLONEQ (NETEXPR,NETEXPR)  *)
+let netir_ex14_audvy =   
   "\n\
   x := (unit, unit);\n"
 
