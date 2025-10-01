@@ -187,7 +187,7 @@ let netir_ex9_audvy =
 
 
 
-let netir_ex10_audvy = (* FunApp portion not effective *)
+let netir_ex10_audvy = 
   "\n\
   main := let y := fun x -> x; in let z := y (unit); in z;\n"
 
