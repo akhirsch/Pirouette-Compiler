@@ -37,7 +37,19 @@ let rec pprint_local_type ppf (typ : 'a Local.typ) =
     fprintf ppf "@[<h>%a * %a@]" pprint_local_type t1 pprint_local_type t2
   | TSum (t1, t2, _) ->
     fprintf ppf "@[<h>%a + %a@]" pprint_local_type t1 pprint_local_type t2
-  | TVariant _ -> failwith "Not implemented yet"
+  | Local.TVariant (constructors, _) ->
+    fprintf ppf "@[<v 0>%a@]"
+      (pp_print_list
+          ~pp_sep:(fun ppf () -> fprintf ppf "@ | ")
+          (fun ppf { Local.name; args; info = _ } ->
+            match args with
+            | [] -> fprintf ppf "@[<h>%s@]" name
+            | _ ->
+              fprintf ppf "@[<h>%s : %a@]"
+                name
+                (pp_print_list ~pp_sep:(fun ppf () -> fprintf ppf ",@ ") pprint_local_type)
+                args))
+      constructors
 ;;
 
 (** [pprint_local_pattern] takes a formatter [ppf] and a local pattern,
@@ -64,7 +76,15 @@ let rec pprint_local_pattern ppf (pat : 'a Local.pattern) =
     fprintf ppf "@[<hv>(%a, %a)@]" pprint_local_pattern p1 pprint_local_pattern p2
   | Left (p, _) -> fprintf ppf "@[<hv2>left@ %a@]" pprint_local_pattern p
   | Right (p, _) -> fprintf ppf "@[<hv2>right@ %a@]" pprint_local_pattern p
-  | PConstruct _ -> failwith "Not implemented yet"
+  | Local.PConstruct (name, patterns, _) ->
+    (match patterns with
+     | [] -> 
+       fprintf ppf "@[<h>%s@]" name
+     | _ -> 
+       fprintf ppf "@[<h>%s (%a)@]"
+         name
+         (pp_print_list ~pp_sep:(fun ppf () -> fprintf ppf ",@ ") pprint_local_pattern)
+         patterns)
 ;;
 
 (** [pprint_local_expr] takes a formatter [ppf] and a local expression, and prints the formatted code of the local expression
@@ -145,7 +165,15 @@ let rec pprint_local_expr ppf (expr : 'a Local.expr) =
       e
       (pp_print_list ~pp_sep:(fun ppf () -> fprintf ppf "@ | ") pprint_local_case)
       cases
-  | Construct _ -> failwith "Not implemented yet"
+  | Construct (name, args, _) ->
+    (match args with
+    | [] -> 
+      fprintf ppf "@[<h>%s@]" name
+    | _ -> 
+      fprintf ppf "@[<h>%s (%a)@]"
+        name
+        (pp_print_list ~pp_sep:(fun ppf () -> fprintf ppf ",@ ") pprint_local_expr)
+        args)
 ;;
 
 (* ============================== Choreo ============================== *)
@@ -168,7 +196,21 @@ let rec pprint_choreo_type ppf (typ : 'a Choreo.typ) =
     fprintf ppf "@[<h>%a *@ %a@]" pprint_choreo_type t1 pprint_choreo_type t2
   | TSum (t1, t2, _) ->
     fprintf ppf "@[<h>(%a) + (%a)@]" pprint_choreo_type t1 pprint_choreo_type t2
-  | TVariant _ -> failwith "Not implemented yet"
+  | TVariant (constructors, _) ->
+    fprintf ppf "@[<v 0>%a@]"
+      (pp_print_list
+          ~pp_sep:(fun ppf () -> fprintf ppf "@ | ")
+          (* The record is likely 'Choreo.constructor', not 'Local' *)
+          (fun ppf { Choreo.name; args; info = _ } ->
+            match args with
+            | [] -> fprintf ppf "@[<h>%s@]" name
+            | _ ->
+              fprintf ppf "@[<h>%s : %a@]"
+                name
+                (* FIX: Recursive call must be to pprint_choreo_type *)
+                (pp_print_list ~pp_sep:(fun ppf () -> fprintf ppf ",@ ") pprint_choreo_type)
+                args))
+      constructors
 ;;
 
 (** [pp_choreo_pattern] takes a formatter [fmt] and a choreo pattern,
@@ -187,7 +229,15 @@ let rec pprint_choreo_pattern ppf (pat : 'a Choreo.pattern) =
     fprintf ppf "@[<hv>(%a, %a)@]" pprint_choreo_pattern p1 pprint_choreo_pattern p2
   | Left (p, _) -> fprintf ppf "@[<hv2>left@ %a@]" pprint_choreo_pattern p
   | Right (p, _) -> fprintf ppf "@[<hv2>right@ %a@]" pprint_choreo_pattern p
-  | PConstruct _ -> failwith "Not implemented yet"
+  | PConstruct (name, args, _) ->
+    (match args with
+    | [] -> 
+      fprintf ppf "@[<h>%s@]" name
+    | _ -> 
+      fprintf ppf "@[<h>%s (%a)@]"
+        name
+        (pp_print_list ~pp_sep:(fun ppf () -> fprintf ppf ",@ ") pprint_choreo_pattern)
+        args)
 ;;
 
 (** [pprint_choreo_stmt_block] takes a formatter [ppf] and a choreo statement block,
@@ -282,7 +332,15 @@ and pprint_choreo_expr ppf (expr : 'a Choreo.expr) =
       e
       (pp_print_list ~pp_sep:(fun ppf () -> fprintf ppf "@ | ") pprint_choreo_case)
       cases
-  | Construct _ -> failwith "Not implemented yet"
+  | Construct (name, args, _) ->
+    (match args with
+    | [] -> 
+      fprintf ppf "@[<h>%s@]" name
+    | _ -> 
+      fprintf ppf "@[<h>%s (%a)@]"
+        name
+        (pp_print_list ~pp_sep:(fun ppf () -> fprintf ppf ",@ ") pprint_choreo_expr)
+        args)
 ;;
 
 (* ============================== Net ============================== *)
@@ -297,6 +355,19 @@ let rec pprint_net_type ppf (typ : 'a Net.typ) =
     fprintf ppf "@[<h>(%a) * (%a)@]" pprint_net_type t1 pprint_net_type t2
   | TSum (t1, t2, _) ->
     fprintf ppf "@[<h>(%a) + (%a)@]" pprint_net_type t1 pprint_net_type t2
+  | TVariant (constructors, _) ->
+    fprintf ppf "@[<v 0>%a@]"
+      (pp_print_list
+          ~pp_sep:(fun ppf () -> fprintf ppf "@ | ")
+          (fun ppf { Net.name; args; info = _ } ->
+            match args with
+            | [] -> fprintf ppf "@[<h>%s@]" name
+            | _ ->
+              fprintf ppf "@[<h>%s : %a@]"
+                name
+                (pp_print_list ~pp_sep:(fun ppf () -> fprintf ppf ",@ ") pprint_net_type)
+                args))
+      constructors
 ;;
 
 let[@specialise] rec pprint_net_stmt_block ppf (stmts : 'a Net.stmt_block) =
@@ -382,4 +453,13 @@ and pprint_net_expr ppf (expr : 'a Net.expr) =
       loc
       (pp_print_list ~pp_sep:(fun ppf () -> fprintf ppf "@ | ") pprint_net_choice)
       choices
+  | Construct (name, args, _) ->
+    (match args with
+    | [] -> 
+      fprintf ppf "@[<h>%s@]" name
+    | _ -> 
+      fprintf ppf "@[<h>%s (%a)@]"
+        name
+        (pp_print_list ~pp_sep:(fun ppf () -> fprintf ppf ",@ ") pprint_net_expr)
+        args)
 ;;
