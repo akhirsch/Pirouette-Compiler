@@ -245,4 +245,5 @@ and emit_net_pexp ~(self_id : string) (module Msg : Msg_intf) (exp : 'a Net.expr
       ~loc
       (Msg.emit_net_recv ~src ~dst:self_id)
       (cases @ [ default_case ])
+    | Construct _ -> failwith "not implemented yet"
 ;;

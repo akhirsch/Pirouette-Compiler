@@ -38,7 +38,7 @@ let rec pprint_local_type ppf (typ : 'a Local.typ) =
   | TSum (t1, t2, _) ->
     fprintf ppf "@[<h>%a + %a@]" pprint_local_type t1 pprint_local_type t2
   | Local.TVariant (constructors, _) ->
-    fprintf ppf "@[<v 0>%a@]"
+    fprintf ppf "@[type<v 0>%a@]"
       (pp_print_list
           ~pp_sep:(fun ppf () -> fprintf ppf "@ | ")
           (fun ppf { Local.name; args; info = _ } ->
@@ -81,7 +81,7 @@ let rec pprint_local_pattern ppf (pat : 'a Local.pattern) =
      | [] -> 
        fprintf ppf "@[<h>%s@]" name
      | _ -> 
-       fprintf ppf "@[<h>%s (%a)@]"
+       fprintf ppf "@[<h>%s %a@]"
          name
          (pp_print_list ~pp_sep:(fun ppf () -> fprintf ppf ",@ ") pprint_local_pattern)
          patterns)
@@ -170,7 +170,7 @@ let rec pprint_local_expr ppf (expr : 'a Local.expr) =
     | [] -> 
       fprintf ppf "@[<h>%s@]" name
     | _ -> 
-      fprintf ppf "@[<h>%s (%a)@]"
+      fprintf ppf "@[<h>%s %a@]"
         name
         (pp_print_list ~pp_sep:(fun ppf () -> fprintf ppf ",@ ") pprint_local_expr)
         args)
@@ -200,14 +200,12 @@ let rec pprint_choreo_type ppf (typ : 'a Choreo.typ) =
     fprintf ppf "@[<v 0>%a@]"
       (pp_print_list
           ~pp_sep:(fun ppf () -> fprintf ppf "@ | ")
-          (* The record is likely 'Choreo.constructor', not 'Local' *)
           (fun ppf { Choreo.name; args; info = _ } ->
             match args with
             | [] -> fprintf ppf "@[<h>%s@]" name
             | _ ->
               fprintf ppf "@[<h>%s : %a@]"
                 name
-                (* FIX: Recursive call must be to pprint_choreo_type *)
                 (pp_print_list ~pp_sep:(fun ppf () -> fprintf ppf ",@ ") pprint_choreo_type)
                 args))
       constructors
@@ -234,7 +232,7 @@ let rec pprint_choreo_pattern ppf (pat : 'a Choreo.pattern) =
     | [] -> 
       fprintf ppf "@[<h>%s@]" name
     | _ -> 
-      fprintf ppf "@[<h>%s (%a)@]"
+      fprintf ppf "@[<h>%s %a@]"
         name
         (pp_print_list ~pp_sep:(fun ppf () -> fprintf ppf ",@ ") pprint_choreo_pattern)
         args)
@@ -337,7 +335,7 @@ and pprint_choreo_expr ppf (expr : 'a Choreo.expr) =
     | [] -> 
       fprintf ppf "@[<h>%s@]" name
     | _ -> 
-      fprintf ppf "@[<h>%s (%a)@]"
+      fprintf ppf "@[<h>%s %a@]"
         name
         (pp_print_list ~pp_sep:(fun ppf () -> fprintf ppf ",@ ") pprint_choreo_expr)
         args)
@@ -363,7 +361,7 @@ let rec pprint_net_type ppf (typ : 'a Net.typ) =
             match args with
             | [] -> fprintf ppf "@[<h>%s@]" name
             | _ ->
-              fprintf ppf "@[<h>%s : %a@]"
+              fprintf ppf "@[<h>%s : (%a)@]"
                 name
                 (pp_print_list ~pp_sep:(fun ppf () -> fprintf ppf ",@ ") pprint_net_type)
                 args))
@@ -458,7 +456,7 @@ and pprint_net_expr ppf (expr : 'a Net.expr) =
     | [] -> 
       fprintf ppf "@[<h>%s@]" name
     | _ -> 
-      fprintf ppf "@[<h>%s (%a)@]"
+      fprintf ppf "@[<h>%s %a@]"
         name
         (pp_print_list ~pp_sep:(fun ppf () -> fprintf ppf ",@ ") pprint_net_expr)
         args)

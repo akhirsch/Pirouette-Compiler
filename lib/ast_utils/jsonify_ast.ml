@@ -312,7 +312,7 @@ let rec jsonify_net_type = function
       [ ( "TVariant"
         , `List
             (List.map
-               (fun { Local.name; args; info = _ } ->
+               (fun { Net.name; args; info = _ } ->
                  `Assoc
                    [ "name", `String name
                    ; "args", `List (List.map jsonify_net_type args)

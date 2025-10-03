@@ -37,7 +37,9 @@ let suite =
          >::: [ ("test_net_peq" >:: fun _ -> net_peq Astutils_testcases.net_test_1) ]
          (* ADD more net_peq tests here *)
        ; "Constructors"
-         >::: [ ("constructor" >:: fun _ -> peq Astutils_testcases.net_test_1) ]
+         >::: [ ("constructor1" >:: fun _ -> peq Astutils_testcases.constructor1) 
+         ; ("constructor2" >:: fun _ -> peq Astutils_testcases.constructor2)
+         ]
        ]
 ;;
 

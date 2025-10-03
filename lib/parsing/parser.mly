@@ -267,7 +267,7 @@ foreign_decl:
 *)
 constructor_arg_list_choreo:
   | t=choreo_type { [t] }
-  | t=choreo_type TIMES rest=constructor_arg_list_choreo { t :: rest }
+  | t=choreo_type COMMA rest=constructor_arg_list_choreo { t :: rest }
   
 (** [constructor_arg_list_local] parses a list of local types for variant constructor arguments.
     
@@ -280,7 +280,7 @@ constructor_arg_list_choreo:
 *)
 constructor_arg_list_local:
   | t=local_type { [t] }
-  | t=local_type TIMES rest=constructor_arg_list_local { t :: rest }
+  | t=local_type COMMA rest=constructor_arg_list_local { t :: rest }
 
 (** [local_constructor_def] parses constructor definitions for variant types in the local language.
    
@@ -295,9 +295,9 @@ constructor_arg_list_local:
 %inline local_constructor_def:
   | BAR name=ID 
     { Ast_core.Local.M.{ name = name; args = []; info = gen_pos $startpos $endpos } }
-  | BAR name=ID OF t=local_type
+  | BAR name=ID COLON t=local_type
     { Ast_core.Local.M.{ name = name; args = [t]; info = gen_pos $startpos $endpos } }
-  | BAR name=ID OF LPAREN args=constructor_arg_list_local RPAREN
+  | BAR name=ID COLON args=constructor_arg_list_local
     { Ast_core.Local.M.{ name = name; args = args; info = gen_pos $startpos $endpos } }
 
 (** [choreo_constructor_def] parses constructor definitions for variant types in the choreography language.
@@ -309,9 +309,9 @@ constructor_arg_list_local:
                in a constructor definition for use in choreography variant types.
 *)
 %inline choreo_constructor_def:
-  | BAR name=ID 
+  | BAR name=ID
     { Ast_core.Choreo.M.{ name = name; args = []; info = gen_pos $startpos $endpos } }
-  | BAR name=ID OF t=choreo_type
+  | BAR name=ID COLON t=choreo_type
     { Ast_core.Choreo.M.{ name = name; args = [t]; info = gen_pos $startpos $endpos } }
-  | BAR name=ID OF LPAREN args=constructor_arg_list_choreo RPAREN
+  | BAR name=ID COLON args=constructor_arg_list_choreo 
     { Ast_core.Choreo.M.{ name = name; args = args; info = gen_pos $startpos $endpos } }
