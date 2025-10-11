@@ -101,3 +101,54 @@ let constructor3 =
   | construct2 : arg1, arg2, arg3\n\n\
   | construct3 : arg1, arg2, arg3\n"
 ;;
+
+
+let no_constructor_list = "type x :="
+;;
+
+let one_constructor_one_arg =
+  "type x :=\n\n\
+  | Construct1 : arg1\n"
+;;
+
+let one_constructor_multi_arg =
+  "type x :=\n\n\
+  | Construct1 : arg1, arg2, arg3\n"
+;;
+
+let two_constructors_one_arg =
+  "type x :=\n\n\
+  | Construct1 : arg_a\n\n\
+  | Construct2 : arg_b\n"
+;;
+
+let two_constructors_multi_arg =
+  "type x :=\n\n\
+  | Construct1 : arg1, arg2\n\n\
+  | Construct2 : arg3, arg4, arg5\n"
+;;
+
+let ten_constructors_ten_args =
+  "type x :=\n\n\
+  | C1 : a1, a2, a3, a4, a5, a6, a7, a8, a9, a10\n\n\
+  | C2 : b1, b2, b3, b4, b5, b6, b7, b8, b9, b10\n\n\
+  | C3 : c1, c2, c3, c4, c5, c6, c7, c8, c9, c10\n\n\
+  | C4 : d1, d2, d3, d4, d5, d6, d7, d8, d9, d10\n\n\
+  | C5 : e1, e2, e3, e4, e5, e6, e7, e8, e9, e10\n\n\
+  | C6 : f1, f2, f3, f4, f5, f6, f7, f8, f9, f10\n\n\
+  | C7 : g1, g2, g3, g4, g5, g6, g7, g8, g9, g10\n\n\
+  | C8 : h1, h2, h3, h4, h5, h6, h7, h8, h9, h10\n\n\
+  | C9 : i1, i2, i3, i4, i5, i6, i7, i8, i9, i10\n\n\
+  | C10 : j1, j2, j3, j4, j5, j6, j7, j8, j9, j10\n"
+;;
+
+let negative_missing_colon =
+  "type x :=\n\n\
+  | Construct1 arg1, arg2, arg3\n"
+;;
+
+let negative_missing_pipe =
+  "type x :=\n\n\
+  | Construct1 : arg1\n\n\
+  Construct2 : arg2\n"
+;;

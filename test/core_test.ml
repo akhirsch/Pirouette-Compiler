@@ -359,6 +359,52 @@ let test_change_int_LOC (old_int : 'a) (new_int : 'a) =
   assert_equal new_int (LocalAst.get_info_value new_info)
 ;;
 
+(*-------------------------------*)
+(*IMPORTANT THESE ARE PLACEHOLDERS FOR VARIANT TESTS WITH SOME TEST CASE IDEAS
+I'M UNABLE TO MAKE TEST CASES UNTIL VARIANTS AND CONSTRCUTORS EXIST IN*)
+
+let test_no_constructor_list_LOC arg1 arg2 =
+  let constructors = [] in
+  let expected = "" in
+  let actual = "" in
+  assert_equal actual expected
+;;
+
+let test_single_constructor_one_arg_LOC arg1 arg2 =
+  let constructors = [] in
+  let expected = "" in
+  let actual = "" in
+  assert_equal actual expected
+;;
+
+let test_single_constructor_multi_arg_LOC arg1 arg2 =
+  let constructors = [] in
+  let expected = "" in
+  let actual = "" in
+  assert_equal actual expected
+;;
+
+let test_multi_constructors_one_arg_LOC arg1 arg2 =
+  let constructors = [] in
+  let expected = "" in
+  let actual = "" in
+  assert_equal actual expected
+;;
+
+let test_multi_constructors_multi_arg_LOC arg1 arg2 =
+  let constructors = [] in
+  let expected = "" in
+  let actual = "" in
+  assert_equal actual expected
+;;
+
+let test_large_constructor_list_LOC arg1 arg2 =
+  let constructors = [] in
+  let expected = "" in
+  let actual = "" in
+  assert_equal actual expected
+;;
+
 (*-----------------------------------------------------------*)
 (* LOC Test Suite *)
 (*-----------------------------------------------------------*)
@@ -446,6 +492,21 @@ let loc_suite =
               ; ("test_expression_right 1 2" >:: fun _ -> test_expression_right_LOC 1 2)
               ; ("test_expression_match 1 2" >:: fun _ -> test_expression_match_LOC 1 2)
               ; ("test_expression_pair 1 2" >:: fun _ -> test_expression_pair_LOC 1 2)
+              ]
+        ; "Constructors Tests"
+        >::: [
+                ( "no constructor list"
+                >:: fun _ -> test_no_constructor_list_LOC 1 2 );
+                ( "single constructor one argument"
+                >:: fun _ -> test_single_constructor_one_arg_LOC 1 2 );
+                ( "single constructor multiple arguments"
+                >:: fun _ -> test_single_constructor_multi_arg_LOC 1 2 );
+                ( "multiple constructors one argument"
+                >:: fun _ -> test_multi_constructors_one_arg_LOC 1 2 );
+                ( "multiple constructors multiple arguments"
+                >:: fun _ -> test_multi_constructors_multi_arg_LOC 1 2 );
+                ( "10 constructors with 10 arguments"
+                >:: fun _ -> test_large_constructor_list_LOC 1 2 );
               ]
        ]
 ;;
@@ -915,6 +976,52 @@ let test_info_stmt_foreigndecl_CH (meta1 : int) (new_meta : int) =
   assert_equal new_meta (ChoreoAst.get_info_stmt new_typ_var)
 ;;
 
+(*-------------------------------*)
+(*IMPORTANT THESE ARE PLACEHOLDERS FOR VARIANT TESTS WITH SOME TEST CASE IDEAS
+I'M UNABLE TO MAKE TEST CASES UNTIL VARIANTS AND CONSTRCUTORS EXIST IN*)
+
+let test_no_constructor_list_CH arg1 arg2 =
+  let constructors = [] in
+  let expected = "" in
+  let actual = "" in
+  assert_equal actual expected
+;;
+
+let test_single_constructor_one_arg_CH arg1 arg2 =
+  let constructors = [] in
+  let expected = "" in
+  let actual = "" in
+  assert_equal actual expected
+;;
+
+let test_single_constructor_multi_arg_CH arg1 arg2 =
+  let constructors = [] in
+  let expected = "" in
+  let actual = "" in
+  assert_equal actual expected
+;;
+
+let test_multi_constructors_one_arg_CH arg1 arg2 =
+  let constructors = [] in
+  let expected = "" in
+  let actual = "" in
+  assert_equal actual expected
+;;
+
+let test_multi_constructors_multi_arg_CH arg1 arg2 =
+  let constructors = [] in
+  let expected = "" in
+  let actual = "" in
+  assert_equal actual expected
+;;
+
+let test_large_constructor_list_CH arg1 arg2 =
+  let constructors = [] in
+  let expected = "" in
+  let actual = "" in
+  assert_equal actual expected
+;;
+
 (*-----------------------------------------------------------*)
 (* CH Test Suite *)
 (*-----------------------------------------------------------*)
@@ -986,6 +1093,21 @@ let choreo_suite =
               ; ("test_info_typedecl_CH" >:: fun _ -> test_info_stmt_typedecl_CH 1 2 3)
               ; ("test_info_foreigndecl_CH" >:: fun _ -> test_info_stmt_foreigndecl_CH 1 2)
               ]
+      ; "Constructors Tests"
+      >::: [
+              ( "no constructor list"
+              >:: fun _ -> test_no_constructor_list_CH 1 2 );
+              ( "single constructor one argument"
+              >:: fun _ -> test_single_constructor_one_arg_CH 1 2 );
+              ( "single constructor multiple arguments"
+              >:: fun _ -> test_single_constructor_multi_arg_CH 1 2 );
+              ( "multiple constructors one argument"
+              >:: fun _ -> test_multi_constructors_one_arg_CH 1 2 );
+              ( "multiple constructors multiple arguments"
+              >:: fun _ -> test_multi_constructors_multi_arg_CH 1 2 );
+              ( "10 constructors with 10 arguments"
+              >:: fun _ -> test_large_constructor_list_CH 1 2 );
+            ]
        ]
 ;;
 

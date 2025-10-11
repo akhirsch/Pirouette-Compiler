@@ -28,6 +28,7 @@ let correct_fst = Local.Fst (correct_pair_e, m)
 let correct_snd = Local.Snd (correct_pair_e, m)
 let correct_left = Local.Left (correct_binop_int_e, m)
 let correct_right = Local.Right (correct_binop_int_e, m)
+let correct_variant = Local.Constructors ()
 
 (*Binding local type variables*)
 let int_var = Local.BinOp (correct_binop_int_e, Plus m, Var (VarId ("foo", m), m), m)
@@ -1012,6 +1013,61 @@ let helper_suite =
        ]
 ;;
 
+let variants_type_test_local =
+  "variants test local"
+  >::: [
+    
+         "type declaration matches type returned"
+         >:: (fun _ ->
+           let input = (*test input data*) in
+           let expected_output = (*expected result**) in
+           let actual_output = My_module.function_to_test input in
+           assert_equal expected_output actual_output);
+
+         "type declaration matches type returned for multiple constructos"
+         >:: (fun _ ->
+           let expected = 42 (*placeholders*)in
+           let result = 21 + 21 in
+           assert_equal expected result ~msg:"Optional message on failure");
+
+         "type checking fails if type returned does no match type declaration"
+         >:: (fun _ ->
+            assert_raises (Failure "An expected error message") (fun () -> 
+                My_module.function_that_fails ()
+            ))
+
+       ]
+;;
+
+let variants_type_test_choreo =
+  "variant tests local"
+  >::: [
+    
+         "type declaration matches type returned"
+         >:: (fun _ ->
+           let input = (* ... your test input data ... *) in
+           let expected_output = (* ... the result you expect ... *) in
+           let actual_output = My_module.function_to_test input in
+           assert_equal expected_output actual_output);
+
+         "type declaration matches type returned for multiple constructos"
+         >:: (fun _ ->
+           let expected = 42 in
+           let result = 21 + 21 in
+           assert_equal expected result ~msg:"Optional message on failure");
+
+         "type checking fails if type returned does no match type declaration"
+         >:: (fun _ ->
+            assert_raises (Failure "An expected error message") (fun () -> 
+                My_module.function_that_fails ()
+            ))
+
+       ]
+;;
+
+let () = run_test_tt_main suite
+;;
+
 let all_suites =
   "All type inference tests"
   >::: [ (*Local test suites*)
@@ -1029,6 +1085,8 @@ let all_suites =
          unification_suite
        ; (*Helper functions test suite*)
          helper_suite
+       ; variants_type_test_local
+       ; variants_type_test_choreo
        ]
 ;;
 
