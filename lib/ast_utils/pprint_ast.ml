@@ -41,7 +41,7 @@ let rec pprint_local_type ppf (typ : 'a Local.typ) =
     fprintf ppf "@[type<v 0>%a@]"
       (pp_print_list
           ~pp_sep:(fun ppf () -> fprintf ppf "@ | ")
-          (fun ppf { Local.name; args; info = _ } ->
+          (fun ppf { Local.name; args; typ; info = _ } ->
             match args with
             | [] -> fprintf ppf "@[<h>%s@]" name
             | _ ->
@@ -165,7 +165,7 @@ let rec pprint_local_expr ppf (expr : 'a Local.expr) =
       e
       (pp_print_list ~pp_sep:(fun ppf () -> fprintf ppf "@ | ") pprint_local_case)
       cases
-  | Construct (name, args, _) ->
+  | Construct (name, args, typ, _) ->
     (match args with
     | [] -> 
       fprintf ppf "@[<h>%s@]" name
@@ -200,7 +200,7 @@ let rec pprint_choreo_type ppf (typ : 'a Choreo.typ) =
     fprintf ppf "@[<v 0>%a@]"
       (pp_print_list
           ~pp_sep:(fun ppf () -> fprintf ppf "@ | ")
-          (fun ppf { Choreo.name; args; info = _ } ->
+          (fun ppf { Choreo.name; args; typ; info = _ } ->
             match args with
             | [] -> fprintf ppf "@[<h>%s@]" name
             | _ ->
@@ -330,7 +330,7 @@ and pprint_choreo_expr ppf (expr : 'a Choreo.expr) =
       e
       (pp_print_list ~pp_sep:(fun ppf () -> fprintf ppf "@ | ") pprint_choreo_case)
       cases
-  | Construct (name, args, _) ->
+  | Construct (name, args, typ, _) ->
     (match args with
     | [] -> 
       fprintf ppf "@[<h>%s@]" name

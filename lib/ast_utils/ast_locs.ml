@@ -19,7 +19,7 @@ let rec extract_type : 'a Choreo.typ -> LocSet.t = function
   | TVariant (constructors, _) ->
     List.fold_left
       (fun acc constructor ->
-        let { Choreo.name = _; args; info = _ } = constructor in
+        let { Choreo.name = _; args; typ; info = _ } = constructor in
         LocSet.union
           acc
           (List.fold_left
@@ -65,6 +65,6 @@ and extract_expr : 'a Choreo.expr -> LocSet.t = function
         LocSet.union acc (LocSet.union (extract_pattern p) (extract_expr e)))
       (extract_expr e)
       cases
-  | Construct (_, es, _) ->
+  | Construct (_, es,_, _) ->
     List.fold_left (fun acc e -> LocSet.union acc (extract_expr e)) LocSet.empty es
 ;;

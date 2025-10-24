@@ -493,7 +493,7 @@ let loc_suite =
               ; ("test_expression_match 1 2" >:: fun _ -> test_expression_match_LOC 1 2)
               ; ("test_expression_pair 1 2" >:: fun _ -> test_expression_pair_LOC 1 2)
               ]
-        ; "Constructors Tests"
+        ; "Local Constructors Tests"
         >::: [
                 ( "no constructor list"
                 >:: fun _ -> test_no_constructor_list_LOC 1 2 );
@@ -1093,7 +1093,7 @@ let choreo_suite =
               ; ("test_info_typedecl_CH" >:: fun _ -> test_info_stmt_typedecl_CH 1 2 3)
               ; ("test_info_foreigndecl_CH" >:: fun _ -> test_info_stmt_foreigndecl_CH 1 2)
               ]
-      ; "Constructors Tests"
+      ; "CH Constructors Tests"
       >::: [
               ( "no constructor list"
               >:: fun _ -> test_no_constructor_list_CH 1 2 );

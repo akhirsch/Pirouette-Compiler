@@ -13,6 +13,7 @@ module M : sig
   and 'a constructor =
     { name : string
     ; args : 'a typ list
+    ; typ  : 'a typ
     ; info : 'a
     }
 
@@ -23,7 +24,7 @@ module M : sig
     | LocPat of 'a Local.M.loc_id * 'a Local.M.pattern * 'a
     | Left of 'a pattern * 'a
     | Right of 'a pattern * 'a
-    | PConstruct of string * 'a pattern list * 'a
+    | PConstruct of string * 'a pattern list * 'a typ 'a
 
   type 'a expr =
     | Unit of 'a
@@ -41,7 +42,7 @@ module M : sig
     | Left of 'a expr * 'a
     | Right of 'a expr * 'a
     | Match of 'a expr * ('a pattern * 'a expr) list * 'a
-    | Construct of string * 'a expr list * 'a
+    | Construct of string * 'a expr list * 'a typ * 'a
 
   and 'a stmt =
     | Decl of 'a pattern * 'a typ * 'a

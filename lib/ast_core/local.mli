@@ -40,6 +40,7 @@ module M : sig
   and 'a constructor =
     { name : string
     ; args : 'a typ list
+    ; typ  : 'a typ
     ; info : 'a
     }
 
@@ -65,7 +66,7 @@ module M : sig
     | Left of 'a expr * 'a
     | Right of 'a expr * 'a
     | Match of 'a expr * ('a pattern * 'a expr) list * 'a
-    | Construct of string * 'a expr list * 'a
+    | Construct of string * 'a expr list * 'a typ * 'a
 end
 
 module With : functor

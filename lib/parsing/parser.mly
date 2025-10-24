@@ -136,7 +136,7 @@ local_expr:
   | RIGHT e=local_expr { Right (e, gen_pos $startpos $endpos) }
   | MATCH e=local_expr WITH cases=nonempty_list(local_case) { Match (e, cases, gen_pos $startpos $endpos) }
   | LPAREN e=local_expr RPAREN { Local.set_info_expr (gen_pos $startpos $endpos) e }
-  | name=ID LPAREN args=separated_list(COMMA, local_expr) RPAREN { Construct (name, args, gen_pos $startpos $endpos) }
+  | name=ID LPAREN args=separated_list(COMMA, local_expr) RPAREN { Construct (name, args, typ, gen_pos $startpos $endpos) }
 
 (** [choreo_pattern] parses patterns used in choreography expressions and constructs corresponding AST nodes.*)
 choreo_pattern:
@@ -267,7 +267,7 @@ foreign_decl:
 *)
 constructor_arg_list_choreo:
   | t=choreo_type { [t] }
-  | t=choreo_type COMMA rest=constructor_arg_list_choreo { t :: rest }
+  | t=choreo_type COMMA rest=constructor_arg_list_choreo { t :: rest } 
   
 (** [constructor_arg_list_local] parses a list of local types for variant constructor arguments.
     
@@ -293,12 +293,12 @@ constructor_arg_list_local:
                in a constructor definition with the specified name and arguments.
 *)
 %inline local_constructor_def:
-  | BAR name=ID 
-    { Ast_core.Local.M.{ name = name; args = []; info = gen_pos $startpos $endpos } }
-  | BAR name=ID COLON t=local_type
-    { Ast_core.Local.M.{ name = name; args = [t]; info = gen_pos $startpos $endpos } }
-  | BAR name=ID COLON args=constructor_arg_list_local
-    { Ast_core.Local.M.{ name = name; args = args; info = gen_pos $startpos $endpos } }
+  | BAR name=ID ARROW typ=choreo_type
+    { Ast_core.Local.M.{ name = name; args = []; typ = x; info = gen_pos $startpos $endpos } }
+  | BAR name=ID COLON t=local_type ARROW typ=choreo_type
+    { Ast_core.Local.M.{ name = name; args = [t]; typ = x; info = gen_pos $startpos $endpos } }
+  | BAR name=ID COLON args=constructor_arg_list_local ARROW typ=choreo_type
+    { Ast_core.Local.M.{ name = name; args = args; typ = x; info = gen_pos $startpos $endpos } }
 
 (** [choreo_constructor_def] parses constructor definitions for variant types in the choreography language.
     
@@ -309,9 +309,9 @@ constructor_arg_list_local:
                in a constructor definition for use in choreography variant types.
 *)
 %inline choreo_constructor_def:
-  | BAR name=ID
-    { Ast_core.Choreo.M.{ name = name; args = []; info = gen_pos $startpos $endpos } }
-  | BAR name=ID COLON t=choreo_type
-    { Ast_core.Choreo.M.{ name = name; args = [t]; info = gen_pos $startpos $endpos } }
-  | BAR name=ID COLON args=constructor_arg_list_choreo 
-    { Ast_core.Choreo.M.{ name = name; args = args; info = gen_pos $startpos $endpos } }
+  | BAR name=ID ARROW typ=choreo_type
+    { Ast_core.Choreo.M.{ name = name; args = []; typ = x info = gen_pos $startpos $endpos } }
+  | BAR name=ID COLON t=choreo_type ARROW typ=choreo_type
+    { Ast_core.Choreo.M.{ name = name; args = [t]; typ = x; info = gen_pos $startpos $endpos } }
+  | BAR name=ID COLON args=constructor_arg_list_choreo ARROW typ=choreo_type
+    { Ast_core.Choreo.M.{ name = name; args = args; typ = x info = gen_pos $startpos $endpos } }

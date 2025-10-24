@@ -37,7 +37,7 @@ let rec jsonify_local_type = function
       [ ( "TVariant"
         , `List
             (List.map
-               (fun { Local.name; args; info = _ } ->
+               (fun { Local.name; args; typ; info = _ } ->
                  `Assoc
                    [ "name", `String name
                    ; "args", `List (List.map jsonify_local_type args)
@@ -125,7 +125,7 @@ let rec jsonify_local_expr = function
                      cases) )
             ] )
       ]
-  | Local.Construct (name, exprs, _) ->
+  | Local.Construct (name, exprs, typ, _) ->
     `Assoc
       [ ( "Construct"
         , `Assoc
@@ -150,7 +150,7 @@ let rec jsonify_choreo_type = function
       [ ( "TVariant"
         , `List
             (List.map
-               (fun { Choreo.name; args; info = _ } ->
+               (fun { Choreo.name; args; typ; info = _ } ->
                  `Assoc
                    [ "name", `String name
                    ; "args", `List (List.map jsonify_choreo_type args)
@@ -283,7 +283,7 @@ and jsonify_choreo_expr = function
             ; "cases", `List (List.map jsonify_choreo_case cases)
             ] )
       ]
-  | Choreo.Construct (name, exprs, _) ->
+  | Choreo.Construct (name, exprs, typ, _) ->
     `Assoc
       [ ( "Construct"
         , `Assoc

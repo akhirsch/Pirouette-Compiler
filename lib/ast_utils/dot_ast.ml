@@ -87,7 +87,7 @@ let rec dot_local_type (string_of_info : 'a -> string) (typ : 'a Local.typ)
     in
     let constructor_nodes =
       List.map
-        (fun { Local.name; args; info = cons_info } ->
+        (fun { Local.name; args; typ; info = cons_info } ->
           let cons_node_name = generate_node_name () in
           let cons_node =
             spf
@@ -291,7 +291,7 @@ let rec dot_local_expr (string_of_info : 'a -> string) (loc_expr : 'a Local.expr
     let c2, case_edges = dot_local_cases cases in
     let edge1 = spf "%s -> %s;\n" node_name n1 in
     match_node ^ edge1 ^ case_edges ^ c1 ^ c2, node_name
-  | Construct (name, exprs, info) ->
+  | Construct (name, exprs, typ, info) ->
     let construct_node =
       spf "%s [label=\"Construct %s %s\"];\n" node_name name (string_of_info info)
     in
@@ -357,7 +357,7 @@ let rec dot_choreo_type (string_of_info : 'a -> string) (typ : 'a Choreo.typ)
     in
     let constructor_nodes =
       List.map
-        (fun { Choreo.name; args; info = cons_info } ->
+        (fun { Choreo.name; args; typ; info = cons_info } ->
           let cons_node_name = generate_node_name () in
           let cons_node =
             spf
@@ -654,7 +654,7 @@ and dot_choreo_expr (string_of_info : 'a -> string) (expr : 'a Choreo.expr)
     let c2, case_edges = dot_choreo_cases cases in
     let edge1 = spf "%s -> %s;\n" node_name n1 in
     match_node ^ edge1 ^ case_edges ^ c1 ^ c2, node_name
-  | Construct (name, exprs, info) ->
+  | Construct (name, exprs, typ, info) ->
     let construct_node =
       spf "%s [label=\"Construct %s %s\"];\n" node_name name (string_of_info info)
     in
