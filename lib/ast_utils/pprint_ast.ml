@@ -76,7 +76,7 @@ let rec pprint_local_pattern ppf (pat : 'a Local.pattern) =
     fprintf ppf "@[<hv>(%a, %a)@]" pprint_local_pattern p1 pprint_local_pattern p2
   | Left (p, _) -> fprintf ppf "@[<hv2>left@ %a@]" pprint_local_pattern p
   | Right (p, _) -> fprintf ppf "@[<hv2>right@ %a@]" pprint_local_pattern p
-  | Local.PConstruct (name, patterns, _) ->
+  | Local.PConstruct (name, patterns, typ, _) ->
     (match patterns with
      | [] -> 
        fprintf ppf "@[<h>%s@]" name
@@ -227,7 +227,7 @@ let rec pprint_choreo_pattern ppf (pat : 'a Choreo.pattern) =
     fprintf ppf "@[<hv>(%a, %a)@]" pprint_choreo_pattern p1 pprint_choreo_pattern p2
   | Left (p, _) -> fprintf ppf "@[<hv2>left@ %a@]" pprint_choreo_pattern p
   | Right (p, _) -> fprintf ppf "@[<hv2>right@ %a@]" pprint_choreo_pattern p
-  | PConstruct (name, args, _) ->
+  | PConstruct (name, args, typ, _) ->
     (match args with
     | [] -> 
       fprintf ppf "@[<h>%s@]" name

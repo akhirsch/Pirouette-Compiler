@@ -217,7 +217,7 @@ struct
     | TVar (t, _) -> TVar (t, i)
     | TProd (t1, t2, _) -> TProd (t1, t2, i)
     | TSum (t1, t2, _) -> TSum (t1, t2, i)
-    | TVariant (cs, _) -> TVariant (cs, i)
+    | TVariant (cs,  _) -> TVariant (cs, i)
   ;;
 
   let set_info_pattern : Info.t -> pattern -> pattern =

@@ -26,7 +26,7 @@ module M = struct
     | LocPat of 'a Local.loc_id * 'a Local.pattern * 'a
     | Left of 'a pattern * 'a
     | Right of 'a pattern * 'a
-    | PConstruct of string * 'a pattern list * 'a
+    | PConstruct of string * 'a pattern list * 'a typ * 'a
 
   type 'a expr =
     | Unit of 'a
@@ -92,7 +92,7 @@ struct
     | LocPat (_, _, i) -> i
     | Left (_, i) -> i
     | Right (_, i) -> i
-    | PConstruct (_, _, i) -> i
+    | PConstruct (_, _, _, i) -> i
   ;;
 
   let get_info_expr : expr -> Info.t = function
@@ -145,7 +145,7 @@ struct
     | LocPat (loc, pat, _) -> LocPat (loc, pat, i)
     | Left (p, _) -> Left (p, i)
     | Right (p, _) -> Right (p, i)
-    | PConstruct (name, ps, _) -> PConstruct (name, ps, i)
+    | PConstruct (name, ps, t, _) -> PConstruct (name, ps, t, i)
   ;;
 
   let set_info_expr : Info.t -> expr -> expr =

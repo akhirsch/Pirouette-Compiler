@@ -51,7 +51,7 @@ module M : sig
     | Pair of 'a pattern * 'a pattern * 'a
     | Left of 'a pattern * 'a
     | Right of 'a pattern * 'a
-    | PConstruct of string * 'a pattern list * 'a
+    | PConstruct of string * 'a pattern list * 'a typ * 'a
 
   type 'a expr =
     | Unit of 'a

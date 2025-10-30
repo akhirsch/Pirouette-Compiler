@@ -161,7 +161,7 @@ let rec dot_local_pattern (string_of_info : 'a -> string) (pat : 'a Local.patter
     let right_node = spf "%s [label=\"Right %s\"];\n" node_name (string_of_info info) in
     let edge = spf "%s -> %s;\n" node_name n in
     right_node ^ edge ^ c, node_name
-  | PConstruct (name, patterns, info) ->
+  | PConstruct (name, patterns, typ, info) ->
     let pconstruct_node =
       spf "%s [label=\"Constructor %s %s\"];\n" node_name name (string_of_info info)
     in
@@ -425,7 +425,7 @@ let rec dot_choreo_pattern (string_of_info : 'a -> string) (pat : 'a Choreo.patt
     let right_node = spf "%s [label=\"Right %s\"];\n" node_name (string_of_info info) in
     let edge = spf "%s -> %s;\n" node_name n in
     right_node ^ edge ^ c, node_name
-  | PConstruct (name, patterns, info) ->
+  | PConstruct (name, patterns, typ, info) ->
     let pconstruct_node =
       spf "%s [label=\"Constructor %s %s\"];\n" node_name name (string_of_info info)
     in

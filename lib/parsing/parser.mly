@@ -88,7 +88,7 @@ stmt_block:
 stmt:
   | p=choreo_pattern COLON t=choreo_type SEMICOLON { Decl (p, t, gen_pos $startpos $endpos) }
   | ps=nonempty_list(choreo_pattern) COLONEQ e=choreo_expr SEMICOLON { Assign (ps, e, gen_pos $startpos $endpos) }
-  | TYPE id=typ_id COLONEQ t=choreo_type SEMICOLON? { TypeDecl (id, t, gen_pos $startpos $endpos) }
+  | TYPE id=typ_id COLONEQ t=choreo_type SEMICOLON { TypeDecl (id, t, gen_pos $startpos $endpos) } //or list of constructors
   | f=foreign_decl { f }
 
 /* Associativity increases from expr to expr3, with each precedence level falling through to the next. */
@@ -117,7 +117,7 @@ choreo_expr2:
   | id=var_id { Var (id, gen_pos $startpos $endpos) }
   | id=loc_id DOT e=local_expr { LocExpr (id, e, gen_pos $startpos $endpos) }
   | LPAREN e=choreo_expr RPAREN { Choreo.set_info_expr (gen_pos $startpos $endpos) e }
-  | name=ID LPAREN args=separated_list(COMMA, choreo_expr) RPAREN { Construct (name, args, gen_pos $startpos $endpos) }
+  | name=ID COLON LPAREN args=separated_list(COMMA, choreo_expr) RPAREN ARROW typ=choreo_type{ Construct (name, args,typ, gen_pos $startpos $endpos) }
 
 (** [local_expr] parses local expressions and constructs corresponding AST nodes.
 
@@ -136,7 +136,7 @@ local_expr:
   | RIGHT e=local_expr { Right (e, gen_pos $startpos $endpos) }
   | MATCH e=local_expr WITH cases=nonempty_list(local_case) { Match (e, cases, gen_pos $startpos $endpos) }
   | LPAREN e=local_expr RPAREN { Local.set_info_expr (gen_pos $startpos $endpos) e }
-  | name=ID LPAREN args=separated_list(COMMA, local_expr) RPAREN { Construct (name, args, typ, gen_pos $startpos $endpos) }
+  | name=ID COLON LPAREN args=separated_list(COMMA, local_expr) RPAREN ARROW typ=local_type { Construct (name, args, typ, gen_pos $startpos $endpos) }
 
 (** [choreo_pattern] parses patterns used in choreography expressions and constructs corresponding AST nodes.*)
 choreo_pattern:
@@ -147,7 +147,7 @@ choreo_pattern:
   | LEFT p=choreo_pattern { Left (p, gen_pos $startpos $endpos) }
   | RIGHT p=choreo_pattern { Right (p, gen_pos $startpos $endpos) }
   | LPAREN p=choreo_pattern RPAREN { Choreo.set_info_pattern (gen_pos $startpos $endpos) p }
-  | name=ID LPAREN args=separated_list(COMMA, choreo_pattern) RPAREN { PConstruct (name, args, gen_pos $startpos $endpos) }
+  | name=ID COLON LPAREN args=separated_list(COMMA, choreo_pattern) RPAREN ARROW typ=choreo_type { PConstruct (name, args,typ, gen_pos $startpos $endpos) }
   
   (** [local_pattern] parses patterns used in local expressions within choreographies and constructs corresponding AST nodes.*)
 local_pattern:
@@ -158,7 +158,7 @@ local_pattern:
   | LEFT p=local_pattern { Left (p, gen_pos $startpos $endpos) }
   | RIGHT p=local_pattern { Right (p, gen_pos $startpos $endpos) }
   | LPAREN p=local_pattern RPAREN { Local.set_info_pattern (gen_pos $startpos $endpos) p }
-  | name=ID LPAREN args=separated_list(COMMA, local_pattern) RPAREN { PConstruct (name, args, gen_pos $startpos $endpos) }
+  | name=ID COLON LPAREN args=separated_list(COMMA, local_pattern) RPAREN ARROW typ=local_type { PConstruct (name, args, typ, gen_pos $startpos $endpos) }
 
 (** [choreo_type] parses choreography types and constructs corresponding AST nodes.
 
@@ -293,12 +293,12 @@ constructor_arg_list_local:
                in a constructor definition with the specified name and arguments.
 *)
 %inline local_constructor_def:
-  | BAR name=ID ARROW typ=choreo_type
-    { Ast_core.Local.M.{ name = name; args = []; typ = x; info = gen_pos $startpos $endpos } }
-  | BAR name=ID COLON t=local_type ARROW typ=choreo_type
-    { Ast_core.Local.M.{ name = name; args = [t]; typ = x; info = gen_pos $startpos $endpos } }
-  | BAR name=ID COLON args=constructor_arg_list_local ARROW typ=choreo_type
-    { Ast_core.Local.M.{ name = name; args = args; typ = x; info = gen_pos $startpos $endpos } }
+  | BAR name=ID ARROW typ=local_type
+    { Ast_core.Local.M.{ name = name; args = []; typ = typ; info = gen_pos $startpos $endpos } }
+  | BAR name=ID COLON t=local_type ARROW typ=local_type
+    { Ast_core.Local.M.{ name = name; args = [t]; typ = typ; info = gen_pos $startpos $endpos } }
+  | BAR name=ID COLON args=constructor_arg_list_local ARROW typ=local_type
+    { Ast_core.Local.M.{ name = name; args = args; typ = typ; info = gen_pos $startpos $endpos } }
 
 (** [choreo_constructor_def] parses constructor definitions for variant types in the choreography language.
     
@@ -310,8 +310,8 @@ constructor_arg_list_local:
 *)
 %inline choreo_constructor_def:
   | BAR name=ID ARROW typ=choreo_type
-    { Ast_core.Choreo.M.{ name = name; args = []; typ = x info = gen_pos $startpos $endpos } }
+    { Ast_core.Choreo.M.{ name = name; args = []; typ = typ; info = gen_pos $startpos $endpos } }
   | BAR name=ID COLON t=choreo_type ARROW typ=choreo_type
-    { Ast_core.Choreo.M.{ name = name; args = [t]; typ = x; info = gen_pos $startpos $endpos } }
+    { Ast_core.Choreo.M.{ name = name; args = [t]; typ = typ; info = gen_pos $startpos $endpos } }
   | BAR name=ID COLON args=constructor_arg_list_choreo ARROW typ=choreo_type
-    { Ast_core.Choreo.M.{ name = name; args = args; typ = x info = gen_pos $startpos $endpos } }
+    { Ast_core.Choreo.M.{ name = name; args = args; typ = typ; info = gen_pos $startpos $endpos } }

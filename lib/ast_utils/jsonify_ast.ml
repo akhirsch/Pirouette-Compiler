@@ -61,7 +61,7 @@ let rec jsonify_local_pattern = function
   | Local.Right (p, _) -> `Assoc [ "Right", jsonify_local_pattern p ]
   | Local.Pair (p1, p2, _) ->
     `Assoc [ "Pair", `List [ jsonify_local_pattern p1; jsonify_local_pattern p2 ] ]
-  | Local.PConstruct (name, patterns, _) ->
+  | Local.PConstruct (name, patterns, typ, _) ->
     `Assoc
       [ ( "PConstruct"
         , `Assoc
@@ -169,7 +169,7 @@ let rec jsonify_choreo_pattern = function
   | Choreo.LocPat (LocId (loc, _), p, _) ->
     `Assoc
       [ "LocPat", `Assoc [ "loc", `String loc; "local_patt", jsonify_local_pattern p ] ]
-  | Choreo.PConstruct (name, patterns, _) ->
+  | Choreo.PConstruct (name, patterns,_,  _) ->
     `Assoc
       [ ( "PConstruct"
         , `Assoc

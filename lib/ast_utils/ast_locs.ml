@@ -6,7 +6,7 @@ let rec extract_pattern : 'a Choreo.pattern -> LocSet.t = function
   | Pair (p1, p2, _) -> LocSet.union (extract_pattern p1) (extract_pattern p2)
   | LocPat (LocId (id, _), _, _) -> LocSet.singleton id
   | Left (p, _) | Right (p, _) -> extract_pattern p
-  | PConstruct (_, ps, _) ->
+  | PConstruct (_, ps,_,  _) ->
     List.fold_left (fun acc p -> LocSet.union acc (extract_pattern p)) LocSet.empty ps
 ;;
 

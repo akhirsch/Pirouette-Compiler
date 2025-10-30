@@ -24,7 +24,7 @@ module M : sig
     | LocPat of 'a Local.M.loc_id * 'a Local.M.pattern * 'a
     | Left of 'a pattern * 'a
     | Right of 'a pattern * 'a
-    | PConstruct of string * 'a pattern list * 'a typ 'a
+    | PConstruct of string * 'a pattern list * 'a typ * 'a
 
   type 'a expr =
     | Unit of 'a
