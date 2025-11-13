@@ -40,7 +40,7 @@ module M = struct
     | Decl of 'a pattern * 'a typ * 'a
     | Assign of 'a pattern list * 'a expr * 'a (* list is only for F P1 P2 ... Pn := C *)
     | TypeDecl of 'a Local.typ_id * 'a typ * 'a
-    | Variant of 'a Local.typ_id * 'a Local.var_id * 'a Local.typ_id * 'a
+    | Variant of 'a Local.typ_id * string * 'a Local.typ_id * 'a (* only accepted type string, but since I think that was the source of error for foriegn declaration I'm not sure that is rigth*)
     | ForeignDecl of 'a Local.var_id * 'a typ * string * 'a
 
   and 'a stmt_block = 'a stmt list
