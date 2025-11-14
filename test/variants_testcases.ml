@@ -1,0 +1,1 @@
+let simple = "type X := constructor : X;";;
