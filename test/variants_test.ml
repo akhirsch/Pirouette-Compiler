@@ -7,6 +7,10 @@ assert_equal program []
 
 ;;
 
+(* dune exec pirc -- -ast-dump dot examples/exvariant1.pir *)
+(* --profile release *)
+(* dune exec pirc --profile release -- --ast-dump dot examples/variant_declaration.pir *)
+
 
 
 
