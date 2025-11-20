@@ -396,11 +396,12 @@ and dot_stmt (string_of_info : 'a -> string) (stmt : 'a Choreo.stmt) : string * 
     var_node ^ edge ^ c, node_name
   | Variant (TypId (id1, _), s, TypId (id2, _), info ) ->
     let variant_node = spf "%s [label=\"VariantDeclaration %s\"];\n" node_name (string_of_info info) in
-    let var_node1 = spf "%s [label=\"%s %s\"];\n" node_name id1 (string_of_info info) in
-    let var_node2 = spf "%s [label=\"%s %s\"];\n" node_name id2 (string_of_info info) in
-    (* let c, n = dot_choreo_type string_of_info typ in *)
-    let edge = spf "%s -> %s;\n" node_name s in
-    var_node1 ^ edge, s ^ var_node2
+    (* let var_node1 = spf "%s [label=\"%s %s\"];\n" node_name id1 (string_of_info info) in *)
+    (* let var_node2 = spf "%s [label=\"%s %s\"];\n" node_name id2 (string_of_info info) in *)
+    let typ1edge = spf "%s -> %s;\n" node_name (id1^"_1") in (* temporarily added numbers so that the dot visualizer doesn't mistake it for the same thing*)
+    let typ2edge = spf "%s -> %s;\n" node_name (id2^"_2") in
+    let constructor = spf "%s -> %s;\n" node_name s in
+    variant_node ^ typ1edge ^ constructor ^ typ2edge, node_name
   | ForeignDecl (VarId (id, _), typ, s, info) ->
     let node_name = generate_node_name () in
     let decl_node =

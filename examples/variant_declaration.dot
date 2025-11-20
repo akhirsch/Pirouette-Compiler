@@ -1,5 +1,7 @@
 digraph G {
-n0 [label="X [1:0-1:26]"];
+n0 [label="VariantDeclaration [1:0-1:26]"];
+n0 -> X_1;
 n0 -> constructor;
+n0 -> X_2;
 
 }
