@@ -87,7 +87,7 @@ stmt:
   | p=choreo_pattern COLON t=choreo_type SEMICOLON { Decl (p, t, gen_pos $startpos $endpos) }
   | ps=nonempty_list(choreo_pattern) COLONEQ e=choreo_expr SEMICOLON { Assign (ps, e, gen_pos $startpos $endpos) }
   | TYPE id=typ_id COLONEQ t=choreo_type SEMICOLON? { TypeDecl (id, t, gen_pos $startpos $endpos) }
-  | TYPE t1=typ_id COLONEQ name=ID COLON t2=typ_id SEMICOLON { Variant (t1, name, t2, gen_pos $startpos $endpos) } // type X := constructor : X;
+  | TYPE t1=typ_id COLONEQ constructors=constructor_list_choreo SEMICOLON { Variant (t1, constructors, gen_pos $startpos $endpos) } // type X := constructor : X;
   | f=foreign_decl { f }
 
 /* Associativity increases from expr to expr3, with each precedence level falling through to the next. */
@@ -252,3 +252,50 @@ value:
 foreign_decl:
   | FOREIGN id=var_id COLON t=choreo_type COLONEQ s=STRING SEMICOLON 
     { ForeignDecl (id, t, s, gen_pos $startpos $endpos) }
+
+constructor_list_local:
+  | constructors=nonempty_list(constructor_arg_list_local){constructors}
+
+constructor_list_choreo: 
+  | constructors=nonempty_list(constructor_arg_list_choreo){constructors}
+
+constructor_arg_list_choreo:
+  | t=choreo_type { [t] }
+  | t=choreo_type ARROW rest=constructor_arg_list_choreo { t :: rest } 
+  
+(** [constructor_arg_list_local] parses a list of local types for variant constructor arguments.
+    
+    We need this separate rule because the '*' symbol is used both for product types 
+    and for separating constructor arguments, which confuses the parser. This tells
+    the parser how to differentiate between the 2 usages.
+
+    - Returns: A list of local type AST nodes.
+    - Example: "int * bool * string" gets turned into a list [int; bool; string]
+*)
+constructor_arg_list_local:
+  | t=local_type { [t] }
+  | t=local_type ARROW rest=constructor_arg_list_local { t :: rest }
+
+%inline local_constructor_def:
+  | BAR name=ID ARROW typ=typ_id
+    { Ast_core.Local.M.{ name = name; args = []; typ = typ; info = gen_pos $startpos $endpos } }
+  | BAR name=ID COLON t=local_type ARROW typ=typ_id
+    { Ast_core.Local.M.{ name = name; args = [t]; typ = typ; info = gen_pos $startpos $endpos } }
+  | BAR name=ID COLON args=constructor_arg_list_local ARROW typ=typ_id
+    { Ast_core.Local.M.{ name = name; args = args; typ = typ; info = gen_pos $startpos $endpos } }
+
+(** [choreo_constructor_def] parses constructor definitions for variant types in the choreography language.
+    
+    Similar to [local_constructor_def], but for constructors in the choreography language.
+    
+    - Returns: A constructor record with name, argument types, and location info.
+    - Example: Parsing a vertical bar, a constructor name, a colon, and type arguments results 
+               in a constructor definition for use in choreography variant types.
+*)
+%inline choreo_constructor_def:
+  | BAR name=ID ARROW typ=typ_id
+    { Ast_core.Choreo.M.{ name = name; args = []; typ = typ; info = gen_pos $startpos $endpos } }
+  | BAR name=ID COLON t=typ_id ARROW typ=typ_id
+    { Ast_core.Choreo.M.{ name = name; args = [t]; typ = typ; info = gen_pos $startpos $endpos } }
+  | BAR name=ID COLON args=constructor_arg_list_choreo ARROW typ=typ_id
+    { Ast_core.Choreo.M.{ name = name; args = args; typ = typ; info = gen_pos $startpos $endpos } }
