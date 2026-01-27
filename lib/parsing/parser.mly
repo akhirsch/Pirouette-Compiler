@@ -293,7 +293,7 @@ constructor_arg_list_local:
                in a constructor definition for use in choreography variant types.
 *)
 %inline choreo_constructor_def:
-  | BAR name=ID ARROW typ=typ_id
+  | BAR name=ID COLON typ=typ_id
     { Ast_core.Choreo.M.{ name = name; args = []; typ = typ; info = gen_pos $startpos $endpos } }
   | BAR name=ID COLON t=typ_id ARROW typ=typ_id
     { Ast_core.Choreo.M.{ name = name; args = [t]; typ = typ; info = gen_pos $startpos $endpos } }
