@@ -1,8 +1,40 @@
 digraph G {
-n0 [label="X [1:0-2:20]"];
+n0 [label="X [2:0-2:54]"];
 n0 -> n1;
-n1 [label="Variant [2:0-2:20]"];
-n2 [label="Constructor constructor [2:0-2:20]"];
+n1 [label="Variant [2:10-2:54]"];
+n2 [label="Constructor constructor [2:10-2:54]"];
 n1 -> n2;
+n3 [label="A [2:25-2:30]"];
+n3 -> n4;
+n4 [label="Int [2:27-2:30]"];
+n5 [label="A [2:32-2:37]"];
+n5 -> n6;
+n6 [label="Int [2:34-2:37]"];
+n7 [label="B [2:39-2:44]"];
+n7 -> n8;
+n8 [label="Int [2:41-2:44]"];
+n9 [label="C [2:46-2:51]"];
+n9 -> n10;
+n10 [label="Int [2:48-2:51]"];
+n2 -> n3;
+n2 -> n5;
+n2 -> n7;
+n2 -> n9;
+
+n11 [label="X [5:0-5:34]"];
+n11 -> n12;
+n12 [label="Variant [5:10-5:34]"];
+n13 [label="Constructor constructor [5:10-5:34]"];
+n12 -> n13;
+n14 [label="A [5:25-5:30]"];
+n14 -> n15;
+n15 [label="Int [5:27-5:30]"];
+n13 -> n14;
+
+n16 [label="X [17:0-18:17]"];
+n16 -> n17;
+n17 [label="Variant [18:0-18:17]"];
+n18 [label="Constructor constructor [18:0-18:17]"];
+n17 -> n18;
 
 }
