@@ -1,0 +1,8 @@
+digraph G {
+n0 [label="X [1:0-2:20]"];
+n0 -> n1;
+n1 [label="Variant [2:0-2:20]"];
+n2 [label="Constructor constructor [2:0-2:20]"];
+n1 -> n2;
+
+}

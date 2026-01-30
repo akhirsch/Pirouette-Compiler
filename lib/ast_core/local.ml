@@ -35,6 +35,14 @@ module M = struct
     | TVar of 'a typ_id * 'a
     | TProd of 'a typ * 'a typ * 'a
     | TSum of 'a typ * 'a typ * 'a
+    | TVariant of 'a constructor list * 'a
+
+      and 'a constructor =
+    { name : string
+    ; args : 'a typ list
+    ; typ  : 'a typ_id
+    ; info : 'a
+    }
 
   type 'a pattern =
     | Default of 'a
@@ -43,6 +51,7 @@ module M = struct
     | Pair of 'a pattern * 'a pattern * 'a
     | Left of 'a pattern * 'a
     | Right of 'a pattern * 'a
+    | PConstruct of string * 'a pattern list * 'a typ_id * 'a
 
   type 'a expr =
     | Unit of 'a
@@ -57,6 +66,7 @@ module M = struct
     | Left of 'a expr * 'a
     | Right of 'a expr * 'a
     | Match of 'a expr * ('a pattern * 'a expr) list * 'a
+    | Construct of string * 'a expr list * 'a typ_id * 'a
 end
 
 module With (Info : sig
@@ -73,6 +83,7 @@ struct
   type nonrec typ = Info.t M.typ
   type nonrec pattern = Info.t M.pattern
   type nonrec expr = Info.t M.expr
+  type nonrec constructor = Info.t M.constructor
 
   let get_info_value : value -> Info.t = function
     | Int (_, i) -> i
@@ -120,6 +131,7 @@ struct
     | TVar (_, i) -> i
     | TProd (_, _, i) -> i
     | TSum (_, _, i) -> i
+    | TVariant (_, i) -> i
   ;;
 
   let get_info_pattern : pattern -> Info.t = function
@@ -129,6 +141,7 @@ struct
     | Pair (_, _, i) -> i
     | Left (_, i) -> i
     | Right (_, i) -> i
+    | PConstruct (_, _, _, i) -> i
   ;;
 
   let get_info_expr : expr -> Info.t = function
@@ -144,6 +157,11 @@ struct
     | Left (_, i) -> i
     | Right (_, i) -> i
     | Match (_, _, i) -> i
+    | Construct (_, _, _, i) -> i
+  ;;
+
+    let get_info_constructor : constructor -> Info.t = function
+    | { name = _; args = _; typ = _; info = i } -> i
   ;;
 
   let set_info_value : Info.t -> value -> value =
@@ -199,6 +217,7 @@ struct
     | TVar (t, _) -> TVar (t, i)
     | TProd (t1, t2, _) -> TProd (t1, t2, i)
     | TSum (t1, t2, _) -> TSum (t1, t2, i)
+    | TVariant (cs,  _) -> TVariant (cs, i)
   ;;
 
   let set_info_pattern : Info.t -> pattern -> pattern =
@@ -209,6 +228,7 @@ struct
     | Pair (p1, p2, _) -> Pair (p1, p2, i)
     | Left (p, _) -> Left (p, i)
     | Right (p, _) -> Right (p, i)
+    | PConstruct (name, ps, t, _) -> PConstruct (name, ps, t, i)
   ;;
 
   let set_info_expr : Info.t -> expr -> expr =
@@ -225,5 +245,11 @@ struct
     | Left (e, _) -> Left (e, i)
     | Right (e, _) -> Right (e, i)
     | Match (e, cases, _) -> Match (e, cases, i)
+    | Construct (s, es, t, _) -> Construct (s, es, t, i)
+  ;;
+
+    let set_info_constructor : Info.t -> constructor -> constructor =
+    fun i -> function
+    | { name; args; typ; info = _ } -> { name; args; typ; info = i }
   ;;
 end

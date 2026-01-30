@@ -35,6 +35,14 @@ module M : sig
     | TVar of 'a typ_id * 'a
     | TProd of 'a typ * 'a typ * 'a
     | TSum of 'a typ * 'a typ * 'a
+    | TVariant of 'a constructor list * 'a
+
+      and 'a constructor =
+    { name : string
+    ; args : 'a typ list
+    ; typ  : 'a typ_id
+    ; info : 'a
+    }
 
   type 'a pattern =
     | Default of 'a
@@ -43,6 +51,8 @@ module M : sig
     | Pair of 'a pattern * 'a pattern * 'a
     | Left of 'a pattern * 'a
     | Right of 'a pattern * 'a
+    | PConstruct of string * 'a pattern list * 'a typ_id * 'a
+    
 
   type 'a expr =
     | Unit of 'a
@@ -57,6 +67,7 @@ module M : sig
     | Left of 'a expr * 'a
     | Right of 'a expr * 'a
     | Match of 'a expr * ('a pattern * 'a expr) list * 'a
+    | Construct of string * 'a expr list * 'a typ_id * 'a
 end
 
 module With : functor
@@ -74,6 +85,7 @@ module With : functor
   type nonrec typ = Info.t M.typ
   type nonrec pattern = Info.t M.pattern
   type nonrec expr = Info.t M.expr
+  type nonrec constructor = Info.t M.constructor
 
   val get_info_value : value -> Info.t
   val get_info_locid : loc_id -> Info.t
@@ -84,6 +96,7 @@ module With : functor
   val get_info_typ : typ -> Info.t
   val get_info_pattern : pattern -> Info.t
   val get_info_expr : expr -> Info.t
+  val get_info_constructor : constructor -> Info.t
   val set_info_value : Info.t -> value -> value
   val set_info_locid : Info.t -> loc_id -> loc_id
   val set_info_varid : Info.t -> var_id -> var_id
@@ -93,4 +106,5 @@ module With : functor
   val set_info_typ : Info.t -> typ -> typ
   val set_info_pattern : Info.t -> pattern -> pattern
   val set_info_expr : Info.t -> expr -> expr
+  val set_info_constructor : Info.t -> constructor -> constructor
 end

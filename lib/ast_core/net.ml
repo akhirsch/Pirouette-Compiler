@@ -7,6 +7,13 @@ module M = struct
     | TMap of 'a typ * 'a typ * 'a
     | TProd of 'a typ * 'a typ * 'a
     | TSum of 'a typ * 'a typ * 'a
+    | TVariant of 'a constructor list * 'a
+
+    and 'a constructor =
+      { name : string
+      ; args : 'a typ list
+      ; info : 'a
+      }
 
   type 'a expr =
     | Unit of 'a
@@ -26,6 +33,7 @@ module M = struct
     | Left of 'a expr * 'a
     | Right of 'a expr * 'a
     | Match of 'a expr * ('a Local.pattern * 'a expr) list * 'a
+    | Construct of string * 'a expr list * 'a
 
   and 'a stmt =
     | Decl of 'a Local.pattern * 'a typ * 'a
@@ -51,6 +59,7 @@ struct
     | TMap (_, _, i) -> i
     | TProd (_, _, i) -> i
     | TSum (_, _, i) -> i
+    | TVariant (_, i) -> i
   ;;
 
   let get_info_expr : expr -> Info.t = function
@@ -71,6 +80,7 @@ struct
     | Left (_, i) -> i
     | Right (_, i) -> i
     | Match (_, _, i) -> i
+    | Construct (_, _, i) -> i
   ;;
 
   let get_info_stmt : stmt -> Info.t = function
@@ -87,6 +97,7 @@ struct
     | TMap (t1, t2, _) -> TMap (t1, t2, i)
     | TProd (t1, t2, _) -> TProd (t1, t2, i)
     | TSum (t1, t2, _) -> TSum (t1, t2, i)
+    | TVariant (cs, _) -> TVariant (cs, i)
   ;;
 
   let set_info_expr : Info.t -> expr -> expr =
@@ -108,6 +119,7 @@ struct
     | Left (e, _) -> Left (e, i)
     | Right (e, _) -> Right (e, i)
     | Match (e, cases, _) -> Match (e, cases, i)
+    | Construct (s, es, _) -> Construct (s, es, i)
   ;;
 
   let set_info_stmt : Info.t -> stmt -> stmt =

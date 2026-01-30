@@ -1,4 +1,4 @@
 type X := 
-| constructor: arg -> argz : X;
+| constructor: arg1;
 
 {-comment-}

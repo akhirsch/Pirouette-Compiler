@@ -8,6 +8,14 @@ module M : sig
     | TMap of 'a typ * 'a typ * 'a
     | TProd of 'a typ * 'a typ * 'a
     | TSum of 'a typ * 'a typ * 'a
+    | TVariant of 'a constructor list * 'a
+
+      and 'a constructor =
+    { name : string
+    ; args : 'a typ list
+    ; typ  : 'a Local.M.typ_id
+    ; info : 'a
+    }
 
   type 'a pattern =
     | Default of 'a
@@ -16,6 +24,8 @@ module M : sig
     | LocPat of 'a Local.M.loc_id * 'a Local.M.pattern * 'a
     | Left of 'a pattern * 'a
     | Right of 'a pattern * 'a
+    | PConstruct of string * 'a pattern list * 'a Local.M.typ_id * 'a
+
 
   type 'a expr =
     | Unit of 'a
@@ -33,12 +43,13 @@ module M : sig
     | Left of 'a expr * 'a
     | Right of 'a expr * 'a
     | Match of 'a expr * ('a pattern * 'a expr) list * 'a
+    | Construct of string * 'a expr list * 'a Local.M.typ_id * 'a
 
   and 'a stmt =
     | Decl of 'a pattern * 'a typ * 'a
     | Assign of 'a pattern list * 'a expr * 'a
     | TypeDecl of 'a Local.M.typ_id * 'a typ * 'a
-    | Variant of 'a Local.M.typ_id * 'a list * 'a
+    (* | Variant of 'a Local.M.typ_id * 'a list * 'a *)
     | ForeignDecl of 'a Local.M.var_id * 'a typ * string * 'a
 
   and 'a stmt_block = 'a stmt list
@@ -55,6 +66,7 @@ module With : functor
   type nonrec expr = Info.t M.expr
   type nonrec stmt = Info.t M.stmt
   type nonrec stmt_block = stmt list
+  type nonrec constructor = Info.t M.constructor
 
   val get_info_typid : typ_id -> Info.t
   val get_info_typ : typ -> Info.t
@@ -66,4 +78,5 @@ module With : functor
   val set_info_pattern : Info.t -> pattern -> pattern
   val set_info_expr : Info.t -> expr -> expr
   val set_info_stmt : Info.t -> stmt -> stmt
+  val set_info_constructor : Info.t -> constructor -> constructor
 end

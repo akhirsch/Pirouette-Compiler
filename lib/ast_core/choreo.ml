@@ -10,6 +10,14 @@ module M = struct
     | TMap of 'a typ * 'a typ * 'a
     | TProd of 'a typ * 'a typ * 'a
     | TSum of 'a typ * 'a typ * 'a
+    | TVariant of 'a constructor list * 'a
+
+      and 'a constructor =
+    { name : string
+    ; args : 'a typ list
+    ; typ  : 'a Local.typ_id
+    ; info : 'a
+    }
 
   type 'a pattern =
     | Default of 'a
@@ -18,6 +26,7 @@ module M = struct
     | LocPat of 'a Local.loc_id * 'a Local.pattern * 'a
     | Left of 'a pattern * 'a
     | Right of 'a pattern * 'a
+    | PConstruct of string * 'a pattern list * 'a Local.typ_id * 'a
 
   type 'a expr =
     | Unit of 'a
@@ -35,12 +44,13 @@ module M = struct
     | Left of 'a expr * 'a
     | Right of 'a expr * 'a
     | Match of 'a expr * ('a pattern * 'a expr) list * 'a
+    | Construct of string * 'a expr list * 'a Local.typ_id * 'a
 
   and 'a stmt =
     | Decl of 'a pattern * 'a typ * 'a
     | Assign of 'a pattern list * 'a expr * 'a (* list is only for F P1 P2 ... Pn := C *)
     | TypeDecl of 'a Local.typ_id * 'a typ * 'a
-    | Variant of 'a Local.typ_id * 'a list * 'a (* only accepted type string, but since I think that was the source of error for foriegn declaration I'm not sure that is rigth*)
+    (* | Variant of 'a Local.typ_id * 'a list * 'a only accepted type string, but since I think that was the source of error for foriegn declaration I'm not sure that is rigth *)
     | ForeignDecl of 'a Local.var_id * 'a typ * string * 'a
 
   and 'a stmt_block = 'a stmt list
@@ -56,6 +66,7 @@ struct
   type nonrec expr = Info.t M.expr
   type nonrec stmt = Info.t M.stmt
   type nonrec stmt_block = stmt list
+  type nonrec constructor = Info.t M.constructor
 
   let get_info_typid : typ_id -> Info.t = function
     | Typ_Id (_, i) -> i
@@ -68,6 +79,7 @@ struct
     | TMap (_, _, i) -> i
     | TProd (_, _, i) -> i
     | TSum (_, _, i) -> i
+    | TVariant (_, i) -> i
   ;;
 
   let get_info_pattern : pattern -> Info.t = function
@@ -77,6 +89,8 @@ struct
     | LocPat (_, _, i) -> i
     | Left (_, i) -> i
     | Right (_, i) -> i
+    | PConstruct (_, _, _, i) -> i
+
   ;;
 
   let get_info_expr : expr -> Info.t = function
@@ -95,13 +109,14 @@ struct
     | Left (_, i) -> i
     | Right (_, i) -> i
     | Match (_, _, i) -> i
+    | Construct (_, _, _, i) -> i
   ;;
 
   let get_info_stmt : stmt -> Info.t = function
     | Decl (_, _, i) -> i
     | Assign (_, _, i) -> i
     | TypeDecl (_, _, i) -> i
-    | Variant (_,_,i) -> i
+    (* | Variant (_,_,i) -> i *)
     | ForeignDecl (_, _, _, i) -> i
   ;;
 
@@ -118,6 +133,7 @@ struct
     | TMap (t1, t2, _) -> TMap (t1, t2, i)
     | TProd (t1, t2, _) -> TProd (t1, t2, i)
     | TSum (t1, t2, _) -> TSum (t1, t2, i)
+    | TVariant (cs, _) -> TVariant (cs, i)
   ;;
 
   let set_info_pattern : Info.t -> pattern -> pattern =
@@ -128,6 +144,7 @@ struct
     | LocPat (loc, pat, _) -> LocPat (loc, pat, i)
     | Left (p, _) -> Left (p, i)
     | Right (p, _) -> Right (p, i)
+    | PConstruct (name, ps, t, _) -> PConstruct (name, ps, t, i)
   ;;
 
   let set_info_expr : Info.t -> expr -> expr =
@@ -147,6 +164,7 @@ struct
     | Left (e, _) -> Left (e, i)
     | Right (e, _) -> Right (e, i)
     | Match (e, cases, _) -> Match (e, cases, i)
+    | Construct (s, es, t, _) -> Construct (s, es, t, i)
   ;;
 
   let set_info_stmt : Info.t -> stmt -> stmt =
@@ -154,7 +172,12 @@ struct
     | Decl (pat, typ, _) -> Decl (pat, typ, i)
     | Assign (pats, e, _) -> Assign (pats, e, i)
     | TypeDecl (id, typ, _) -> TypeDecl (id, typ, i)
-    | Variant (t1, constructors, _) -> Variant (t1, constructors, i)
+    (* | Variant (t1, constructors, _) -> Variant (t1, constructors, i) *)
     | ForeignDecl (id, t, s, _) -> ForeignDecl (id, t, s, i)
+  ;;
+
+    let set_info_constructor : Info.t -> constructor -> constructor =
+    fun i -> function
+    | { name; args; typ; info = _ } -> { name; args; typ; info = i }
   ;;
 end
