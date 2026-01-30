@@ -5,15 +5,15 @@
 
     - Traversal and extraction – e.g., [extract_locs] collects all
       choreography locations from a statement block.
-    - Serialization and pretty-printing– functions prefixed with
+    - Serialization and pretty-printing – functions prefixed with
       [jsonify_*] and [pprint_*] convert ASTs to JSON or formatted source text.
     - Graph visualization – [stringify_dot_choreo_ast] and [dot_choreo_ast]
       export a choreography AST to DOT format for visual inspection.
     - Foreign function interface (FFI) utilities
 
     These utilities are intended for developer and tooling use (testing,
-    visualization, and compiler diagnostics), not for end-user programs
-    They help understand how Pirouette code becomes an AST, whre you can see the
+    visualization, and compiler diagnostics), not for end-user programs.
+    They help understand how Pirouette code becomes an AST, where you can see the
     structure of choreographies and visualize communication patterns.
 *)
 
@@ -39,14 +39,13 @@
       Alice 
       Bob]}*)
 
-
-val extract_locs : 'a Ast_core.Choreo.M.stmt_block -> string list
 (** [extract_locs] extracts all location identifiers from choreographic 
       statement block [stmts].
       
       Returns a list of unique location names (as strings) found in location-qualified
       types, expressions, or patterns. *)
-     
+val extract_locs : 'a Ast_core.Choreo.M.stmt_block -> string list
+
 (** {1 JSON Serialization} 
     
     Functions for converting AST structures to JSON format, useful for 
@@ -111,33 +110,33 @@ val extract_locs : 'a Ast_core.Choreo.M.stmt_block -> string list
     {b Raises:} Functions writing to channels may raise [Sys_error] if file 
     operations fail. *)
 
-val stringify_jsonify_choreo_ast : 'a Ast_core.Choreo.M.stmt_block -> string
 (** [stringify_jsonify_choreo_ast] converts choreographic statement 
       block [stmts] to a JSON string representation.
       
       Returns the entire AST structure as a JSON-formatted string, including
       all nested expressions, types, and patterns.*)
+val stringify_jsonify_choreo_ast : 'a Ast_core.Choreo.M.stmt_block -> string
 
-val stringify_jsonify_net_ast : 'a Ast_core.Net.M.stmt_block -> string
 (** [stringify_jsonify_net_ast] converts network statement block [stmts] 
       to a JSON string representation.
       
       Returns the network IR AST structure as a JSON-formatted string, including
       explicit send/receive operations and choice coordination. *)
+val stringify_jsonify_net_ast : 'a Ast_core.Net.M.stmt_block -> string
 
-val jsonify_choreo_ast : out_channel -> 'a Ast_core.Choreo.M.stmt_block -> unit
 (** [jsonify_choreo_ast] writes choreographic statement block [stmts] 
       as JSON to output channel [oc].
       
       Serializes the AST structure to JSON and writes it directly to the 
       specified output channel (file, stdout, etc.).*)
+val jsonify_choreo_ast : out_channel -> 'a Ast_core.Choreo.M.stmt_block -> unit
 
-val jsonify_net_ast : out_channel -> 'a Ast_core.Net.M.stmt_block -> unit
 (** [jsonify_net_ast] writes network statement block [stmts] as JSON 
       to output channel [oc].
       
       Serializes the network IR AST structure to JSON and writes it to the 
       specified output channel. *)
+val jsonify_net_ast : out_channel -> 'a Ast_core.Net.M.stmt_block -> unit
 
 (** {1 Pretty Printing} 
     
@@ -184,30 +183,30 @@ val jsonify_net_ast : out_channel -> 'a Ast_core.Net.M.stmt_block -> unit
     {b Raises:} Functions writing to channels may raise [Sys_error] if file 
     operations fail.*)
 
-val stringify_pprint_choreo_ast : 'a Ast_core.Choreo.M.stmt_block -> string
 (** [stringify_pprint_choreo_ast] converts choreographic statement block 
       [stmts] to formatted Pirouette source code as a string.
       
       Pretty-prints the AST back into readable Pirouette syntax, preserving
       structure and formatting for human readability.*)
+val stringify_pprint_choreo_ast : 'a Ast_core.Choreo.M.stmt_block -> string
 
-val stringify_pprint_net_ast : 'a Ast_core.Net.M.stmt_block -> string
 (** [stringify_pprint_net_ast] converts network statement block [stmts] 
       to formatted source code as a string.
       
       Pretty-prints the network IR AST with explicit communication primitives
       (Send, Recv, ChooseFor, AllowChoice). *)
+val stringify_pprint_net_ast : 'a Ast_core.Net.M.stmt_block -> string
 
-val pprint_choreo_ast : out_channel -> 'a Ast_core.Choreo.M.stmt_block -> unit
 (** [pprint_choreo_ast] writes choreographic statement block [stmts] 
       as formatted Pirouette source code to output channel [oc].*)
+val pprint_choreo_ast : out_channel -> 'a Ast_core.Choreo.M.stmt_block -> unit
 
-val pprint_net_ast : out_channel -> 'a Ast_core.Net.M.stmt_block -> unit
 (** [pprint_net_ast] writes network statement block [stmts] as 
       formatted source code to output channel [oc].
       
       Outputs the network IR with explicit send/receive operations in a 
       readable format. *)
+val pprint_net_ast : out_channel -> 'a Ast_core.Net.M.stmt_block -> unit
 
 (** {1 Graph Visualization} 
     
@@ -255,7 +254,6 @@ val pprint_net_ast : out_channel -> 'a Ast_core.Net.M.stmt_block -> unit
     {b Raises:} Functions writing to channels may raise [Sys_error] if file 
     operations fail.*)
 
-val stringify_dot_choreo_ast : ('a -> string) -> 'a Ast_core.Choreo.M.stmt_block -> string
 (** [stringify_dot_choreo_ast] converts choreographic 
       statement block [stmts] to a DOT graph representation as a string.
       
@@ -265,13 +263,9 @@ val stringify_dot_choreo_ast : ('a -> string) -> 'a Ast_core.Choreo.M.stmt_block
       - [stmts]: the statement block to visualize
       
       Returns a DOT format string to produce visual diagrams of the AST structure.*)
+val stringify_dot_choreo_ast : ('a -> string) -> 'a Ast_core.Choreo.M.stmt_block -> string
 
-val dot_choreo_ast
-  :  out_channel
-  -> ('a -> string)
-  -> 'a Ast_core.Choreo.M.stmt_block
-  -> unit
-  (** [dot_choreo_ast] writes choreographic statement 
+(** [dot_choreo_ast] writes choreographic statement 
       block [stmts] as a DOT graph to output channel [oc].
       
       {b Note on documentation:} Although the function signature uses unlabeled 
@@ -284,6 +278,11 @@ val dot_choreo_ast
       - [oc]: output channel to write DOT format to
       - [meta_to_string]: function to convert metadata ['a] to string labels
       - [stmts]: the statement block to visualize*)
+val dot_choreo_ast
+  :  out_channel
+  -> ('a -> string)
+  -> 'a Ast_core.Choreo.M.stmt_block
+  -> unit
 
 (** {1 Foreign Function Interface (FFI) Utilities} 
     
@@ -291,9 +290,15 @@ val dot_choreo_ast
     declarations. Used during code generation to properly link external 
     functions. *)
 
-val parse_external_name : string -> (string option * string * string option)
 (** [parse_external_name] parses a foreign function name specification 
       into [(module_name, function_name, alias)]. See section example for usage. *)
+val parse_external_name : string -> string option * string * string option
 
-val collect_ffi_info : 'a Ast_core.Choreo.M.stmt list -> (string option * string * string option) list
-val ast_list_info_map : ('a -> 'b) -> 'a Ast_core.Choreo.M.stmt_block -> 'b Ast_core.Choreo.M.stmt_block
+val collect_ffi_info
+  :  'a Ast_core.Choreo.M.stmt list
+  -> (string option * string * string option) list
+
+val ast_list_info_map
+  :  ('a -> 'b)
+  -> 'a Ast_core.Choreo.M.stmt_block
+  -> 'b Ast_core.Choreo.M.stmt_block

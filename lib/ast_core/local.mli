@@ -2,8 +2,8 @@
     single endpoint. Unlike choreographic ASTs which describe global protocols 
     across multiple locations, local ASTs represent pure computation at one 
     location with no distribution or communication primitives.*)
-    
-    (**{b M:} This module defines the local IR used within a single endpoint/location.
+
+(**{b M:} This module defines the local IR used within a single endpoint/location.
     Unlike the choreography AST, no location qualifiers appear here - all values 
     are local by construction. This represents what a single participant executes
     after endpoint projection.
@@ -11,7 +11,6 @@
     All AST nodes are parameterized by metadata type ['a] for compiler passes
     to attach annotations. *)
 module M : sig
-
   (** {1 Local Values} 
   
   ['a value] represent literal values (integers, strings, booleans) in local 
@@ -36,7 +35,6 @@ module M : sig
           Int(42, ())
         in
         int_42]} *)
-
     | String of string * 'a
     (** String literal
     
@@ -53,7 +51,6 @@ module M : sig
           String("hello", ())
         in 
         str_hello ]}*)
-
     | Bool of bool * 'a
     (** Boolean literal
     
@@ -76,8 +73,9 @@ module M : sig
     Internal representations of names. In Pirouette source code, these appear
     as simple names; the parser constructs these AST nodes. *)
 
-  type 'a loc_id = LocId of string * 'a
-  (** Location Identifier: location name with metadata.
+  type 'a loc_id =
+    | LocId of string * 'a
+    (** Location Identifier: location name with metadata.
         
       {b Internal AST Structure:} [LocId(name, metadata)]
         
@@ -97,8 +95,9 @@ module M : sig
         ]}
        *)
 
-  type 'a var_id = VarId of string * 'a
-  (** Variable Identifier: variable name with metadata.
+  type 'a var_id =
+    | VarId of string * 'a
+    (** Variable Identifier: variable name with metadata.
         
       {b Internal AST Structure:} [VarId(name, metadata)]
         
@@ -116,8 +115,9 @@ module M : sig
           in
           var_x]}*)
 
-  type 'a typ_id = TypId of string * 'a
-  (** Type Identifier: type name with metadata.
+  type 'a typ_id =
+    | TypId of string * 'a
+    (** Type Identifier: type name with metadata.
       
       {b Internal AST Structure:} [TypID(name, metadata)]
       
@@ -134,8 +134,9 @@ module M : sig
           in
           person_name]}*)
 
-  type 'a sync_label = LabelId of string * 'a
-  (** Synchronization Label (for choices): label name with metadata.
+  type 'a sync_label =
+    | LabelId of string * 'a
+    (** Synchronization Label (for choices): label name with metadata.
         
       {b Internal AST Structure:} [LabelId(name, metadata)]
       
@@ -153,7 +154,9 @@ module M : sig
           in
           ready_label]}*)
 
-(** {1 Local Operators} Operators for local computation at a single endpoint. These represent primitive
+  (** {1 Local Operators} 
+  
+    Operators for local computation at a single endpoint. These represent primitive 
     operations on local values.*)
 
   (** {b Unary Operators:} operate on one operand
@@ -178,7 +181,6 @@ module M : sig
             Not(())
           in
           not_op]}*)
-
     | Neg of 'a
     (** Arethmetic negation
     
@@ -202,18 +204,18 @@ module M : sig
     performed on two values. Each operator carries metadata of type ['a]. *)
 
   type 'a bin_op =
-    | Plus of 'a  (** Addition: [x + y] *)
+    | Plus of 'a (** Addition: [x + y] *)
     | Minus of 'a (** Subtraction: [x - y] *)
     | Times of 'a (** Multiplication: [x * y] *)
-    | Div of 'a   (** Division: [x / y] *)
-    | And of 'a   (** Logical AND: [x && y] *)
-    | Or of 'a    (** Logical OR: [x || y] *)
-    | Eq of 'a    (** Equality: [x = y] *)
-    | Neq of 'a   (** Inequality: [x <> y] *)
-    | Lt of 'a    (** Less than: [x < y] *)
-    | Leq of 'a   (** Less than or equal: [x <= y] *)
-    | Gt of 'a    (** Greater than: [x > y] *)
-    | Geq of 'a   (** Greater than or equal: [x >= y] *)
+    | Div of 'a (** Division: [x / y] *)
+    | And of 'a (** Logical AND: [x && y] *)
+    | Or of 'a (** Logical OR: [x || y] *)
+    | Eq of 'a (** Equality: [x = y] *)
+    | Neq of 'a (** Inequality: [x <> y] *)
+    | Lt of 'a (** Less than: [x < y] *)
+    | Leq of 'a (** Less than or equal: [x <= y] *)
+    | Gt of 'a (** Greater than: [x > y] *)
+    | Geq of 'a (** Greater than or equal: [x >= y] *)
 
   (** {1 Local Types} 
   
@@ -239,7 +241,6 @@ module M : sig
             TUnit(())
           in 
           unit_type]}*)
-
     | TInt of 'a
     (** Integer type
     
@@ -256,7 +257,6 @@ module M : sig
             TInt(())  
           in
           int_type]}*)
-
     | TString of 'a
     (** String type
     
@@ -273,7 +273,6 @@ module M : sig
             TString(())
           in
           string_type]}*)
-
     | TBool of 'a
     (** Boolean type
     
@@ -290,7 +289,6 @@ module M : sig
             TBool (())
           in
           bool_type]}*)
-
     | TVar of 'a typ_id * 'a
     (** Type variable
     
@@ -307,7 +305,6 @@ module M : sig
             TVar(TypId("a", ()), ())
           in 
           type_var]}*)
-
     | TProd of 'a typ * 'a typ * 'a
     (** Product type: pairs
     
@@ -325,7 +322,6 @@ module M : sig
           (*TProd of int type * string type * () metadata*)
           in
           prod_int_string]}*)
-
     | TSum of 'a typ * 'a typ * 'a
     (** Sum type: tagged unions 
     
@@ -367,7 +363,6 @@ module M : sig
             Default(())
           in
           wildcard]}*)
-
     | Val of 'a value * 'a
     (** Value pattern: matches specific literal
     
@@ -386,7 +381,6 @@ module M : sig
             Val(Int(78, ()), ()) (* () is metadata*)
           in
           val_pattern]}*)
-
     | Var of 'a var_id * 'a
     (** Variable binding
 
@@ -403,7 +397,6 @@ module M : sig
             Var(VarId("x", ()), ()) (* () is metadata*)
           in
           var_x]}*)
-
     | Pair of 'a pattern * 'a pattern * 'a
     (** Pair Pattern
     
@@ -422,7 +415,6 @@ module M : sig
                   ()) (* () is metadata *)
           in
           pair_xy]}*)
-
     | Left of 'a pattern * 'a
     (** Left Sum Pattern
     
@@ -440,7 +432,6 @@ module M : sig
             (*() metadata here for each Left/Var/VarId*)
           in
           left_x]}*)
-
     | Right of 'a pattern * 'a
     (** Right Sum Pattern
     
@@ -466,7 +457,7 @@ module M : sig
     operators, conditionals, and pattern matching - all executed locally. Each 
     expression carries metadata of type ['a] for source location tracking and 
     type information.*)
-  
+
   type 'a expr =
     | Unit of 'a
     (** Unit Value
@@ -484,7 +475,6 @@ module M : sig
             Unit(())
           in
           unit_expr]}*)
-
     | Val of 'a value * 'a
     (** Literal Value
     
@@ -503,7 +493,6 @@ module M : sig
             Val(Int(44, ()), ())
           in
           val_44]}*)
-
     | Var of 'a var_id * 'a
     (** Variable Reference
     
@@ -520,7 +509,6 @@ module M : sig
             Var(VarId("x", ()), ()) (* () is metadata *)
           in
           var_x]}*)
-
     | UnOp of 'a un_op * 'a expr * 'a
     (** Unary Operation 
     
@@ -539,7 +527,6 @@ module M : sig
             (* () meta data for each UnOp/Not/Var/VarId*)
           in
           not_x]}*)
-
     | BinOp of 'a expr * 'a bin_op * 'a expr * 'a
     (** Binary Operation 
     
@@ -560,7 +547,6 @@ module M : sig
                   ()) (* () metadata *)
           in
           x_plus_y]}*)
-
     | Let of 'a var_id * 'a typ * 'a expr * 'a expr * 'a
     (** Let Binding 
     
@@ -581,7 +567,6 @@ module M : sig
             ())
           in
           let_expr ]}*)
-
     | Pair of 'a expr * 'a expr * 'a
     (** Pair Construction
     
@@ -600,7 +585,6 @@ module M : sig
                   ())
           in
           pair_xy]}*)
-
     | Fst of 'a expr * 'a
     (** First Projection
     
@@ -618,7 +602,6 @@ module M : sig
           (* () metadata for each Fst/Var/VarId *)
           in
           first]}*)
-
     | Snd of 'a expr * 'a
     (** Second Projection
     
@@ -636,7 +619,6 @@ module M : sig
           (* () metadata for each Snd/Var/VarId *)
           in
           second]}*)
-
     | Left of 'a expr * 'a
     (** Left Injection
     
@@ -654,7 +636,6 @@ module M : sig
           (* () metadata for each Left/Var/VarId*)
           in
           left_X]}*)
-
     | Right of 'a expr * 'a
     (** Right Injection
     
@@ -672,7 +653,6 @@ module M : sig
             (* () metadata for each Right/Var/VarId*)
           in
           right_z]}*)
-
     | Match of 'a expr * ('a pattern * 'a expr) list * 'a
     (** Pattern Matching
     
@@ -705,10 +685,10 @@ end
     local AST with a specific metadata type. *)
 module With : functor
     (Info : sig
-       type t (** The concrete metadata type *)
+       (** The concrete metadata type *)
+       type t
      end)
     -> sig
-
   (** {1 Type Aliases}*)
 
   type nonrec value = Info.t M.value
@@ -722,7 +702,9 @@ module With : functor
   type nonrec pattern = Info.t M.pattern
   type nonrec expr = Info.t M.expr
 
-  (** {1 Metadata Accessors} Functions to extract metadata from AST nodes. *)
+  (** {1 Metadata Accessors} 
+  
+  Functions to extract metadata from AST nodes. *)
 
   (** [get_info_value v] is the metadata from value [v]. *)
   val get_info_value : value -> Info.t
@@ -751,7 +733,9 @@ module With : functor
   (** [get_info_expr e] is the metadata from expression [e]. *)
   val get_info_expr : expr -> Info.t
 
-  (** {1 Metadata Modifiers} Functions to set metadata at AST nodes *)
+  (** {1 Metadata Modifiers} 
+  
+  Functions to set metadata at AST nodes *)
 
   (** [set_info_value info v] is value [v] with metadata replaced by [info]. *)
   val set_info_value : Info.t -> value -> value

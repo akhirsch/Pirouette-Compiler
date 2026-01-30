@@ -1,4 +1,5 @@
-(** Lexer for Pirouette Network IR (Intermediate Representation).
+{
+  (** Lexer for Pirouette Network IR (Intermediate Representation).
     
     This lexer tokenizes Pirouette Network IR - the intermediate representation
     produced after endpoint projection. Unlike the main lexer which handles
@@ -98,7 +99,7 @@
     - Position tracking is maintained via [next_line] for accurate error reporting
     - Works with [Net_parser] to produce [Parsed_ast.Net.stmt_block]*)
 
-{
+
   open Lexing
   open Net_parser
 
@@ -217,3 +218,17 @@ and read_multi_line_comment = parse
   | newline { next_line lexbuf; read_multi_line_comment lexbuf }
   | _       { read_multi_line_comment lexbuf }
   | eof     { raise (SyntaxError "Comment is not terminated") }
+
+  {
+      let read = read
+  (** [read] is the main lexer function that tokenizes the input. *)
+
+      let read_string = read_string
+  (** [read_string buf] processes string literals recursively in the lexer. *)
+
+      let read_single_line_comment = read_single_line_comment
+  (** [read_single_line_comment] processes single-line comments in the lexer. *)
+
+      let read_multi_line_comment = read_multi_line_comment    
+  (** [read_multi_line_comment] processes multi-line comments in the lexer. *)    
+  }

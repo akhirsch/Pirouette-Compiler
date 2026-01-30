@@ -6,10 +6,13 @@ open Lwt.Infix
 
 type location_config =
   { location : string (** The location identifier as it appears in the choreography. *)
-  ; http_address : string (** The http_address is the address where this location will run. *)
+  ; http_address : string
+    (** The http_address is the address where this location will run. *)
   }
+
 (** Complete configuration for all locations in a choreography. *)
-type config = { locations : location_config list (** List of all location configurations. *)}
+type config =
+  { locations : location_config list (** List of all location configurations. *) }
 
 (** [parse_location_config] accepts a [yaml] value, and returns [config] if [yaml] 
     represents a valid location configuration with both "location" and "http_address" fields, 
@@ -28,6 +31,7 @@ let parse_location_config yaml =
     Some { location = loc; http_address = addr }
   | _ -> None
 ;;
+
 (** [parse_config] accepts [yaml] value, returning [config] - a record containing all 
     successfully parsed locations - if [yaml] has a locations array, and [None] if the [yaml] 
     value is malformed or missing the locations field.
@@ -42,13 +46,15 @@ let parse_location_config yaml =
         - location: "bob"
           http_address: "localhost:8002"
     ]} *)
+
 let parse_config yaml =
   match yaml with
-  | `O [ ("locations", `A locs) (**locs is a list of YAML entries*) ] ->
+  | `O [ ("locations", `A locs) (* locs is a list of YAML entries*) ] ->
     let parsed_locs = List.filter_map parse_location_config locs in
     Some { locations = parsed_locs }
   | _ -> None
 ;;
+
 (** [load_config] accepts a [filename], returning [config]
     if the configuration file at [filename] can be successfully loaded
     and parsed, and [None] if the file does not exist or cannot be parsed.
@@ -61,6 +67,7 @@ let load_config filename =
     let yaml = Yaml.of_string_exn contents in
     Lwt.return (parse_config yaml))
 ;;
+
 (** [check_locations] accepts a [config choreo_ast] value, and returns [Ok locations] 
     containing only the locations from [config] that are used in [choreo_ast] if all locations in
     [choreo_ast] have corresponding entries in [config]. Returns [Error msg]
