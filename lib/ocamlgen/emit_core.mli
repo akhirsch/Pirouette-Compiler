@@ -59,16 +59,16 @@
 
 (** {1 Exceptions}*)
 
+(** [Main_expr] is raised when encountering the main expression during
+      code generation.
+      
+      This exception carries the OCaml expression that represents the program's
+      entry point, allowing special handling of the main computation separately
+      from other bindings. 
+      
+      The [Ppxlib.expression] is an OCaml AST node that can be compiled by the
+      OCaml compiler.*)
 exception Main_expr of Ppxlib.expression
-(** [Main_expr] is raised when encountering the main expression during code
-    generation.
-
-    This exception carries the OCaml expression that represents the program's
-    entry point, allowing special handling of the main computation separately
-    from other bindings.
-
-    The [Ppxlib.expression] is an OCaml AST node that can be compiled by the
-    OCaml compiler.*)
 
 (** {1 Local Code Emission}
 
@@ -80,9 +80,8 @@ exception Main_expr of Ppxlib.expression
     - Input: Pirouette's Local AST (internal IR)
     - Output: OCaml Parsetree via Ppxlib (OCaml compiler's IR) *)
 
-val emit_local_pexp : 'a Ast_core.Local.M.expr -> Ppxlib.expression
-(** [emit_local_pexp] converts a local expression [expr] to an OCaml Parsetree
-    expression.
+(** [emit_local_pexp] converts a local expression [expr] to an OCaml
+Parsetree expression.
 
     Generates OCaml code for pure local computation - arithmetic, variables,
     patternmatching, ect. - with out any communication primitives.
@@ -109,27 +108,27 @@ val emit_local_pexp : 'a Ast_core.Local.M.expr -> Ppxlib.expression
       let local_ast = (*... the Local AST above...*) in
       let ocaml_parsetree = emit_local_pexp local_ast in
       (* ocaml_parsetree is a ppxlib.expression node *)
-    ]}
+      ]}
+      
+  {b Stage 4 - OCaml Parsetree (Ppxlib.expression - OCaml compiler's IR):}
+      {[
+        (* A Ppxlib.expression representing: *)
+        x + 1
+      ]}
+      
+  {b Stage 5 - Final compiled OCaml code:}
+      {[
+        (* The OCaml compiler produces executable code for: *)
+        x + 1
+      ]}
+      
+      {b Summary:} This function translates from Pirouette's representation
+      of local computation to OCaml's representation, enabling the OCaml
+      compiler to generate executable code. *)
+val emit_local_pexp : 'a Ast_core.Local.M.expr -> Ppxlib.expression
 
-    {b Stage 4 - OCaml Parsetree (Ppxlib.expression - OCaml compiler's IR):}
-    {[
-      (* A Ppxlib.expression representing: *)
-      x + 1
-    ]}
-
-    {b Stage 5 - Final compiled OCaml code:}
-    {[
-      (* The OCaml compiler produces executable code for: *)
-      x + 1
-    ]}
-
-    {b Summary:} This function translates from Pirouette's representation of
-    local computation to OCaml's representation, enabling the OCaml compiler to
-    generate executable code. *)
-
-val emit_local_ppat : 'a Ast_core.Local.M.pattern -> Ppxlib.pattern
-(** [emit_local_ppat] converts a Pirouette local pattern to an OCaml Parsetree
-    pattern.
+(** [emit_local_ppat] converts a Pirouette local pattern to an OCaml Parsetree 
+pattern.
 
     Generates OCaml patterns for variable bindings, literals, pairs, and sum
     type matching.
@@ -177,9 +176,10 @@ val emit_local_ppat : 'a Ast_core.Local.M.pattern -> Ppxlib.pattern
       (* In function parameters: *)
       let add_pair (x, y) = x + y
     ]}
-
-    {b Summary:} Used in let bindings, function parameters, and match cases to
-    bind variables from structured data.*)
+      
+    {b Summary:} Used in let bindings, function parameters, and match cases
+      to bind variables from structured data.*)
+val emit_local_ppat : 'a Ast_core.Local.M.pattern -> Ppxlib.pattern
 
 (** {1 Network Code Emission}
 
@@ -207,6 +207,8 @@ val emit_net_fun_body :
   Ppxlib.expression
 (** [emit_net_fun_body] generates an OCaml function body from Pirouette Net IR
 
+(** [emit_net_fun_body] generates an OCaml function body from Pirouette Net IR
+  
     Parameters:
     - [self_id]: name of the current endpoint
     - [Msg_intf.M]: module that generates code for communication operations
@@ -281,76 +283,74 @@ val emit_net_fun_body :
         let val_1 = x + y in
         Http_send.send_to "Bob" (Marshal.to_string val_1 [])
 
-      (* The value (x + y) is:
-             1. Computed and bound to val_1
-             2. Serialized using Marshal.to_string
-             3. Sent to Bob using backend-specific send function *)
-    ]}
+    {b Summary:} This function translates function definitions with 
+      communication operations from Pirouette's representation to OCaml's 
+      representation. Values are automatically marshaled before sending, allowing 
+      transmission accross different boundaries (machines). *)
+val emit_net_fun_body
+  :  self_id:string
+  -> (module Msg_intf.M)
+  -> 'a Ast_core.Local.M.pattern list
+  -> 'a Ast_core.Net.M.expr
+  -> Ppxlib.expression
 
-    {b Summary:} This function translates function definitions with
-    communication operations from Pirouette's representation to OCaml's
-    representation. Values are automatically marshaled before sending, allowing
-    transmission accross different boundaries (machines). *)
+(** [emit_net_binding] converts a Pirouette network statement to an OCaml value 
+  binding.
+      
+      Parameters:
+      - [self_id]: name of the current endpoint
+      - [Msg_intf.M]: the message module which code generator for communication operations
+      - [Ast_core.Net.M.stmt]: network statement (typically Decl or Assign) from Pirouette Net AST
+      
+      Generates top-level bindings for the OCaml program, including variable
+      declarations and assignments. Communication operations are generated via
+      the message module.
+      
+      [Ppxlib.value_binding] is an OCaml data structure that represents 
+      value bindings (let bindings) as structured data, not as strings.
+      
+      {b Stage 1 - Pirouette source (choreography, before projection):}
+        {[
+          send Alice 33 -> Bob
+        ]}
+      
+      {b Stage 2 - After projection to Bob's Network IR:}
+      *)
+val emit_net_binding
+  :  self_id:string
+  -> (module Msg_intf.M)
+  -> 'a Ast_core.Net.M.stmt
+  -> Ppxlib.value_binding
 
-val emit_net_binding :
-  self_id:string ->
-  (module Msg_intf.M) ->
-  'a Ast_core.Net.M.stmt ->
-  Ppxlib.value_binding
-(** [emit_net_binding] converts a Pirouette network statement to an OCaml value
-    binding.
+(** [emit_net_pexp ~self_id msg_module expr] converts a Pirouette network 
+      expression to an OCaml Parsetree expression.
+      
+      Parameters:
+      - [self_id]: name of the current endpoint generating code for
+      - [msg_module]: code generator implementing [Msg_intf.M] for communication
+      - [expr]: network IR expression to convert (Pirouette Net AST)
+      
+      Transforms network operations including communication primitives, local
+      computations, and control flow. Communication operations are delegated to
+      the message module's code generators.
+      
+      [Ppxlib.expression] is an OCaml data structure (records, variants, lists) 
+      that represents code, not a string.*)
+val emit_net_pexp
+  :  self_id:string
+  -> (module Msg_intf.M)
+  -> 'a Ast_core.Net.M.expr
+  -> Ppxlib.expression
 
-    Parameters:
-    - [self_id]: name of the current endpoint
-    - [Msg_intf.M]: the message module which code generator for communication
-      operations
-    - [Ast_core.Net.M.stmt]: network statement (typically Decl or Assign) from
-      Pirouette Net AST
-
-    Generates top-level bindings for the OCaml program, including variable
-    declarations and assignments. Communication operations are generated via the
-    message module.
-
-    [Ppxlib.value_binding] is an OCaml data structure that represents value
-    bindings (let bindings) as structured data, not as strings.
-
-    {b Stage 1 - Pirouette source (choreography, before projection):}
-    {[
-      send Alice 33 -> Bob
-    ]}
-
-    {b Stage 2 - After projection to Bob's Network IR:} *)
-
-val emit_net_pexp :
-  self_id:string ->
-  (module Msg_intf.M) ->
-  'a Ast_core.Net.M.expr ->
-  Ppxlib.expression
-(** [emit_net_pexp ~self_id msg_module expr] converts a Pirouette network
-    expression to an OCaml Parsetree expression.
-
-    Parameters:
-    - [self_id]: name of the current endpoint generating code for
-    - [msg_module]: code generator implementing [Msg_intf.M] for communication
-    - [expr]: network IR expression to convert (Pirouette Net AST)
-
-    Transforms network operations including communication primitives, local
-    computations, and control flow. Communication operations are delegated to
-    the message module's code generators.
-
-    [Ppxlib.expression] is an OCaml data structure (records, variants, lists)
-    that represents code, not a string.*)
-
-val emit_foreign_decl :
-  string -> 'a Ast_core.Net.M.typ -> string -> Ppxlib.value_binding
-(** [emit_foreign_decl var_name typ external_name] generates an OCaml external
-    declaration for a foreign function.
-
-    Parameters:
-    - [var_name]: local name for the function
-    - [typ]: type of the foreign function
-    - [external_name]: external name to link against
-
-    Creates OCaml [external] declarations that bind foreign functions from other
-    languages (typically C) or libraries. Does not require a message module
-    since FFI is independent of communication backend.*)
+(** [emit_foreign_decl var_name typ external_name] generates an OCaml 
+      external declaration for a foreign function.
+      
+      Parameters:
+      - [var_name]: local name for the function
+      - [typ]: type of the foreign function
+      - [external_name]: external name to link against
+      
+      Creates OCaml [external] declarations that bind foreign functions from
+      other languages (typically C) or libraries. Does not require a message
+      module since FFI is independent of communication backend.*)
+val emit_foreign_decl : string -> 'a Ast_core.Net.M.typ -> string -> Ppxlib.value_binding
