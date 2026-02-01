@@ -37,8 +37,21 @@ jobs:
         with:
           ocaml-compiler: 5.2.1
 
-      - name: Lint and format
-        uses: ocaml/setup-ocaml/lint-fmt@v3
+      - name: Format code
+	run: | 
+	opam install ocamlformat=0.28.1
+	opam exec -- dune build @fmt --auto-promote
+	
+      - name: Commit and push formatted code
+        run: |
+	AUTHOR=$(git log -n 1 --pretty=format:"%an")
+	EMAIL=$(git log -n 1 --pretty=format:"%ae")
+	COMMIT_MSG=$(git log -n 1 --pretty=format"%B")
+	git config --global user.name $AUTHOR
+	git config --global user.email $EMAIL
+	git add .
+	git commit -m "$COMMIT_MSG (formatted)"
+	git push
 
   build:
     strategy:
