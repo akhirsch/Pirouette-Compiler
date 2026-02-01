@@ -35,7 +35,6 @@
 
 (**{2 Message Channel Interface Module}*)
 
-module Msg_chan_intf : Msg_intf.M
 (** Message interface implementation for channel-based communication.
     
     This module implements [Msg_intf.M] using OCaml channels for send/recv
@@ -45,13 +44,9 @@ module Msg_chan_intf : Msg_intf.M
     
     Channels are established between domains at program startup, and all
     communication goes through these channels*)
+module Msg_chan_intf : Msg_intf.M
 
-val emit_toplevel_domain
-  :  out_channel
-  -> string list
-  -> 'a Ast_core.Net.M.stmt_block list
-  -> unit
-  (** [emit_toplevel_domain oc locations stmt_blocks] generates a complete
+(** [emit_toplevel_domain oc locations stmt_blocks] generates a complete
       OCaml program for the Domain backend and writes it to output channel [oc].
       
       Parameters:
@@ -68,3 +63,8 @@ val emit_toplevel_domain
       {b Note:} This backend is useful for:
       - Testing choreographies locally without network setup
       - Debugging with all endpoints in one process *)
+val emit_toplevel_domain
+  :  out_channel
+  -> string list
+  -> 'a Ast_core.Net.M.stmt_block list
+  -> unit

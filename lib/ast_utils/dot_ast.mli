@@ -18,7 +18,6 @@
     2. A Pirouette choreography source file
     3. The Pirouette compiler built *)
 
-val generate_dot_code : ('a -> string) -> 'a Ast_core.Choreo.M.stmt_block -> string
 (** [generate_dot_code metadata_to_string stmts] generates DOT graph code for
     visualizing a choreography.
     
@@ -80,3 +79,4 @@ val generate_dot_code : ('a -> string) -> 'a Ast_core.Choreo.M.stmt_block -> str
     - Communication edges (sends, receives)
     - Proper formatting for readability
     *)
+val generate_dot_code : ('a -> string) -> 'a Ast_core.Choreo.M.stmt_block -> string

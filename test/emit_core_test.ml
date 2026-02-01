@@ -682,7 +682,10 @@ let net_binding_main_error _ =
 ;;
 
 let net_binding_foreign_decl _ =
-  let stmt = Net.ForeignDecl (VarId ("pir_func", ()), TUnit (), "Foreign_function:foreign_function", ()) in
+  let stmt =
+    Net.ForeignDecl
+      (VarId ("pir_func", ()), TUnit (), "Foreign_function:foreign_function", ())
+  in
   let pattern_test pat =
     match pat.ppat_desc with
     | Ppat_var { txt = var_name; _ } -> var_name = "pir_func"
@@ -711,7 +714,9 @@ let net_binding_other _ =
 (*----------------------------FFI test cases--------------------------------------*)
 
 let test_basic_external_function _ =
-  let binding = emit_foreign_decl "my_func" (TUnit ()) "Simple_function.simple_function" in
+  let binding =
+    emit_foreign_decl "my_func" (TUnit ()) "Simple_function.simple_function"
+  in
   let result = expr_to_string binding.pvb_expr in
   assert_equal
     ~msg:"Basic external function should create a simple wrapper"
@@ -739,19 +744,25 @@ let test_package_submodule_external_function _ =
 
 let test_search_path_only _ =
   assert_raises
-    (Failure "Invalid external function format. Expected [Package:][Submodule.]function[@searchpath]")
+    (Failure
+       "Invalid external function format. Expected \
+        [Package:][Submodule.]function[@searchpath]")
     (fun () -> emit_foreign_decl "bad_fn" (TUnit ()) "@search_path_only" |> ignore)
 ;;
 
 let test_empty_package_name _ =
   assert_raises
-    (Failure "Invalid external function format. Expected [Package:][Submodule.]function[@searchpath]")
+    (Failure
+       "Invalid external function format. Expected \
+        [Package:][Submodule.]function[@searchpath]")
     (fun () -> emit_foreign_decl "bad_fn" (TUnit ()) ":function" |> ignore)
 ;;
 
 let test_empty_function_name _ =
   assert_raises
-    (Failure "Invalid external function format. Expected [Package:][Submodule.]function[@searchpath]")
+    (Failure
+       "Invalid external function format. Expected \
+        [Package:][Submodule.]function[@searchpath]")
     (fun () -> emit_foreign_decl "bad_fn" (TUnit ()) "module:" |> ignore)
 ;;
 

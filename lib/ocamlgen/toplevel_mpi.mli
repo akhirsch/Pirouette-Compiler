@@ -37,9 +37,8 @@
     - Handles low-latency, high-bandwidth data transfer
     *)
 
-    (**{2 Message MPI Interface Module}*)
+(**{2 Message MPI Interface Module}*)
 
-module Msg_mpi_intf : Msg_intf.M
 (** Message interface implementation for MPI-based communication.
     
     This module implements [Msg_intf.M] using MPI primitives for send/recv
@@ -47,13 +46,9 @@ module Msg_mpi_intf : Msg_intf.M
     - Sends data via MPI_Send to a specific rank
     - Receives data via MPI_Recv from a specific rank
     - Maps endpoint names to MPI ranks *)
+module Msg_mpi_intf : Msg_intf.M
 
-val emit_toplevel_mpi
-  :  out_channel
-  -> string list
-  -> 'a Ast_core.Net.M.stmt_block list
-  -> unit
-  (** [emit_toplevel_mpi oc locations stmt_blocks] generates a complete
+(** [emit_toplevel_mpi oc locations stmt_blocks] generates a complete
       MPI program that runs all endpoints in a single executable using
       SPMD model and writes it to output channel [oc].
       
@@ -72,3 +67,8 @@ val emit_toplevel_mpi
       {b Important:} Unlike HTTP backend, this generates {b one program} that
       contains all endpoints. The MPI runtime launches multiple copies, and each
       process executes different code based on its rank. *)
+val emit_toplevel_mpi
+  :  out_channel
+  -> string list
+  -> 'a Ast_core.Net.M.stmt_block list
+  -> unit

@@ -16,11 +16,7 @@
 
 (**{2 End Point Projection}*)
 
-val epp_choreo_to_net
-  :  'a Ast_core.Choreo.M.stmt list
-  -> string
-  -> 'a Ast_core.Net.M.stmt list
-  (** [epp_choreo_to_net] projects choreographic statement list 
+(** [epp_choreo_to_net] projects choreographic statement list 
       [stmts] onto endpoint [location], producing network IR statements.
       
       Performs endpoint projection (EPP) to extract the behavior of a specific
@@ -36,8 +32,12 @@ val epp_choreo_to_net
       
       {b Raises:} May raise projection errors if the choreography cannot be 
       safely projected (e.g., location appears in conflicting branches). *)
-      
-      (**
+val epp_choreo_to_net
+  :  'a Ast_core.Choreo.M.stmt list
+  -> string
+  -> 'a Ast_core.Net.M.stmt list
+
+(**
       {2 Local Computations Example}
       
       Input (Pirouette):
@@ -74,7 +74,7 @@ val epp_choreo_to_net
       Each endpoint only gets the computations qualified with their own location.
       No communication occurs - these are purely local operations.*)
 
-      (**
+(**
       {2 Data Transfer Example : Send/Recv}
 
       Input (Pirouette):
@@ -117,8 +117,8 @@ val epp_choreo_to_net
       ]}
       
       {b Note:} [Send] and [Recv] transfer data values between endpoints.*)
-      
-      (**
+
+(**
       {2 Decision Coordination Example: ChooseFor/AllowChoice}
 
       Input (Pirouette):

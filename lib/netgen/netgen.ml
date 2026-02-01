@@ -5,7 +5,7 @@ module Net = Ast_core.Net.M
 let _m = Obj.magic () (* dummy metainfo to make the types work *)
 
 (* Use this list to create a whitelist of locations/agents/domains that will NOT have type information for their variables erased when compiling for other locations/agents/domains*)
-let whitelisted_locs = ["PIRSTDLIBLOC"]
+let whitelisted_locs = [ "PIRSTDLIBLOC" ]
 
 (* TODO: change Hashtbl to List *)
 let rec merge_net_stmt (stmt : 'a Net.stmt) (stmt' : 'a Net.stmt) : 'a Net.stmt option =
@@ -134,7 +134,9 @@ let rec epp_choreo_type (typ : 'a Choreo.typ) (loc : string) : 'a Net.typ =
   match typ with
   | TLoc ((LocId (loc1, _) as locid), t1, _) ->
     (* If the location of the type is the location of the domain, or the location of the type is whitelisted e.g. in the case of the stdlib providing functions where type info should be shown to all other domains, keep type info*)
-    if ((List.mem loc1 whitelisted_locs) || (loc1 = loc)) then TLoc (locid, t1, _m) else TUnit _m
+    if List.mem loc1 whitelisted_locs || loc1 = loc
+    then TLoc (locid, t1, _m)
+    else TUnit _m
   | TMap (t1, t2, _) -> TMap (epp_choreo_type t1 loc, epp_choreo_type t2 loc, _m)
   | TProd (t1, t2, _) -> TProd (epp_choreo_type t1 loc, epp_choreo_type t2 loc, _m)
   | TSum (t1, t2, _) -> TSum (epp_choreo_type t1 loc, epp_choreo_type t2 loc, _m)
