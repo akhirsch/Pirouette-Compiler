@@ -52,9 +52,26 @@ module M : sig
         in 
         str_hello ]}*)
     | Bool of bool * 'a
-        (** Boolean literal
+    (** Boolean literal
+    
+      {b Internal AST Structure:} [Bool(b, metadata)]
+      
+      {b Pirouette Syntax:}
+      {[
+        true
+      ]}
+        
+      {b Ocaml:}
+      {[
+        let bool_true = 
+          Bool(true, ())
+        in
+        bool_true]}*)
 
-            {b Internal AST Structure:} [Bool(b, metadata)]
+  (** {1 Local Identifiers} 
+    
+    Internal representations of names. In Pirouette source code, these appear
+    as simple names; the parser constructs these AST nodes. *)
 
   type 'a loc_id =
     | LocId of string * 'a
@@ -110,8 +127,12 @@ module M : sig
           Person  (* type name *)
           ]}
 
-      Internal representations of names. In Pirouette source code, these appear
-      as simple names; the parser constructs these AST nodes. *)
+      {b Ocaml:}
+        {[
+          let person_name = 
+            TypeId("Person", ()) (* () is the metadata *)
+          in
+          person_name]}*)
 
   type 'a sync_label =
     | LabelId of string * 'a
@@ -139,16 +160,20 @@ module M : sig
     operations on local values.*)
 
   (** {b Unary Operators:} operate on one operand
-
-      ['a un_op] represent unary operations (logical negation, arithmetic
-      negation) performed on a single value. Each operator carries metadata of
-      type ['a]. *)
+    
+    ['a un_op] represent unary operations (logical negation, arithmetic negation) 
+    performed on a single value. Each operator carries metadata of type ['a]. *)
 
   type 'a un_op =
     | Not of 'a
-        (**Logical negation
+    (**Logical negation
+    
+    {b Internal AST Structure:} [Not(metadata)]
 
-           {b Internal AST Structure:} [Not(metadata)]
+      {b Pirouette Syntax:} 
+        {[
+          not x
+        ]}
 
       {b Ocaml:}
         {[
@@ -157,25 +182,26 @@ module M : sig
           in
           not_op]}*)
     | Neg of 'a
-        (** Arethmetic negation
+    (** Arethmetic negation
+    
+    {b Internal AST Structure:} [Neg(metadata)]
 
-            {b Internal AST Structure:} [Neg(metadata)]
-
-            {b Pirouette Syntax:}
-            {[
-              -x
-            ]}
-
-            {b Ocaml:}
-            {[
-              let neg_op = Neg () in
-              neg_op
-            ]}*)
+      {b Pirouette Syntax:} 
+        {[
+          -x
+        ]}
+          
+      {b Ocaml:}
+        {[
+          let neg_op = 
+            Neg(())
+          in
+          neg_op]}*)
 
   (** {b Binary Operators:} operate on two operands
-
-      ['a bin_op] represent binary operations (arithmetic, logical, comparison)
-      performed on two values. Each operator carries metadata of type ['a]. *)
+    
+    ['a bin_op] represent binary operations (arithmetic, logical, comparison) 
+    performed on two values. Each operator carries metadata of type ['a]. *)
 
   type 'a bin_op =
     | Plus of 'a (** Addition: [x + y] *)
@@ -191,17 +217,18 @@ module M : sig
     | Gt of 'a (** Greater than: [x > y] *)
     | Geq of 'a (** Greater than or equal: [x >= y] *)
 
-  (** {1 Local Types}
-
-      ['a typ] represent the types of values in local computation at a single
-      endpoint. Unlike choreographic types, local types do not include location
-      qualifiers - all values are local by construction. Each node carries
-      metadata of type ['a], allowing compiler passes to attach annotations such
-      as source locations or type information. *)
+  (** {1 Local Types} 
+  
+  ['a typ] represent the types of values in local computation at a single endpoint.
+    Unlike choreographic types, local types do not include location qualifiers - all 
+    values are local by construction. Each node carries metadata of type ['a], allowing 
+    compiler passes to attach annotations such as source locations or type information. *)
 
   type 'a typ =
     | TUnit of 'a
-        (** Unit type
+    (** Unit type
+    
+      {b Internal AST Structure:} [TUnit(metadata)]
 
       {b Pirouette Syntax:}
         {[
@@ -215,7 +242,9 @@ module M : sig
           in 
           unit_type]}*)
     | TInt of 'a
-        (** Integer type
+    (** Integer type
+    
+      {b Internal AST Structure:} [TInt(metadata)]
 
       {b Pirouette Syntax:}
         {[
@@ -229,7 +258,9 @@ module M : sig
           in
           int_type]}*)
     | TString of 'a
-        (** String type
+    (** String type
+    
+      {b Internal AST Structure:} [TString(metadata)]
 
       {b Pirouette Syntax:}
         {[
@@ -243,7 +274,9 @@ module M : sig
           in
           string_type]}*)
     | TBool of 'a
-        (** Boolean type
+    (** Boolean type
+    
+      {b Internal AST Structure:} [TBool(metadata)]
 
       {b Pirouette Syntax:}
         {[
@@ -257,7 +290,9 @@ module M : sig
           in
           bool_type]}*)
     | TVar of 'a typ_id * 'a
-        (** Type variable
+    (** Type variable
+    
+      {b Internal AST Structure:} [TVar(typ_id, metadata)]
 
       {b Pirouette Syntax:}
         {[
@@ -271,7 +306,9 @@ module M : sig
           in 
           type_var]}*)
     | TProd of 'a typ * 'a typ * 'a
-        (** Product type: pairs
+    (** Product type: pairs
+    
+      {b Internal AST Structure:} [TProd(left_type, right_type, metadata)]
 
       {b Pirouette Syntax:}
         {[
@@ -286,31 +323,34 @@ module M : sig
           in
           prod_int_string]}*)
     | TSum of 'a typ * 'a typ * 'a
-        (** Sum type: tagged unions
+    (** Sum type: tagged unions 
+    
+      {b Internal AST Structure:} [TSum(left_type, right_type, metadata)]
 
-            {b Internal AST Structure:} [TSum(left_type, right_type, metadata)]
+      {b Pirouette Syntax:}
+        {[
+          int + string 
+        ]}
+          
+      {b Ocaml: }
+        {[
+          let sum_int_string = 
+            TSum(TInt(()), TString(()), ())
+          in
+          sum_int_string]}*)
 
-            {b Pirouette Syntax:}
-            {[
-              int + string
-            ]}
+  (** {1 Local Patterns} 
 
-            {b Ocaml:}
-            {[
-              let sum_int_string = TSum (TInt (), TString (), ()) in
-              sum_int_string
-            ]}*)
-
-  (** {1 Local Patterns}
-
-      ['a pattern] represent patterns for matching and destructuring values in
-      local computation. These patterns bind variables, match literals, and
-      destructure compound data at a single endpoint. Each pattern carries
-      metadata of type ['a] for source location tracking and type information.*)
+  ['a pattern] represent patterns for matching and destructuring values in 
+    local computation. These patterns bind variables, match literals, and 
+    destructure compound data at a single endpoint. Each pattern carries 
+    metadata of type ['a] for source location tracking and type information.*)
 
   type 'a pattern =
     | Default of 'a
-        (** Default (wildcard) pattern
+    (** Default (wildcard) pattern
+    
+      {b Internal AST Structure:} [Default(metadata)]
 
       {b Pirouette Syntax:}
         {[
@@ -324,7 +364,9 @@ module M : sig
           in
           wildcard]}*)
     | Val of 'a value * 'a
-        (** Value pattern: matches specific literal
+    (** Value pattern: matches specific literal
+    
+      {b Internal AST Structure:} [Val(value, metadata)]
 
       {b Pirouette Syntax:}
         {[
@@ -340,9 +382,9 @@ module M : sig
           in
           val_pattern]}*)
     | Var of 'a var_id * 'a
-        (** Variable binding
+    (** Variable binding
 
-            {b Internal AST Structure:} [Var(var_id, metadata)]
+      {b Internal AST Structure:} [Var(var_id, metadata)]
 
       {b Pirouette Syntax:}
         {[
@@ -356,7 +398,9 @@ module M : sig
           in
           var_x]}*)
     | Pair of 'a pattern * 'a pattern * 'a
-        (** Pair Pattern
+    (** Pair Pattern
+    
+    {b Internal AST Structure:} [Pair(left_pattern, right_pattern, metadata)]
 
     {b Pirouette Syntax:}
         {[
@@ -372,7 +416,9 @@ module M : sig
           in
           pair_xy]}*)
     | Left of 'a pattern * 'a
-        (** Left Sum Pattern
+    (** Left Sum Pattern
+    
+    {b Internal AST Structure:} [Left(pattern, metadata)]
 
     {b Pirouette Syntax:}
         {[
@@ -387,23 +433,22 @@ module M : sig
           in
           left_x]}*)
     | Right of 'a pattern * 'a
-        (** Right Sum Pattern
+    (** Right Sum Pattern
+    
+    {b Internal AST Structure:} [Right(pattern, metadata)]
 
-            {b Internal AST Structure:} [Right(pattern, metadata)]
-
-            {b Pirouette Syntax:}
-            {[
-              Right y
-            ]}
-
-            {b Ocaml:}
-            {[
-              let right_y =
-                Right (Var (VarId ("y", ()), ()), ())
-                (*() metadata here for each Right/Var/VarId *)
-              in
-              right_y
-            ]}*)
+   {b Pirouette Syntax:}
+        {[
+          Right y
+        ]}
+        
+      {b Ocaml:}
+        {[  
+          let right_y = 
+            Right(Var(VarId("y", ()), ()), ())
+            (*() metadata here for each Right/Var/VarId *)
+          in
+          right_y]}*)
 
   (** {1 Local Expressions}
   
@@ -415,7 +460,9 @@ module M : sig
 
   type 'a expr =
     | Unit of 'a
-        (** Unit Value
+    (** Unit Value
+    
+    {b Internal AST Structure:} [Unit(metadata)]
 
     {b Pirouette Syntax:}
         {[
@@ -429,7 +476,9 @@ module M : sig
           in
           unit_expr]}*)
     | Val of 'a value * 'a
-        (** Literal Value
+    (** Literal Value
+    
+    {b Internal AST Structure:} [Val(value, metadata)]
 
     {b Pirouette Syntax:}
         {[
@@ -445,7 +494,9 @@ module M : sig
           in
           val_44]}*)
     | Var of 'a var_id * 'a
-        (** Variable Reference
+    (** Variable Reference
+    
+    {b Internal AST Structure:} [Var(var_id, metadata)]
 
     {b Pirouette Syntax:}
         {[
@@ -459,7 +510,9 @@ module M : sig
           in
           var_x]}*)
     | UnOp of 'a un_op * 'a expr * 'a
-        (** Unary Operation
+    (** Unary Operation 
+    
+    {b Internal AST Structure:} [UnOp(operator, expr, metadata)]
 
     {b Pirouette Syntax:}
         {[
@@ -475,7 +528,9 @@ module M : sig
           in
           not_x]}*)
     | BinOp of 'a expr * 'a bin_op * 'a expr * 'a
-        (** Binary Operation
+    (** Binary Operation 
+    
+    {b Internal AST Structure:} [BinOp(left_expr, operator, right_expr, metadata)]
 
     {b Pirouette Syntax:}
         {[
@@ -493,7 +548,9 @@ module M : sig
           in
           x_plus_y]}*)
     | Let of 'a var_id * 'a typ * 'a expr * 'a expr * 'a
-        (** Let Binding
+    (** Let Binding 
+    
+    {b Internal AST Structure:} [Let(var_id, typ, bind_expr, body_expr, metadata)]
 
     {b Pirouette Syntax:}
         {[
@@ -511,7 +568,9 @@ module M : sig
           in
           let_expr ]}*)
     | Pair of 'a expr * 'a expr * 'a
-        (** Pair Construction
+    (** Pair Construction
+    
+    {b Internal AST Structure:} [Pair(left_expr, right_expr, metadata)]
 
     {b Pirouette Syntax:}
         {[
@@ -527,7 +586,9 @@ module M : sig
           in
           pair_xy]}*)
     | Fst of 'a expr * 'a
-        (** First Projection
+    (** First Projection
+    
+    {b Internal AST Structure:} [Fst(pair_expr, metadata)]
 
     {b Pirouette Syntax:}
         {[
@@ -542,7 +603,9 @@ module M : sig
           in
           first]}*)
     | Snd of 'a expr * 'a
-        (** Second Projection
+    (** Second Projection
+    
+    {b Internal AST Structure:} [Snd(pair_exp, metadata)]
 
     {b Pirouette Syntax:}
         {[
@@ -557,7 +620,9 @@ module M : sig
           in
           second]}*)
     | Left of 'a expr * 'a
-        (** Left Injection
+    (** Left Injection
+    
+    {b Internal AST Structure:} [Left(expr, metadata)]
 
     {b Pirouette Syntax:}
         {[
@@ -572,7 +637,9 @@ module M : sig
           in
           left_X]}*)
     | Right of 'a expr * 'a
-        (** Right Injection
+    (** Right Injection
+    
+    {b Internal AST Structure:} [Right(expr, metadata)]
 
     {b Pirouette Syntax:}
         {[
@@ -587,32 +654,33 @@ module M : sig
           in
           right_z]}*)
     | Match of 'a expr * ('a pattern * 'a expr) list * 'a
-        (** Pattern Matching
+    (** Pattern Matching
+    
+    {b Internal AST Structure:} [Match(expr, cases, metadata)]
 
-            {b Internal AST Structure:} [Match(expr, cases, metadata)]
-
-            {b Pirouette Syntax:}
-            {[
-              match x with 0 -> "zero" | n -> "non-zero"
-            ]}
-
-            {b Ocaml:}
-            {[
-              let match_expr =
-                Match(Var(VarId("x", ()), ())
-                [(Val(Int(0, ()), ()),
-                  Val(String("zero", ()), ()));
-                  (Var(VarId("n", ()), ()),
-                  Val(String("non-zero", ()), ()))],
-                  ())
-              in
-              match_expr
-            ]}*)
+    {b Pirouette Syntax:}
+        {[
+          match x with 
+          | 0 -> "zero"
+          | n -> "non-zero"
+        ]}
+        
+      {b Ocaml:}
+        {[  
+          let match_expr = 
+            Match(Var(VarId("x", ()), ())
+            [(Val(Int(0, ()), ()),
+              Val(String("zero", ()), ()));
+              (Var(VarId("n", ()), ()),
+              Val(String("non-zero", ()), ()))],
+              ())
+          in
+          match_expr
+        ]}*)
 end
 
-(** {b With:} Module that uses a Functor for creating local AST types with
-    concrete metadata.
-
+(** {b With:} Module that uses a Functor for creating local AST types with concrete metadata.
+    
     Similar to the choreography AST functor, this instantiates the polymorphic
     local AST with a specific metadata type. *)
 module With : functor
@@ -638,68 +706,61 @@ module With : functor
   
   Functions to extract metadata from AST nodes. *)
 
-  val get_info_value : value -> Info.t
   (** [get_info_value v] is the metadata from value [v]. *)
+  val get_info_value : value -> Info.t
 
-  val get_info_locid : loc_id -> Info.t
   (** [get_info_locid loc] is the metadata from location identifier [loc]. *)
+  val get_info_locid : loc_id -> Info.t
 
-  val get_info_varid : var_id -> Info.t
   (** [get_info_varid var] is the metadata from variable identifier [var]. *)
+  val get_info_varid : var_id -> Info.t
 
-  val get_info_typid : typ_id -> Info.t
   (** [get_info_typid tid] is the metadata from type identifier [tid]. *)
+  val get_info_typid : typ_id -> Info.t
 
-  val get_info_unop : un_op -> Info.t
   (** [get_info_unop op] is the metadata from unary operator [op]. *)
+  val get_info_unop : un_op -> Info.t
 
-  val get_info_binop : bin_op -> Info.t
   (** [get_info_binop op] is the metadata from binary operator [op]. *)
+  val get_info_binop : bin_op -> Info.t
 
-  val get_info_typ : typ -> Info.t
   (** [get_info_typ t] is the metadata from type [t]. *)
+  val get_info_typ : typ -> Info.t
 
-  val get_info_pattern : pattern -> Info.t
   (** [get_info_pattern p] is the metadata from pattern [p]. *)
+  val get_info_pattern : pattern -> Info.t
 
-  val get_info_expr : expr -> Info.t
   (** [get_info_expr e] is the metadata from expression [e]. *)
+  val get_info_expr : expr -> Info.t
 
   (** {1 Metadata Modifiers} 
   
   Functions to set metadata at AST nodes *)
 
-  val set_info_value : Info.t -> value -> value
   (** [set_info_value info v] is value [v] with metadata replaced by [info]. *)
+  val set_info_value : Info.t -> value -> value
 
+  (** [set_info_locid info loc] is location identifier [loc] with metadata replaced by [info]. *)
   val set_info_locid : Info.t -> loc_id -> loc_id
-  (** [set_info_locid info loc] is location identifier [loc] with metadata
-      replaced by [info]. *)
 
+  (** [set_info_varid info var] is variable identifier [var] with metadata replaced by [info]. *)
   val set_info_varid : Info.t -> var_id -> var_id
-  (** [set_info_varid info var] is variable identifier [var] with metadata
-      replaced by [info]. *)
 
+  (** [set_info_typid info tid] is type identifier [tid] with metadata replaced by [info]. *)
   val set_info_typid : Info.t -> typ_id -> typ_id
-  (** [set_info_typid info tid] is type identifier [tid] with metadata replaced
-      by [info]. *)
 
+  (** [set_info_unop info op] is unary operator [op] with metadata replaced by [info]. *)
   val set_info_unop : Info.t -> un_op -> un_op
-  (** [set_info_unop info op] is unary operator [op] with metadata replaced by
-      [info]. *)
 
+  (** [set_info_binop info op] is binary operator [op] with metadata replaced by [info]. *)
   val set_info_binop : Info.t -> bin_op -> bin_op
-  (** [set_info_binop info op] is binary operator [op] with metadata replaced by
-      [info]. *)
 
-  val set_info_typ : Info.t -> typ -> typ
   (** [set_info_typ info t] is type [t] with metadata replaced by [info]. *)
+  val set_info_typ : Info.t -> typ -> typ
 
+  (** [set_info_pattern info p] is pattern [p] with metadata replaced by [info]. *)
   val set_info_pattern : Info.t -> pattern -> pattern
-  (** [set_info_pattern info p] is pattern [p] with metadata replaced by [info].
-  *)
 
+  (** [set_info_expr info e] is expression [e] with metadata replaced by [info]. *)
   val set_info_expr : Info.t -> expr -> expr
-  (** [set_info_expr info e] is expression [e] with metadata replaced by [info].
-  *)
 end

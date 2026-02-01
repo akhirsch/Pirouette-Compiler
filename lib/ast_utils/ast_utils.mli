@@ -1,7 +1,7 @@
 (** {b ast_utils} AST utility functions
 
-    Provides shared helper functions for working with AST structures across the
-    compiler. Includes routines for:
+    Provides shared helper functions for working with AST structures across
+    the compiler.  Includes routines for:
 
     - Traversal and extraction – e.g., [extract_locs] collects all
       choreography locations from a statement block.
@@ -17,16 +17,27 @@
     structure of choreographies and visualize communication patterns.
 *)
 
-(** {1 Location Extraction}
+(** {1 Location Extraction} 
 
-    Example workflow for extracting location information:
-
-    {b Input (Pirouette):}
+  Example workflow for extracting location information:
+  
+  {b Input (Pirouette):}
     {[
       x : Alice.int;
       send Alice -> Bob;
-      y : Bob.string
-    ]}
+      y : Bob.string 
+      ]}
+      
+  {b Ocaml:}
+   {[ 
+      let locs = extract_locs stmts in 
+      List.iter print_endline locs
+      ]}
+      
+  {b Expected:} Prints location names:
+    {[
+      Alice 
+      Bob]}*)
 
 (** [extract_locs] extracts all location identifiers from choreographic 
       statement block [stmts].
@@ -42,36 +53,36 @@ val extract_locs : 'a Ast_core.Choreo.M.stmt_block -> string list
     represents the internal OCaml AST structure.
     
     Example workflow:
-
+    
     {b Input (Pirouette):}
     {[
       x : Alice.int;
       x := [Alice] 5;
       send Alice x -> Bob
     ]}
-
+    
     {b OCaml:}
     {[
       (* Convert to JSON string *)
       let json_str = stringify_jsonify_choreo_ast stmts in
       print_endline json_str;
-
+      
       (* Or write directly to file *)
       let oc = open_out "ast.json" in
       jsonify_choreo_ast oc stmts;
       close_out oc;
-
+      
       (* Same functions exist for network IR *)
       let net_json = stringify_jsonify_net_ast net_stmts in
       jsonify_net_ast (open_out "net.json") net_stmts
     ]}
-
+    
     {b Terminal:}
     {[
       $ cat ast.json | jq .
       $ jq '.statements[0]' ast.json
     ]}
-
+    
     {b Expected:} JSON representing the OCaml AST structure:
     {[
       {
@@ -95,8 +106,8 @@ val extract_locs : 'a Ast_core.Choreo.M.stmt_block -> string list
         ]
       }
     ]}
-
-    {b Raises:} Functions writing to channels may raise [Sys_error] if file
+    
+    {b Raises:} Functions writing to channels may raise [Sys_error] if file 
     operations fail. *)
 
 (** [stringify_jsonify_choreo_ast] converts choreographic statement 
@@ -127,43 +138,49 @@ val jsonify_choreo_ast : out_channel -> 'a Ast_core.Choreo.M.stmt_block -> unit
       specified output channel. *)
 val jsonify_net_ast : out_channel -> 'a Ast_core.Net.M.stmt_block -> unit
 
+(** {1 Pretty Printing} 
+    
+    Functions for converting AST structures back to human-readable Pirouette 
+    source code. Useful for debugging, code generation, and displaying 
+    transformed ASTs. 
+    
     Example workflow:
-
+    
     {b Input (AST in memory):}
-    {[
-      (* Some choreographic AST after parsing/transformation *)
-      let stmts = ...
-    ]}
-
+      {[
+        (* Some choreographic AST after parsing/transformation *)
+        let stmts = ...
+      ]}
+    
     {b OCaml:}
-    {[
-      (* Convert to Pirouette source string *)
-      let pirouette_code = stringify_pprint_choreo_ast stmts in
-      print_endline pirouette_code;
-
-      (* Or write directly to file *)
-      let oc = open_out "output.pir" in
-      pprint_choreo_ast oc stmts;
-      close_out oc;
-
-      (* Same functions exist for network IR *)
-      let net_code = stringify_pprint_net_ast net_stmts in
-      pprint_net_ast stdout net_stmts
-    ]}
-
+      {[
+        (* Convert to Pirouette source string *)
+        let pirouette_code = stringify_pprint_choreo_ast stmts in
+        print_endline pirouette_code;
+      
+        (* Or write directly to file *)
+        let oc = open_out "output.pir" in
+        pprint_choreo_ast oc stmts;
+        close_out oc;
+      
+        (* Same functions exist for network IR *)
+        let net_code = stringify_pprint_net_ast net_stmts in
+        pprint_net_ast stdout net_stmts
+      ]}
+    
     {b Terminal:}
-    {[
-      $ cat output.pir
-    ]}
-
+      {[
+        $ cat output.pir
+      ]}
+    
     {b Expected:} Reconstructed Pirouette source code:
-    {[
-      x : Alice.int;
-      x := [Alice] 5;
-      send Alice x -> Bob
-    ]}
-
-    {b Raises:} Functions writing to channels may raise [Sys_error] if file
+      {[
+        x : Alice.int;
+        x := [Alice] 5;
+        send Alice x -> Bob
+      ]}
+    
+    {b Raises:} Functions writing to channels may raise [Sys_error] if file 
     operations fail.*)
 
 (** [stringify_pprint_choreo_ast] converts choreographic statement block 
@@ -191,34 +208,40 @@ val pprint_choreo_ast : out_channel -> 'a Ast_core.Choreo.M.stmt_block -> unit
       readable format. *)
 val pprint_net_ast : out_channel -> 'a Ast_core.Net.M.stmt_block -> unit
 
+(** {1 Graph Visualization} 
+    
+    Functions for exporting AST structures to DOT format for visualization 
+    with Graphviz. Useful for understanding AST structure and debugging 
+    transformations. 
+    
     Example workflow:
-
+    
     {b Input (Pirouette):}
-    {[
-      x : Alice.int;
-      send Alice x -> Bob
-    ]}
-
+      {[
+        x : Alice.int;
+        send Alice x -> Bob
+      ]}
+    
     {b OCaml:}
-    {[
-      (* Convert to DOT string *)
-      let dot_str = stringify_dot_choreo_ast (fun _ -> "") stmts in
-
-      (* Or write directly to file *)
-      let oc = open_out "ast.dot" in
-      dot_choreo_ast oc (fun _ -> "") stmts;
-      close_out oc
-    ]}
-
+      {[
+        (* Convert to DOT string *)
+        let dot_str = stringify_dot_choreo_ast (fun _ -> "") stmts in
+      
+        (* Or write directly to file *)
+        let oc = open_out "ast.dot" in
+        dot_choreo_ast oc (fun _ -> "") stmts;
+        close_out oc
+      ]}
+    
     {b Terminal:}
-    {[
-      $ dot -Tpng ast.dot -o ast.png
-      $ dot -Tsvg ast.dot -o ast.svg
-      $ open ast.png
-    ]}
-
+      {[
+        $ dot -Tpng ast.dot -o ast.png
+        $ dot -Tsvg ast.dot -o ast.svg
+        $ open ast.png
+      ]}
+    
     {b Expected:} Visual graph showing AST structure:
-    {v
+      {v
               stmt_block
              /          \
            Decl          Send
@@ -226,9 +249,9 @@ val pprint_net_ast : out_channel -> 'a Ast_core.Net.M.stmt_block -> unit
        Var  TLoc   Alice  x  Bob
         |   / \
         x Alice TInt
-    v}
-
-    {b Raises:} Functions writing to channels may raise [Sys_error] if file
+      v}
+    
+    {b Raises:} Functions writing to channels may raise [Sys_error] if file 
     operations fail.*)
 
 (** [stringify_dot_choreo_ast] converts choreographic 
@@ -261,28 +284,10 @@ val dot_choreo_ast
   -> 'a Ast_core.Choreo.M.stmt_block
   -> unit
 
-    Returns a DOT format string to produce visual diagrams of the AST structure.*)
-
-val dot_choreo_ast :
-  out_channel -> ('a -> string) -> 'a Ast_core.Choreo.M.stmt_block -> unit
-(** [dot_choreo_ast] writes choreographic statement block [stmts] as a DOT graph
-    to output channel [oc].
-
-    {b Note on documentation:} Although the function signature uses unlabeled
-    parameters, the documentation uses descriptive parameter names ([oc],
-    [meta_to_string], [stmts]) for clarity. This is standard OCaml documentation
-    practice - parameter names in docs help readers understand each argument's
-    purpose, even when the signature doesn't include explicit labels.
-
-    Parameters:
-    - [oc]: output channel to write DOT format to
-    - [meta_to_string]: function to convert metadata ['a] to string labels
-    - [stmts]: the statement block to visualize*)
-
-(** {1 Foreign Function Interface (FFI) Utilities}
-
-    Functions for parsing and extracting information about foreign function
-    declarations. Used during code generation to properly link external
+(** {1 Foreign Function Interface (FFI) Utilities} 
+    
+    Functions for parsing and extracting information about foreign function 
+    declarations. Used during code generation to properly link external 
     functions. *)
 
 (** [parse_external_name] parses a foreign function name specification 

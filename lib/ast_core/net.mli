@@ -1,21 +1,20 @@
-(** {b Net:} Network-level intermediate representation (IR). This module defines
-    the AST structures for network programs with explicit communication and
-    synchronization. Unlike choreographic ASTs which describe global protocols,
-    network ASTs represent distributed computation after endpoint projection,
-    with explicit send/receive and choice coordination primitives for each
-    location. *)
+(** {b Net:} Network-level intermediate representation (IR). This module defines the AST structures for network programs with explicit 
+    communication and synchronization. Unlike choreographic ASTs which describe 
+    global protocols, network ASTs represent distributed computation after 
+    endpoint projection, with explicit send/receive and choice coordination 
+    primitives for each location. *)
 
-(**{b M:} This module captures explicit communication, synchronization, and
-   dataflow between locations after endpoint projection. It forms the compiler's
-   bridge between choreographic ASTs and backend code generation.
-
-   Unlike the choreography AST (which describes global protocols) or local AST
-   (which describes single-endpoint computation), the network IR represents
-   distributed computation with explicit send/receive primitives and choice
-   coordination.
-
-   All AST nodes are parameterized by metadata type ['a] for compiler passes to
-   attach annotations. *)
+(**{b M:} This module captures explicit communication, synchronization, and dataflow 
+    between locations after endpoint projection. It forms the compiler's bridge 
+    between choreographic ASTs and backend code generation.
+    
+    Unlike the choreography AST (which describes global protocols) or local AST
+    (which describes single-endpoint computation), the network IR represents
+    distributed computation with explicit send/receive primitives and choice
+    coordination.
+    
+    All AST nodes are parameterized by metadata type ['a] for compiler passes
+    to attach annotations. *)
 module M : sig
   (** {1 Network Types} 
   
@@ -93,29 +92,30 @@ module M : sig
             in
             int_string_pair]} *)
     | TSum of 'a typ * 'a typ * 'a
-        (** Sum type (tagged unions)
+    (** Sum type (tagged unions)
+          
+      {b Internal AST Structure:} [TSum(left_type, right_type, metadata)]
+          
+      {b Pirouette Syntax:}
+          {[
+            int + string
+          ]}
+          
+      {b OCaml AST Construction:}
+          {[
+            let int_or_string = 
+              TSum(TInt(()), TString(()), ())
+            in
+            int_or_string ]} *)
 
-            {b Internal AST Structure:} [TSum(left_type, right_type, metadata)]
-
-            {b Pirouette Syntax:}
-            {[
-              int + string
-            ]}
-
-            {b OCaml AST Construction:}
-            {[
-              let int_or_string = TSum (TInt (), TString (), ()) in
-              int_or_string
-            ]} *)
-
-  (** {1 Network Expressions}
-
-      ['a expr] represent computations in projected endpoint programs after
-      choreographic projection. Unlike choreographic expressions which describe
-      global protocols, network expressions include explicit [Send]/[Recv] for
-      communication and [ChooseFor]/[AllowChoice] for synchronization. Each
-      expression carries metadata of type ['a], allowing compiler passes to
-      attach annotations. *)
+  (** {1 Network Expressions} 
+      
+       ['a expr] represent computations in projected endpoint programs after 
+    choreographic projection. Unlike choreographic expressions which describe 
+    global protocols, network expressions include explicit [Send]/[Recv] for 
+    communication and [ChooseFor]/[AllowChoice] for synchronization. Each 
+    expression carries metadata of type ['a], allowing compiler passes to 
+    attach annotations. *)
 
   type 'a expr =
     | Unit of 'a
@@ -151,7 +151,9 @@ module M : sig
             in
             var_x]} *)
     | Ret of 'a Local.M.expr * 'a
-        (** Return a local expression: wraps a computation in a network context.
+    (** Return a local expression: wraps a computation in a network context.
+    
+      {b Internal AST Structure:} [Ret(local_expr, metadata)]
 
       {b Note:} This constructor does not have Pirouette syntax - it is inserted
       automatically by the compiler during endpoint projection to distinguish 
@@ -195,194 +197,21 @@ module M : sig
           in
           if_expr]} *)
     | Let of 'a stmt list * 'a expr * 'a
-        (** Let binding with statement block
-
-            {b Internal AST Structure:} [Let(stmt_list, body_expr, metadata)]
-
-            {b Pirouette Syntax:}
-            {[
-              let x = 5 in
-              x + 1
-            ]}
-
-            {b OCaml:}
-            {[
-              let let_expr =
-                Let
-                  ( [
-                      Assign
-                        ( [ Local.M.Var (Local.M.VarId ("x", ()), ()) ],
-                          Unit (),
-                          () );
-                    ],
-                    Unit (),
-                    () )
-              in
-              let_expr
-            ]} *)
-    | Send of 'a expr * 'a Local.M.loc_id * 'a
-        (** Send expression: transmits a value to a specified location.
-
-            {b Internal AST Structure:}
-            [Send(value_expr, destination, metadata)]
-
-            {b Pirouette Syntax:}
-            {[
-              send Alice 42 -> Bob
-            ]}
-
-            {b Note:} The [Send] constructor is generated during endpoint
-            projection. The choreographic [send] operation above is projected
-            into separate [Send] operations for the sender and [Recv] operations
-            for the receiver.
-
-            {b OCaml AST Construction:}
-            {[
-              (* Alice's projected code *)
-              let send_to_bob =
-                Send
-                  ( Ret (Local.M.Val (Local.M.Int (42, ()), ()), ()),
-                    Local.M.LocId ("Bob", ()),
-                    () )
-              in
-              send_to_bob
-            ]} *)
-    | Recv of 'a Local.M.loc_id * 'a
-        (** Receive expression: receives a value from a specified location.
-
-            {b Internal AST Structure:} [Recv(source, metadata)]
-
-            {b Pirouette Syntax:}
-            {[
-              send Alice 42 -> Bob
-            ]}
-
-            {b Note:} The [Recv] constructor is generated during endpoint
-            projection. The choreographic [send] operation above is projected
-            into [Send] operations for the sender and [Recv] operations for the
-            receiver.
-
-            {b OCaml AST Construction:}
-            {[
-              (* Bob's projected code *)
-              let recv_from_alice = Recv (Local.M.LocId ("Alice", ()), ()) in
-              recv_from_alice
-            ]} *)
-    | ChooseFor of 'a Local.M.sync_label * 'a Local.M.loc_id * 'a expr * 'a
-        (** Make a choice and inform a location: selects a branch and notifies
-            peer.
-
-            {b Internal AST Structure:}
-            [ChooseFor(label, peer, continuation, metadata)]
-            - [label]: the choice/branch being selected
-            - [peer]: location to be notified
-            - [continuation]: expression after choice is communicated
-            - [metadata]: node metadata
-
-            {b Pirouette Syntax:}
-            {[
-              select Alice Ready -> Bob; continuation
-            ]}
-
-            {b Note:} The [ChooseFor] constructor is generated during endpoint
-            projection. The choreographic [select] operation above is projected
-            into [ChooseFor] operations for the chooser and [AllowChoice]
-            operations for the peer.
-
-            {b OCaml AST Construction:}
-            {[
-              (* Alice's projected code *)
-              let choose_ready =
-                ChooseFor
-                  ( Local.M.LabelId ("Ready", ()),
-                    Local.M.LocId ("Bob", ()),
-                    Unit (),
-                    () )
-              in
-              choose_ready
-            ]} *)
-    | AllowChoice of
-        'a Local.M.loc_id * ('a Local.M.sync_label * 'a expr) list * 'a
-        (** Allow/offer choices from a location: receives choice and branches
-            accordingly.
-
-            {b Internal AST Structure:}
-            [AllowChoice(chooser, branches, metadata)]
-            - [chooser]: location making the choice
-            - [branches]: list of (label, expression) pairs for each possible
-              choice
-            - [metadata]: node metadata
-
-            Dual to [ChooseFor] - this is the receiver's side.
-
-            {b Pirouette Syntax:}
-            {[
-              select Alice Ready -> Bob; continuation
-            ]}
-
-            {b Note:} The [AllowChoice] constructor is generated during endpoint
-            projection. The choreographic [select] operation above is projected
-            into [ChooseFor] operations for the chooser and [AllowChoice]
-            operations for the peer.
-
-            {b OCaml AST Construction:}
-            {[
-              (* Bob's projected code *)
-              let allow_alice_choice =
-                AllowChoice
-                  ( Local.M.LocId ("Alice", ()),
-                    [
-                      (Local.M.LabelId ("Ready", ()), Unit ());
-                      (Local.M.LabelId ("NotReady", ()), Unit ());
-                    ],
-                    () )
-              in
-              allow_alice_choice
-            ]} *)
-    | FunDef of 'a Local.M.pattern list * 'a expr * 'a
-        (** Function Definition
-
-            {b Internal AST Structure:} [FunDef(params, body, metadata)]
-
-            {b Pirouette Syntax:}
-            {[
-              fun x y -> x + y
-            ]}
-
-            {b OCaml:}
-            {[
-              let fun_xy =
-                FunDef
-                  ( [
-                      Local.M.Var (Local.M.VarId ("x", ()), ());
-                      Local.M.Var (Local.M.VarId ("y", ()), ());
-                    ],
-                    Ret
-                      ( Local.M.BinOp
-                          ( Local.M.Var (Local.M.VarId ("x", ()), ()),
-                            Local.M.Plus (),
-                            Local.M.Var (Local.M.VarId ("y", ()), ()),
-                            () ),
-                        () ),
-                    () )
-              in
-              fun_xy
-            ]} *)
-    | FunApp of 'a expr * 'a expr * 'a
-        (** Function Application
-
-            {b Internal AST Structure:}
-            [FunApp(function_expr, argument_expr, metadata)]
-
-            {b Pirouette Syntax:}
-            {[
-              add 3
-            ]}
-
-            {b OCaml:}
-            {[
-              let add_3 =
-                FunApp(Var(Local.M.VarId("add", ()), ())
+    (** Let binding with statement block
+          
+      {b Internal AST Structure:} [Let(stmt_list, body_expr, metadata)]
+          
+      {b Pirouette Syntax:}
+        {[
+          let x = 5 in x + 1
+        ]}
+          
+      {b OCaml:}
+        {[
+           let let_expr = 
+              Let([Assign([Local.M.Var(Local.M.VarId("x", ()), ())],
+                        Unit(()),
+                        ())],
                 Unit(()),
                 ())
             in
@@ -613,7 +442,44 @@ module M : sig
           in
           right_x]} *)
     | Match of 'a expr * ('a Local.M.pattern * 'a expr) list * 'a
-        (** Pattern matching
+    (** Pattern matching
+      
+    {b Internal AST Structure:} [Match(expr, cases, metadata)]
+      - [expr]: expression to match
+      - [cases]: list of (pattern, expression) pairs
+      - [metadata]: node metadata
+      
+    {b Pirouette Syntax:}
+        {[
+          match x with
+          | Left v -> v + 1
+          | Right v -> v - 1
+        ]}
+      
+    {b OCaml:}
+        {[
+          let match_expr = 
+            Match(Var(Local.M.VarId("x", ()), ()),
+                  [(Local.M.Left(Local.M.Var(Local.M.VarId("v", ()), ()), ()),
+                    Ret(Local.M.BinOp(
+                          Local.M.Var(Local.M.VarId("v", ()), ()),
+                          Local.M.Plus(()),
+                          Local.M.Val(Local.M.Int(1, ()), ()),
+                          ()),
+                        ()));
+                   (* First case: Left v -> v + 1 *)
+                   
+                   (Local.M.Right(Local.M.Var(Local.M.VarId("v", ()), ()), ()),
+                    Ret(Local.M.BinOp(
+                          Local.M.Var(Local.M.VarId("v", ()), ()),
+                          Local.M.Minus(()),
+                          Local.M.Val(Local.M.Int(1, ()), ()),
+                          ()),
+                        ()))],
+                   (* Second case: Right v -> v - 1 *)
+                  ())
+          in
+          match_expr]} *)
 
   (** {1 Network Statements}
     
@@ -642,11 +508,11 @@ module M : sig
           in
           x_int_decl]} *)
     | Assign of 'a Local.M.pattern list * 'a expr * 'a
-        (** Assignment
-
-            {b Internal AST Structure:} [Assign(patterns, expr, metadata)]
-
-            {b Pirouette Syntax:}
+    (** Assignment
+          
+      {b Internal AST Structure:} [Assign(patterns, expr, metadata)]
+          
+      {b Pirouette Syntax:}
             {[
               x := 5
             ]}
@@ -687,10 +553,10 @@ module M : sig
   (** {1 Net Statement Block}*)
 
   (** Statement Block: a sequence of statements executed in order.
-
-      {b Internal AST Structure:} [stmt_block] is a list of ['a stmt]
-
-      {b Pirouette Syntax:}
+  
+  {b Internal AST Structure:} [stmt_block] is a list of ['a stmt]
+  
+    {b Pirouette Syntax:}
       {[
         x : int;
         x:= 5;
@@ -726,10 +592,10 @@ module M : sig
   and 'a stmt_block = 'a stmt list
 end
 
-(**{b With:} This module uses a functor for creating network AST types with
-   concrete metadata.
-
-   Instantiates the polymorphic network AST with a specific metadata type. *)
+(**{b With:} This module uses a functor for creating network AST types 
+with concrete metadata.
+    
+    Instantiates the polymorphic network AST with a specific metadata type. *)
 module With : functor
     (Info : sig
        (** [type t] is the concrete metadata type*)
@@ -743,29 +609,27 @@ module With : functor
 
   (** {1 Metadata Acessors}
 
-      Functions to extract metadata from AST nodes. *)
+  Functions to extract metadata from AST nodes. *)
 
-  val get_info_typ : typ -> Info.t
   (** [get_info_typ t] is the metadata from type [t]. *)
+  val get_info_typ : typ -> Info.t
 
-  val get_info_expr : expr -> Info.t
   (** [get_info_expr e] is the metadata from expression [e]. *)
+  val get_info_expr : expr -> Info.t
 
-  val get_info_stmt : stmt -> Info.t
   (** [get_info_stmt s] is the metadata from statement [s]. *)
+  val get_info_stmt : stmt -> Info.t
 
   (** {1 Metadata Modifiers}
 
-      Functions to replace metadata in AST nodes*)
+  Functions to replace metadata in AST nodes*)
 
-  val set_info_typ : Info.t -> typ -> typ
   (** [set_info_typ info t] is type [t] with metadata replaced by [info]. *)
+  val set_info_typ : Info.t -> typ -> typ
 
+  (** [set_info_expr info e] is expression [e] with metadata replaced by [info]. *)
   val set_info_expr : Info.t -> expr -> expr
-  (** [set_info_expr info e] is expression [e] with metadata replaced by [info].
-  *)
 
+  (** [set_info_stmt info s] is statement [s] with metadata replaced by [info]. *)
   val set_info_stmt : Info.t -> stmt -> stmt
-  (** [set_info_stmt info s] is statement [s] with metadata replaced by [info].
-  *)
 end

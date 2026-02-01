@@ -1,11 +1,11 @@
-(** {b Choreo:} Core choreography abstract syntax tree definitions. This module
-    defines the AST structures for choreographic programs, including types,
-    patterns, expressions, and statements that operate across multiple
-    distributed locations. *)
+(** {b Choreo:} Core choreography abstract syntax tree definitions. This module defines the AST structures for choreographic programs,
+    including types, patterns, expressions, and statements that operate
+    across multiple distributed locations. 
+  *)
 
 (** {b M:} This module defines the AST structures for choreographic programs.
-    All AST nodes are parameterized by a metadata type ['a], allowing different
-    compiler passes to attach their own annotations (source locations, type
+All AST nodes are parameterized by a metadata type ['a], allowing different
+    compiler passes to attach their own annotations (source locations, type 
     information, etc.). *)
 module M : sig
   (** {1 Type Identifiers} 
@@ -18,14 +18,22 @@ module M : sig
     | Typ_Id of string * 'a
     (** Type identifiers: [typ_id] (name + metadata). 
 
-            {b Internal AST Structure:} [Typ_Id(name, meta)]
-            - [name]: type name as a string (e.g., "Sum", "Result").
-            - [meta]: node metadata (source, typing info, etc.).
+    {b Internal AST Structure:} [Typ_Id(name, meta)]  
+    - [name]: type name as a string (e.g., "Sum", "Result").  
+    - [meta]: node metadata (source, typing info, etc.).
 
-            {b Pirouette Syntax:}
-            {[
-              type Result = int + string
-            ]}
+    {b Pirouette Syntax:}
+      {[
+        type Result = int + string
+      ]}
+    
+    {b OCaml:}
+      {[
+        let result_id = 
+          Typ_Id("Result", ())
+        in
+        result_id
+      ]}*)
 
   (** {1 Choreographic Types} 
    
@@ -57,13 +65,12 @@ module M : sig
         unit_type
       ]} *)
     | TLoc of 'a Local.M.loc_id * 'a Local.M.typ * 'a
-        (** Location-qualified type: a value of a local type at a specific
-            location
+    (** Location-qualified type: a value of a local type at a specific location
 
-            {b Internal AST Structure:} [TLoc(location, local_type, meta)]
-            - [location]: the location identifier
-            - [local_type]: the local type at that location
-            - [meta]: node metadata
+    {b Internal AST Structure:} [TLoc(location, local_type, meta)]
+        - [location]: the location identifier
+        - [local_type]: the local type at that location
+        - [meta]: node metadata
 
     {b Pirouette Syntax:}
       {[
@@ -78,9 +85,9 @@ module M : sig
         in        
         alice_int]} *)
     | TVar of 'a typ_id * 'a
-        (** Type variable
+    (** Type variable 
 
-            {b Internal AST Structure:} [TVar(type_id, meta)]
+    {b Internal AST Structure:} [TVar(type_id, meta)]
 
     {b Pirouette Syntax:}
       {[
@@ -94,9 +101,9 @@ module M : sig
       in
       type_var_a]}*)
     | TMap of 'a typ * 'a typ * 'a
-        (** Function type (domain -> codomain)
+    (** Function type (domain -> codomain)
 
-            {b Internal AST Structure:} [TMap(domain, codomain, meta)]
+    {b Internal AST Structure:} [TMap(domain, codomain, meta)]
 
     {b Pirouette Syntax:}
       {[
@@ -110,9 +117,9 @@ module M : sig
       in
       int_to_string]}*)
     | TProd of 'a typ * 'a typ * 'a
-        (** Product type (pair).
+    (** Product type (pair).
 
-            {b Internal AST Structure:} [TProd(left, right, meta)]
+    {b Internal AST Structure:} [TProd(left, right, meta)]
 
     {b Pirouette Syntax:}
       {[
@@ -126,38 +133,37 @@ module M : sig
       in
       int_string_pair]}*)
     | TSum of 'a typ * 'a typ * 'a
-        (** Sum type: tagged union representing a choice between two
-            alternatives.
+    (** Sum type: tagged union representing a choice between two alternatives.
+          
+      A value is either Left (first type) or Right (second type), but not both.
 
-            A value is either Left (first type) or Right (second type), but not
-            both.
+      {b Internal AST Structure:} [TSum(left, right, meta)]
 
-            {b Internal AST Structure:} [TSum(left, right, meta)]
+      {b Pirouette Syntax:}
+      {[          
+        int + string            (* either int or string *)
+        bool + unit             (* either bool or unit *)
+        (int * int) + string    (* either a pair or a string *)
+      ]}
+        
+      {b Ocaml:}
+      {[
+        let int_or_string = 
+          TSum(TInt(()), TString(()), ())
+        in
+        int_or_string
+      ]}*)
 
-            {b Pirouette Syntax:}
-            {[
-              int
-              + string (* either int or string *) bool
-              + unit (* either bool or unit *) (int * int)
-              + string (* either a pair or a string *)
-            ]}
-
-            {b Ocaml:}
-            {[
-              let int_or_string = TSum (TInt (), TString (), ()) in
-              int_or_string
-            ]}*)
-
-  (** {1 Choreographic Patterns}
-
-      ['a pattern] for destructuring values, annotated with metadata of type
-      ['a]. Patterns can match values distributed across multiple locations. *)
+  (** {1 Choreographic Patterns} 
+  
+      ['a pattern] for destructuring values, annotated with metadata of type ['a].
+      Patterns can match values distributed across multiple locations. *)
 
   type 'a pattern =
     | Default of 'a
-        (** Wildcard that matches any data and binds nothing.
+    (** Wildcard that matches any data and binds nothing. 
 
-            {b Internal AST Structure:} [Default(meta)]
+    {b Internal AST Structure:} [Default(meta)]
 
     {b Pirouette Syntax:}
       {[
@@ -172,9 +178,9 @@ module M : sig
         wildcard
       ]}*)
     | Var of 'a Local.M.var_id * 'a
-        (** Variable binding
+    (** Variable binding 
 
-            {b Internal AST Structure:} [Var(var_id, meta)]
+    {b Internal AST Structure:} [Var(var_id, meta)]
 
     {b Pirouette Syntax:}
       {[
@@ -189,8 +195,10 @@ module M : sig
         var_x
       ]}*)
     | Pair of 'a pattern * 'a pattern * 'a
-        (** Pair pattern for destructuring products. Contains a pattern for the
-            first element, a pattern for the second element, and metadata.
+    (** Pair pattern for destructuring products. Contains a pattern for the first 
+        element, a pattern for the second element, and metadata. 
+        
+      {b Internal AST Structure:} [Pair(left_pattern, right_pattern, meta)]
 
       {b Pirouette Syntax:}
       {[
@@ -207,10 +215,9 @@ module M : sig
         in
         pair_xy]}*)
     | LocPat of 'a Local.M.loc_id * 'a Local.M.pattern * 'a
-        (** Location-qualified pattern: matches a local pattern at a specific
-            location
+    (** Location-qualified pattern: matches a local pattern at a specific location 
 
-            {b Internal AST Structure:} [LocPat(location, local_pattern, meta)]
+      {b Internal AST Structure:} [LocPat(location, local_pattern, meta)]
 
       {b Pirouette Syntax:}
       {[
@@ -226,7 +233,9 @@ module M : sig
         in
         alice_x]}*)
     | Left of 'a pattern * 'a
-        (** Left constructor of sum type.
+    (** Left constructor of sum type. 
+    
+    {b Internal AST Structure:} [Left(pattern, meta)]
 
     {b Pirouette Syntax:}
       {[
@@ -240,9 +249,9 @@ module M : sig
         in
         left_x]}*)
     | Right of 'a pattern * 'a
-        (** Right constructor of sum type.
+    (** Right constructor of sum type.
 
-            {b Internal AST Structure:} [Right(pattern, meta)]
+    {b Internal AST Structure:} [Right(pattern, meta)]
 
     {b Pirouette Syntax:}
       {[
@@ -264,7 +273,9 @@ module M : sig
 
   type 'a expr =
     | Unit of 'a
-        (** Unit value
+    (** Unit value 
+    
+    {b Internal AST Structure:} [Unit(meta)]
 
     {b Pirouette Syntax:}
       {[
@@ -278,9 +289,9 @@ module M : sig
         in
         unit_expr]}*)
     | Var of 'a Local.M.var_id * 'a
-        (** Variable reference.
+    (** Variable reference.
 
-            {b Internal AST Structure:} [Var(var_id, meta)]
+      {b Internal AST Structure:} [Var(var_id, meta)]
 
     {b Pirouette Syntax:}
       {[
@@ -294,8 +305,9 @@ module M : sig
         in
         var_x]}*)
     | LocExpr of 'a Local.M.loc_id * 'a Local.M.expr * 'a
-        (** Location-qualified expression: a local expression at a specific
-            location
+    (** Location-qualified expression: a local expression at a specific location 
+    
+    {b Internal AST Structure:} [LocExpr(location, local_expr, meta)]
 
     {b Pirouette Syntax:}
       {[
@@ -310,18 +322,18 @@ module M : sig
         in
         alice_x]}*)
     | Send of 'a Local.M.loc_id * 'a expr * 'a Local.M.loc_id * 'a
-        (** Message send:
+    (** Message send:
 
-            {b Internal AST Structure:} [Send(sender, value, receiver, meta)]
-            - [sender]: origin location
-            - [value]: expression being transmitted
-            - [receiver]: destination location
-            - [meta]: node metadata (source span, type info)
+      {b Internal AST Structure:} [Send(sender, value, receiver, meta)]
+        - [sender]: origin location
+        - [value]: expression being transmitted
+        - [receiver]: destination location
+        - [meta]: node metadata (source span, type info)
 
-            {b Pirouette Syntax:}
-            {[
-              send Alice 42 -> Bob
-            ]}
+    {b Pirouette Syntax:}
+      {[
+        send Alice 42 -> Bob
+        ]}
 
     {b Ocaml:}
       {[
@@ -331,14 +343,24 @@ module M : sig
     (** Synchronizing choices: transfers control flow, One location makes a choice and synchronizes with another location about which 
     branch to take.
 
-            {b Pirouette Syntax:}
-            {[
-              (* General form *)
-              select Alice Ready -> Bob; <continuation>
+    {b Internal AST Structure:} [Sync(chooser, label, peer, cont, meta)]
+      - [chooser]: location making the choice
+      - [label]: selected branch label
+      - [peer]: location to be informed
+      - [cont]: continuation expression after synchronization
+      - [meta]: metadata for this sync
+      
+      
+    {b Pirouette Syntax:}
+      {[
+        (* General form *)
+        select Alice Ready -> Bob; <continuation>
+    
+        (* Concrete example *)
+        select Alice Ready -> Bob; send Alice 42 -> Bob
+      ]}
 
-              (* Concrete example *)
-              select Alice Ready -> Bob; send Alice 42 -> Bob
-            ]}
+The continuation can be any expression (Send, Let, Unit, etc.)
 
     {b Ocaml:}
       {[
@@ -355,9 +377,14 @@ module M : sig
         in
         alice_ready_bob]}*)
     | If of 'a expr * 'a expr * 'a expr * 'a
-        (** Conditional expression: Standard if-then-else conditional
+    (** Conditional expression: Standard if-then-else conditional
+    
+    {b Internal AST Structure:} [If(cond, then_expr, else_expr, meta)]
 
-            {b Internal AST Structure:} [If(cond, then_expr, else_expr, meta)]
+    {b Pirouette Syntax:}
+      {[
+        if cond then e1 else e2
+      ]}
 
     {b Ocaml:}
     {[
@@ -368,7 +395,9 @@ module M : sig
       in
       if_expr]}*)
     | Let of 'a stmt_block * 'a expr * 'a
-        (** Let binding of a statement block: Introduces local bindings
+    (** Let binding of a statement block: Introduces local bindings 
+    
+    {b Internal AST Structure:} [Let(stmt_block, body, meta)]
 
    {b Pirouette Syntax:}
       {[
@@ -387,7 +416,9 @@ module M : sig
         let_expr
       ]}*)
     | FunDef of 'a pattern list * 'a expr * 'a
-        (** Function definition
+    (** Function definition 
+    
+    {b Internal AST Structure:} [FunDef(params, body, meta)]
 
     {b Pirouette Syntax:}
       {[
@@ -404,10 +435,9 @@ module M : sig
       in
       fun_xy]}*)
     | FunApp of 'a expr * 'a expr * 'a
-        (** Function Application
+    (** Function Application
 
-            {b Internal AST Structure:}
-            [FunApp(function_expr, argument_expr, meta)]
+      {b Internal AST Structure:} [FunApp(function_expr, argument_expr, meta)]
 
     {b Pirouette Syntax:}
       {[
@@ -424,8 +454,8 @@ module M : sig
         add_3
       ]}*)
     | Pair of 'a expr * 'a expr * 'a
-        (** Pair construction: Creates a pair value containing two expressions.
-            {b Internal AST Structure:}[Pair(left_expr, right_expr, meta)]
+    (** Pair construction: Creates a pair value containing two expressions. 
+     {b Internal AST Structure:}[Pair(left_expr, right_expr, meta)]
 
     {b Pirouette Syntax:}
       {[
@@ -441,10 +471,14 @@ module M : sig
       in
       pair_xy]}*)
     | Fst of 'a expr * 'a
-        (** First projection from pair: extracts the first element from a pair
-            expression.
+    (** First projection from pair: extracts the first element from a pair expression.
+    
+    {b Internal AST Structure:} [Fst(pair_expr, meta)]
 
-            {b Internal AST Structure:} [Fst(pair_expr, meta)]
+    {b Pirouette Syntax:}
+      {[
+        fst p
+      ]}
 
     {b Ocaml:}
     {[
@@ -452,10 +486,14 @@ module M : sig
       let x = fst p     (* x = 5 *)
     ]} *)
     | Snd of 'a expr * 'a
-        (** Second projection from pair: extracts the second element from a pair
-            expression.
+    (** Second projection from pair: extracts the second element from a pair expression.
+    
+    {b Internal AST Structure:} [Snd(pair_expr, meta)]
 
-            {b Internal AST Structure:} [Snd(pair_expr, meta)]
+    {b Pirouette Syntax:}
+      {[
+        snd p
+      ]}
 
     {b Ocaml:}
     {[
@@ -463,46 +501,73 @@ module M : sig
       let y = snd p     (* y = "hello" *)
     ]} *)
     | Left of 'a expr * 'a
-        (** Left injection into sum type: constructs a Left value containing the
-            given expression.
+    (** Left injection into sum type: constructs a Left value containing the given expression.
+      
+      The ['a expr] can be any expression type. The result is a sum type value tagged as Left.
 
-            The ['a expr] can be any expression type. The result is a sum type
-            value tagged as Left.
+      {b Internal AST Structure:}[Left(payload, meta)]
+      - [payload]: any expression; the *resulting value* is tagged as Left.
+      - [meta]: metadata for the Left node.
 
-            {b Internal AST Structure:}[Left(payload, meta)]
-            - [payload]: any expression; the *resulting value* is tagged as
-              Left.
-            - [meta]: metadata for the Left node.
+      {b Pirouette Syntax:}
+      {[
+        Left 5
+      ]}
 
     {b Ocaml:}
       {[
         Left (Int 5, m) 
       ]}*)
     | Right of 'a expr * 'a
-        (** Right injection into sum type: constructs a Left value containing
-            the given expression.
+    (** Right injection into sum type: constructs a Left value containing the given expression.
+      
+    The ['a expr] can be any expression type. The result is a sum type value tagged as Right.
 
-            The ['a expr] can be any expression type. The result is a sum type
-            value tagged as Right.
+    {b Internal AST Structure:} [Right(payload, meta)]
+    - [payload]: any expression; the resulting value is tagged as Right.
+    - [meta]: metadata for the Right node.
 
-            {b Internal AST Structure:} [Right(payload, meta)]
-            - [payload]: any expression; the resulting value is tagged as Right.
-            - [meta]: metadata for the Right node.
+    {b Pirouette Syntax:}
+      {[
+        Right "hello"
+      ]}    
 
     {b Ocaml:}
       {[
         Right (String "hello", m) 
       ]}*)
     | Match of 'a expr * ('a pattern * 'a expr) list * 'a
-        (** Pattern matching expression: matches an expression against a list of
-            pattern-case pairs.
+    (** Pattern matching expression: matches an expression against a list of pattern-case pairs.
+      
+      The first ['a expr] is the value to match, the list contains pattern-case pairs where
+      each pattern is tried in order until one matches, then its corresponding expression is evaluated.
+      
+      Requires: At least one pattern must match the value (exhaustiveness).
+      
+      {b Internal AST Structure:} [Match(expr, cases, meta)]
+        - [expr]: expression to inspect
+        - [cases]: list of (pattern, expression) pairs
+        - [meta]: metadata for the match node
 
-            The first ['a expr] is the value to match, the list contains
-            pattern-case pairs where each pattern is tried in order until one
-            matches, then its corresponding expression is evaluated.
+      {b Pirouette Syntax:}
+      {[
+        match x with
+        | Left v -> v + 1
+        | Right v -> v - 1
+      ]}
 
-            Requires: At least one pattern must match the value
-            (exhaustiveness).
+      {b OCaml:}
+      {[
+        let match_expr = 
+          Match(Var(Local.M.VarId("x", ()), ()), 
+                [(Left(Var(Local.M.VarId("v", ()), 
+                ()), ()), Unit(()));
+                 (Right(Var(Local.M.VarId("v", ()), 
+                 ()), ()), Unit(()))], 
+                ()) (* () is the metadata*)
+        in
+        match_expr
+      ]} *)
 
   (** {1 Choreographic Statements} 
     
@@ -529,8 +594,12 @@ module M : sig
       in
       x_int_decl]}*)
     | Assign of 'a pattern list * 'a expr * 'a
-        (** Assignment: binds patterns to the result of evaluating an
-            expression.
+    (** Assignment: binds patterns to the result of evaluating an expression.
+        
+      The ['a pattern list] contains patterns to bind, ['a expr] is the value to assign,
+      and ['a] is metadata. Multiple patterns allow destructuring of tuple results.
+        
+      {b Internal AST Structure:} [Assign(patterns, expr, meta)]
 
       {b Pirouette Syntax:}
         {[
@@ -568,42 +637,39 @@ module M : sig
           result_type_decl
         ]} *)
     | ForeignDecl of 'a Local.M.var_id * 'a typ * string * 'a
-        (** Foreign function declaration: declares an external function with its
-            type and external name.
+    (** Foreign function declaration: declares an external function with its type and external name.
+        
+    {b Internal AST Structure:} [ForeignDecl(var_id, typ, external_name, meta)]
 
-            {b Internal AST Structure:}
-            [ForeignDecl(var_id, typ, external_name, meta)]
-
-  (** {1 Choreographic Statement Block}
-
-            {b Pirouette Syntax:}
-            {[
-              foreign print : string -> unit = "print"
-            ]}
-
-            {b OCaml:}
-            {[
-              let print_foreign =
-                ForeignDecl
-                  ( Local.M.VarId ("print", ()),
-                    TMap (TString (), TUnit (), ()),
-                    "print",
-                    () )
-              in
-              print_foreign
-            ]}*)
+      The ['a Local.M.var_id] is the internal name, ['a typ] is its type, 
+      [string] is the external name (e.g., from C library), and ['a] is metadata.
+      
+    {b Pirouette Syntax:}
+    {[
+      foreign print : string -> unit = "print"
+    ]} 
+    
+    {b OCaml:}
+    {[
+      let print_foreign = 
+        ForeignDecl(Local.M.VarId("print", ()), 
+                    TMap(TString(()), TUnit(()), ()), 
+                    "print", 
+                    ())
+      in
+      print_foreign]}*)
 
   (** {1 Choreographic Statement Block}
 
-      A block of statements forming a sequence of declarations and assignments.
-      Statements in a block are executed in order, with each statement
-      potentially introducing bindings visible to subsequent statements. *)
+  A block of statements forming a sequence of declarations and assignments.
+    Statements in a block are executed in order, with each statement potentially
+    introducing bindings visible to subsequent statements. *)
 
   (** Block of Statements
+    
+    {b Internal AST Structure:} [stmt_block] is a list of ['a stmt]
 
-      {b Internal AST Structure:} [stmt_block] is a list of ['a stmt]
-
-      {b Pirouette Syntax:}
+    {b Pirouette Syntax:}
       {[
         x : int;
         x := 5;
@@ -623,22 +689,20 @@ module M : sig
   and 'a stmt_block = 'a stmt list
 end
 
-(** {b With:} This module uses a Functor for creating AST types with concrete
-    metadata. A functor is a parametrized module that takes one or more modules
-    as arguments and returns a new module as a result.
+(** {b With:} This module uses a Functor for creating AST types with concrete metadata. A functor is a parametrized 
+    module that takes one or more modules as arguments and returns a new module as a result.
 
-    The polymorphic AST types (['a typ], ['a expr], etc.) allow any metadata
-    type ['a]. This functor instantiates those types with a specific metadata
-    type [Info.t], making the AST concrete and providing utilities to access and
-    modify the metadata annotations.
-
+    The polymorphic AST types (['a typ], ['a expr], etc.) allow any metadata type ['a].
+    This functor instantiates those types with a specific metadata type [Info.t], making
+    the AST concrete and providing utilities to access and modify the metadata annotations.
+    
     {b Functor use:}
-
+    
     Different compiler passes need different metadata:
     - Parser attaches source locations
     - Type checker attaches type information
     - Code generator attaches target-specific data
-
+    
     This functor lets each pass work with its own metadata type while reusing
     the same AST structure.
     
@@ -663,11 +727,13 @@ module With : functor
   
   Functions to extract metadata from AST nodes. *)
 
+  (** [get_info_typid tid] is the metadata annotation from type identifier [tid].*)
   val get_info_typid : typ_id -> Info.t
 
   (** [get_info_typ t] is the metadata annotation from type [t].*)
   val get_info_typ : typ -> Info.t
 
+  (** [get_info_pattern p] is the metadata annotation from pattern [p].*)
   val get_info_pattern : pattern -> Info.t
 
   (** [get_info_expr e] is the metadata annotation from expression [e].*)
@@ -675,7 +741,6 @@ module With : functor
 
   (** [get_info_stmt s] is the metadata annotation from statement [s].*)
   val get_info_stmt : stmt -> Info.t
-  (** [get_info_stmt s] is the metadata annotation from statement [s].*)
 
   (** {1 Metadata Modifiers} 
   
