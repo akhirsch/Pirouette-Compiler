@@ -25,7 +25,7 @@
     directly from Pirouette IR.
     
     The compilation flow:
-    {b What we do in Pirouette (skip the parser):}
+    {b What we do in Pirouette:}
     {v
   Pirouette source  →  Pirouette Parser  →  Pirouette AST  →  emit_* functions  
    "x := [Alice] 5"                       (Choreo/Net/Local)    (This module)  

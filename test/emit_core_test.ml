@@ -79,8 +79,7 @@ let local_unop_neg _ =
   assert_equal true (contains_substring result "-");
   assert_equal true (contains_substring result "5")
 ;;
-
-let local_binop_plus _ =
+ let local_binop_plus _ =
   let expr = BinOp (Val (Int (5, ()), ()), Plus (), Val (Int (3, ()), ()), ()) in
   let result = expr_to_string (emit_local_pexp expr) in
   assert_equal true (contains_substring result "5");

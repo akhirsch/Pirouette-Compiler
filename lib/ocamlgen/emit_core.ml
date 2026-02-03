@@ -138,6 +138,7 @@ and emit_foreign_decl id typ external_name=
                                   | TVar (TypId (typ_id, _), _) -> "(" ^ typ_id ^ ")"
                                   | TProd (typ1, typ2, _) -> "(" ^ (find_local_type_sig typ1) ^ " * " ^ (find_local_type_sig typ2) ^ ")"
                                   | TSum (typ1, typ2, _) -> "(" ^ (find_local_type_sig typ1) ^ " + " ^ (find_local_type_sig typ2) ^ ")"
+                                  | TForeign (TypId (typ_id, _), _) -> "(" ^ typ_id ^ ")"
                                 in find_local_type_sig local_type
     | TMap (typ1, typ2, _) -> "(" ^ (find_type_sig typ1) ^ " -> " ^ (find_type_sig typ2) ^ ")"
     | TProd (typ1, typ2, _) -> "(" ^ (find_type_sig typ1) ^ " * " ^ (find_type_sig typ2) ^ ")"

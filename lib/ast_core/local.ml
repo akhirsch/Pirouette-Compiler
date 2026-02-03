@@ -35,6 +35,7 @@ module M = struct
     | TVar of 'a typ_id * 'a
     | TProd of 'a typ * 'a typ * 'a
     | TSum of 'a typ * 'a typ * 'a
+    | TForeign of 'a typ_id * 'a 
 
   type 'a pattern =
     | Default of 'a
@@ -120,6 +121,7 @@ struct
     | TVar (_, i) -> i
     | TProd (_, _, i) -> i
     | TSum (_, _, i) -> i
+    | TForeign (_, i) -> i 
   ;;
 
   let get_info_pattern : pattern -> Info.t = function
@@ -199,6 +201,7 @@ struct
     | TVar (t, _) -> TVar (t, i)
     | TProd (t1, t2, _) -> TProd (t1, t2, i)
     | TSum (t1, t2, _) -> TSum (t1, t2, i)
+    | TForeign (t, _) -> TForeign (t, i)
   ;;
 
   let set_info_pattern : Info.t -> pattern -> pattern =

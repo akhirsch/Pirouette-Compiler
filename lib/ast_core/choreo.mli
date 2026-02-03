@@ -159,6 +159,8 @@ module M : sig
         int_or_string
       ]}*)
 
+    | TForeign of 'a typ_id * 'a 
+
   (** {1 Choreographic Patterns} 
   
       ['a pattern] for destructuring values, annotated with metadata of type ['a].
@@ -685,6 +687,8 @@ The continuation can be any expression (Send, Let, Unit, etc.)
                     ())
       in
       print_foreign]}*)
+
+    | ForeignTypeDecl of 'a Local.M.typ_id * 'a
 
 (** {1 Choreographic Statement Block}
 

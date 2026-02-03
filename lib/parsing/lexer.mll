@@ -148,14 +148,16 @@ and read_single_line_comment = parse
     - If EOF is reached during a comment, it returns an EOF token with metadata.
 *)
 
-and read_multi_line_comment = parse
-  | "-}"    { read lexbuf }
-  | newline { next_line lexbuf; read_multi_line_comment lexbuf }
-  | _       { read_multi_line_comment lexbuf }
-  | eof     { raise (SyntaxError "Comment is not terminated") }
-  (** [read_multi_line_comment] processes multi-line comments in the lexer.
+
+(** [read_multi_line_comment] processes multi-line comments in the lexer.
     
     - Skips all characters within the comment boundaries until the closing delimiter is found.
     - Handles newlines within the comment to maintain accurate line tracking.
     - {b Raises} a SyntaxError if EOF is reached without finding the closing delimiter.
 *)
+and read_multi_line_comment = parse
+  | "-}"    { read lexbuf }
+  | newline { next_line lexbuf; read_multi_line_comment lexbuf }
+  | _       { read_multi_line_comment lexbuf }
+  | eof     { raise (SyntaxError "Comment is not terminated") }
+  

@@ -160,6 +160,7 @@ let rec ast_local_type_info_map : ('a -> 'b) -> 'a Ast_core.Local.M.typ -> 'b As
   | TVar (TypId (typ_name, type_metadata), metadata) -> TVar (TypId (typ_name, map type_metadata), map metadata)
   | TProd (typ1, typ2, metadata) -> TProd (ast_local_type_info_map map typ1, ast_local_type_info_map map typ2, map metadata)
   | TSum  (typ1, typ2, metadata) -> TSum  (ast_local_type_info_map map typ1, ast_local_type_info_map map typ2, map metadata)
+  | TForeign (TypId (typ_name, type_metadata), metadata) -> TForeign (TypId (typ_name, map type_metadata),map metadata)
 ;;
 
 let rec info_map_pattern_match : ('a -> 'b) -> ('a Ast_core.Local.M.pattern * 'a Ast_core.Local.M.expr) list -> ('b Ast_core.Local.M.pattern * 'b Ast_core.Local.M.expr) list = 
@@ -191,6 +192,8 @@ let rec ast_choreo_type_info_map : ('a -> 'b) -> 'a Ast_core.Choreo.M.typ -> 'b 
   | TMap (typ1, typ2, metadata) ->  TMap (ast_choreo_type_info_map map typ1, ast_choreo_type_info_map map typ2, map metadata)
   | TProd (typ1, typ2, metadata) ->  TProd (ast_choreo_type_info_map map typ1, ast_choreo_type_info_map map typ2, map metadata)
   | TSum (typ1, typ2, metadata) -> TSum (ast_choreo_type_info_map map typ1, ast_choreo_type_info_map map typ2, map metadata)
+  | TForeign (Typ_Id (type_name, type_metadata), metadata) ->  TForeign (Typ_Id (type_name, map type_metadata), map metadata)
+
 ;;
 
 let rec ast_choreo_pattern_info_map : ('a -> 'b) -> 'a Ast_core.Choreo.M.pattern -> 'b Ast_core.Choreo.M.pattern = 
@@ -238,6 +241,7 @@ and ast_info_map : ('a -> 'b) -> 'a Ast_core.Choreo.M.stmt -> 'b Ast_core.Choreo
   | Assign (stmt_pattern_list, stmt_expr, metadata) -> Assign (ast_choreo_pattern_list_info_map map stmt_pattern_list, ast_choreo_expr_info_map map stmt_expr, map metadata)
   | TypeDecl ((TypId (type_name, type_metadata)), stmt_type, metadata) -> TypeDecl (TypId (type_name, map type_metadata), ast_choreo_type_info_map map stmt_type, map metadata)
   | ForeignDecl (VarId (name, meta), stmt_type, stmt_foreign_str, metadata) -> ForeignDecl (VarId (name, map meta), ast_choreo_type_info_map map stmt_type, stmt_foreign_str, map metadata)
+  | ForeignTypeDecl (TypId (type_name, type_metadata), metadata) -> ForeignTypeDecl (TypId (type_name, map type_metadata), map metadata)
 
 and ast_list_info_map : ('a -> 'b) -> 'a Ast_core.Choreo.M.stmt_block -> 'b Ast_core.Choreo.M.stmt_block = 
   fun map -> function

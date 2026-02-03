@@ -573,7 +573,9 @@ module M : sig
           result_decl]} *)
 
     | ForeignDecl of 'a Local.M.var_id * 'a typ * string * 'a
-
+    
+    | ForeignTypeDecl of 'a Local.M.typ_id * 'a
+    
     (** {1 Net Statement Block}*)
 
   and 'a stmt_block = 'a stmt list

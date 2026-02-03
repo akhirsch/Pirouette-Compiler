@@ -20,6 +20,7 @@ let rec ast_local_type_alpha_rename : 'a Ast_core.Local.M.typ ->'a Ast_core.Loca
   | TVar (TypId (typ_name, tpye_metadata), metadata) -> TVar (TypId (typ_name^suffix, tpye_metadata), metadata)
   | TProd (typ1, typ2, metadata) -> TProd (ast_local_type_alpha_rename typ1, ast_local_type_alpha_rename typ2, metadata)
   | TSum  (typ1, typ2, metadata) -> TSum  (ast_local_type_alpha_rename typ1, ast_local_type_alpha_rename typ2, metadata)
+  | TForeign (TypId (typ_name, type_metadata), metadata) -> TForeign (TypId (typ_name^suffix, type_metadata), metadata)
 ;;
 
 let rec alpha_rename_pattern_match : ('a Ast_core.Local.M.pattern * 'a Ast_core.Local.M.expr) list -> ('a Ast_core.Local.M.pattern * 'a Ast_core.Local.M.expr) list = function 
@@ -48,6 +49,7 @@ let rec ast_choreo_type_alpha_rename : 'a Ast_core.Choreo.M.typ -> 'a Ast_core.C
   | TMap (typ1, typ2, metadata) ->  TMap (ast_choreo_type_alpha_rename typ1, ast_choreo_type_alpha_rename typ2, metadata)
   | TProd (typ1, typ2, metadata) ->  TProd (ast_choreo_type_alpha_rename typ1, ast_choreo_type_alpha_rename typ2, metadata)
   | TSum (typ1, typ2, metadata) -> TSum (ast_choreo_type_alpha_rename typ1, ast_choreo_type_alpha_rename typ2, metadata)
+  | TForeign (Typ_Id (typ_name, type_metadata), metadata) -> TForeign (Typ_Id (typ_name^suffix, type_metadata), metadata)
 ;;
 
 let rec ast_choreo_pattern_alpha_rename : 'a Ast_core.Choreo.M.pattern -> 'a Ast_core.Choreo.M.pattern = function
@@ -90,7 +92,7 @@ and ast_alpha_rename : 'a Ast_core.Choreo.M.stmt -> 'a Ast_core.Choreo.M.stmt = 
   | Assign (stmt_pattern_list, stmt_expr, metadata) -> Assign (ast_choreo_pattern_list_alpha_rename stmt_pattern_list, ast_choreo_expr_alpha_rename stmt_expr, metadata)
   | TypeDecl ((TypId (type_name, type_metadata)), stmt_type, metadata) -> TypeDecl (TypId (type_name^suffix, type_metadata), ast_choreo_type_alpha_rename stmt_type, metadata)
   | ForeignDecl (VarId (name, meta), stmt_type, stmt_foreign_str, metadata) -> ForeignDecl (VarId (name^suffix, meta), ast_choreo_type_alpha_rename stmt_type, stmt_foreign_str, metadata)
-
+  | ForeignTypeDecl (TypId (type_name, type_metadata), metadata) -> ForeignTypeDecl (TypId (type_name^suffix, type_metadata), metadata)
 and ast_list_alpha_rename : 'a Ast_core.Choreo.M.stmt_block -> 'a Ast_core.Choreo.M.stmt_block = function
   | [] -> []
   | h::d -> (ast_alpha_rename h) :: (ast_list_alpha_rename d)

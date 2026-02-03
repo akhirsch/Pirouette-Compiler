@@ -343,6 +343,9 @@ module M : sig
           in
           sum_int_string]}*)
 
+    | TForeign of 'a typ_id * 'a 
+    (** Foreign type *)
+
   (** {1 Local Patterns} 
 
   ['a pattern] represent patterns for matching and destructuring values in 

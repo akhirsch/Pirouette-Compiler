@@ -24,6 +24,7 @@ let rec ast_local_type_stringify : 'a Ast_core.Local.M.typ -> string = function
   | TVar (TypId (typ_name, _), _) -> "(TVar (TypId (\"" ^ typ_name ^ "\", ()), ()))"
   | TProd (typ1, typ2, _) -> "(TProd (" ^ ast_local_type_stringify typ1 ^ ", " ^ ast_local_type_stringify typ2 ^ ", ()))"
   | TSum  (typ1, typ2, _) -> "(TSum (" ^ ast_local_type_stringify typ1 ^ ", " ^ ast_local_type_stringify typ2 ^ ", ()))"
+  | TForeign (TypId (typ_name, _), _) -> "(TForeign (TypId (\"" ^ typ_name ^ "\", ()), ()))"
 ;;
 
 let ast_local_bin_op_stringify : 'a Ast_core.Local.M.bin_op -> string = function
@@ -72,6 +73,7 @@ let rec ast_choreo_type_stringify : 'a Ast_core.Choreo.M.typ -> string = functio
   | TMap (typ1, typ2, _) ->  "(TMap (" ^ ast_choreo_type_stringify typ1 ^ ", " ^ ast_choreo_type_stringify typ2 ^ ", ()))"
   | TProd (typ1, typ2, _) ->  "(TProd (" ^ ast_choreo_type_stringify typ1 ^", " ^ ast_choreo_type_stringify typ2 ^" , ()))"
   | TSum (typ1, typ2, _) -> "(TSum (" ^ ast_choreo_type_stringify typ1 ^ ", " ^ ast_choreo_type_stringify typ2 ^ ", ()))"
+  | TForeign (Typ_Id (typ_name, _), _) -> "(TForeign (Typ_Id (\"" ^ typ_name ^ "\", ()), ()))"
 ;;
 
 let rec ast_choreo_pattern_stringify : 'a Ast_core.Choreo.M.pattern -> string = function
@@ -114,6 +116,7 @@ and ast_stringify : 'a Ast_core.Choreo.M.stmt -> string = function
   | Assign (stmt_pattern_list, stmt_expr, _) -> "(Assign (" ^ ast_choreo_pattern_list_stringify stmt_pattern_list ^ ", " ^ ast_choreo_expr_stringify stmt_expr ^ ", ()))"
   | TypeDecl ((TypId (type_name, _)), stmt_type, _) -> "(TypeDecl (TypId (\"" ^ type_name ^ "\" , ()), " ^ ast_choreo_type_stringify stmt_type ^ ", ()))"
   | ForeignDecl (VarId (name, _), stmt_type, stmt_foreign_str, _) -> "(ForeignDecl (VarId ( \"" ^ name ^"\" , ()), " ^ ast_choreo_type_stringify stmt_type ^ ", \"" ^ stmt_foreign_str ^ "\", ()))"
+  | ForeignTypeDecl (TypId (type_name, _), _) -> "(ForeignTypeDecl (TypId (\"" ^ type_name ^ "\", ()), ()))"
 
 and ast_list_stringify : 'a Ast_core.Choreo.M.stmt_block -> string = function
   | [] -> "[]"

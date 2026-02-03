@@ -174,6 +174,10 @@ stmt:
   | ps=nonempty_list(choreo_pattern) COLONEQ e=choreo_expr SEMICOLON { Assign (ps, e, gen_pos $startpos $endpos) }
   | TYPE id=typ_id COLONEQ t=choreo_type SEMICOLON? { TypeDecl (id, t, gen_pos $startpos $endpos) }
   | f=foreign_decl { f }
+  | ft=foreign_type_decl { ft }
+
+foreign_type_decl:
+  | FOREIGN TYPE id=typ_id SEMICOLON { ForeignTypeDecl (id, gen_pos $startpos $endpos) }
 
 /* Associativity increases from expr to expr3, with each precedence level falling through to the next. */
 choreo_expr:

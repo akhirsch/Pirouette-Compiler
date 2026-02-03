@@ -32,6 +32,7 @@ let rec jsonify_local_type = function
     `Assoc [ "TProd", `List [ jsonify_local_type t1; jsonify_local_type t2 ] ]
   | Local.TSum (t1, t2, _) ->
     `Assoc [ "TSum", `List [ jsonify_local_type t1; jsonify_local_type t2 ] ]
+  | Local.TForeign (TypId (id, _), _) -> `String id
 ;;
 
 let rec jsonify_local_pattern = function
@@ -119,6 +120,7 @@ let rec jsonify_choreo_type = function
     `Assoc [ "TProd", `List [ jsonify_choreo_type t1; jsonify_choreo_type t2 ] ]
   | Choreo.TSum (t1, t2, _) ->
     `Assoc [ "TSum", `List [ jsonify_choreo_type t1; jsonify_choreo_type t2 ] ]
+  | Choreo.TForeign (Typ_Id (id, _), _) -> `String id
 ;;
 
 let rec jsonify_choreo_pattern = function
@@ -162,6 +164,9 @@ let rec jsonify_choreo_stmt = function
             ; "foreign_name", `String s
             ] )
       ]
+  | Choreo.ForeignTypeDecl (TypId (id, _), _) ->
+    `Assoc 
+      [ ("ForeignTypeDecl", `Assoc [ "type_id", `String id ]) ]
 
 and jsonify_choreo_expr = function
   | Choreo.Unit _ -> `String "Unit"
@@ -283,6 +288,8 @@ let rec jsonify_net_stmt = function
             ; "foreign_name", `String s
             ] )
       ]
+  | Net.ForeignTypeDecl (TypId (id, _), _) ->
+    `Assoc [ "ForeignTypeDecl", `Assoc [ "id", `String id ] ]
 
 and jsonify_net_expr = function
   | Net.Unit _ -> `String "Unit"
