@@ -41,11 +41,9 @@ let () =
   |> Array.to_list
   |> List.filter_map (Filename.chop_suffix_opt ~suffix:".pir")
   |> List.iter (gen_rules shm_flags);
-  Printf.printf
-    {|
+  Printf.printf {|
 (alias
  (name runtest)
  (deps
   (alias test-pipeline)))
 |}
-;;
