@@ -14,7 +14,6 @@ let testcase_1 =
    S.\"Hello\"\n\n\
    else R[R] ~> S; \n\n\
    S.\"Bye\";\n"
-;;
 
 let testcase_2 =
   "right (_,_) := \n\n\
@@ -23,7 +22,6 @@ let testcase_2 =
    let R.res := [S] (right x,y) ~> R; in R.\"Sent\"\n\n\
    else R[R] ~> S;\n\n\
    let R.res := [S] S.(left 0,snd false) ~> R; in R.\"why\";\n"
-;;
 
 let testcase_3 =
   "type x := P2.int;\n\
@@ -35,7 +33,6 @@ let testcase_3 =
    ()\n\n\
    P2.3\n\n\
    ;"
-;;
 
 let testcase_4 =
   "y := if P1.(3*2 < 5/2 && 3 = 3)\n\n\
@@ -43,21 +40,18 @@ let testcase_4 =
    fst P2.5\n\n\
    else P1[R] ~> P2;\n\n\
    snd P2.5;\n"
-;;
 
 let choreo_typs =
   "type choreo_sum_typ := P1.int + P2.int;\n\n\
    type choreo_unit := unit;\n\n\
    type choreo_prod_typ := P1.bool * P2.bool;\n\n\
    type choreo_map_typ := P1.bool -> P2.bool;\n"
-;;
 
 let local_typs =
   "type local_unit := P1.unit;\n\n\
    type local_string := P1.string;\n\n\
    type local_prod_typ := P1.(int*string);\n\n\
    type local_sum_typ := P1.(int+string);\n"
-;;
 
 let choreo_fundef =
   "foo := fun a -> (a, a);\n\n\
@@ -67,19 +61,19 @@ let choreo_fundef =
   \  S.\"Hello\"\n\n\
   \  else R[R] ~> S; \n\n\
   \  S.();\n"
-;;
 
 let choreo_pat_match =
-  "y := let P.y := y; in\n\nmatch P.(5 >= 4 && 5/2 != 3 || 2 <= 2) with\n\n|_->();\n"
-;;
+  "y := let P.y := y; in\n\n\
+   match P.(5 >= 4 && 5/2 != 3 || 2 <= 2) with\n\n\
+   |_->();\n"
 
 let lcl_pat_match =
   "y := P.let y : int := 3 in\n\nmatch (x,z) with\n\n|(true,_)->(1,\"None\");\n"
-;;
 
 let lcl_pat_match_2 =
-  "y := P.let y : int := 3 in\n\nmatch (x,z) with\n\n|(left 1,right \"None\")->();\n"
-;;
+  "y := P.let y : int := 3 in\n\n\
+   match (x,z) with\n\n\
+   |(left 1,right \"None\")->();\n"
 
 let foreign_decl = "foreign myFunc : unit -> unit := \"external_function\";\n"
 let simple_net = "y1 : unit;"
@@ -94,4 +88,3 @@ let netir_ex3 =
    y2 := allow choice from P1 with\n\
   \      | L -> ret (5)\n\
   \      | R -> ret (9);\n"
-;;

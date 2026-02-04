@@ -1,17 +1,10 @@
 module M = struct
-  type 'a value =
-    | Int of int * 'a
-    | String of string * 'a
-    | Bool of bool * 'a
-
+  type 'a value = Int of int * 'a | String of string * 'a | Bool of bool * 'a
   type 'a loc_id = LocId of string * 'a
   type 'a var_id = VarId of string * 'a
   type 'a typ_id = TypId of string * 'a
   type 'a sync_label = LabelId of string * 'a
-
-  type 'a un_op =
-    | Not of 'a
-    | Neg of 'a
+  type 'a un_op = Not of 'a | Neg of 'a
 
   type 'a bin_op =
     | Plus of 'a
@@ -60,8 +53,8 @@ module M = struct
 end
 
 module With (Info : sig
-    type t
-  end) =
+  type t
+end) =
 struct
   type nonrec value = Info.t M.value
   type nonrec loc_id = Info.t M.loc_id
@@ -78,24 +71,11 @@ struct
     | Int (_, i) -> i
     | String (_, i) -> i
     | Bool (_, i) -> i
-  ;;
 
-  let get_info_locid : loc_id -> Info.t = function
-    | LocId (_, i) -> i
-  ;;
-
-  let get_info_varid : var_id -> Info.t = function
-    | VarId (_, i) -> i
-  ;;
-
-  let get_info_typid : typ_id -> Info.t = function
-    | TypId (_, i) -> i
-  ;;
-
-  let get_info_unop : un_op -> Info.t = function
-    | Not i -> i
-    | Neg i -> i
-  ;;
+  let get_info_locid : loc_id -> Info.t = function LocId (_, i) -> i
+  let get_info_varid : var_id -> Info.t = function VarId (_, i) -> i
+  let get_info_typid : typ_id -> Info.t = function TypId (_, i) -> i
+  let get_info_unop : un_op -> Info.t = function Not i -> i | Neg i -> i
 
   let get_info_binop : bin_op -> Info.t = function
     | Plus i -> i
@@ -110,7 +90,6 @@ struct
     | Leq i -> i
     | Gt i -> i
     | Geq i -> i
-  ;;
 
   let get_info_typ : typ -> Info.t = function
     | TUnit i -> i
@@ -120,7 +99,6 @@ struct
     | TVar (_, i) -> i
     | TProd (_, _, i) -> i
     | TSum (_, _, i) -> i
-  ;;
 
   let get_info_pattern : pattern -> Info.t = function
     | Default i -> i
@@ -129,7 +107,6 @@ struct
     | Pair (_, _, i) -> i
     | Left (_, i) -> i
     | Right (_, i) -> i
-  ;;
 
   let get_info_expr : expr -> Info.t = function
     | Unit i -> i
@@ -144,38 +121,27 @@ struct
     | Left (_, i) -> i
     | Right (_, i) -> i
     | Match (_, _, i) -> i
-  ;;
 
   let set_info_value : Info.t -> value -> value =
-    fun i -> function
+   fun i -> function
     | Int (n, _) -> Int (n, i)
     | String (s, _) -> String (s, i)
     | Bool (b, _) -> Bool (b, i)
-  ;;
 
   let set_info_locid : Info.t -> loc_id -> loc_id =
-    fun i -> function
-    | LocId (s, _) -> LocId (s, i)
-  ;;
+   fun i -> function LocId (s, _) -> LocId (s, i)
 
   let set_info_varid : Info.t -> var_id -> var_id =
-    fun i -> function
-    | VarId (s, _) -> VarId (s, i)
-  ;;
+   fun i -> function VarId (s, _) -> VarId (s, i)
 
   let set_info_typid : Info.t -> typ_id -> typ_id =
-    fun i -> function
-    | TypId (s, _) -> TypId (s, i)
-  ;;
+   fun i -> function TypId (s, _) -> TypId (s, i)
 
   let set_info_unop : Info.t -> un_op -> un_op =
-    fun i -> function
-    | Not _ -> Not i
-    | Neg _ -> Neg i
-  ;;
+   fun i -> function Not _ -> Not i | Neg _ -> Neg i
 
   let set_info_binop : Info.t -> bin_op -> bin_op =
-    fun i -> function
+   fun i -> function
     | Plus _ -> Plus i
     | Minus _ -> Minus i
     | Times _ -> Times i
@@ -188,10 +154,9 @@ struct
     | Leq _ -> Leq i
     | Gt _ -> Gt i
     | Geq _ -> Geq i
-  ;;
 
   let set_info_typ : Info.t -> typ -> typ =
-    fun i -> function
+   fun i -> function
     | TUnit _ -> TUnit i
     | TInt _ -> TInt i
     | TString _ -> TString i
@@ -199,20 +164,18 @@ struct
     | TVar (t, _) -> TVar (t, i)
     | TProd (t1, t2, _) -> TProd (t1, t2, i)
     | TSum (t1, t2, _) -> TSum (t1, t2, i)
-  ;;
 
   let set_info_pattern : Info.t -> pattern -> pattern =
-    fun i -> function
+   fun i -> function
     | Default _ -> Default i
     | Val (v, _) -> Val (v, i)
     | Var (x, _) -> Var (x, i)
     | Pair (p1, p2, _) -> Pair (p1, p2, i)
     | Left (p, _) -> Left (p, i)
     | Right (p, _) -> Right (p, i)
-  ;;
 
   let set_info_expr : Info.t -> expr -> expr =
-    fun i -> function
+   fun i -> function
     | Unit _ -> Unit i
     | Val (v, _) -> Val (v, i)
     | Var (x, _) -> Var (x, i)
@@ -225,5 +188,4 @@ struct
     | Left (e, _) -> Left (e, i)
     | Right (e, _) -> Right (e, i)
     | Match (e, cases, _) -> Match (e, cases, i)
-  ;;
 end
