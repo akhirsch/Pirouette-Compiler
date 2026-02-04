@@ -716,11 +716,24 @@ module With : functor
        type t
      end)
     -> sig
+  (** [typ_id] (Type ID) is a type alias for {!Choreo.M.typ_id}, representing names for types in choreographic declarations
+  and references*)
   type nonrec typ_id = Info.t M.typ_id
+
+  (** [typ] (Type) is a type alias for {!Choreo.M.typ}, representing the types of values and communications in a choreography*)
   type nonrec typ = Info.t M.typ
+
+  (** [pattern] is a type alias for {!Choreo.M.pattern}, representing names for types in Choreographic declarations
+  and references*)
   type nonrec pattern = Info.t M.pattern
+
+  (** [expr] (Expression) is a type alias for {!Choreo.M.expr}, representing computations and communications in a choreography*)
   type nonrec expr = Info.t M.expr
+
+  (** [stmt] (Statement) is a type alias for {!Choreo.M.stmt}, declaring that a pattern has a certain type*)
   type nonrec stmt = Info.t M.stmt
+
+  (** [stmt_block] (Statement Block) is a type alias representing a list of statements*)
   type nonrec stmt_block = stmt list
 
   (** {1 Metadata Accessors} 

@@ -602,8 +602,14 @@ module With : functor
        type t
      end)
     -> sig
+  (** [typ] (Type) is a type alias for {!Net.M.typ}, representing a type at the network level, bridging choreographic types
+  and backend code generation*)
   type nonrec typ = Info.t M.typ
+
+  (** [expr] (Expression) is a type alias for {!Net.M.expr}, representing computations in projected endpoint programs
+  after choregraphic projection*)
   type nonrec expr = Info.t M.expr
+
   type nonrec stmt = Info.t M.stmt
   type nonrec stmt_block = Info.t M.stmt_block
 
