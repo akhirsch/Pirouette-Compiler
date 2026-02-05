@@ -610,7 +610,11 @@ module With : functor
   after choregraphic projection*)
   type nonrec expr = Info.t M.expr
 
+  (** [stmt] (Statement) is a type alias for {!Net.M.stmt}, representing expressions in projected endpoint programs
+  after choregraphic projection*)
   type nonrec stmt = Info.t M.stmt
+
+  (** [stmt_block] (Statement Block) is a type alias for {!Net.M.stmt_block}, representing a list of statements*)
   type nonrec stmt_block = Info.t M.stmt_block
 
   (** {1 Metadata Acessors}
