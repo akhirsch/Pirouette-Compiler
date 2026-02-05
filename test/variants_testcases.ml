@@ -1,6 +1,6 @@
 let simple = "type X := constructor : X;";;
-let true_constructor = "type T := true : T;"
-let true_constructor = "type F := ;"
+let true_constructor = "type T := true : T;";;
+let true_constructor = "type F := ;";;
 let boolean = "
   type T := true : T;
   type F := ;
@@ -8,13 +8,13 @@ let boolean = "
   | true : T 
   | false : F
   ;
-"
+";;
 let nats = "
   type N := 
   | zero : N 
   | suc : N -> N
   ;
-" 
+";;
 (* I'm not sure what the syntax is for a parameterized ADT, 
 so i'm doing it in agda style as a placeholder*)
 let lst = "
@@ -22,4 +22,4 @@ let lst = "
   | [] : list A
   | :: : list A -> list A -> list A
   ;
-" 
+";;
