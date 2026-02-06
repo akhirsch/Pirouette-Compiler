@@ -37,8 +37,21 @@ jobs:
         with:
           ocaml-compiler: 5.2.1
 
-      - name: Lint and format
-        uses: ocaml/setup-ocaml/lint-fmt@v3
+      - name: Format code
+        run: |
+          opam install ocamlformat=0.28.1
+          opam exec -- dune build @fmt --auto-promote
+
+      - name: Commit and push formatted code
+        run: |
+          AUTHOR=$(git log -n 1 --pretty=format:"%an")
+          EMAIL=$(git log -n 1 --pretty=format:"%ae")
+          COMMIT_MSG=$(git log -n 1 --pretty=format"%B")
+          git config --global user.name $AUTHOR
+          git config --global user.email $EMAIL
+          git add .
+          git commit -m "$COMMIT_MSG (formatted)"
+          git push
 
   build:
     strategy:
@@ -62,3 +75,34 @@ jobs:
         run: opam exec -- dune build
       - name: Build Docs
         run: opam exec -- dune build @doc
+        
+  Run-Test-Suite:
+    strategy:
+      fail-fast: false
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set-up OCaml
+        uses: ocaml/setup-ocaml@v3
+        with:
+          ocaml-compiler: 5.2.1
+
+      - name: Install dependencies
+        run: opam install . --deps-only --with-test
+
+      - name: Build
+        run: opam exec -- dune build
+
+      - name: Run Tests
+        run: |
+          TEST_OUTPUT=$(opam exec -- dune test)
+          SUMMARY_LINE=$($TEST_OUTPUT tail -n 1)
+          if [[ SUMMARY_LINE == FAILED*]] ;
+          then
+            echo $TEST_OUTPUT
+            exit 1
+          fi
