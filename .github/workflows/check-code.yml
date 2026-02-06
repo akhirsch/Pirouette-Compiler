@@ -47,13 +47,20 @@ jobs:
           if ! git diff --diff-filter M --exit-code ;
           then
             AUTHOR=$(git log -n 1 --pretty=format:"%an")
+            echo $AUTHOR
             EMAIL=$(git log -n 1 --pretty=format:"%ae")
+            echo $EMAIL
             COMMIT_MSG=$(git log -n 1 --pretty=format"%B")
+            echo $COMMIT_MSG
             git config --global user.name $AUTHOR
             git config --global user.email $EMAIL
+            echo "configs set"
             git add -u
+            echo "added files"
             git commit -m "$COMMIT_MSG (formatted)"
+            echo "committed"
             git push
+            echo "pushed"
           fi
 
   build:
