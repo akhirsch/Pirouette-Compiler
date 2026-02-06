@@ -49,7 +49,7 @@ jobs:
           COMMIT_MSG=$(git log -n 1 --pretty=format"%B")
           git config --global user.name $AUTHOR
           git config --global user.email $EMAIL
-          git add .
+          git add -u
           git commit -m "$COMMIT_MSG (formatted)"
           git push
 
