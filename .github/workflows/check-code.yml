@@ -44,7 +44,8 @@ jobs:
 
       - name: Commit and push formatted code
         run: |
-          if ! git diff --diff-filter M --exit-code ;
+          CHANGES=$(git diff --diff-filter M)
+          if [[ -n $CHANGES ]] ;
           then
             AUTHOR=$(git log -n 1 --pretty=format:"%an")
             echo $AUTHOR
