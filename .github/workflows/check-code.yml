@@ -44,14 +44,17 @@ jobs:
 
       - name: Commit and push formatted code
         run: |
-          AUTHOR=$(git log -n 1 --pretty=format:"%an")
-          EMAIL=$(git log -n 1 --pretty=format:"%ae")
-          COMMIT_MSG=$(git log -n 1 --pretty=format"%B")
-          git config --global user.name $AUTHOR
-          git config --global user.email $EMAIL
-          git add -u
-          git commit -m "$COMMIT_MSG (formatted)"
-          git push
+          if ! git diff --diff-filter M --exit-code ;
+          then
+            AUTHOR=$(git log -n 1 --pretty=format:"%an")
+            EMAIL=$(git log -n 1 --pretty=format:"%ae")
+            COMMIT_MSG=$(git log -n 1 --pretty=format"%B")
+            git config --global user.name $AUTHOR
+            git config --global user.email $EMAIL
+            git add -u
+            git commit -m "$COMMIT_MSG (formatted)"
+            git push
+          fi
 
   build:
     strategy:
