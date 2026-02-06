@@ -87,7 +87,7 @@ let rec dot_local_type (string_of_info : 'a -> string) (typ : 'a Local.typ)
     in
     let constructor_nodes =
       List.map
-        (fun { Local.name; args; typ; info = cons_info } ->
+        (fun { Local.name; args; typ = _; info = cons_info } -> (*temp fix for typ*)
           let cons_node_name = generate_node_name () in
           let cons_node =
             spf
@@ -171,7 +171,7 @@ let rec dot_local_pattern (string_of_info : 'a -> string) (pat : 'a Local.patter
           let c, n = dot_local_pattern string_of_info pat in
           let edge = spf "%s -> %s;\n" node_name n in
           edge ^ c)
-        patterns
+        patterns (*@[spf "%s -> %s;\n" node_name (string_of_info typ)]*)
     in
     pconstruct_node ^ String.concat "" pat_code, node_name
 ;;

@@ -16,10 +16,10 @@ let rec extract_type : 'a Choreo.typ -> LocSet.t = function
   | TVar (Typ_Id (id, _), _) -> LocSet.singleton id
   | TMap (t1, t2, _) | TProd (t1, t2, _) | TSum (t1, t2, _) ->
     LocSet.union (extract_type t1) (extract_type t2)
-  | TVariant (constructors, _) ->
+ | TVariant (constructors, _) ->
     List.fold_left
       (fun acc constructor ->
-        let { Choreo.name = _; args; info = _ } = constructor in
+        let { Choreo.name = _; args; typ = _; info = _ } = constructor in
         LocSet.union
           acc
           (List.fold_left

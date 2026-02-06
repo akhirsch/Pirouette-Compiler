@@ -37,10 +37,11 @@ let rec jsonify_local_type = function
       [ ( "TVariant"
         , `List
             (List.map
-               (fun { Local.name; args; typ; info = _ } ->
+               (fun { Local.name; args; typ = TypId (typ_id, _); info = _ } ->
                  `Assoc
                    [ "name", `String name
                    ; "args", `List (List.map jsonify_local_type args)
+                   ; "typ", `String typ_id
                    ])
                constructors) )
       ]
@@ -62,14 +63,15 @@ let rec jsonify_local_pattern = function
   | Local.Right (p, _) -> `Assoc [ "Right", jsonify_local_pattern p ]
   | Local.Pair (p1, p2, _) ->
     `Assoc [ "Pair", `List [ jsonify_local_pattern p1; jsonify_local_pattern p2 ] ]
-  | Local.PConstruct (name, patterns, typ, _) ->
-    `Assoc
-      [ ( "PConstruct"
-        , `Assoc
-            [ "name", `String name
-            ; "patterns", `List (List.map jsonify_local_pattern patterns)
-            ] )
-      ]
+  | Local.PConstruct (name, patterns, TypId (typ_id, _), _) ->
+      `Assoc
+        [ ( "PConstruct"
+          , `Assoc
+              [ "name", `String name
+              ; "patterns", `List (List.map jsonify_local_pattern patterns)
+              ; "typ", `String typ_id
+              ] )
+        ]
 
 ;;
 
@@ -127,12 +129,15 @@ let rec jsonify_local_expr = function
                      cases) )
             ] )
       ]
-  | Local.Construct (name, exprs, typ, _) ->
-    `Assoc
-      [ ( "Construct"
-        , `Assoc
-            [ "name", `String name; "exprs", `List (List.map jsonify_local_expr exprs) ] )
-      ]
+  | Local.Construct (name, exprs, TypId (typ_id, _), _) ->
+      `Assoc
+        [ ( "Construct"
+          , `Assoc
+              [ "name", `String name
+              ; "exprs", `List (List.map jsonify_local_expr exprs)
+              ; "typ", `String typ_id
+              ] )
+        ]
 ;;
 
 (* ============================== Choreo ============================== *)
@@ -152,10 +157,11 @@ let rec jsonify_choreo_type = function
       [ ( "TVariant"
         , `List
             (List.map
-               (fun { Choreo.name; args; typ; info = _ } ->
+               (fun { Choreo.name; args; typ = Local.TypId (typ_id, _); info = _ } ->
                  `Assoc
                    [ "name", `String name
                    ; "args", `List (List.map jsonify_choreo_type args)
+                   ; "typ", `String typ_id
                    ])
                constructors) )
       ]
@@ -171,12 +177,13 @@ let rec jsonify_choreo_pattern = function
   | Choreo.LocPat (LocId (loc, _), p, _) ->
     `Assoc
       [ "LocPat", `Assoc [ "loc", `String loc; "local_patt", jsonify_local_pattern p ] ]
-  | Choreo.PConstruct (name, patterns,_,  _) ->
+  | Choreo.PConstruct (name, patterns, Local.TypId (typ_id, _),  _) ->
     `Assoc
       [ ( "PConstruct"
         , `Assoc
             [ "name", `String name
             ; "patterns", `List (List.map jsonify_choreo_pattern patterns)
+            ; "typ", `String typ_id
             ] )
       ]
 ;;
@@ -285,11 +292,14 @@ and jsonify_choreo_expr = function
             ; "cases", `List (List.map jsonify_choreo_case cases)
             ] )
       ]
-  | Choreo.Construct (name, exprs, typ, _) ->
+  | Choreo.Construct (name, exprs, Local.TypId (typ_id, _), _) ->
     `Assoc
       [ ( "Construct"
         , `Assoc
-            [ "name", `String name; "exprs", `List (List.map jsonify_choreo_expr exprs) ]
+            [ "name", `String name
+            ; "exprs", `List (List.map jsonify_choreo_expr exprs)
+            ; "typ", `String typ_id
+            ]
         )
       ]
 
@@ -318,7 +328,7 @@ let rec jsonify_net_type = function
       [ ( "TVariant"
         , `List
             (List.map
-               (fun { Net.name; args; info = _ } ->
+               (fun { Net.name; args; typ =_; info = _ } -> (* had to add typ but it shouldn't... fix laterrrrrrr*)
                  `Assoc
                    [ "name", `String name
                    ; "args", `List (List.map jsonify_net_type args)
@@ -425,11 +435,11 @@ and jsonify_net_expr = function
             ; "cases", `List (List.map jsonify_net_case cases)
             ] )
       ]
-  | Net.Construct (name, exprs, _) ->
+  | Net.Construct (name, exprs, Local.TypId (typ_id, _), _) ->
       `Assoc
       [ ( "Construct"
         , `Assoc
-            [ "name", `String name; "exprs", `List (List.map jsonify_net_expr exprs) ]
+            [ "name", `String name; "exprs", `List (List.map jsonify_net_expr exprs); "typ", `String typ_id ]
         )
       ]
 ;;

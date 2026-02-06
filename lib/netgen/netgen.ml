@@ -145,6 +145,7 @@ let rec epp_choreo_pattern (pat : 'a Choreo.pattern) (loc : string) : 'a Local.p
   | LocPat (LocId (id, _), p, _) -> if id = loc then p else Default _m
   | Left (p, _) -> Left (epp_choreo_pattern p loc, _m)
   | Right (p, _) -> Right (epp_choreo_pattern p loc, _m)
+  | PConstruct (id, pats, typid, _) -> PConstruct (id, List.map (fun p -> epp_choreo_pattern p loc) pats, typid,  _m)
 ;;
 
 let rec epp_choreo_stmt (stmt : 'a Choreo.stmt) (loc : string) : 'a Net.stmt =
