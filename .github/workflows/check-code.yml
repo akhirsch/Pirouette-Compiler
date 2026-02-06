@@ -74,3 +74,34 @@ jobs:
       - name: Build
         run: opam exec -- dune build
 
+  Run-Test-Suite:
+    strategy:
+      fail-fast: false
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set-up OCaml
+        uses: ocaml/setup-ocaml@v3
+        with:
+          ocaml-compiler: 5.2.1
+
+      - name: Install dependencies
+        run: opam install . --deps-only --with-test
+
+      - name: Build
+        run: opam exec -- dune build
+
+      - name: Run Tests
+        run: |
+          TEST_OUTPUT=$(opam exec -- dune test)
+          SUMMARY_LINE=$($TEST_OUTPUT tail -n 1)
+          if [[ SUMMARY_LINE == FAILED*]] ;
+          then
+            echo $TEST_OUTPUT
+            exit 1
+          fi
+            
