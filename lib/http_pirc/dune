@@ -2,7 +2,21 @@
  (name http_pirc)
  (public_name http_pirc)
  (modules send_receive config_parser)
- (libraries cohttp-lwt-unix lwt lwt.unix yaml ast_utils parsing netgen cohttp-eio eio_main eio http logs eio.unix unix)
+ (libraries
+  cohttp-lwt-unix
+  lwt
+  lwt.unix
+  yaml
+  ast_utils
+  parsing
+  netgen
+  cohttp-eio
+  eio_main
+  eio
+  http
+  logs
+  eio.unix
+  unix)
  (preprocess
   (pps lwt_ppx)))
 
