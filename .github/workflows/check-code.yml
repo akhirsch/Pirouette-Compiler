@@ -41,12 +41,14 @@ jobs:
         run: |
           opam install ocamlformat=0.28.1
           echo "Running fmt 1"
-          opam exec -- dune build @fmt --auto-promote
+          opam exec -- dune build @fmt --auto-promote || true
+          # We use "|| true" here to suppress the exit code 1 that @fmt throws when it has to
+          # reformat code.
           echo "Running fmt 2"
           opam exec -- dune build @fmt
           echo "done"
-          # We run @fmt a second time because if formatting is needed, @fmt exits with code 1
-          # Assuming there wasn't a real error, the second @fmt should overwrite with code 0
+          # We run @fmt a second time in case it throws a real error. If the first @fmt
+          # reformatted without issue, the second @fmt will exit with code 0.
 
       - name: Commit and push formatted code
         run: |
