@@ -28,8 +28,6 @@ permissions: read-all
 jobs:
   lint-fmt:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -57,6 +55,9 @@ jobs:
           CHANGES=$(git diff --diff-filter M)
           if [[ -n $CHANGES ]] ;
           then
+            echo "CURRENT BRANCH IS"
+            BRANCH=$(git branch --show-current)
+            echo $BRANCH
             AUTHOR=$(git log -n 1 --pretty=format:"%an")
             echo $AUTHOR
             EMAIL=$(git log -n 1 --pretty=format:"%ae")
