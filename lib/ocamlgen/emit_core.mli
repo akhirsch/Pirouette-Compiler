@@ -23,19 +23,11 @@
     but before type checking. When the OCaml compiler reads source code, it 
     produces a Parsetree. We use Ppxlib to construct these same Parsetree nodes
     directly from Pirouette IR.
+
+    {b Compilatin Flow:}
     
-    The compilation flow:
-    {b What we do in Pirouette (skip the parser):}
-    {v
-  Pirouette source  →  Pirouette Parser  →  Pirouette AST  →  emit_* functions  
-   "x := [Alice] 5"                       (Choreo/Net/Local)    (This module)  
-                                                                   ↓         
-                                                                Parsetree
-                                                                   ↓    
-                                                               Type Checker 
-                                                                   ↓ 
-                                                                Executable
-v}
+    See {{:https://github.com/akhirsch/Pirouette-Compiler/wiki/Compiler-Pipeline-Diagram}the Pirouette Wiki} for a
+    Compiler Pipeline Diagram depicting the process of generating OCaml code from Pirouette code
     
     Using Ppxlib ensures:
     - Type-safe code generation (syntax errors caught at generation time)
