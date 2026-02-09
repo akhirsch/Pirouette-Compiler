@@ -1,0 +1,979 @@
+[
+  {
+    "ForeignDecl": {
+      "id": "print_string_PIROUETTE_ID",
+      "net_type": {
+        "TMap": [
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } },
+          "TUnit"
+        ]
+      },
+      "foreign_name": "print_string"
+    }
+  },
+  {
+    "ForeignDecl": {
+      "id": "print_endline_PIROUETTE_ID",
+      "net_type": {
+        "TMap": [
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } },
+          "TUnit"
+        ]
+      },
+      "foreign_name": "print_endline"
+    }
+  },
+  {
+    "ForeignDecl": {
+      "id": "print_int_PIROUETTE_ID",
+      "net_type": {
+        "TMap": [
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TInt" } },
+          "TUnit"
+        ]
+      },
+      "foreign_name": "print_int"
+    }
+  },
+  {
+    "ForeignDecl": {
+      "id": "print_newline_PIROUETTE_ID",
+      "net_type": { "TMap": [ "TUnit", "TUnit" ] },
+      "foreign_name": "print_newline"
+    }
+  },
+  {
+    "ForeignDecl": {
+      "id": "prerr_string_PIROUETTE_ID",
+      "net_type": {
+        "TMap": [
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } },
+          "TUnit"
+        ]
+      },
+      "foreign_name": "prerr_string"
+    }
+  },
+  {
+    "ForeignDecl": {
+      "id": "prerr_endline_PIROUETTE_ID",
+      "net_type": {
+        "TMap": [
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } },
+          "TUnit"
+        ]
+      },
+      "foreign_name": "prerr_endline"
+    }
+  },
+  {
+    "ForeignDecl": {
+      "id": "prerr_int_PIROUETTE_ID",
+      "net_type": {
+        "TMap": [
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TInt" } },
+          "TUnit"
+        ]
+      },
+      "foreign_name": "prerr_int"
+    }
+  },
+  {
+    "ForeignDecl": {
+      "id": "prerr_newline_PIROUETTE_ID",
+      "net_type": { "TMap": [ "TUnit", "TUnit" ] },
+      "foreign_name": "prerr_newline"
+    }
+  },
+  {
+    "ForeignDecl": {
+      "id": "string_cat_PIROUETTE_ID",
+      "net_type": {
+        "TMap": [
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } },
+          {
+            "TMap": [
+              { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } },
+              { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } }
+            ]
+          }
+        ]
+      },
+      "foreign_name": "String.cat"
+    }
+  },
+  {
+    "ForeignDecl": {
+      "id": "cat_PIROUETTE_ID",
+      "net_type": {
+        "TMap": [
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } },
+          {
+            "TMap": [
+              { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } },
+              { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } }
+            ]
+          }
+        ]
+      },
+      "foreign_name": "String.cat"
+    }
+  },
+  {
+    "ForeignDecl": {
+      "id": "string_of_int_PIROUETTE_ID",
+      "net_type": {
+        "TMap": [
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TInt" } },
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } }
+        ]
+      },
+      "foreign_name": "string_of_int"
+    }
+  },
+  {
+    "ForeignDecl": {
+      "id": "string_of_bool_PIROUETTE_ID",
+      "net_type": {
+        "TMap": [
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TBool" } },
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } }
+        ]
+      },
+      "foreign_name": "string_of_bool"
+    }
+  },
+  {
+    "ForeignDecl": {
+      "id": "length_PIROUETTE_ID",
+      "net_type": {
+        "TMap": [
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } },
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TInt" } }
+        ]
+      },
+      "foreign_name": "String.length"
+    }
+  },
+  {
+    "ForeignDecl": {
+      "id": "filenm_get_current_dir_name_PIROUETTE_ID",
+      "net_type": {
+        "TMap": [
+          "TUnit",
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } }
+        ]
+      },
+      "foreign_name": "((fun () -> (Filename.current_dir_name)))"
+    }
+  },
+  {
+    "ForeignDecl": {
+      "id": "filenm_get_parent_dir_name_PIROUETTE_ID",
+      "net_type": {
+        "TMap": [
+          "TUnit",
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } }
+        ]
+      },
+      "foreign_name": "((fun () -> (Filename.parent_dir_name)))"
+    }
+  },
+  {
+    "ForeignDecl": {
+      "id": "filenm_get_dir_sep_PIROUETTE_ID",
+      "net_type": {
+        "TMap": [
+          "TUnit",
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } }
+        ]
+      },
+      "foreign_name": "((fun () -> (Filename.dir_sep)))"
+    }
+  },
+  {
+    "ForeignDecl": {
+      "id": "filenm_concat_path_PIROUETTE_ID",
+      "net_type": {
+        "TMap": [
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } },
+          {
+            "TMap": [
+              { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } },
+              { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } }
+            ]
+          }
+        ]
+      },
+      "foreign_name": "Filename.concat"
+    }
+  },
+  {
+    "ForeignDecl": {
+      "id": "filenm_is_relative_filepath_PIROUETTE_ID",
+      "net_type": {
+        "TMap": [
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } },
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TBool" } }
+        ]
+      },
+      "foreign_name": "Filename.is_relative"
+    }
+  },
+  {
+    "ForeignDecl": {
+      "id": "filenm_is_implicit_filepath_PIROUETTE_ID",
+      "net_type": {
+        "TMap": [
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } },
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TBool" } }
+        ]
+      },
+      "foreign_name": "Filename.is_implicit"
+    }
+  },
+  {
+    "ForeignDecl": {
+      "id": "filenm_check_suffix_PIROUETTE_ID",
+      "net_type": {
+        "TMap": [
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } },
+          {
+            "TMap": [
+              { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } },
+              { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TBool" } }
+            ]
+          }
+        ]
+      },
+      "foreign_name": "Filename.check_suffix"
+    }
+  },
+  {
+    "ForeignDecl": {
+      "id": "filenm_chop_suffix_PIROUETTE_ID",
+      "net_type": {
+        "TMap": [
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } },
+          {
+            "TMap": [
+              { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } },
+              { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } }
+            ]
+          }
+        ]
+      },
+      "foreign_name": "Filename.chop_suffix"
+    }
+  },
+  {
+    "ForeignDecl": {
+      "id": "filenm_get_file_extension_PIROUETTE_ID",
+      "net_type": {
+        "TMap": [
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } },
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } }
+        ]
+      },
+      "foreign_name": "Filename.extension"
+    }
+  },
+  {
+    "ForeignDecl": {
+      "id": "filenm_remove_file_extension_noerr_PIROUETTE_ID",
+      "net_type": {
+        "TMap": [
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } },
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } }
+        ]
+      },
+      "foreign_name": "Filename.remove_extension"
+    }
+  },
+  {
+    "ForeignDecl": {
+      "id": "filenm_remove_file_extension_PIROUETTE_ID",
+      "net_type": {
+        "TMap": [
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } },
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } }
+        ]
+      },
+      "foreign_name": "Filename.chop_extension"
+    }
+  },
+  {
+    "ForeignDecl": {
+      "id": "filenm_get_basename_from_path_PIROUETTE_ID",
+      "net_type": {
+        "TMap": [
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } },
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } }
+        ]
+      },
+      "foreign_name": "Filename.basename"
+    }
+  },
+  {
+    "ForeignDecl": {
+      "id": "filenm_get_dirname_from_path_PIROUETTE_ID",
+      "net_type": {
+        "TMap": [
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } },
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } }
+        ]
+      },
+      "foreign_name": "Filename.dirname"
+    }
+  },
+  {
+    "ForeignDecl": {
+      "id": "filenm_get_null_file_PIROUETTE_ID",
+      "net_type": {
+        "TMap": [
+          "TUnit",
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } }
+        ]
+      },
+      "foreign_name": "((fun () -> (Filename.null)))"
+    }
+  },
+  {
+    "ForeignDecl": {
+      "id": "filenm_create_temp_file_PIROUETTE_ID",
+      "net_type": {
+        "TMap": [
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } },
+          {
+            "TMap": [
+              { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } },
+              { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } }
+            ]
+          }
+        ]
+      },
+      "foreign_name": "Filename.temp_file"
+    }
+  },
+  {
+    "ForeignDecl": {
+      "id": "filenm_get_temp_dir_PIROUETTE_ID",
+      "net_type": {
+        "TMap": [
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } },
+          {
+            "TMap": [
+              { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } },
+              { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } }
+            ]
+          }
+        ]
+      },
+      "foreign_name": "Filename.temp_dir"
+    }
+  },
+  {
+    "ForeignDecl": {
+      "id": "filenm_get_temp_dir_name_PIROUETTE_ID",
+      "net_type": {
+        "TMap": [
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TUnit" } },
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } }
+        ]
+      },
+      "foreign_name": "Filename.get_temp_dir_name"
+    }
+  },
+  {
+    "ForeignDecl": {
+      "id": "filenm_set_temp_dir_name_PIROUETTE_ID",
+      "net_type": {
+        "TMap": [
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } },
+          "TUnit"
+        ]
+      },
+      "foreign_name": "Filename.set_temp_dir_name"
+    }
+  },
+  {
+    "ForeignDecl": {
+      "id": "filenm_quote_filename_PIROUETTE_ID",
+      "net_type": {
+        "TMap": [
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } },
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } }
+        ]
+      },
+      "foreign_name": "Filename.quote"
+    }
+  },
+  {
+    "ForeignDecl": {
+      "id": "sys_get_argv_PIROUETTE_ID",
+      "net_type": {
+        "TMap": [
+          "TUnit",
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } }
+        ]
+      },
+      "foreign_name": "((fun () -> (Sys.executable_name)))"
+    }
+  },
+  {
+    "ForeignDecl": {
+      "id": "sys_is_file_PIROUETTE_ID",
+      "net_type": {
+        "TMap": [
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } },
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TBool" } }
+        ]
+      },
+      "foreign_name": "Sys.file_exists"
+    }
+  },
+  {
+    "ForeignDecl": {
+      "id": "sys_is_directory_PIROUETTE_ID",
+      "net_type": {
+        "TMap": [
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } },
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TBool" } }
+        ]
+      },
+      "foreign_name": "Sys.is_directory"
+    }
+  },
+  {
+    "ForeignDecl": {
+      "id": "sys_is_regular_file_PIROUETTE_ID",
+      "net_type": {
+        "TMap": [
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } },
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TBool" } }
+        ]
+      },
+      "foreign_name": "Sys.is_regular_file"
+    }
+  },
+  {
+    "ForeignDecl": {
+      "id": "sys_remove_file_PIROUETTE_ID",
+      "net_type": {
+        "TMap": [
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } },
+          "TUnit"
+        ]
+      },
+      "foreign_name": "Sys.remove"
+    }
+  },
+  {
+    "ForeignDecl": {
+      "id": "sys_rename_file_PIROUETTE_ID",
+      "net_type": {
+        "TMap": [
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } },
+          {
+            "TMap": [
+              { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } },
+              "TUnit"
+            ]
+          }
+        ]
+      },
+      "foreign_name": "Sys.rename"
+    }
+  },
+  {
+    "ForeignDecl": {
+      "id": "sys_move_file_PIROUETTE_ID",
+      "net_type": {
+        "TMap": [
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } },
+          {
+            "TMap": [
+              { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } },
+              "TUnit"
+            ]
+          }
+        ]
+      },
+      "foreign_name": "Sys.rename"
+    }
+  },
+  {
+    "ForeignDecl": {
+      "id": "sys_get_env_PIROUETTE_ID",
+      "net_type": {
+        "TMap": [
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } },
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } }
+        ]
+      },
+      "foreign_name": "Sys.getenv"
+    }
+  },
+  {
+    "ForeignDecl": {
+      "id": "sys_run_command_PIROUETTE_ID",
+      "net_type": {
+        "TMap": [
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } },
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TInt" } }
+        ]
+      },
+      "foreign_name": "Sys.command"
+    }
+  },
+  {
+    "ForeignDecl": {
+      "id": "sys_change_dir_PIROUETTE_ID",
+      "net_type": {
+        "TMap": [
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } },
+          "TUnit"
+        ]
+      },
+      "foreign_name": "Sys.chdir"
+    }
+  },
+  {
+    "ForeignDecl": {
+      "id": "sys_ch_dir_PIROUETTE_ID",
+      "net_type": {
+        "TMap": [
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } },
+          "TUnit"
+        ]
+      },
+      "foreign_name": "Sys.chdir"
+    }
+  },
+  {
+    "ForeignDecl": {
+      "id": "sys_cd_PIROUETTE_ID",
+      "net_type": {
+        "TMap": [
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } },
+          "TUnit"
+        ]
+      },
+      "foreign_name": "Sys.chdir"
+    }
+  },
+  {
+    "ForeignDecl": {
+      "id": "sys_make_dir_PIROUETTE_ID",
+      "net_type": {
+        "TMap": [
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } },
+          {
+            "TMap": [
+              { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TInt" } },
+              "TUnit"
+            ]
+          }
+        ]
+      },
+      "foreign_name": "Sys.mkdir"
+    }
+  },
+  {
+    "ForeignDecl": {
+      "id": "sys_mkdir_PIROUETTE_ID",
+      "net_type": {
+        "TMap": [
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } },
+          {
+            "TMap": [
+              { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TInt" } },
+              "TUnit"
+            ]
+          }
+        ]
+      },
+      "foreign_name": "Sys.mkdir"
+    }
+  },
+  {
+    "ForeignDecl": {
+      "id": "sys_rmdir_PIROUETTE_ID",
+      "net_type": {
+        "TMap": [
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } },
+          "TUnit"
+        ]
+      },
+      "foreign_name": "Sys.rmdir"
+    }
+  },
+  {
+    "ForeignDecl": {
+      "id": "sys_remove_empty_dir_PIROUETTE_ID",
+      "net_type": {
+        "TMap": [
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } },
+          "TUnit"
+        ]
+      },
+      "foreign_name": "Sys.rmdir"
+    }
+  },
+  {
+    "ForeignDecl": {
+      "id": "sys_get_cwd_PIROUETTE_ID",
+      "net_type": {
+        "TMap": [
+          "TUnit",
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } }
+        ]
+      },
+      "foreign_name": "Sys.getcwd"
+    }
+  },
+  {
+    "ForeignDecl": {
+      "id": "sys_get_os_type_PIROUETTE_ID",
+      "net_type": {
+        "TMap": [
+          "TUnit",
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } }
+        ]
+      },
+      "foreign_name": "((fun () -> (Sys.os_type)))"
+    }
+  },
+  {
+    "ForeignDecl": {
+      "id": "sys_get_wordsize_PIROUETTE_ID",
+      "net_type": {
+        "TMap": [
+          "TUnit",
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TInt" } }
+        ]
+      },
+      "foreign_name": "((fun () -> (Sys.word_size)))"
+    }
+  },
+  {
+    "ForeignDecl": {
+      "id": "sys_get_ocaml_int_size_PIROUETTE_ID",
+      "net_type": {
+        "TMap": [
+          "TUnit",
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TInt" } }
+        ]
+      },
+      "foreign_name": "((fun () -> (Sys.int_size)))"
+    }
+  },
+  {
+    "ForeignDecl": {
+      "id": "sys_get_ocaml_max_string_length_PIROUETTE_ID",
+      "net_type": {
+        "TMap": [
+          "TUnit",
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TInt" } }
+        ]
+      },
+      "foreign_name": "((fun () -> (Sys.max_string_length)))"
+    }
+  },
+  {
+    "ForeignDecl": {
+      "id": "sys_get_ocaml_max_array_length_PIROUETTE_ID",
+      "net_type": {
+        "TMap": [
+          "TUnit",
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TInt" } }
+        ]
+      },
+      "foreign_name": "((fun () -> (Sys.max_array_length)))"
+    }
+  },
+  {
+    "ForeignDecl": {
+      "id": "sys_get_ocaml_max_floatarray_length_PIROUETTE_ID",
+      "net_type": {
+        "TMap": [
+          "TUnit",
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TInt" } }
+        ]
+      },
+      "foreign_name": "((fun () -> (Sys.max_floatarray_length)))"
+    }
+  },
+  {
+    "ForeignDecl": {
+      "id": "sys_check_big_endian_PIROUETTE_ID",
+      "net_type": {
+        "TMap": [
+          "TUnit",
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TBool" } }
+        ]
+      },
+      "foreign_name": "((fun () -> (Sys.big_endian)))"
+    }
+  },
+  {
+    "ForeignDecl": {
+      "id": "err_get_backtrace_PIROUETTE_ID",
+      "net_type": {
+        "TMap": [
+          "TUnit",
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } }
+        ]
+      },
+      "foreign_name": "Printexc.get_backtrace"
+    }
+  },
+  {
+    "ForeignDecl": {
+      "id": "err_record_backtrace_PIROUETTE_ID",
+      "net_type": {
+        "TMap": [
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TBool" } },
+          "TUnit"
+        ]
+      },
+      "foreign_name": "Printexc.record_backtrace"
+    }
+  },
+  {
+    "ForeignDecl": {
+      "id": "err_get_backtrace_status_PIROUETTE_ID",
+      "net_type": {
+        "TMap": [
+          "TUnit",
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TBool" } }
+        ]
+      },
+      "foreign_name": "Printexc.backtrace_status"
+    }
+  },
+  {
+    "ForeignDecl": {
+      "id": "digest_compare_PIROUETTE_ID",
+      "net_type": {
+        "TMap": [
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } },
+          {
+            "TMap": [
+              { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } },
+              { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TInt" } }
+            ]
+          }
+        ]
+      },
+      "foreign_name": "Digest.compare"
+    }
+  },
+  {
+    "ForeignDecl": {
+      "id": "digest_is_equal_PIROUETTE_ID",
+      "net_type": {
+        "TMap": [
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } },
+          {
+            "TMap": [
+              { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } },
+              { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TBool" } }
+            ]
+          }
+        ]
+      },
+      "foreign_name": "Digest.equal"
+    }
+  },
+  {
+    "ForeignDecl": {
+      "id": "digest_string_PIROUETTE_ID",
+      "net_type": {
+        "TMap": [
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } },
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } }
+        ]
+      },
+      "foreign_name": "Digest.string"
+    }
+  },
+  {
+    "ForeignDecl": {
+      "id": "digest_substring_PIROUETTE_ID",
+      "net_type": {
+        "TMap": [
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } },
+          {
+            "TMap": [
+              { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TInt" } },
+              {
+                "TMap": [
+                  { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TInt" } },
+                  {
+                    "TLoc": {
+                      "loc": "PIRSTDLIBLOC",
+                      "local_type": "TString"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "foreign_name": "Digest.substring"
+    }
+  },
+  {
+    "ForeignDecl": {
+      "id": "digest_file_PIROUETTE_ID",
+      "net_type": {
+        "TMap": [
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } },
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } }
+        ]
+      },
+      "foreign_name": "Digest.file"
+    }
+  },
+  {
+    "ForeignDecl": {
+      "id": "digest_convert_to_hex_string_PIROUETTE_ID",
+      "net_type": {
+        "TMap": [
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } },
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } }
+        ]
+      },
+      "foreign_name": "Digest.to_hex"
+    }
+  },
+  {
+    "ForeignDecl": {
+      "id": "digest_convert_hex_string_to_digest_PIROUETTE_ID",
+      "net_type": {
+        "TMap": [
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } },
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" } }
+        ]
+      },
+      "foreign_name": "Digest.of_hex"
+    }
+  },
+  {
+    "ForeignDecl": {
+      "id": "rand_init_PIROUETTE_ID",
+      "net_type": {
+        "TMap": [
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TInt" } },
+          "TUnit"
+        ]
+      },
+      "foreign_name": "Random.init"
+    }
+  },
+  {
+    "ForeignDecl": {
+      "id": "rand_self_init_PIROUETTE_ID",
+      "net_type": { "TMap": [ "TUnit", "TUnit" ] },
+      "foreign_name": "Random.self_init"
+    }
+  },
+  {
+    "ForeignDecl": {
+      "id": "rand_bits_PIROUETTE_ID",
+      "net_type": {
+        "TMap": [
+          "TUnit",
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TInt" } }
+        ]
+      },
+      "foreign_name": "Random.bits"
+    }
+  },
+  {
+    "ForeignDecl": {
+      "id": "rand_int_PIROUETTE_ID",
+      "net_type": {
+        "TMap": [
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TInt" } },
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TInt" } }
+        ]
+      },
+      "foreign_name": "Random.int"
+    }
+  },
+  {
+    "ForeignDecl": {
+      "id": "rand_full_int_PIROUETTE_ID",
+      "net_type": {
+        "TMap": [
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TInt" } },
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TInt" } }
+        ]
+      },
+      "foreign_name": "Random.full_int"
+    }
+  },
+  {
+    "ForeignDecl": {
+      "id": "rand_bool_PIROUETTE_ID",
+      "net_type": {
+        "TMap": [
+          "TUnit",
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TBool" } }
+        ]
+      },
+      "foreign_name": "Random.bool"
+    }
+  },
+  {
+    "ForeignDecl": {
+      "id": "exit_PIROUETTE_ID",
+      "net_type": {
+        "TMap": [
+          { "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TInt" } },
+          "TUnit"
+        ]
+      },
+      "foreign_name": "exit"
+    }
+  },
+  {
+    "ForeignDecl": {
+      "id": "exit_hook_PIROUETTE_ID",
+      "net_type": { "TMap": [ { "TMap": [ "TUnit", "TUnit" ] }, "TUnit" ] },
+      "foreign_name": "at_exit"
+    }
+  },
+  {
+    "Decl": {
+      "net_pattern": { "Var": "stdlib_version_PIROUETTE_ID" },
+      "net_type": {
+        "TLoc": { "loc": "PIRSTDLIBLOC", "local_type": "TString" }
+      }
+    }
+  },
+  {
+    "Assign": {
+      "net_pattern": [ { "Var": "stdlib_version_PIROUETTE_ID" } ],
+      "net_expr": "Unit"
+    }
+  },
+  {
+    "Assign": {
+      "net_pattern": [ { "Var": "display_stdlib_info_PIROUETTE_ID" } ],
+      "net_expr": {
+        "FunDef": { "patterns": [ "Default" ], "net_expr": "Unit" }
+      }
+    }
+  },
+  { "ForeignTypeDecl": { "id": "Int32_PIROUETTE_ID" } },
+  {
+    "Assign": {
+      "net_pattern": [ { "Var": "main_PIROUETTE_ID" } ],
+      "net_expr": { "Ret": { "Val": 5 } }
+    }
+  }
+]

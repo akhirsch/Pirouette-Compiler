@@ -35,6 +35,9 @@ let rec unify_local t1 t2 : local_subst =
     let s1 = unify_local t1a t2a in
     let s2 = unify_local (apply_subst_typ_local s1 t1b) (apply_subst_typ_local s1 t2b) in
     s1 @ s2
+  | Local.TForeign (Local.TypId(ft1, _),_), Local.TForeign (Local.TypId(ft2,_),_) ->
+    if ft1 = ft2 then [] 
+    else failwith "Foreign type mismatch"
   | _ -> failwith "Unification failed"
 
 and unify_choreo t1 t2 : choreo_subst =
@@ -59,6 +62,9 @@ and unify_choreo t1 t2 : choreo_subst =
       unify_choreo (apply_subst_typ_choreo s1 t1b) (apply_subst_typ_choreo s1 t2b)
     in
     s1 @ s2
+  | Choreo.TForeign (Choreo.Typ_Id(ft1, _),_), Choreo.TForeign (Choreo.Typ_Id(ft2,_),_) ->
+    if ft1 = ft2 then [] 
+    else failwith "Foreign type mismatch"
   | _ -> failwith "Unification failed"
 
 (*occurs check: ensure t1 does not occur in t2*)
@@ -357,7 +363,7 @@ let rec infer_choreo_stmt choreo_ctx global_ctx stmt
     compose_subst_choreo s_comp s3, t1, ctx_list @ choreo_ctx
   | Choreo.TypeDecl (_typ_id, _choreo_typ, _) -> failwith "Not implemented"
   | Choreo.ForeignDecl (_, _, _, _) -> failwith "Not implemented"
-  (*| Choreo.ForeignTypeDecl (_, _) -> failwith "Not implemented"*)
+  | Choreo.ForeignTypeDecl (_, _) -> failwith "Not implemented"
 
 and infer_choreo_stmt_block choreo_ctx global_ctx stmts
   : choreo_subst * ftv Choreo.typ * choreo_ctx

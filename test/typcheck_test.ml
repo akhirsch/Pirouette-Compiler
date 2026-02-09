@@ -126,6 +126,8 @@ let rec local_typ_eq t expected_t =
   | Local.TProd (t1, t2, _), Local.TProd (t1', t2', _)
   | Local.TSum (t1, t2, _), Local.TSum (t1', t2', _) ->
     local_typ_eq t1 t1' && local_typ_eq t2 t2'
+  | Local.TForeign (Local.TypId (name1, _), _), Local.TForeign (Local.TypId (name2, _), _) ->
+    name1 = name2  
   | _ -> false
 ;;
 
@@ -1012,6 +1014,55 @@ let helper_suite =
        ]
 ;;
 
+(*------------------Foreign Type Testcases---------------------------*)
+
+(* Local foreign type tests *)
+let foreign_type_int32 = Local.TForeign (Local.TypId ("Int32", m), m)
+let foreign_type_float64 = Local.TForeign (Local.TypId ("Float64", m), m)
+
+(* Let binding with foreign type *)
+let correct_foreign_type_let =
+  Local.Let
+    ( VarId ("x", m)
+    , foreign_type_int32
+    , Local.Var (VarId ("y", m), m)  (* assume y is already bound to Int32 *)
+    , Local.Var (VarId ("x", m), m)
+    , m )
+;;
+
+(* INCORRECT let binding should reject with error*)
+let incorrect_foreign_type_binding =
+  Local.Let
+    ( VarId ("x", m)
+    , foreign_type_int32        (* Declared as Int32 *)
+    , Local.Val (Local.Int (5, m), m)  (* But assigned an Int value *)
+    , Local.Var (VarId ("x", m), m)
+    , m )
+;;
+
+let foreign_type_local_suite = 
+  "Foreign type Local tests"
+  >::: [ ("foreign type declaration is accepted"
+        >:: fun _ -> local_typ_eq foreign_type_int32 foreign_type_int32 
+          |> assert_true)
+          ; ("foreign type can be used in expressions"
+          >:: fun _ -> 
+          let ctx = [ "y", foreign_type_int32] in
+          let _subst, t = infer_local_expr ctx correct_foreign_type_let in 
+          local_typ_eq t foreign_type_int32
+          |> assert_true)
+          ; ("type checking fails for invlaid foreign type usage"
+          >:: fun _ ->
+            Failure "Type annotation and actual type mismatch"
+            |> local_expr_typ_failures incorrect_foreign_type_binding)
+          ; (" foreign types unify correctly when same"
+          >:: fun _ -> unify_local_success foreign_type_int32 foreign_type_int32 [])
+          ; (" foreign types fail to unify when different"
+          >:: fun _ -> unify_local_failure foreign_type_int32 foreign_type_float64 
+          "Foreign type mismatch")
+          ]
+  ;;
+
 let all_suites =
   "All type inference tests"
   >::: [ (*Local test suites*)
@@ -1019,6 +1070,7 @@ let all_suites =
        ; local_binding_suite
        ; correct_pattn_suite
        ; incorrect_local_type_suite
+       ; foreign_type_local_suite
        ; (*Choreo test suites*)
          choreo_const_suite
        ; choreo_binding_suite
