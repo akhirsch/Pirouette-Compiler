@@ -45,7 +45,6 @@ Then `pirc` will parse the file and dump the ASTs to the current directory (in p
 - `-msg-backend <domain|http|mpi>`: Specify the backend for parallel execution. `domain` (*default*) for [Domain(thread)-based parallelism](https://ocaml.org/manual/parallelism.html); `http` uses the HTTP backend ; `mpi` uses the Message Passing Interface, often across multiple machines.
 
 - `-<pprint|json|dot>`: Dump the AST in pretty-printed or JSON format, or generate a [DOT](https://graphviz.org/doc/info/lang.html) file for AST visualization.
->>>>>>> 035a805a22b24c518650e3499f7d2bd01ced7f52
 
 - use `-` to read the source code from `stdin`. E.g.:
 

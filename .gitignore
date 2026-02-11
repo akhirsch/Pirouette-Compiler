@@ -1,6 +1,12 @@
 .vscode
 .DS_Store
 
+# OCaml build artifacts
+*.cmi
+*.cmx
+*.o
+*.exe
+
 _build
 testing/pingpong/dist-newstyle
 *~
