@@ -24,7 +24,7 @@
     produces a Parsetree. We use Ppxlib to construct these same Parsetree nodes
     directly from Pirouette IR.
 
-    {b Compilatin Flow:}
+    {b Compilation Flow:}
     
     See {{:https://github.com/akhirsch/Pirouette-Compiler/wiki/Compiler-Pipeline-Diagram}the Pirouette Wiki} for a
     Compiler Pipeline Diagram depicting the process of generating OCaml code from Pirouette code

@@ -31,17 +31,11 @@
     - Messages are marshaled and sent in HTTP request bodies
     - Endpoints receive data via HTTP request handlers *)
 
-    (**{2 Message http Interface Module}*)
+(**{2 Message http Interface Module}*)
 
 module Msg_http_intf : Msg_intf.M
 
-val emit_toplevel_http
-  :  out_channel
-  -> string list
-  -> 'a Ast_core.Net.M.stmt_block list
-  -> string
-  -> unit
-  (** [emit_toplevel_http] generates a complete OCaml program for a single 
+(** [emit_toplevel_http] generates a complete OCaml program for a single 
   endpoint using HTTP communication and writes it to output channel [oc].
       
       Parameters:
@@ -63,3 +57,52 @@ val emit_toplevel_http
       {b Effect:} Writes a complete OCaml program for [target_endpoint] to [oc].
       The generated program is a standalone executable that runs an HTTP server
       and communicates with other endpoints via HTTP requests.*)
+val emit_toplevel_http
+  :  out_channel
+  -> string list
+  -> 'a Ast_core.Net.M.stmt_block list
+  -> string
+  -> unit
+
+(** {2 About Ppxlib}*)
+
+(** See {{!ocamlgen.Emit_core}the emit_core documentation} for an overview of Ppxlib.
+
+{b Metaquot:} Throughout toplevel_http.ml there are expressions of the form:
+    {[
+      let e = [%expr (*Some expression...*)]
+    ]}
+    
+    This is a Ppxlib metaquot. The expression inside of the metaquot will not be evaluated
+    to a value, but rather as a Parsetree Expression. This is used to generate OCaml code that
+    will be transmitted as OCaml code, not as a value.
+
+    Another type of metaquot used is:
+    {[
+      let stri = [%stri let a = (*Some value...*)]
+    ]}
+    
+    This has the same effect as %expr, but for Structure Items, which could be values, exceptions, types, modules, etc.
+
+{b Anti-Quotation:} Throughout toplevel_http.ml there are expressions of the form:
+      {[
+        let f = [%expr [%e (*Some expression...*)]]
+      ]}
+
+      This is a PPxlib anti-quotation. The expression inside of the anti-quotation will be seen as OCaml code
+      and will be evaluated to a value. This is used within Metaquotations to dynamically generate values for 
+      Parsetree Expressions
+
+      Another type of anti-quotation used is:
+      {[
+        let [%p (*Some expression...*)]
+      ]}
+
+      This has the same effect as %expr, but for Patterns, which includes any pattern that you would use for pattern matching
+
+
+ {b For further reading,} see {{:https://ocaml-ppx.github.io/ppxlib/ppxlib/generating-code.html} the PPxlib documentation on generating code}*)
+
+(** {2 About LWT}*)
+
+(** *)
