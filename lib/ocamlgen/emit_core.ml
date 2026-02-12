@@ -117,7 +117,7 @@ and emit_net_binding ~(self_id : string) (module Msg : Msg_intf) (stmt : 'a Net.
     emit_foreign_decl id typ external_name
   | _ -> Builder.value_binding ~pat:[%pat? _unit] ~expr:Builder.eunit
 
-and emit_foreign_decl id typ external_name=
+and emit_foreign_decl id _typ external_name=
   let open Ast_builder.Default in
   let package_name, function_name, _ =
     Ast_utils.parse_external_name external_name
@@ -128,7 +128,7 @@ and emit_foreign_decl id typ external_name=
     | None -> ""
   in
   (* A function that takes in a Net type and pretty prints the type into Ocaml. Note, loc.types turn into just types*)
-  let rec find_type_sig : 'a Net.typ -> label = function
+  (*let rec find_type_sig : 'a Net.typ -> label = function
     | TUnit _ -> "(unit)"
     | TLoc (_, local_type, _) -> let rec find_local_type_sig : 'a Local.typ -> label = function  
                                   | TUnit _ -> "(unit)"
@@ -145,7 +145,7 @@ and emit_foreign_decl id typ external_name=
     | TSum (typ1, typ2, _) -> "(" ^ (find_type_sig typ1) ^ " + " ^ (find_type_sig typ2) ^ ")" in
 
   (* The full type signature of a function. We apply this type signature to the identifier, then we set the value of the identifier to be equal to 'fun arg ->[ffi]]'. This works because of currying. *)
-  let type_sig = find_type_sig typ in
+ let type_sig = find_type_sig typ in
   
   let fun_expr =
     pexp_fun
@@ -155,6 +155,18 @@ and emit_foreign_decl id typ external_name=
       (pvar ~loc (": " ^ type_sig))
       [%expr
         [%e evar ~loc "fun arg ->"]
+        [%e evar ~loc (package_string ^ function_name)]
+        [%e evar ~loc "arg"]]
+  in
+  value_binding ~loc ~pat:(pvar ~loc id) ~expr:fun_expr*)
+
+  let fun_expr =
+    pexp_fun
+      ~loc
+      Nolabel
+      None
+      (pvar ~loc ("arg"))
+      [%expr
         [%e evar ~loc (package_string ^ function_name)]
         [%e evar ~loc "arg"]]
   in
