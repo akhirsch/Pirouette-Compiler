@@ -1,6 +1,6 @@
-(** Parser specification for the Pirouette choreographic programming language.
+(** Parser specification for the Pirouette choreographic programming language.*)
     
-    This file defines the grammar rules for parsing Pirouette source code into
+  (**  This file defines the grammar rules for parsing Pirouette source code into
     Abstract Syntax Trees (ASTs). It is processed by Menhir/ocamlyacc to generate
     the actual parser implementation.
     
@@ -337,3 +337,5 @@ value:
 foreign_decl:
   | FOREIGN id=var_id COLON t=choreo_type COLONEQ s=STRING SEMICOLON 
     { ForeignDecl (id, t, s, gen_pos $startpos $endpos) }
+
+

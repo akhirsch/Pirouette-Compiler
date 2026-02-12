@@ -1,6 +1,6 @@
-(** Code generation for HTTP-based communication backend.
-    
-    This module provides code generation for distributed programs using HTTP
+(** Code generation for HTTP-based communication backend. *)
+
+(** This module provides code generation for distributed programs using HTTP
     for communication. It implements a message-passing backend where endpoints
     communicate via HTTP requests, running as separate processes that can be
     deployed on different machines.
@@ -34,6 +34,7 @@
 (**{2 Message http Interface Module}*)
 
 module Msg_http_intf : Msg_intf.M
+open Ppxlib
 
 (** [emit_toplevel_http] generates a complete OCaml program for a single 
   endpoint using HTTP communication and writes it to output channel [oc].
@@ -63,6 +64,20 @@ val emit_toplevel_http
   -> 'a Ast_core.Net.M.stmt_block list
   -> string
   -> unit
+
+(** [emit_domain_stri] is implemented by [emit_toplevel_http], separating each endpoint name with
+statement block, and generating a structure item for each pair.
+      
+      Parameters:
+      - [loc_id]: An endpoint name (e,g,, ["Alice"])
+      - [net_stmts]: A network IR statement block for an endpoint)
+      
+      {b Effect:} This function is called to create the [process_bindings] binding, which contains
+      a list of structure items. This list is then written to [oc] from [emit_toplevel_http]*)
+val emit_domain_stri
+  :  label
+  -> 'a Ast_core.Net.M.stmt_block
+  -> Ppxlib.Parsetree.structure_item
 
 (** {2 About Ppxlib}*)
 
@@ -103,6 +118,12 @@ val emit_toplevel_http
 
  {b For further reading,} see {{:https://ocaml-ppx.github.io/ppxlib/ppxlib/generating-code.html} the PPxlib documentation on generating code}*)
 
-(** {2 About LWT}*)
+(** {2 About Lwt}*)
 
-(** *)
+(** Lwt is a concurrent programming library. The function:
+{[
+  Lwt.main.run (*arg*)
+]}
+runs the scheduler for asynchronous computations
+
+*)
