@@ -1,4 +1,7 @@
 {-works-}
+
+type X := (A.int * B.int);
+
 type X := 
 | constructor1: A.int, A.int, B.int, C.int:X;
 | constructor2: A.int, A.int, B.int, C.int:X;

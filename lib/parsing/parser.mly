@@ -87,6 +87,7 @@ stmt:
   | p=choreo_pattern COLON t=choreo_type SEMICOLON { Decl (p, t, gen_pos $startpos $endpos) }
   | ps=nonempty_list(choreo_pattern) COLONEQ e=choreo_expr SEMICOLON { Assign (ps, e, gen_pos $startpos $endpos) }
   | TYPE id=typ_id COLONEQ t=choreo_type SEMICOLON? { TypeDecl (id, t, gen_pos $startpos $endpos) } // or it can take a list of constructors
+  // | TYPE id=typ_id SEMICOLON { TypeDecl (id, gen_pos $startpos $endpos) }
   // | TYPE t1=typ_id COLONEQ constructors=constructor_list_choreo SEMICOLON { Variant (t1, constructors, gen_pos $startpos $endpos) } // type X := constructor : X;
   | f=foreign_decl { f }
 
