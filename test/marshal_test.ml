@@ -63,4 +63,3 @@ let suite =
          "test_marshal_unmarshal_person" >:: test_marshal_unmarshal_person;
        ]
 
-let () = run_test_tt_main suite

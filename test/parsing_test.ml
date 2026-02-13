@@ -46,4 +46,3 @@ let suite =
          "test_foreign_decl_unit_to_unit" >:: test_foreign_decl_unit_to_unit;
        ]
 
-let () = run_test_tt_main suite

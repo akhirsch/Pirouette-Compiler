@@ -850,4 +850,3 @@ let all_suites =
          ffi_suite;
        ]
 
-let () = run_test_tt_main all_suites

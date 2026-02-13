@@ -1,3 +1,34 @@
+(test
+  (name main_test)
+  (modules main_test 
+    prettyprint_test
+    typcheck_test
+    parsing_test
+    marshal_test
+    dotast_test
+    net_parsing_test
+    emit_core_test
+    types_test
+    astutils_testcases
+    )
+  (libraries 
+    ounit2 
+    parsing 
+    ast_utils
+    stdlib_utils
+    typing
+    ast_core
+    http_pirc
+    ppxlib
+    ocamlgen
+    cohttp-lwt-unix
+    logs
+  )
+  (preprocess
+      (pps bisect_ppx ppxlib.metaquot)
+  )
+)
+
 ; (executable
 ;  (name pipeline_gen))
 
@@ -29,15 +60,15 @@
 ; 0% (0 / 5) -> lib/parsing/parsed_ast.ml
 ; 40% (949 / 2362) -> lib/parsing/parser.ml
 
-(test
- (name prettyprint_test)
- (modules prettyprint_test astutils_testcases)
- (libraries ounit2 parsing ast_utils))
+; (test
+;  (name prettyprint_test)
+;  (modules prettyprint_test astutils_testcases)
+;  (libraries ounit2 parsing ast_utils))
 
-(test
- (name stdlib_test)
- (modules stdlib_test)
- (libraries stdlib_utils))
+; (test
+;  (name stdlib_test)
+;  (modules stdlib_test)
+;  (libraries stdlib_utils))
 
 ;(test
 ;(name send_receive_test)
@@ -59,10 +90,10 @@
 ; 2% (67 / 2362) -> lib/parsing/parser.ml
 ; 78% (344 / 437) -> lib/typing/typ_infer.ml (focus)
 
-(test
- (name typcheck_test)
- (modules typcheck_test)
- (libraries parsing ounit2 typing))
+; (test
+;  (name typcheck_test)
+;  (modules typcheck_test)
+;  (libraries parsing ounit2 typing))
 
 ;runs parsing_test.ml
 ; -- currently only testing stuff covered by prettyprint_test and typcheck_test
@@ -74,16 +105,16 @@
 ; 0% (0 / 5) -> lib/parsing/parsed_ast.ml
 ; 2% (67 / 2362) -> lib/parsing/parser.m (focus)
 
-(test
- (name parsing_test)
- (modules parsing_test)
- (libraries ounit2 parsing ast_core))
+; (test
+;  (name parsing_test)
+;  (modules parsing_test)
+;  (libraries ounit2 parsing ast_core))
 
 ;this library is a requisite for marshal_test
 
-(library
- (name types_test)
- (modules types_test))
+; (library
+;  (name types_test)
+;  (modules types_test))
 
 ;runs marshal_test.ml
 ; TESTED FILES 2/25
@@ -95,10 +126,10 @@
 ; 0% (0 / 27) -> lib/config/config_parser.ml
 ; 12% (15 / 123) -> lib/http/send_receive.ml (focus)
 
-(test
- (name marshal_test)
- (modules marshal_test)
- (libraries ounit2 http_pirc types_test))
+; (test
+;  (name marshal_test)
+;  (modules marshal_test)
+;  (libraries ounit2 http_pirc types_test))
 
 (executable
  (name marshal_sender)
@@ -112,26 +143,26 @@
 
 ;runs dotast_test.ml
 
-(test
- (name dotast_test)
- (modules dotast_test)
- (libraries ounit2 parsing ast_utils))
+; (test
+;  (name dotast_test)
+;  (modules dotast_test)
+;  (libraries ounit2 parsing ast_utils))
 
-;runs core_test.ml
+; ;runs core_test.ml
 
-(test
- (name net_parsing_test)
- (modules net_parsing_test)
- (libraries ounit2 ast_core parsing)
- (preprocess
-  (pps bisect_ppx)))
+; (test
+;  (name net_parsing_test)
+;  (modules net_parsing_test)
+;  (libraries ounit2 ast_core parsing)
+;  (preprocess
+;   (pps bisect_ppx)))
 
-(test
- (name emit_core_test)
- (modules emit_core_test)
- (libraries ounit2 ppxlib ast_core ocamlgen)
- (preprocess
-  (pps ppxlib.metaquot)))
+; (test
+;  (name emit_core_test)
+;  (modules emit_core_test)
+;  (libraries ounit2 ppxlib ast_core ocamlgen)
+;  (preprocess
+;   (pps ppxlib.metaquot)))
 
 ; (test
 ;  (name msg_intf_test)

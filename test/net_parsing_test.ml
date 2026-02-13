@@ -1002,19 +1002,20 @@ let additional_token_tests =
        ]
 
 (* Register the tests *)
-let () =
-  run_test_tt_main
-    ("Net Parsing Test Suite"
+
+let suite = 
+  "Net Parsing Test Suite"
     >::: [
-           basic_structure_tests;
-           declaration_tests;
-           expression_tests;
-           product_sum_tests;
-           pattern_matching_tests;
-           network_communication_tests;
-           net_expr_tests;
-           parser_error_tests;
-           precedence_tests;
-           boolean_literal_tests;
-           additional_token_tests;
-         ])
+      basic_structure_tests;
+      declaration_tests;
+      expression_tests;
+      product_sum_tests;
+      pattern_matching_tests;
+      network_communication_tests;
+      net_expr_tests;
+      parser_error_tests;
+      precedence_tests;
+      boolean_literal_tests;
+      additional_token_tests;
+      ]
+
