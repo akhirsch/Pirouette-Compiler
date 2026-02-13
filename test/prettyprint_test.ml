@@ -75,6 +75,10 @@ let suite =
          >::: [ ("simple_net" >:: fun _ -> net_peq Astutils_testcases.simple_net)
               ; ("ex3_netir" >:: fun _ -> net_peq Astutils_testcases.netir_ex3)
               ]
+      ; "Variants"
+        >:::  [ ("simple_variant" >:: fun _ -> peq Astutils_testcases.simple_variant)
+              
+              ]
        ]
 ;;
 

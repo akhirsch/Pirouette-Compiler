@@ -17,8 +17,13 @@ assert_equal program []
 let suite =
   "Variant Tests"
   >::: [ "Examples"
-         >::: [ ("testcase1" >:: fun _ -> ast_equals Variants_testcases.simple)
-              ]
+         >::: [ 
+              ("testcase1" >:: fun _ -> ast_equals Variants_testcases.simple);
+              (* ("testcase2" >:: fun _ -> ast_equals Variants_testcases.true_constructor);       
+              ("testcase3" >:: fun _ -> ast_equals Variants_testcases.false_constructor);
+              ("testcase4" >:: fun _ -> ast_equals Variants_testcases.nats);
+              ("testcase5" >:: fun _ -> ast_equals Variants_testcases.lst);  *)
+         ]
        ]
 ;;
 

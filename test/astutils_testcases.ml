@@ -32,7 +32,6 @@ let testcase_3 =
    then P1[L] ~> P2;\n\n\
    P2.5\n\n\
    else P1[R] ~> P2;\n\n\
-   ()\n\n\
    P2.3\n\n\
    ;"
 ;;
@@ -95,3 +94,8 @@ let netir_ex3 =
   \      | L -> ret (5)\n\
   \      | R -> ret (9);\n"
 ;;
+
+(* Below are some tests for variants *)
+let simple_variant = "type X := constructor : X;\n";;
+let simple_different_name = "type T := true : T;";;
+let missing_constructor = "type F := ;";;
