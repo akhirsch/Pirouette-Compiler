@@ -65,12 +65,25 @@ val emit_toplevel_http
   -> string
   -> unit
 
-(** [emit_domain_stri] is implemented by [emit_toplevel_http], separating each endpoint name with
+(** [emit_toplevel_init] is utilized by [emit_toplevel_http], attempting to load the [target_endpoint]
+      
+      Parameters:
+      - [_loc_ids]: An endpoint name (e,g,, ["Alice"])
+      - [config_file_path]: The name of the location of a YAML file containing a location (endpoint) name
+      and an http address 
+      
+      {b Effect:} [config_file_path] is parsed as a YAML file. If successful, it is added to [config], a record
+      containing all successfully parsed locations. Otherwise, the program will fail
+      
+      See {{!Http_pirc.Config_parser} the config parser documentation} for further reading*)
+val emit_toplevel_init : 'a -> label -> structure_item list
+
+(** [emit_domain_stri] is utilized by [emit_toplevel_http], separating each endpoint name with
 statement block, and generating a structure item for each pair.
       
       Parameters:
       - [loc_id]: An endpoint name (e,g,, ["Alice"])
-      - [net_stmts]: A network IR statement block for an endpoint)
+      - [net_stmts]: A network IR statement block for an endpoint
       
       {b Effect:} This function is called to create the [process_bindings] binding, which contains
       a list of structure items. This list is then written to [oc] from [emit_toplevel_http]*)
