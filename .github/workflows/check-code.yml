@@ -28,8 +28,6 @@ permissions: read-all
 jobs:
   lint-fmt:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -39,43 +37,8 @@ jobs:
         with:
           ocaml-compiler: 5.2.1
 
-      - name: Format code
-        run: |
-          opam install ocamlformat=0.28.1
-          echo "Running fmt 1"
-          opam exec -- dune build @fmt --auto-promote || true
-          # We use "|| true" here to suppress the exit code 1 that @fmt throws when it has to
-          # reformat code.
-          echo "Running fmt 2"
-          opam exec -- dune build @fmt
-          echo "done"
-          # We run @fmt a second time in case it throws a real error. If the first @fmt
-          # reformatted without issue, the second @fmt will exit with code 0.
-
-      - name: Commit and push formatted code
-        run: |
-          CHANGES=$(git diff --diff-filter M)
-          if [[ -n $CHANGES ]] ;
-          then
-            echo "CURRENT BRANCH IS"
-            BRANCH=$(git branch --show-current)
-            echo $BRANCH
-            AUTHOR=$(git log -n 1 --pretty=format:"%an")
-            echo $AUTHOR
-            EMAIL=$(git log -n 1 --pretty=format:"%ae")
-            echo $EMAIL
-            COMMIT_MSG=$(git log -n 1 --pretty=format"%B")
-            echo $COMMIT_MSG
-            git config --global user.name $AUTHOR
-            git config --global user.email $EMAIL
-            echo "configs set"
-            git add -u
-            echo "added files"
-            git commit -m "$COMMIT_MSG (formatted)"
-            echo "committed"
-            git push
-            echo "pushed"
-          fi
+      - name: Lint and format
+        uses: ocaml/setup-ocaml/lint-fmt@v3
 
   build:
     strategy:
