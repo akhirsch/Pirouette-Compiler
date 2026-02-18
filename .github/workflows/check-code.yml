@@ -87,9 +87,10 @@ jobs:
       - name: Run Tests
         run: |
           TEST_OUTPUT=$(opam exec -- dune test)
-          SUMMARY_LINE=$($TEST_OUTPUT tail -n 1)
-          if [[ SUMMARY_LINE == FAILED*]] ;
+          if [[ -n TEST_OUTPUT ]] ; # Ounit2 produces no output when all tests pass.
           then
             echo $TEST_OUTPUT
             exit 1
+          else
+            echo "All tests were passed."
           fi
