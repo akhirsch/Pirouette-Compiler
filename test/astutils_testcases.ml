@@ -96,6 +96,28 @@ let netir_ex3 =
 ;;
 
 (* Below are some tests for variants *)
-let simple_variant = "type X := constructor : X;\n";;
-let simple_different_name = "type T := true : T;";;
-let missing_constructor = "type F := ;";;
+let simple_variant = "type X := | constructor: X;";;
+let simple_different_name = "type Person := | Sam: Male;";;
+let two_constructors = 
+"type Coin := 
+| heads: win;\n\n
+| tails: loss;\n\n
+";;
+
+let multiple_constructors1 = 
+"type SchoolEmployee := 
+| Principal: Administrator;\n\n
+| Teacher: Educator;\n\n
+| Janitor: Maintenance;\n\n
+| Security: Maintenance;\n\n
+| IT: Maintenance;\n
+";;
+
+let multiple_constructors2 = 
+"type Car := 
+| Civic: Honda;\n\n
+| Accord: Honda;\n\n
+| Camry: Toyota;\n\n
+| Corolla: Honda;\n\n
+| Altima: Nissan;\n
+";;
