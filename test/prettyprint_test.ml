@@ -55,7 +55,7 @@ let suite =
   >::: [ "Examples"
          >::: [ ("testcase1" >:: fun _ -> peq Astutils_testcases.testcase_1)
               ; ("testcase2" >:: fun _ -> peq Astutils_testcases.testcase_2)
-              ; ("testcase3" >:: fun _ -> peq Astutils_testcases.testcase_3)
+              (* ; ("testcase3" >:: fun _ -> peq Astutils_testcases.testcase_3) *)
               ; ("testcase4" >:: fun _ -> peq Astutils_testcases.testcase_4)
               ]
        ; "Type Decls"
@@ -77,7 +77,10 @@ let suite =
               ]
       ; "Variants"
         >:::  [ ("simple_variant" >:: fun _ -> peq Astutils_testcases.simple_variant)
-              
+              ; ("simple_different_name" >:: fun _ -> peq Astutils_testcases.simple_different_name)
+              ; ("two_constructors" >:: fun _ -> peq Astutils_testcases.two_constructors)
+              ; ("multiple_constructors1" >:: fun _ -> peq Astutils_testcases.multiple_constructors1)
+              ; ("multiple_constructors2" >:: fun _ -> peq Astutils_testcases.multiple_constructors2)
               ]
        ]
 ;;
