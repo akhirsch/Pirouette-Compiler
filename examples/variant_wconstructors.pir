@@ -3,12 +3,12 @@
 type X := (A.int * B.int);
 
 type X := 
-| constructor1: A.int, A.int, B.int, C.int:X;
-| constructor2: A.int, A.int, B.int, C.int:X;
-| constructor3: A.int, A.int, B.int, C.int:X;
+| constructor1: A.int, B.int, C.int:X;
+| constructor2: A.int, B.int, C.int:X;
+| constructor3: A.int, B.int, C.int:X;
 
 {-works-}
-type X := | constructor: A.int, A.int, B.int, C.int:X;
+type X := | constructor: A.int, B.int, C.int:X;
 
 {-works-}
 type X := | constructor: A.int: X;

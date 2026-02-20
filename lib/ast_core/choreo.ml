@@ -68,6 +68,10 @@ struct
   type nonrec stmt_block = stmt list
   type nonrec constructor = Info.t M.constructor
 
+(* let get_type_typid : typ_id -> string = function
+  | Typ_id (t, _) -> t
+;; *)
+
   let get_info_typid : typ_id -> Info.t = function
     | Typ_Id (_, i) -> i
   ;;

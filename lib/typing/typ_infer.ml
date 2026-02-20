@@ -35,6 +35,9 @@ let rec unify_local t1 t2 : local_subst =
     let s1 = unify_local t1a t2a in
     let s2 = unify_local (apply_subst_typ_local s1 t1b) (apply_subst_typ_local s1 t2b) in
     s1 @ s2
+  | Local.TVariant (cl, _) ->
+    (* need to unravel constructor list, name, arg list, typ *)
+    (* unify the arg types, unify the variant type decl and the typ at the end *)
   | _ -> failwith "Unification failed"
 
 and unify_choreo t1 t2 : choreo_subst =
@@ -59,6 +62,9 @@ and unify_choreo t1 t2 : choreo_subst =
       unify_choreo (apply_subst_typ_choreo s1 t1b) (apply_subst_typ_choreo s1 t2b)
     in
     s1 @ s2
+  | Choreo.TVariant (cla, _), Choreo.TVariant (clb, _) ->
+      (* if id1 = id2 from typid*)
+  (* something *)
   | _ -> failwith "Unification failed"
 
 (*occurs check: ensure t1 does not occur in t2*)
@@ -68,6 +74,8 @@ and occurs_in_local var_name t2 =
   | Local.TVar (Local.TypId (var_name', _), _) -> var_name = var_name'
   | Local.TProd (t2a, t2b, _) | Local.TSum (t2a, t2b, _) ->
     occurs_in_local var_name t2a || occurs_in_local var_name t2b
+  | TVariant (cl, _) ->
+  (* someting *)
 
 (*occurs check for choreo*)
 and occurs_in_choreo var_name t2 =
@@ -90,6 +98,8 @@ and apply_subst_typ_local s t =
     Local.TProd (apply_subst_typ_local s t1, apply_subst_typ_local s t2, m)
   | Local.TSum (t1, t2, _) ->
     Local.TSum (apply_subst_typ_local s t1, apply_subst_typ_local s t2, m)
+  | Local.TVariant (cl, _) ->
+  (* something *)
 
 (*apply substitution to a Choreo.typ*)
 and apply_subst_typ_choreo s t =
@@ -107,6 +117,8 @@ and apply_subst_typ_choreo s t =
     Choreo.TProd (apply_subst_typ_choreo s t1, apply_subst_typ_choreo s t2, m)
   | Choreo.TSum (t1, t2, _) ->
     Choreo.TSum (apply_subst_typ_choreo s t1, apply_subst_typ_choreo s t2, m)
+  | Choreo.TVariant (cl, _) ->
+  (* aaaaahhhhhhh *)
 
 (*apply substitution to context*)
 and apply_subst_ctx_local subst ctx =
@@ -292,6 +304,9 @@ let rec infer_local_expr local_ctx = function
        compose_subst_local s_comp s3, List.hd typ_ls'
      | _ -> failwith "Type of patterns are not sum types")
 
+    | Local.Constructor (name, args, typ, _) ->
+    (* gjskbgdjsgbdsb *)
+
 and typeof_Val = function
   | Int _ -> TInt m
   | Bool _ -> TBool m
@@ -317,6 +332,8 @@ and infer_local_pattern local_ctx = function
   | Local.Right (p, _) ->
     let s, t, ctx = infer_local_pattern local_ctx p in
     s, Local.TSum (Local.TVar (Local.TypId (gen_ftv (), m), m), t, m), ctx
+  | Local.PConstructor (name, args, typ, _) ->
+  (* nfsklvnlsns *)
 ;;
 
 (* ============================== Choreo ============================== *)
@@ -593,4 +610,5 @@ and infer_choreo_pattern choreo_ctx global_ctx = function
           (Local.LocId ("dummy", m), Local.TVar (Local.TypId (gen_ftv (), m), m), m)
     in
     s, Choreo.TSum (Choreo.TVar (Choreo.Typ_Id (gen_ftv (), m), m), t_wrapped, m), ctx
+  | Choreo.
 ;;

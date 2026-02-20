@@ -67,13 +67,14 @@ let rec emit_local_pexp (expr : 'a Local.expr) =
     in
     Builder.pexp_match (emit_local_pexp e) cases
      (* ===================================================================================== *)
-  | Construct (name, arglist, typ, _) ->
+  | Construct (name, arglist, _, _) ->
     let args = List.map emit_local_pexp arglist in
     let constructor_lid = { txt = Longident.Lident name; loc } in
     (match args with
      | [] -> Builder.pexp_construct constructor_lid None
      | [arg] -> Builder.pexp_construct constructor_lid (Some arg)
      | _ -> Builder.pexp_construct constructor_lid (Some (Builder.pexp_tuple args))) (* not right*)
+    (* let ty = emit_local_pexp typ *)
       (* ===================================================================================== *)
 
 and emit_local_ppat (pat : 'a Local.pattern) =
@@ -88,7 +89,7 @@ and emit_local_ppat (pat : 'a Local.pattern) =
   | Right (p, _) -> [%pat? Either.Right [%p emit_local_ppat p]]
 
   (* ===================================================================================== *)
-  | PConstruct (name, arglist, typ, _) ->
+  | PConstruct (name, arglist, _, _) ->
     let args = List.map emit_local_ppat arglist in
     let constructor_lid = { txt = Longident.Lident name; loc } in
     (match args with

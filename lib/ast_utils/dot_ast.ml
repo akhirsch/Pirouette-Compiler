@@ -161,7 +161,7 @@ let rec dot_local_pattern (string_of_info : 'a -> string) (pat : 'a Local.patter
     let right_node = spf "%s [label=\"Right %s\"];\n" node_name (string_of_info info) in
     let edge = spf "%s -> %s;\n" node_name n in
     right_node ^ edge ^ c, node_name
-  | PConstruct (name, patterns, typ, info) ->
+  | PConstruct (name, patterns, TypId(typ, _), info) ->
     let pconstruct_node =
       spf "%s [label=\"Constructor %s %s\"];\n" node_name name (string_of_info info)
     in
@@ -173,7 +173,8 @@ let rec dot_local_pattern (string_of_info : 'a -> string) (pat : 'a Local.patter
           edge ^ c)
         patterns (*@[spf "%s -> %s;\n" node_name (string_of_info typ)]*)
     in
-    pconstruct_node ^ String.concat "" pat_code, node_name
+    let typ_code = spf "%s [label=\"%s %s\"];\n" node_name typ (string_of_info info) in
+    pconstruct_node ^ String.concat "" pat_code ^ typ_code, node_name
 ;;
 
 (** [dot_local_expr loc_expr] creates the dot code for local expressions [loc_expr]
@@ -292,7 +293,7 @@ let rec dot_local_expr (string_of_info : 'a -> string) (loc_expr : 'a Local.expr
     let edge1 = spf "%s -> %s;\n" node_name n1 in
     let edge2 = spf "%s -> %s;\n" node_name n2 in
     match_node ^ edge1 ^ edge2 ^ c1 ^ c2, node_name
-  | Construct (name, exprs, typ, info) ->
+  | Construct (name, exprs, TypId(typ, _), info) ->
     let construct_node =
       spf "%s [label=\"Construct %s %s\"];\n" node_name name (string_of_info info)
     in
@@ -304,7 +305,8 @@ let rec dot_local_expr (string_of_info : 'a -> string) (loc_expr : 'a Local.expr
           edge ^ c)
         exprs
     in
-    construct_node ^ String.concat "" exprs_code, node_name
+    let typ_code = spf "%s [label=\"%s %s\"];\n" node_name typ (string_of_info info) in
+    construct_node ^ String.concat "" exprs_code ^ typ_code, node_name
 ;;
 
 (*=========================== Choreo ===========================*)
@@ -358,7 +360,7 @@ let rec dot_choreo_type (string_of_info : 'a -> string) (typ : 'a Choreo.typ)
     in
     let constructor_nodes =
       List.map
-        (fun { Choreo.name; args; typ; info = cons_info } ->
+        (fun { Choreo.name; args; typ = TypId(typc, _) ; info = cons_info } -> (*(Choreo.Typ_Id(typ, _)). Local.TypId(typ, i)*)
           let cons_node_name = generate_node_name () in
           let cons_node =
             spf
@@ -377,7 +379,8 @@ let rec dot_choreo_type (string_of_info : 'a -> string) (typ : 'a Choreo.typ)
               ("", "")
               args
           in
-          cons_node ^ cons_edge ^ args_code, args_edges)
+          let typ_code = spf "%s [label=\"%s %s\"];\n" node_name typc (string_of_info info) in
+          cons_node ^ cons_edge ^ args_code ^ typ_code, args_edges)
         constructors
     in
     let all_cons_code =
@@ -426,7 +429,7 @@ let rec dot_choreo_pattern (string_of_info : 'a -> string) (pat : 'a Choreo.patt
     let right_node = spf "%s [label=\"Right %s\"];\n" node_name (string_of_info info) in
     let edge = spf "%s -> %s;\n" node_name n in
     right_node ^ edge ^ c, node_name
-  | PConstruct (name, patterns, typ, info) ->
+  | PConstruct (name, patterns, TypId(typ, _), info) ->
     let pconstruct_node =
       spf "%s [label=\"Constructor %s %s\"];\n" node_name name (string_of_info info)
     in
@@ -438,7 +441,8 @@ let rec dot_choreo_pattern (string_of_info : 'a -> string) (pat : 'a Choreo.patt
           edge ^ c)
         patterns
     in
-    pconstruct_node ^ String.concat "" pat_code, node_name
+    let typ_code = spf "%s [label=\"%s %s\"];\n" node_name typ (string_of_info info) in
+    pconstruct_node ^ String.concat "" pat_code ^ typ_code, node_name
 ;;
 
 (** [dot_stmts stmts] creates the dot code for a list of statements [stmts]
@@ -661,7 +665,7 @@ and dot_choreo_expr (string_of_info : 'a -> string) (expr : 'a Choreo.expr)
     let edge1 = spf "%s -> %s;\n" node_name n1 in
     let edge2 = spf "%s -> %s;\n" node_name n2 in
     match_node ^ edge1 ^ edge2 ^ c1 ^ c2, node_name
-  | Construct (name, exprs, typ, info) ->
+  | Construct (name, exprs, TypId(typ, _), info) ->
     let construct_node =
       spf "%s [label=\"Construct %s %s\"];\n" node_name name (string_of_info info)
     in
@@ -673,7 +677,8 @@ and dot_choreo_expr (string_of_info : 'a -> string) (expr : 'a Choreo.expr)
           edge ^ c)
         exprs
     in
-    construct_node ^ String.concat "" exprs_code, node_name
+    let typ_code = spf "%s [label=\"%s %s\"];\n" node_name typ (string_of_info info) in
+    construct_node ^ String.concat "" exprs_code ^ typ_code, node_name
 ;;
 
 (** [generate_dot_code program] generates the dot code for a choreo program [program]
