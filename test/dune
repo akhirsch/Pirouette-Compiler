@@ -79,6 +79,11 @@
  (modules parsing_test)
  (libraries ounit2 parsing ast_core))
 
+;  (test
+;  (name variants_test)
+;  (modules variants_test variants_testcases)
+;  (libraries ounit2 parsing ast_core))
+
 ;this library is a requisite for marshal_test
 
 (library
@@ -146,3 +151,4 @@
 ;  (libraries ounit2 ppxlib ast_core ocamlgen)
 ;  (preprocess
 ;   (pps ppxlib.metaquot)))
+

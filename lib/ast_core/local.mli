@@ -342,6 +342,14 @@ module M : sig
       local computation. These patterns bind variables, match literals, and
       destructure compound data at a single endpoint. Each pattern carries
       metadata of type ['a] for source location tracking and type information.*)
+    | TVariant of 'a constructor list * 'a
+
+      and 'a constructor =
+    { name : string
+    ; args : 'a typ list
+    ; typ  : 'a typ_id
+    ; info : 'a
+    }
 
   type 'a pattern =
     | Default of 'a
@@ -458,6 +466,8 @@ module M : sig
       variables, operators, conditionals, and pattern matching - all executed
       locally. Each expression carries metadata of type ['a] for source location
       tracking and type information.*)
+    | PConstruct of string * 'a pattern list * 'a typ_id * 'a
+    
 
   type 'a expr =
     | Unit of 'a
@@ -683,6 +693,7 @@ module M : sig
               in
               match_expr
             ]}*)
+    | Construct of string * 'a expr list * 'a typ_id * 'a
 end
 
 (** {b With:} Module that uses a Functor for creating local AST types with
@@ -708,6 +719,7 @@ module With : functor
   type nonrec typ = Info.t M.typ
   type nonrec pattern = Info.t M.pattern
   type nonrec expr = Info.t M.expr
+  type nonrec constructor = Info.t M.constructor
 
   (** {1 Metadata Accessors}
 
@@ -744,6 +756,7 @@ module With : functor
 
       Functions to set metadata at AST nodes *)
 
+  val get_info_constructor : constructor -> Info.t
   val set_info_value : Info.t -> value -> value
   (** [set_info_value info v] is value [v] with metadata replaced by [info]. *)
 
@@ -777,4 +790,5 @@ module With : functor
   val set_info_expr : Info.t -> expr -> expr
   (** [set_info_expr info e] is expression [e] with metadata replaced by [info].
   *)
+  val set_info_constructor : Info.t -> constructor -> constructor
 end

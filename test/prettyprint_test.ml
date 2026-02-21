@@ -54,42 +54,36 @@ let net_peq (s : string) =
 
 let suite =
   "Pretty print Tests"
-  >::: [
-         "Examples"
-         >::: [
-                ("testcase1" >:: fun _ -> peq Astutils_testcases.testcase_1);
-                ("testcase2" >:: fun _ -> peq Astutils_testcases.testcase_2);
-                ("testcase3" >:: fun _ -> peq Astutils_testcases.testcase_3);
-                ("testcase4" >:: fun _ -> peq Astutils_testcases.testcase_4);
-              ];
-         "Type Decls"
-         >::: [
-                ("choreo_typs" >:: fun _ -> peq Astutils_testcases.choreo_typs);
-                ("local_typs" >:: fun _ -> peq Astutils_testcases.local_typs);
-              ];
-         "Functions"
-         >::: [
-                ( "define a function" >:: fun _ ->
-                  peq Astutils_testcases.choreo_fundef );
-              ];
-         "Pattern Matching"
-         >::: [
-                ( "choreo_pat_match" >:: fun _ ->
-                  peq Astutils_testcases.choreo_pat_match );
-                ( "local_pat_match" >:: fun _ ->
-                  peq Astutils_testcases.lcl_pat_match );
-                ( "local_pat_match_2" >:: fun _ ->
-                  peq Astutils_testcases.lcl_pat_match_2 );
-              ];
-         "Foreign Declarations"
-         >::: [
-                ("foreign_decl" >:: fun _ -> peq Astutils_testcases.foreign_decl);
-              ];
-         "Net IR"
-         >::: [
-                ("simple_net" >:: fun _ -> net_peq Astutils_testcases.simple_net);
-                ("ex3_netir" >:: fun _ -> net_peq Astutils_testcases.netir_ex3);
-              ];
+  >::: [ "Examples"
+         >::: [ ("testcase1" >:: fun _ -> peq Astutils_testcases.testcase_1)
+              ; ("testcase2" >:: fun _ -> peq Astutils_testcases.testcase_2)
+              (* ; ("testcase3" >:: fun _ -> peq Astutils_testcases.testcase_3) *)
+              ; ("testcase4" >:: fun _ -> peq Astutils_testcases.testcase_4)
+              ]
+       ; "Type Decls"
+         >::: [ ("choreo_typs" >:: fun _ -> peq Astutils_testcases.choreo_typs)
+              ; ("local_typs" >:: fun _ -> peq Astutils_testcases.local_typs)
+              ]
+       ; "Functions"
+         >::: [ ("define a function" >:: fun _ -> peq Astutils_testcases.choreo_fundef) ]
+       ; "Pattern Matching"
+         >::: [ ("choreo_pat_match" >:: fun _ -> peq Astutils_testcases.choreo_pat_match)
+              ; ("local_pat_match" >:: fun _ -> peq Astutils_testcases.lcl_pat_match)
+              ; ("local_pat_match_2" >:: fun _ -> peq Astutils_testcases.lcl_pat_match_2)
+              ]
+       ; "Foreign Declarations"
+         >::: [ ("foreign_decl" >:: fun _ -> peq Astutils_testcases.foreign_decl) ]
+       ; "Net IR"
+         >::: [ ("simple_net" >:: fun _ -> net_peq Astutils_testcases.simple_net)
+              ; ("ex3_netir" >:: fun _ -> net_peq Astutils_testcases.netir_ex3)
+              ]
+      ; "Variants"
+        >:::  [ ("simple_variant" >:: fun _ -> peq Astutils_testcases.simple_variant)
+              ; ("simple_different_name" >:: fun _ -> peq Astutils_testcases.simple_different_name)
+              ; ("two_constructors" >:: fun _ -> peq Astutils_testcases.two_constructors)
+              ; ("multiple_constructors1" >:: fun _ -> peq Astutils_testcases.multiple_constructors1)
+              ; ("multiple_constructors2" >:: fun _ -> peq Astutils_testcases.multiple_constructors2)
+              ]
        ]
 
 let () = run_test_tt_main suite

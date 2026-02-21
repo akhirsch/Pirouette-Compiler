@@ -156,6 +156,14 @@ module M : sig
 
       ['a pattern] for destructuring values, annotated with metadata of type
       ['a]. Patterns can match values distributed across multiple locations. *)
+    | TVariant of 'a constructor list * 'a
+
+      and 'a constructor =
+    { name : string
+    ; args : 'a typ list
+    ; typ  : 'a Local.M.typ_id
+    ; info : 'a
+    }
 
   type 'a pattern =
     | Default of 'a
@@ -269,6 +277,8 @@ module M : sig
       ['a expr] annotated with metadata of type ['a]. Expressions describe
       computations and communications in a choreography, including message
       passing between locations. *)
+    | PConstruct of string * 'a pattern list * 'a Local.M.typ_id * 'a
+
 
   type 'a expr =
     | Unit of 'a
@@ -604,6 +614,7 @@ module M : sig
 
       annotated with metadata of type ['a]. Statements declare variables, types,
       and perform assignments. *)
+    | Construct of string * 'a expr list * 'a Local.M.typ_id * 'a
 
   and 'a stmt =
     | Decl of 'a pattern * 'a typ * 'a
@@ -671,6 +682,7 @@ module M : sig
               in
               result_type_decl
             ]} *)
+    (* | Variant of 'a Local.M.typ_id * 'a list * 'a *)
     | ForeignDecl of 'a Local.M.var_id * 'a typ * string * 'a
         (** Foreign function declaration: declares an external function with its
             type and external name.
@@ -769,6 +781,7 @@ module With : functor
   type nonrec expr = Info.t M.expr
   type nonrec stmt = Info.t M.stmt
   type nonrec stmt_block = stmt list
+  type nonrec constructor = Info.t M.constructor
 
   (** {1 Metadata Accessors}
 
@@ -812,4 +825,5 @@ module With : functor
   val set_info_stmt : Info.t -> stmt -> stmt
   (** [set_info_stmt info s] is statement [s] with its metadata replaced by
       [info].*)
+  val set_info_constructor : Info.t -> constructor -> constructor
 end
