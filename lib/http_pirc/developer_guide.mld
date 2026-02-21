@@ -1,0 +1,167 @@
+{0 Developer Guide}
+To access other packages and/or guides: {{!section:navigation}see Navigation}
+{1 Overview}
+This guide is for contributors to the Pirouette compiler. It covers the internal 
+architecture, codebase organization, and development workflow.
+
+{b What you'll find here:}
+- Compiler pipeline architecture and implementation
+- Project structure and internal libraries
+- Development setup and contribution guidelines
+- Documentation best practices
+- Theory and Formal Foundations
+
+{1 Architecture Overview}
+
+The Pirouette compiler follows a multi-phase architecture:
+{2 Compilation Pipeline}
+
+1. {b Lexical Analysis} - Tokenization
+
+Like breaking down a sentence into words, the lexer breaks down your source code into tokens. 
+It's similar to how you might break down "The cat sat." into [The] [cat] [sat] [.].
+
+The lexer is defined in {!Parsing.Lexer} and handles:
+- Whitespace and comments
+- Keywords and operators
+- Identifiers and literals
+- Special characters
+
+2. {b {!Parsing} - AST construction}
+
+The parser takes these tokens and builds them into a structured format called an Abstract Syntax Tree (AST). 
+Think of it like taking those individual words and understanding that "The cat sat" is a sentence with a subject (cat), verb (sat), and article (the).
+
+The parser defined in {!Parsing.Parser}:
+- Defines grammar rules
+- Builds AST nodes
+- Handles operator precedence
+- Reports syntax errors
+
+3. {b Type Checking} ({!Typing}) - Type safety verification
+
+Before proceeding further, the compiler checks if your program makes sense type-wise. 
+It's like making sure you're not trying to add a number to a string or send a message to a participant that doesn't exist.
+
+The type system supports:
+- Basic types (int, bool, string)
+- Product types (pairs)
+- Sum types (variants)
+- Function types
+- Location-aware types
+
+4. {b Network Code Generation} ({!Netgen}) - Projection 
+
+This is where the magic happens! The compiler takes your choreography (the big picture of how everyone communicates) and 
+creates individual programs for each participant. It's like taking a movie script and giving each actor only their lines and cues.
+
+The projection process detailed in {!Netgen}:
+- Identifies all participants
+- Extracts each participant's view
+- Generates local behaviors
+- Preserves protocol compliance
+- Ensures protocol compliance
+
+5. {b Backend Code Generation} ({!Ocamlgen}) 
+
+Finally, the compiler generates actual executable code for each participant. Depending on your choice, it can generate code that uses:
+- Shared memory communication (for processes on the same machine)
+- HTTP communication (for processes that might be on different machines)
+
+The generated code detailed in {!Ocamlgen} includes:
+- Communication primitives
+- Data structures
+- Control flow
+- Runtime support
+
+{1 Project Structure}
+
+{[
+lib/
+├── ast_core/      # Core AST definitions
+├── ast_utils/     # AST manipulation utilities
+├── http_pirc/     # HTTP runtime (public API)
+├── netgen/        # Network code generation
+├── ocamlgen/      # OCaml backend
+├── parsing/       # Lexer and parser (Menhir)
+└── typing/        # Type checking
+]}
+
+{1 Internal Libraries}
+
+- {!ast_core} - Core abstract syntax tree definitions
+- {!ast_utils} - AST traversal and manipulation
+- {!http_pirc} - Public HTTP runtime
+- {!netgen} - Endpoint projection
+- {!ocamlgen} - OCaml code generation
+- {!parsing} - Menhir-based parser
+- [typing] - Type system implementation
+
+
+{1 Contributing}
+
+To contribute to the compiler:
++ Fork the repository
++ Create a feature branch
++ Write tests for new features
++ Follow OCaml coding guidelines
++ Submit a pull request
+
+
+{2 Development Setup}
+
+{[
+  # Install dependencies
+  opam install . --deps-only --with-test --with-doc
+  
+  # Build
+  dune build
+  
+  # Run tests
+  dune test
+  
+  # Build documentation
+  dune build @doc
+]}
+
+{2 Best Practices}
+{ol {- Program Structure
+   - Start with type declarations
+   - Group related communications
+   - Use meaningful participant names}
+
+    {- Communication Design
+   - Minimize message passing
+   - Use structured data types
+   - Handle all error cases}
+
+    {- Testing
+   - Test with small examples first
+   - Verify both success and failure paths
+   - Check all participants' behaviors}}
+
+
+{2 Theory and Formal Foundations}
+The compiler implements a theoretically sound type system based on:
+- Session types
+- Linear logic
+- Process calculi
+
+For detailed type rules and semantics, refer to the theory documentation here
+{{:https://github.com/akhirsch/Pirouette-Compiler/blob/main/docs/theory.tex}Theory Documentation}
+
+
+{1 Navigation}
+
+{{:../index.html} All Packages} | {{!page-user_guide}User Guide} | {{!page-developer_guide}Developer Guide}
+
+- {{:../index.html}All Packages} - Documentation Navigation
+- {{!page-user_guide}User Guide} - How to use the Pirouette compiler
+- {{!page-developer_guide}Developer Guide} - Contributing and internal architecture
+
+{1 Resources}
+
+- {{:https://github.com/Foundations-of-Decentralization-Group/Pirouette-Compiler}GitHub Repository}
+- {{:https://github.com/akhirsch/Pirouette-Compiler/blob/main/docs/compiler_Guide}Detailed Compiler Guide}
+- {{:https://github.com/akhirsch/Pirouette-Compiler/wiki/Compiler-Pipeline-Diagram}Compiler Pipeline Diagram}
+- {{!page-user_guide}User Guide}

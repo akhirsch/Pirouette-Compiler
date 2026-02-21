@@ -1,0 +1,77 @@
+{0 User Guide}
+
+To access other packages and/or guides: {{!section:navigation}see Navigation}
+{1 Overview}
+Pirouette is a compiler for choreographic programming - a paradigm where you write 
+distributed protocols as a single, unified program describing all participants' 
+interactions from a global perspective.
+
+The compiler automatically:
+- Projects the choreography onto individual endpoint programs
+- Ensures communication safety and protocol correctness
+- Generates executable code with your choice of communication backend
+
+{b Key Benefits:}
+- Write distributed protocols once instead of per-endpoint
+- Compile-time guarantees of deadlock freedom
+- Automatic endpoint generation preserves choreographic properties
+{1 Quick Start}
+
+Install dependencies:
+{[
+  opam install . --deps-only --with-test
+]}
+
+Build pirc:
+{[
+  dune build 
+]}
+
+Build and execute:
+{[
+  dune exec pirc -- [options] <file>
+]}
+
+Once installed, run pirc directly:
+{[
+  pirc [options] <file>
+]}
+
+Example:
+{[
+  cd examples
+  dune exec pirc -- -ast-dump json ex2.pir
+]}
+
+This will parse the file and dump the ASTs to the current directory
+in pretty-printed format.
+
+{1 Command-Line Options}
+
+- [-ast-dump pprint]: Pretty print the AST
+- [-ast-dump json]: Output AST in JSON format
+- [-backend shm]: Use shared memory communication
+- [-backend http]: Use HTTP communication
+
+{1 Libraries}
+
+The [http_pirc] library provides the HTTP-based runtime for endpoint communication:
+- [Config_parser] - Parse YAML configuration files mapping locations to HTTP addresses
+- [Send_receive] - Send and receive messages between endpoints over HTTP
+
+{i Note: Click "all packages" to navigate to the package index to access http_pirc documentation.}
+{{:../index.html} All Packages}
+
+{1 Navigation}
+
+{{:../index.html} All Packages} | {{!page-user_guide}User Guide} | {{!page-developer_guide}Developer Guide}
+
+- {{:../index.html}All Packages} - Documentation Navigation
+- {{!page-user_guide}User Guide} - How to use the Pirouette compiler
+- {{!page-developer_guide}Developer Guide} - Contributing and internal architecture
+
+{1 Further Reading}
+
+- {{:https://github.com/akhirsch/Pirouette-Compiler/blob/main/docs/compiler_Guide}Comprehensive Compiler Guide}
+- {{:https://github.com/akhirsch/Pirouette-Compiler/wiki/Compiler-Pipeline-Diagram}Compiler Pipeline Diagram}
+- {{!page-developer_guide}Developer Guide}

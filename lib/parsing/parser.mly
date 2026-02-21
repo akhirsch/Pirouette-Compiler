@@ -1,3 +1,89 @@
+(** Parser specification for the Pirouette choreographic programming language.
+    
+    This file defines the grammar rules for parsing Pirouette source code into
+    Abstract Syntax Trees (ASTs). It is processed by Menhir/ocamlyacc to generate
+    the actual parser implementation.
+    
+    {2 Parser Overview}
+    
+    The parser works in conjunction with the lexer to transform Pirouette source
+    code into structured AST nodes:
+    
+    {v
+      Source text  →  Lexer  →  Tokens  →        Parser  →  Parsed_ast
+      "x := 5"        read      [ID; COLONEQ; INT]         Choreo.stmt_block
+    v}
+    
+    {2 Key Features}
+    
+    {b Position Tracking:} All AST nodes include source position information
+    ([Pos_info.t]) for accurate error reporting. The [gen_pos] function extracts
+    position data from Menhir's [$startpos] and [$endpos] markers.
+    
+    {b Operator Precedence:} Precedence rules (defined via [%left], [%right], 
+    [%nonassoc]) resolve ambiguities in expressions. Higher declarations in the
+    precedence list bind more tightly.
+    
+    {b Grammar Structure:}
+    - [prog]: Top-level entry point (statement block + EOF)
+    - [stmt]: Choreographic statements (declarations, assignments, type definitions)
+    - [choreo_expr]: Choreographic expressions (send, sync, if/then/else, etc.)
+    - [local_expr]: Local expressions (arithmetic, variables, pattern matching)
+    - [choreo_pattern]/[local_pattern]: Pattern matching constructs
+    - [choreo_type]/[local_type]: Type annotations
+    
+    {2 Pirouette Syntax Examples}
+    
+    {b Variable declaration and assignment:}
+    {[
+      x : Alice.int;
+      x := [Alice] 5;
+    ]}
+    
+    {b Communication (send):}
+    {[
+      send Alice x -> Bob
+      (* Or with destructuring: *)
+      [Alice] x ~> Bob.y; rest
+    ]}
+    
+    {b Synchronization (select):}
+    {[
+      Alice[Ready] ~> Bob;
+      (* Alice sends label "Ready" to Bob *)
+    ]}
+    
+    {b Control flow:}
+    {[
+      if [Alice] x > 10 then
+        (* true branch *)
+      else
+        (* false branch *)
+    ]}
+    
+    {b Foreign function declarations:}
+    {[
+      foreign sqrt : Alice.float -> Alice.float := "sqrt";
+    ]}
+    
+    {2 Output}
+    
+    The parser produces [Parsed_ast.Choreo.stmt_block], which contains:
+    - All AST nodes with [Pos_info.t] metadata (filename, line, column)
+    - Proper nesting and structure according to the grammar
+    - Ready for type checking and further compilation stages
+    
+    {2 Error Handling}
+    
+    Parse errors include position information automatically via Menhir's error
+    reporting. The [gen_pos] function ensures all AST nodes track their source
+    locations for detailed error messages.
+    
+    {2 Notes}
+    
+    - Semicolons are currently required after statements (marked for potential removal)
+    - Operator precedence follows standard mathematical conventions
+    - Entry point is [%start prog] which returns [Parsed_ast.Choreo.stmt_block] *)
 %token <string> ID
 %token <int> INT
 %token <string> STRING

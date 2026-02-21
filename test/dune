@@ -15,7 +15,6 @@
 ;     dune.inc
 ;     (run ../pipeline_gen.exe)))))
 
-
 ;runs test case prettyprint_test.ml (with astutils_testcases.ml as helper)
 ; TESTED FILES 2/25
 ; 4% (3 / 64) -> lib/ast_core/choreo.ml
@@ -34,6 +33,11 @@
  (name prettyprint_test)
  (modules prettyprint_test astutils_testcases)
  (libraries ounit2 parsing ast_utils))
+
+(test
+ (name stdlib_test)
+ (modules stdlib_test)
+ (libraries stdlib_utils))
 
 ;(test
 ;(name send_receive_test)

@@ -64,4 +64,4 @@ broadcast_opt freq :=
 	let N.x := N.9; in
         let O.x := O.9; in A.print_endline A."Terminate - Optimized";
 	
-main := broadcast_opt A.100000;
+main := broadcast_opt A.1000;

@@ -1,0 +1,1 @@
+rename the outputted .ml files to have _pir at the end so that no module mismatch happens due to a pir file have the same name of an existing ocaml module

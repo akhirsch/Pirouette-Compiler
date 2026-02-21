@@ -1,0 +1,15 @@
+(library
+ (name stdlib_utils)
+ (modules stdlib_linker stdlib_ast stdlib_compiler)
+ (libraries
+  ast_utils
+  ast_core
+  parsing
+  netgen
+  ocamlgen
+  http_pirc
+  lwt
+  ppxlib
+  a_rname)
+ (preprocess
+  (pps ppxlib.metaquot)))

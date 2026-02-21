@@ -1,6 +1,6 @@
 (library
  (name netgen)
- (package http_pirc)
+ (public_name http_pirc.netgen)
  (instrumentation
   (backend bisect_ppx))
  (libraries ast_core))

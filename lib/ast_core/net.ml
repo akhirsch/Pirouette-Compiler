@@ -46,8 +46,8 @@ module M = struct
 end
 
 module With (Info : sig
-    type t
-  end) =
+  type t
+end) =
 struct
   type nonrec typ = Info.t M.typ
   type nonrec expr = Info.t M.expr
@@ -89,10 +89,9 @@ struct
     | Assign (_, _, i) -> i
     | TypeDecl (_, _, i) -> i
     | ForeignDecl (_, _, _, i) -> i
-  ;;
 
   let set_info_typ : Info.t -> typ -> typ =
-    fun i -> function
+   fun i -> function
     | TUnit _ -> TUnit i
     | TLoc (loc, t, _) -> TLoc (loc, t, i)
     | TMap (t1, t2, _) -> TMap (t1, t2, i)
@@ -102,7 +101,7 @@ struct
   ;;
 
   let set_info_expr : Info.t -> expr -> expr =
-    fun i -> function
+   fun i -> function
     | Unit _ -> Unit i
     | Var (v, _) -> Var (v, i)
     | Ret (e, _) -> Ret (e, i)
@@ -124,10 +123,9 @@ struct
   ;;
 
   let set_info_stmt : Info.t -> stmt -> stmt =
-    fun i -> function
+   fun i -> function
     | Decl (p, t, _) -> Decl (p, t, i)
     | Assign (ps, e, _) -> Assign (ps, e, i)
     | TypeDecl (id, t, _) -> TypeDecl (id, t, i)
     | ForeignDecl (id, t, s, _) -> ForeignDecl (id, t, s, i)
-  ;;
 end

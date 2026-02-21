@@ -1,3 +1,3 @@
-foreign print : unit -> unit := "Printer.print_string_unit";
+foreign print : A.string -> unit := "print_string";
 
 main := A.print A."Hello";

@@ -1,0 +1,9 @@
+  locations:
+    - location: "init"
+      http_address: "http://127.0.0.1:8080/init"
+    - location: "A"
+      http_address: "http://127.0.0.1:8081/a"
+    - location: "B"
+      http_address: "http://127.0.0.1:8082/b"
+    - location: "C"
+      http_address: "http://127.0.0.1:8083/b"      

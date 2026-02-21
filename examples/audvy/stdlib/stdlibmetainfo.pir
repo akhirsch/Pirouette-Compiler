@@ -1,0 +1,1 @@
+_ := display_stdlib_info A.();

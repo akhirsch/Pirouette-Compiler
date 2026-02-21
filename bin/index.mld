@@ -1,0 +1,44 @@
+{0 Pirouette Compiler}
+
+
+{1 Overview}
+
+The Pirouette compiler implements higher-order typed functional choreographies,
+allowing developers to write distributed protocols as single, unified programs
+that are then compiled to individual endpoint implementations.
+
+The compiler translates choreographies (global descriptions of multi-party protocols)
+into executable code for each participant through a multi-stage pipeline:
+parsing, type checking, endpoint projection, and code generation.
+
+Pirouette supports multiple communication backends (HTTP, shared memory) and
+generates standalone programs that preserve the protocol guarantees specified
+in the choreography.
+
+{2 HTTP Runtime}
+
+For runtime communication, see the [http_pirc] package:
+- [Config_parser] - Configuration parsing
+- [Send_receive] - Message passing
+
+{i Note: Click "all packages" to navigate to the package index to access http_pirc documentation,
+where you can access the two modules listed above.}
+{{:../index.html} All Packages}
+
+{2 Internal Compiler Libraries}
+
+For compiler internals (AST, parsing, typing, netgen, ocamlgen), see the internal 
+libraries section in the [http_pirc] package documentation.
+
+{i Note: Click "all packages" to navigate to the package index to access http_pirc documentation,
+where you can access the internal libraries.}
+{{:../index.html} All Packages}
+
+{1 Documentation}
+
+- {{:../index.html}All Packages} - Documentation Navigation
+
+{1 Resources}
+
+- {{:https://dl.acm.org/doi/10.1145/3498684}Pirouette Paper}
+- {{:https://github.com/Foundations-of-Decentralization-Group/Pirouette-Compiler}GitHub Repository}

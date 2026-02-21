@@ -1,3 +1,174 @@
+(** Parser specification for Pirouette Network IR (Intermediate Representation).
+    
+    This file defines the grammar rules for parsing Pirouette Network IR into
+    Abstract Syntax Trees. It is processed by Menhir/ocamlyacc to generate the
+    actual parser implementation for network-level code.
+    
+    {2 Parser Overview}
+    
+    This parser works with the Network IR lexer to parse the intermediate
+    representation produced after endpoint projection:
+    
+    {v
+      Network IR text  →  Net_lexer  →  Tokens  →  Net_parser  →  Parsed_ast.Net
+      "x := Recv(Alice)"    read        tokens                    stmt_block
+    v}
+    
+    {2 Differences from Choreographic Parser}
+    
+    This parser handles Network IR, not choreographies:
+    
+    {b Network IR has:}
+    - [Send]/[Recv]: Explicit send/receive operations
+    - [ChooseFor]/[AllowChoice]: Choice coordination primitives
+    - [Ret]: Wrapping local expressions for network context
+    - No location-qualified expressions (no [[Alice] expr])
+    - No choreographic [send] or [select] constructs
+    
+    {b Choreographic parser has:}
+    - [[Alice] expr]: Location-qualified expressions
+    - [send Alice x -> Bob]: Choreographic communication
+    - [Alice[Ready] ~> Bob]: Choreographic choice
+    - Global view of the protocol
+    
+    {2 Compilation Pipeline Position}
+    
+    {v
+      Choreography  →  Type Check  →  Endpoint Projection  →  Network IR  →  OCaml Code
+      (Parser.mly)                                            (This parser)
+    v}
+    
+    {b Typical workflow:}
+    1. Users write choreographies (parsed by main parser)
+    2. Type checker validates the choreography
+    3. Endpoint projection generates Network IR programmatically
+    4. OCaml code generator compiles Network IR to executables
+    
+    {b This parser is used for:}
+    - Testing endpoint projection output
+    - Debugging projected code
+    - Manual Network IR programming (advanced users)
+    - Compiler testing and development
+    
+    {2 Network IR Syntax Examples}
+    
+    {b Receiving and computing:}
+    {[
+      x : int;
+      x := Recv(Alice);
+      y : int;
+      y := Ret(x + 1);
+    ]}
+    
+    {b Sending data:}
+    {[
+      val : int;
+      val := Ret(42);
+      send Ret(val) ~> Bob;
+    ]}
+    
+    {b Choice coordination (chooser side):}
+    {[
+      choose Ready for Bob in
+        send Ret(data) ~> Bob
+    ]}
+    
+    {b Choice coordination (follower side):}
+    {[
+      allow choice from Alice with
+      | Ready -> handle_ready
+      | NotReady -> handle_not_ready
+    ]}
+    
+    {b Functions and control flow:}
+    {[
+      f : int -> int;
+      f := fun x -> Ret(x + 1);
+      
+      result : int;
+      result := if Ret(x > 0) then
+                  Ret(x)
+                else
+                  Ret(0);
+    ]}
+    
+    {2 Grammar Structure}
+    
+    {b Top-level:}
+    - [prog]: Entry point (statement block + EOF)
+    - [stmt_block]: List of statements
+    - [stmt]: Variable declarations, assignments, type definitions, foreign declarations
+    
+    {b Network expressions ([net_expr]):}
+    - [Ret(local_expr)]: Wrap local computation
+    - [Send(expr, loc)]: Send data to location
+    - [Recv(loc)]: Receive data from location
+    - [ChooseFor(label, loc, expr)]: Send choice to location
+    - [AllowChoice(loc, cases)]: Wait for choice from location
+    - Control flow: if/then/else, let/in, match, functions
+    
+    {b Local expressions ([local_expr]):}
+    - Pure computation: arithmetic, variables, pattern matching
+    - No communication primitives
+    - Shared with choreographic parser
+    
+    {b Types ([net_type]):}
+    - Basic types: unit, int, string, bool
+    - Compound types: products (×), sums (+), functions (→)
+    - Located types: [Alice.int] (for type annotations)
+    
+    {2 Key Features}
+    
+    {b Position Tracking:} All AST nodes include [Pos_info.t] for error reporting.
+    The [gen_pos] function extracts position data from Menhir's markers.
+    
+    {b Operator Precedence:} Inherits precedence rules from choreographic parser
+    for consistency in expression evaluation.
+    
+    {b Explicit Communication:} Unlike choreographies, all communication is
+    explicit via [Send]/[Recv]/[ChooseFor]/[AllowChoice] constructs.
+    
+    {2 Example: Projected Code}
+    
+    {b Original choreography:}
+    {[
+      x : Alice.int;
+      x := [Alice] 5;
+      send Alice x -> Bob;
+      y : Bob.int;
+      y := [Bob] x + 1;
+    ]}
+    
+    {b After projection to Bob (Network IR):}
+    {[
+      x : int;
+      x := Recv(Alice);
+      y : int;
+      y := Ret(x + 1);
+    ]}
+    
+    This Network IR code is what this parser can parse.
+    
+    {2 Output}
+    
+    The parser produces [Parsed_ast.Net.stmt_block], which contains:
+    - Network IR AST nodes with [Pos_info.t] metadata
+    - Explicit communication operations
+    - Ready for OCaml code generation via [emit_core]
+    
+    {2 Error Handling}
+    
+    Parse errors include position information automatically via Menhir's error
+    reporting. The [gen_pos] function ensures all AST nodes track their source
+    locations for detailed error messages during compilation.
+    
+    {2 Notes}
+    
+    - Semicolons are required after statements (consistent with main parser)
+    - Shares operator precedence with choreographic parser
+    - Entry point is [%start prog] which returns [Parsed_ast.Net.stmt_block]
+    - This parser is primarily for compiler internals and testing *)
+
 %token <string> ID
 %token <int> INT
 %token <string> STRING

@@ -1,0 +1,89 @@
+{0 Http_pirc Package}
+
+{1 Overview}
+
+The [Http_pirc] package contains the HTTP-based runtime for Pirouette choreographies 
+and the core compiler libraries. This package serves two audiences:
+
+- {b Runtime users}: Use [Config_parser] and [Send_receive] for HTTP-based endpoint communication
+- {b Compiler developers}: Access internal libraries for AST manipulation, parsing, type checking, and code generation
+
+{1 HTTP Runtime Modules}
+{3 Config_parser}
+- {!Http_pirc.Config_parser} - Parse YAML configuration files mapping locations to HTTP addresses
+{3 Send_receive}
+- {!Http_pirc.Send_receive} - Send and receive messages between endpoints over HTTP
+
+{1 Internal Compiler Libraries}
+
+Core libraries used throughout the Pirouette compilation pipeline:
+{3 {!Ast_core} - Core AST definitions}
+
+Core abstract syntax tree structures:
+
+- {!Ast_core.Choreo} - Choreography AST
+- {!Ast_core.Local} - Local endpoint AST
+- {!Ast_core.Net} - Network AST
+
+{3 {!Ast_utils} - AST Utilities}
+
+AST traversal and manipulation utilities:
+
+- Functions for extracting locations
+- AST transformation helpers
+- Utility functions for AST analysis
+
+{3 {!Parsing} - Lexer and Parser}
+
+Lexer and parser implementation using Menhir:
+
+- {!Parsing.Lexer} - Main Lexer
+- {!Parsing.Net_lexer} - Network Lexer
+- {!Parsing.Net_parser} - Network Parser
+- {!Parsing.Parse} - Parseing entry point 
+- {!Parsing.Parsed_ast} - Parsed AST representation 
+- {!Parsing.Parser} - Main Parser
+
+{3 {!Typing} - Type System}
+
+Type checking and inference:
+
+- Type rules for choreographies
+- Location-aware types
+- Type safety verification
+
+{3 {!Netgen} - Code Generation}
+
+Network code generation and endpoint projection:
+
+- Projects choreographies onto endpoints
+- Generates communication protocols
+- Ensures protocol compliance
+
+{3 {!Ocamlgen} - OCaml Backend}
+
+OCaml backend code generation with multiple output targets:
+
+- {!Ocamlgen.Emit_core} - Core emission logic
+- {!Ocamlgen.Msg_intf} - Message interface definitions
+- {!Ocamlgen.Toplevel_domain} - Domain-based backend
+- {!Ocamlgen.Toplevel_http} - HTTP-based backend
+- {!Ocamlgen.Toplevel_mpi} - MPI-based backend
+
+{1 For Developers}
+
+See the {{!page-developer_guide}Developer Guide} for detailed information on:
+- Compilation pipeline architecture
+- Contributing guidelines
+- Development setup and testing
+
+{1 Documentation}
+{{:../index.html} All Packages} | {{!page-user_guide}User Guide} | {{!page-developer_guide}Developer Guide}
+
+- {{:../index.html}All Packages} - Documentation Navigation
+- {{!page-user_guide}User Guide} - How to use the Pirouette compiler
+- {{!page-developer_guide}Developer Guide} - Contributing and internal architecture
+
+{1 See Also}
+
+- The main {{:../pirc/index.html}pirc compiler} documentation

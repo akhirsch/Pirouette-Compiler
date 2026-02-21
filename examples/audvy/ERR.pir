@@ -1,0 +1,1 @@
+_ := A.notAFunc A."s";

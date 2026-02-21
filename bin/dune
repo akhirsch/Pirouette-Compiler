@@ -2,4 +2,16 @@
  (name main)
  (public_name pirc)
  (package pirc)
- (libraries ast_utils parsing netgen ocamlgen http_pirc lwt))
+ (libraries
+  ast_utils
+  parsing
+  netgen
+  ocamlgen
+  http_pirc
+  lwt
+  a_rname
+  stdlib_utils))
+
+(documentation
+ (package pirc)
+ (mld_files index))

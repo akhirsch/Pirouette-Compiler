@@ -1,3 +1,4 @@
 (library
  (name typing)
+ (public_name http_pirc.typing)
  (libraries ast_core))

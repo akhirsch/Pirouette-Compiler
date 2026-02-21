@@ -1,6 +1,7 @@
 (library
  (name ocamlgen)
- (libraries ast_core ast_utils ppxlib)
+ (public_name http_pirc.ocamlgen)
+ (libraries ast_core ast_utils ppxlib cohttp-eio eio_main)
  (modules emit_core msg_intf toplevel_domain toplevel_http toplevel_mpi)
  (preprocess
   (pps ppxlib.metaquot))
