@@ -19,6 +19,7 @@ let rec ast_local_pattern_stringify : 'a Ast_core.Local.M.pattern -> string =
       "Left (" ^ ast_local_pattern_stringify pattern ^ ", ())"
   | Right (pattern, _) ->
       "(Right (" ^ ast_local_pattern_stringify pattern ^ ", ()))"
+  | PConstruct (_, _, _, _) -> "" (*PLACEHOLDER*)
 
 let ast_local_loc_id : 'a Ast_core.Local.M.loc_id -> string = function
   | LocId (local_id_name, _) -> "(LocId (\"" ^ local_id_name ^ "\", ()))"
@@ -42,6 +43,7 @@ let rec ast_local_type_stringify : 'a Ast_core.Local.M.typ -> string = function
       ^ ", "
       ^ ast_local_type_stringify typ2
       ^ ", ()))"
+  | TVariant (_, _) -> "" (*PLACEHODLER*)
 
 let ast_local_bin_op_stringify : 'a Ast_core.Local.M.bin_op -> string = function
   | Plus _ -> "(Plus ())"
@@ -115,6 +117,7 @@ and ast_local_expr_stringify : 'a Ast_core.Local.M.expr -> string = function
       ^ ", "
       ^ stringify_pattern_match patterns
       ^ ", ()))"
+  | Construct (_, _, _, _) -> "" (*PLACEHOLDER*)
 
 let rec ast_choreo_type_stringify : 'a Ast_core.Choreo.M.typ -> string =
   function
@@ -143,6 +146,7 @@ let rec ast_choreo_type_stringify : 'a Ast_core.Choreo.M.typ -> string =
       ^ ", "
       ^ ast_choreo_type_stringify typ2
       ^ ", ()))"
+  | TVariant (_, _) -> "" (*PLACEHODLER*)
 
 let rec ast_choreo_pattern_stringify : 'a Ast_core.Choreo.M.pattern -> string =
   function
@@ -162,6 +166,7 @@ let rec ast_choreo_pattern_stringify : 'a Ast_core.Choreo.M.pattern -> string =
       "(Left (" ^ ast_choreo_pattern_stringify choreo_pattern ^ ", ()))"
   | Right (choreo_pattern, _) ->
       "(Right (" ^ ast_choreo_pattern_stringify choreo_pattern ^ ", ()))"
+  | PConstruct(_, _, _, _) -> "" (*PLACEHOLDER*)
 
 let rec ast_choreo_pattern_list_stringify :
     'a Ast_core.Choreo.M.pattern list -> string = function
@@ -242,6 +247,7 @@ and ast_choreo_expr_stringify : 'a Ast_core.Choreo.M.expr -> string = function
       ^ ", "
       ^ stringify_pattern_match patterns
       ^ ", ()))"
+  | Construct (_, _, _, _) -> "" (*PLACEHOLDER*)
 
 and ast_stringify : 'a Ast_core.Choreo.M.stmt -> string = function
   | Decl (stm_pattern, stmt_type, _) ->

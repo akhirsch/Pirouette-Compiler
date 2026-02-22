@@ -151,19 +151,19 @@ module M : sig
               let int_or_string = TSum (TInt (), TString (), ()) in
               int_or_string
             ]}*)
-
-  (** {1 Choreographic Patterns}
-
-      ['a pattern] for destructuring values, annotated with metadata of type
-      ['a]. Patterns can match values distributed across multiple locations. *)
     | TVariant of 'a constructor list * 'a
 
-      and 'a constructor =
+  and 'a constructor =
     { name : string
     ; args : 'a typ list
     ; typ  : 'a Local.M.typ_id
     ; info : 'a
     }
+
+  (** {1 Choreographic Patterns}
+
+      ['a pattern] for destructuring values, annotated with metadata of type
+      ['a]. Patterns can match values distributed across multiple locations. *)
 
   type 'a pattern =
     | Default of 'a
@@ -271,14 +271,13 @@ module M : sig
               let right_x = Right (Var (var_id_x, ()), ()) in
               right_x
             ]}*)
+    | PConstruct of string * 'a pattern list * 'a Local.M.typ_id * 'a
 
   (** {1 Choreographic Expressions}
 
       ['a expr] annotated with metadata of type ['a]. Expressions describe
       computations and communications in a choreography, including message
       passing between locations. *)
-    | PConstruct of string * 'a pattern list * 'a Local.M.typ_id * 'a
-
 
   type 'a expr =
     | Unit of 'a
@@ -609,12 +608,12 @@ module M : sig
               in
               match_expr
             ]} *)
+    | Construct of string * 'a expr list * 'a Local.M.typ_id * 'a
 
   (** {1 Choreographic Statements}
 
       annotated with metadata of type ['a]. Statements declare variables, types,
       and perform assignments. *)
-    | Construct of string * 'a expr list * 'a Local.M.typ_id * 'a
 
   and 'a stmt =
     | Decl of 'a pattern * 'a typ * 'a
@@ -825,5 +824,6 @@ module With : functor
   val set_info_stmt : Info.t -> stmt -> stmt
   (** [set_info_stmt info s] is statement [s] with its metadata replaced by
       [info].*)
+  
   val set_info_constructor : Info.t -> constructor -> constructor
 end
