@@ -104,6 +104,7 @@ module M : sig
               let int_or_string = TSum (TInt (), TString (), ()) in
               int_or_string
             ]} *)
+    | TVariant of 'a constructor list *  'a
 
   (** {1 Network Expressions}
 
@@ -113,8 +114,7 @@ module M : sig
       communication and [ChooseFor]/[AllowChoice] for synchronization. Each
       expression carries metadata of type ['a], allowing compiler passes to
       attach annotations. *)
-    | TVariant of 'a constructor list *  'a
-
+    
     and 'a constructor =
     { name : string
     ; args : 'a typ list
@@ -527,7 +527,7 @@ module M : sig
               in
               match_expr
             ]} *)
-
+      | Construct of string * 'a expr list * 'a Local.M.typ_id * 'a
   (** {1 Network Statements}
 
       ['a stmt] represent statements in projected endpoint programs after
@@ -535,7 +535,7 @@ module M : sig
       assignments, type aliases, and foreign function declarations. Each
       statement carries metadata of type ['a], allowing compiler passes to
       attach annotations.*)
-    | Construct of string * 'a expr list * 'a Local.M.typ_id * 'a
+    
 
   and 'a stmt =
     | Decl of 'a Local.M.pattern * 'a typ * 'a

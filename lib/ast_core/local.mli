@@ -335,6 +335,14 @@ module M : sig
               let sum_int_string = TSum (TInt (), TString (), ()) in
               sum_int_string
             ]}*)
+    | TVariant of 'a constructor list * 'a
+
+  and 'a constructor =
+    { name : string
+    ; args : 'a typ list
+    ; typ  : 'a typ_id
+    ; info : 'a
+    }
 
   (** {1 Local Patterns}
 
@@ -342,14 +350,6 @@ module M : sig
       local computation. These patterns bind variables, match literals, and
       destructure compound data at a single endpoint. Each pattern carries
       metadata of type ['a] for source location tracking and type information.*)
-    | TVariant of 'a constructor list * 'a
-
-      and 'a constructor =
-    { name : string
-    ; args : 'a typ list
-    ; typ  : 'a typ_id
-    ; info : 'a
-    }
 
   type 'a pattern =
     | Default of 'a
@@ -458,6 +458,7 @@ module M : sig
               in
               right_y
             ]}*)
+    | PConstruct of string * 'a pattern list * 'a typ_id * 'a
 
   (** {1 Local Expressions}
 
@@ -466,8 +467,6 @@ module M : sig
       variables, operators, conditionals, and pattern matching - all executed
       locally. Each expression carries metadata of type ['a] for source location
       tracking and type information.*)
-    | PConstruct of string * 'a pattern list * 'a typ_id * 'a
-    
 
   type 'a expr =
     | Unit of 'a
@@ -790,5 +789,6 @@ module With : functor
   val set_info_expr : Info.t -> expr -> expr
   (** [set_info_expr info e] is expression [e] with metadata replaced by [info].
   *)
+
   val set_info_constructor : Info.t -> constructor -> constructor
 end
