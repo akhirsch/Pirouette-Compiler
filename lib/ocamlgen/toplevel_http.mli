@@ -87,10 +87,6 @@ statement block, and generating a structure item for each pair.
       
       {b Effect:} This function is called to create the [process_bindings] binding, which contains
       a list of structure items. This list is then written to [oc] from [emit_toplevel_http]*)
-val emit_domain_stri
-  :  label
-  -> 'a Ast_core.Net.M.stmt_block
-  -> Ppxlib.Parsetree.structure_item
 
 (** {2 About Ppxlib}*)
 
