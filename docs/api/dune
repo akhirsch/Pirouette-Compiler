@@ -1,2 +1,3 @@
 (documentation
- (package http_pirc))
+ (package pirc)
+ (mld_files index))

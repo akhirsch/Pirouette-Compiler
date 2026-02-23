@@ -14,12 +14,6 @@ Pirouette supports multiple communication backends (HTTP, shared memory) and
 generates standalone programs that preserve the protocol guarantees specified
 in the choreography.
 
-The [Http_pirc] package contains the HTTP-based runtime for Pirouette choreographies 
-and the core compiler libraries. This package serves two audiences:
-
-- {b Runtime users}: Use [Config_parser] and [Send_receive] for HTTP-based endpoint communication
-- {b Compiler developers}: Access internal libraries for AST manipulation, parsing, type checking, and code generation
-
 {1 HTTP Runtime Modules}
 {3 Config_parser}
 - {!Http_pirc.Config_parser} - Parse YAML configuration files mapping locations to HTTP addresses
