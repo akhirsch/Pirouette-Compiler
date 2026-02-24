@@ -13,7 +13,6 @@
  (name parsing)
  (public_name pirc.parsing)
  (private_modules lexer parser)
- (modules_without_implementation net_parser_doc parser_doc)
  (libraries ast_core)
  (preprocess
   (pps bisect_ppx)))

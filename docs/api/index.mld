@@ -45,10 +45,10 @@ Lexer and parser implementation using Menhir:
 
 - {!Parsing.Lexer} - Main Lexer
 - {!Parsing.Net_lexer} - Network Lexer
-- {!Parsing.Net_parser} - Network Parser
-- {!Parsing.Parse} - Parseing entry point 
+- {!page-Net_parser} - Network Parser
+- {!Parsing.Parse} - Parsing entry point 
 - {!Parsing.Parsed_ast} - Parsed AST representation 
-- {!Parsing.Parser} - Main Parser
+- {!page-Parser} - Main Parser
 
 {3 {!Typing} - Type System}
 

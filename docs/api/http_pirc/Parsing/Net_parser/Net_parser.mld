@@ -1,4 +1,4 @@
-(** Parser specification for Pirouette Network IR (Intermediate Representation).
+{0 Parser specification for Pirouette Network IR (Intermediate Representation). }
     
     This file defines the grammar rules for parsing Pirouette Network IR into
     Abstract Syntax Trees. It is processed by Menhir/ocamlyacc to generate the
