@@ -89,29 +89,60 @@ let netir_ex3 =
   \      | R -> ret (9);\n"
 ;;
 
-(* Below are some tests for variants *)
+(* Below are some well-formatted tests for variants. These should pass. *)
 let simple_variant = "type X := | constructor: X;";;
-let simple_different_name = "type Person := | Sam: Male;";;
+let simple_different_name = "type Person := | Sam: Person;";;
 let two_constructors = 
 "type Coin := 
-| heads: win;\n\n
-| tails: loss;\n\n
+| heads: Coin;\n\n
+| tails: Coin;\n\n
 ";;
 
 let multiple_constructors1 = 
 "type SchoolEmployee := 
-| Principal: Administrator;\n\n
-| Teacher: Educator;\n\n
-| Janitor: Maintenance;\n\n
-| Security: Maintenance;\n\n
-| IT: Maintenance;\n
+| Principal: SchoolEmployee;\n\n
+| Teacher: SchoolEmployee;\n\n
+| Janitor: SchoolEmployee;\n\n
+| Security: SchoolEmployee;\n\n
+| IT: SchoolEmployee;\n
 ";;
 
 let multiple_constructors2 = 
 "type Car := 
-| Civic: Honda;\n\n
-| Accord: Honda;\n\n
-| Camry: Toyota;\n\n
-| Corolla: Honda;\n\n
-| Altima: Nissan;\n
+| Civic: Car;\n\n
+| Accord: Car;\n\n
+| Camry: Car;\n\n
+| Corolla: Car;\n\n
+| Altima: Car;\n
 ";;
+
+(* Below are some poorly formatted variants. These should fail. *)
+
+let missing_constructor1 = "type X := ;";;
+let missing_constructor2 = "type X := : X;";;
+let missing_constructor_name = "type X := | : X;";;
+let missing_type = "type X := | constructor;";;
+let wrong_constructor_type = "type A := | constructor: B;";;
+let wrong_constructor_type = "type A := | constructor: B;";;
+let multiple_wrong_type1 = 
+  "type A := 
+  | constructor1: B;\n\n
+  | constructor2: A;\n\n
+  ";;
+
+let multiple_wrong_type1 = 
+  "type A := 
+  | constructor1: A;\n\n
+  | constructor2: B;\n\n
+  ";;
+
+
+(* The tests below may or may not pass the parser, but are good edge cases either way. *)
+ (* I (Sam) need to review the specification for these. *)
+let duplicate_constructors = 
+"type Coin := 
+| heads: Coin;\n\n
+| heads: Coin;\n\n
+";;
+
+let type_constructor_same = "type Person := | Person : Person;";;
