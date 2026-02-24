@@ -80,6 +80,15 @@ let test_set_info_foreigntypedecl_Choreo (old_meta : int) (new_meta : int) =
   assert_equal new_meta (ChoreoAst.get_info_stmt new_stmt)
 ;;
 
+
+
+(* add these ast_locs test *)
+(* 
+ForeignTypeDecl — returns LocSet.empty since foreign types have no location
+ForeignDecl with no locations in type — e.g. foreign f : unit := "f" returns LocSet.empty
+ForeignDecl with locations in type — e.g. foreign f : Alice.Int -> Bob.String := "f" returns {Alice, Bob}
+TForeign in extract_type — returns LocSet.empty 
+*)
 (* TEST SUITE *)
 
 let local_ffi_suite =

@@ -160,6 +160,25 @@ module M : sig
       ]}*)
 
     | TForeign of 'a typ_id * 'a 
+    (** foreign type identified only by name.
+
+      two foreign types are equal only if they have the same name
+
+      {b Internal AST Structure:} [TForeign(type_id, meta)]
+
+      {b Pirouette Syntax:}
+      {[
+        foreign type Int32;     (* declaration *)
+        Int32                   (* usage in type signature *)
+      ]}
+
+      {b Ocaml:}
+      {[
+        let foreign_type =
+          TForeign(Typ_Id("Int32", ()), ())
+        in
+        foreign_type
+      ]}*)
 
   (** {1 Choreographic Patterns} 
   

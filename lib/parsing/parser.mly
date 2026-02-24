@@ -178,6 +178,7 @@ stmt:
 
 foreign_type_decl:
   | FOREIGN TYPE id=typ_id SEMICOLON { ForeignTypeDecl (id, gen_pos $startpos $endpos) }
+  (* constructs a ForeignTypeDecl AST node with the type id and position info. *)
 
 /* Associativity increases from expr to expr3, with each precedence level falling through to the next. */
 choreo_expr:

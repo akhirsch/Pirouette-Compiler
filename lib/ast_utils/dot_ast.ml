@@ -83,6 +83,8 @@ let rec dot_local_type (string_of_info : 'a -> string) (typ : 'a Local.typ)
     sum_node ^ edge1 ^ edge2 ^ c1 ^ c2, node_name
   | TForeign (TypId (id, _), info) ->
     spf "%s [label=\"TForeign %s %s\"];\n" node_name id (string_of_info info), node_name
+    (* creates a leaf node labeled with the foreign type name and metadata 
+    no children since this type has internal structure to recurse into similar to tbool above*)
 ;;
 
 (* node name format: n + node_counter *)
@@ -298,6 +300,8 @@ let rec dot_choreo_type (string_of_info : 'a -> string) (typ : 'a Choreo.typ)
     sum_node ^ edge1 ^ edge2 ^ c1 ^ c2, node_name
   | TForeign (Typ_Id (id, _), info) ->
     spf "%s [label=\"TForeign %s %s\"];\n" node_name id (string_of_info info), node_name
+    (* creates a leaf node labeled with the foreign type name and metadata — no children 
+    since foreign types have internal structure to recurse into, same as TBool above *)
 ;;
 
 (** [dot_pattern pat] creates the dot code for patterns [pat]

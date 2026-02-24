@@ -21,6 +21,7 @@ let rec ast_local_type_alpha_rename : 'a Ast_core.Local.M.typ ->'a Ast_core.Loca
   | TProd (typ1, typ2, metadata) -> TProd (ast_local_type_alpha_rename typ1, ast_local_type_alpha_rename typ2, metadata)
   | TSum  (typ1, typ2, metadata) -> TSum  (ast_local_type_alpha_rename typ1, ast_local_type_alpha_rename typ2, metadata)
   | TForeign (TypId (typ_name, type_metadata), metadata) -> TForeign (TypId (typ_name^suffix, type_metadata), metadata)
+    (* followed the structure from Tvar *)
 ;;
 
 let rec alpha_rename_pattern_match : ('a Ast_core.Local.M.pattern * 'a Ast_core.Local.M.expr) list -> ('a Ast_core.Local.M.pattern * 'a Ast_core.Local.M.expr) list = function 
@@ -50,6 +51,7 @@ let rec ast_choreo_type_alpha_rename : 'a Ast_core.Choreo.M.typ -> 'a Ast_core.C
   | TProd (typ1, typ2, metadata) ->  TProd (ast_choreo_type_alpha_rename typ1, ast_choreo_type_alpha_rename typ2, metadata)
   | TSum (typ1, typ2, metadata) -> TSum (ast_choreo_type_alpha_rename typ1, ast_choreo_type_alpha_rename typ2, metadata)
   | TForeign (Typ_Id (typ_name, type_metadata), metadata) -> TForeign (Typ_Id (typ_name^suffix, type_metadata), metadata)
+  (*  followed the same structure as TVar *)
 ;;
 
 let rec ast_choreo_pattern_alpha_rename : 'a Ast_core.Choreo.M.pattern -> 'a Ast_core.Choreo.M.pattern = function

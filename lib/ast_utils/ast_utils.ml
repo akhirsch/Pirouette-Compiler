@@ -80,6 +80,10 @@ let parse_external_name name =
   (package_name, function_name, search_path)
 
 (* Extract all unique FFI information from a list of statements *)
+(* collect_ffi_info walks through a list of choreo statements, finds every ForeignDecl
+ parses its external name string using parse_external_name, and returns a sorted list of all the
+foreign function info. It's used during code generation to know which external functions
+need to be linked or imported into the generated OCaml code.*)
 let collect_ffi_info stmts =
   let rec collect acc = function
     | [] -> acc
@@ -161,6 +165,7 @@ let rec ast_local_type_info_map : ('a -> 'b) -> 'a Ast_core.Local.M.typ -> 'b As
   | TProd (typ1, typ2, metadata) -> TProd (ast_local_type_info_map map typ1, ast_local_type_info_map map typ2, map metadata)
   | TSum  (typ1, typ2, metadata) -> TSum  (ast_local_type_info_map map typ1, ast_local_type_info_map map typ2, map metadata)
   | TForeign (TypId (typ_name, type_metadata), metadata) -> TForeign (TypId (typ_name, map type_metadata),map metadata)
+  (* TForeign Map metadata over a foreign type id, preserving the type name. *)
 ;;
 
 let rec info_map_pattern_match : ('a -> 'b) -> ('a Ast_core.Local.M.pattern * 'a Ast_core.Local.M.expr) list -> ('b Ast_core.Local.M.pattern * 'b Ast_core.Local.M.expr) list = 
@@ -193,7 +198,7 @@ let rec ast_choreo_type_info_map : ('a -> 'b) -> 'a Ast_core.Choreo.M.typ -> 'b 
   | TProd (typ1, typ2, metadata) ->  TProd (ast_choreo_type_info_map map typ1, ast_choreo_type_info_map map typ2, map metadata)
   | TSum (typ1, typ2, metadata) -> TSum (ast_choreo_type_info_map map typ1, ast_choreo_type_info_map map typ2, map metadata)
   | TForeign (Typ_Id (type_name, type_metadata), metadata) ->  TForeign (Typ_Id (type_name, map type_metadata), map metadata)
-
+  (* Map metadata over a foreign type id at the choreo level *)
 ;;
 
 let rec ast_choreo_pattern_info_map : ('a -> 'b) -> 'a Ast_core.Choreo.M.pattern -> 'b Ast_core.Choreo.M.pattern = 
@@ -241,7 +246,9 @@ and ast_info_map : ('a -> 'b) -> 'a Ast_core.Choreo.M.stmt -> 'b Ast_core.Choreo
   | Assign (stmt_pattern_list, stmt_expr, metadata) -> Assign (ast_choreo_pattern_list_info_map map stmt_pattern_list, ast_choreo_expr_info_map map stmt_expr, map metadata)
   | TypeDecl ((TypId (type_name, type_metadata)), stmt_type, metadata) -> TypeDecl (TypId (type_name, map type_metadata), ast_choreo_type_info_map map stmt_type, map metadata)
   | ForeignDecl (VarId (name, meta), stmt_type, stmt_foreign_str, metadata) -> ForeignDecl (VarId (name, map meta), ast_choreo_type_info_map map stmt_type, stmt_foreign_str, map metadata)
+  (* Map metadata over a ForeignDecl, preserving the variable name, type signature, and external string. *)
   | ForeignTypeDecl (TypId (type_name, type_metadata), metadata) -> ForeignTypeDecl (TypId (type_name, map type_metadata), map metadata)
+  (* Map metadata over a ForeignTypeDecl*)
 
 and ast_list_info_map : ('a -> 'b) -> 'a Ast_core.Choreo.M.stmt_block -> 'b Ast_core.Choreo.M.stmt_block = 
   fun map -> function

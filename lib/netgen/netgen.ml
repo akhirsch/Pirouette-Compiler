@@ -138,6 +138,10 @@ let rec epp_choreo_type (typ : 'a Choreo.typ) (loc : string) : 'a Net.typ =
   | TMap (t1, t2, _) -> TMap (epp_choreo_type t1 loc, epp_choreo_type t2 loc, _m)
   | TProd (t1, t2, _) -> TProd (epp_choreo_type t1 loc, epp_choreo_type t2 loc, _m)
   | TSum (t1, t2, _) -> TSum (epp_choreo_type t1 loc, epp_choreo_type t2 loc, _m)
+  | Choreo.TForeign (Choreo.Typ_Id (name, _), _) -> Net.TForeign (Local.TypId (name, _m), _m)
+  (* TForeign has no location to project, but preserves the type name through to the net level.
+   Choreo uses Choreo.Typ_Id while Net uses Local.TypId, so we extract the name string
+   and rewrap it in the correct type id constructor *)
   | _ -> TUnit _m
 ;;
 
@@ -161,7 +165,9 @@ let rec epp_choreo_stmt (stmt : 'a Choreo.stmt) (loc : string) : 'a Net.stmt =
      | _ -> Assign (epp_ps, epp_choreo_expr e loc, _m))
   | TypeDecl (id, t, _) -> TypeDecl (id, epp_choreo_type t loc, _m)
   | ForeignDecl (id, t, s, _) -> ForeignDecl (id, epp_choreo_type t loc, s, _m)
+  (*  ForeignDecl to net level, projecting its type signature for the given location. *)
   | ForeignTypeDecl (id, _) -> ForeignTypeDecl (id, _m)
+  (* ForeignTypeDecl passes through unchanged no type to project name preserved*)
   
 
 and epp_choreo_expr (expr : 'a Choreo.expr) (loc : string) : 'a Net.expr =

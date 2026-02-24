@@ -112,6 +112,23 @@ module M : sig
               TSum(TInt(()), TString(()), ())
             in
             int_or_string ]} *)
+    | TForeign of 'a Local.M.typ_id * 'a
+(** foreign type, identified only by name with no internal structure.
+
+  {b Internal AST Structure:} [TForeign(type_id, metadata)]
+
+  {b Pirouette Syntax:}
+      {[
+        foreign type Int32;
+      ]}
+
+  {b OCaml AST Construction:}
+      {[
+        let foreign_type =
+          TForeign(Local.M.TypId("Int32", ()), ())
+        in
+        foreign_type]} *)
+  
 
   (** {1 Network Expressions} 
       

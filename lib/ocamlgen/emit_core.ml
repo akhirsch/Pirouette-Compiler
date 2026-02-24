@@ -139,11 +139,12 @@ and emit_foreign_decl id typ external_name=
                                   | TVar (TypId (typ_id, _), _) -> "(" ^ typ_id ^ ")"
                                   | TProd (typ1, typ2, _) -> "(" ^ (find_local_type_sig typ1) ^ " * " ^ (find_local_type_sig typ2) ^ ")"
                                   | TSum (typ1, typ2, _) -> "(" ^ (find_local_type_sig typ1) ^ " + " ^ (find_local_type_sig typ2) ^ ")"
-                                  | TForeign (TypId (typ_id, _), _) -> "(" ^ typ_id ^ ")"
+                                  | TForeign (TypId (typ_id, _), _) -> "(" ^ typ_id ^ ")" (* pattern matched at local Tforeign extracts string id and wraps it in parentheses,*)
                                 in find_local_type_sig local_type
     | TMap (typ1, typ2, _) -> "(" ^ (find_type_sig typ1) ^ " -> " ^ (find_type_sig typ2) ^ ")"
     | TProd (typ1, typ2, _) -> "(" ^ (find_type_sig typ1) ^ " * " ^ (find_type_sig typ2) ^ ")"
-    | TSum (typ1, typ2, _) -> "(" ^ (find_type_sig typ1) ^ " + " ^ (find_type_sig typ2) ^ ")" in
+    | TSum (typ1, typ2, _) -> "(" ^ (find_type_sig typ1) ^ " + " ^ (find_type_sig typ2) ^ ")" 
+    | TForeign (Local.TypId (id, _), _) -> "(" ^ id ^ ")" in (* pattern match at net Tforeign extracts string id and wraps it in parentheses,*)
 
   (* The full type signature of a function. We apply this type signature to the identifier, 
   then we set the value of the identifier to be equal to 'fun arg ->[ffi]]'. This works because of currying. *)

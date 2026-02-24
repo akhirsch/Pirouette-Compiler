@@ -7,6 +7,7 @@ module M = struct
     | TMap of 'a typ * 'a typ * 'a
     | TProd of 'a typ * 'a typ * 'a
     | TSum of 'a typ * 'a typ * 'a
+    | TForeign of 'a Local.typ_id * 'a  (* foreign type constructor local.type_id is the name *)
 
   type 'a expr =
     | Unit of 'a
@@ -52,6 +53,7 @@ struct
     | TMap (_, _, i) -> i
     | TProd (_, _, i) -> i
     | TSum (_, _, i) -> i
+    | TForeign ( _, i) -> i 
   ;;
 
   let get_info_expr : expr -> Info.t = function
@@ -89,6 +91,8 @@ struct
     | TMap (t1, t2, _) -> TMap (t1, t2, i)
     | TProd (t1, t2, _) -> TProd (t1, t2, i)
     | TSum (t1, t2, _) -> TSum (t1, t2, i)
+    | TForeign (t, _) -> TForeign (t, i) (* TForeign preserves its type name, only metadata is updated. *)
+
   ;;
 
   let set_info_expr : Info.t -> expr -> expr =
@@ -117,7 +121,7 @@ struct
     | Decl (p, t, _) -> Decl (p, t, i)
     | Assign (ps, e, _) -> Assign (ps, e, i)
     | TypeDecl (id, t, _) -> TypeDecl (id, t, i)
-    | ForeignDecl (id, t, s, _) -> ForeignDecl (id, t, s, i)
-    | ForeignTypeDecl (id, _) -> ForeignTypeDecl (id, i)
+    | ForeignDecl (id, t, s, _) -> ForeignDecl (id, t, s, i) (* preserves variable name, type, and external symbol. *)
+    | ForeignTypeDecl (id, _) -> ForeignTypeDecl (id, i) (* preserves type name *)
   ;;
 end

@@ -33,6 +33,7 @@ let rec jsonify_local_type = function
   | Local.TSum (t1, t2, _) ->
     `Assoc [ "TSum", `List [ jsonify_local_type t1; jsonify_local_type t2 ] ]
   | Local.TForeign (TypId (id, _), _) -> `String id
+  (* returns the type name as a plain JSON string, consistent with TVar both named types *)
 ;;
 
 let rec jsonify_local_pattern = function
@@ -121,6 +122,7 @@ let rec jsonify_choreo_type = function
   | Choreo.TSum (t1, t2, _) ->
     `Assoc [ "TSum", `List [ jsonify_choreo_type t1; jsonify_choreo_type t2 ] ]
   | Choreo.TForeign (Typ_Id (id, _), _) -> `String id
+  (* returns the type name as a plain JSON string, consistent with TVar both named types *)
 ;;
 
 let rec jsonify_choreo_pattern = function
@@ -167,6 +169,10 @@ let rec jsonify_choreo_stmt = function
   | Choreo.ForeignTypeDecl (TypId (id, _), _) ->
     `Assoc 
       [ ("ForeignTypeDecl", `Assoc [ "type_id", `String id ]) ]
+  (*  converts a choreo statement into a JSON representation. 
+  Each statement variant becomes a JSON object with the constructor name as the key.
+  ForeignDecl it includes the variable name, type signature, and external string name
+  ForeignTypeDecl it just includes the type name *)
 
 and jsonify_choreo_expr = function
   | Choreo.Unit _ -> `String "Unit"
@@ -260,6 +266,7 @@ let rec jsonify_net_type = function
     `Assoc [ "TProd", `List [ jsonify_net_type t1; jsonify_net_type t2 ] ]
   | Net.TSum (t1, t2, _) ->
     `Assoc [ "TSum", `List [ jsonify_net_type t1; jsonify_net_type t2 ] ]
+  | Net.TForeign (Local.TypId (id, _), _) -> `String id
 ;;
 
 let rec jsonify_net_stmt = function

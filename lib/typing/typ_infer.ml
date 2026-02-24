@@ -38,6 +38,7 @@ let rec unify_local t1 t2 : local_subst =
   | Local.TForeign (Local.TypId(ft1, _),_), Local.TForeign (Local.TypId(ft2,_),_) ->
     if ft1 = ft2 then [] 
     else failwith "Foreign type mismatch"
+    (* two foreign types unify only if they have the same name*)
   | _ -> failwith "Unification failed"
 
 and unify_choreo t1 t2 : choreo_subst =
@@ -64,7 +65,7 @@ and unify_choreo t1 t2 : choreo_subst =
     s1 @ s2
   | Choreo.TForeign (Choreo.Typ_Id(ft1, _),_), Choreo.TForeign (Choreo.Typ_Id(ft2,_),_) ->
     if ft1 = ft2 then [] 
-    else failwith "Foreign type mismatch"
+    else failwith "Foreign type mismatch" (* two foreign types unify only if they have the same name*)
   | _ -> failwith "Unification failed"
 
 (*occurs check: ensure t1 does not occur in t2*)
@@ -74,7 +75,8 @@ and occurs_in_local var_name t2 =
   | Local.TVar (Local.TypId (var_name', _), _) -> var_name = var_name'
   | Local.TProd (t2a, t2b, _) | Local.TSum (t2a, t2b, _) ->
     occurs_in_local var_name t2a || occurs_in_local var_name t2b
-  | Local.TForeign (_, _) -> false 
+  | Local.TForeign (_, _) -> false (* Foreign typescontain no type variables,
+   so a type variable can never occur inside one. *)
 
 (*occurs check for choreo*)
 and occurs_in_choreo var_name t2 =
@@ -84,7 +86,8 @@ and occurs_in_choreo var_name t2 =
   | Choreo.TVar (Choreo.Typ_Id (var_name', _), _) -> var_name = var_name'
   | Choreo.TMap (t1, t2, _) | Choreo.TProd (t1, t2, _) | Choreo.TSum (t1, t2, _) ->
     occurs_in_choreo var_name t1 || occurs_in_choreo var_name t2
-  | Choreo.TForeign (_, _) -> false
+  | Choreo.TForeign (_, _) -> false (* Foreign typescontain no type variables,
+   so a type variable can never occur inside one. *)
 
 (*traverse the substitution list `s`, apply all occurences of subst to `t`*)
 and apply_subst_typ_local s t =
@@ -98,7 +101,8 @@ and apply_subst_typ_local s t =
     Local.TProd (apply_subst_typ_local s t1, apply_subst_typ_local s t2, m)
   | Local.TSum (t1, t2, _) ->
     Local.TSum (apply_subst_typ_local s t1, apply_subst_typ_local s t2, m)
-  | Local.TForeign (typ_id, _) -> Local.TForeign (typ_id, m)
+  | Local.TForeign (typ_id, _) -> Local.TForeign (typ_id, m) (* no sub to preform
+   preserve the type name and return as-is. *)
 
 (*apply substitution to a Choreo.typ*)
 and apply_subst_typ_choreo s t =
@@ -116,7 +120,8 @@ and apply_subst_typ_choreo s t =
     Choreo.TProd (apply_subst_typ_choreo s t1, apply_subst_typ_choreo s t2, m)
   | Choreo.TSum (t1, t2, _) ->
     Choreo.TSum (apply_subst_typ_choreo s t1, apply_subst_typ_choreo s t2, m)
-  | Choreo.TForeign (typ_id, _) -> Choreo.TForeign (typ_id, m)
+  | Choreo.TForeign (typ_id, _) -> Choreo.TForeign (typ_id, m) (* no substitution for TForeign. 
+  preserve the type name and return as-is. *)
 
 (*apply substitution to context*)
 and apply_subst_ctx_local subst ctx =
@@ -362,8 +367,14 @@ let rec infer_choreo_stmt choreo_ctx global_ctx stmt
     in
     compose_subst_choreo s_comp s3, t1, ctx_list @ choreo_ctx
   | Choreo.TypeDecl (_typ_id, _choreo_typ, _) -> failwith "Not implemented"
-  | Choreo.ForeignDecl (_, _, _, _) -> failwith "Not implemented"
-  | Choreo.ForeignTypeDecl (_, _) -> failwith "Not implemented"
+  | Choreo.ForeignDecl (Local.VarId (var_name, _), choreo_typ, _foreign_symbol, _) ->
+    [], choreo_typ, (var_name, choreo_typ) :: choreo_ctx
+  (* Foreign function declarations introduce an externally-defined function into scope.
+   Add the variable name and its declared type signature to choreo_ctx so it can
+   be referenced and type-checked like any other choreo variable. *) 
+  | Choreo.ForeignTypeDecl (_, _) -> [], Choreo.TUnit m, choreo_ctx
+  (* Foreign type declarations introduce a new type name into the language.
+   No type inference needed, just acknowledge the declaration and pass through.*)
 
 and infer_choreo_stmt_block choreo_ctx global_ctx stmts
   : choreo_subst * ftv Choreo.typ * choreo_ctx
