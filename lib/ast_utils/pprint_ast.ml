@@ -300,7 +300,7 @@ let rec pprint_net_type ppf (typ : 'a Net.typ) =
   | TSum (t1, t2, _) ->
     fprintf ppf "@[<h>(%a) + (%a)@]" pprint_net_type t1 pprint_net_type t2
   | TForeign (Local.TypId (id, _), _) ->
-    fprintf ppf "@[<h>foreign %s@]" id
+    fprintf ppf "@[<h>%s@]" id
   (* TForeign is a leaf node it has no inner type to recurse into, just a name. 
   There's nothing to pretty print recursively, you just print the name directly, 
   same as TUnit just prints "unit" and doesn't recurse *)

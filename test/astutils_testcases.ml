@@ -58,6 +58,7 @@ let local_typs =
    type local_prod_typ := P1.(int*string);\n\n\
    type local_sum_typ := P1.(int+string);\n"
 ;;
+(* NEED -> add local tforign type this test file is being called in pprint test *)
 
 let choreo_fundef =
   "foo := fun a -> (a, a);\n\n\
@@ -94,4 +95,24 @@ let netir_ex3 =
    y2 := allow choice from P1 with\n\
   \      | L -> ret (5)\n\
   \      | R -> ret (9);\n"
+
+(* test feed into prettyprint_test.ml and are testing local TForeign in prettyprint 
+for the bisect report *)
+let foreign_type_decl = "foreign type Int32;\n"
+
+let foreign_decl_with_foreign_type = 
+  "foreign type Int32;\n\
+   foreign myFunc : Alice.Int32 -> Bob.Int32 := \"Pet:feed\";\n"
+
+let foreign_decl_choreo_tforeign = 
+  "foreign type Int32;\n\
+   foreign myFunc : Int32 := \"Pet:feed\";\n"
+   (* Int32 is a bare choreo-level foreign type, not located at any participant *)
+
+let net_foreign_type_decl = "foreign type Int32;\n"
+
+
+let net_foreign_decl_with_foreign_type =
+  "foreign type Int32;\n\
+   foreign myFunc : Int32 := \"Pet:feed\";\n"
 ;;

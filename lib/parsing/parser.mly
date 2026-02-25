@@ -256,6 +256,7 @@ choreo_type:
   | t1=choreo_type TIMES t2=choreo_type { TProd (t1, t2, gen_pos $startpos $endpos) }
   | t1=choreo_type PLUS t2=choreo_type { TSum (t1, t2, gen_pos $startpos $endpos) }
   | LPAREN t=choreo_type RPAREN { Choreo.set_info_typ (gen_pos $startpos $endpos) t }
+  | id=ID { TForeign (Typ_Id (id, gen_pos $startpos $endpos), gen_pos $startpos $endpos) }
 
 (** [local_type] parses local types and constructs corresponding AST nodes.
 
@@ -269,6 +270,7 @@ local_type:
   | t1=local_type TIMES t2=local_type { TProd (t1, t2, gen_pos $startpos $endpos) }
   | t1=local_type PLUS t2=local_type { TSum (t1, t2, gen_pos $startpos $endpos) }
   | LPAREN t=local_type RPAREN { Local.set_info_typ (gen_pos $startpos $endpos) t }
+  | id=typ_id { Ast_core.Local.M.TForeign (id, gen_pos $startpos $endpos) } (* need to add this match if it is an id then it is a tforeign type *)
   
 loc_id:
   | id=ID { LocId (id, gen_pos $startpos $endpos) }

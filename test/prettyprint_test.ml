@@ -70,12 +70,19 @@ let suite =
               ; ("local_pat_match_2" >:: fun _ -> peq Astutils_testcases.lcl_pat_match_2)
               ]
        ; "Foreign Declarations"
-         >::: [ ("foreign_decl" >:: fun _ -> peq Astutils_testcases.foreign_decl) ]
+         >::: [ ("foreign_decl" >:: fun _ -> peq Astutils_testcases.foreign_decl) 
+              ; ("foreign_type_decl" >:: fun _ -> peq Astutils_testcases.foreign_type_decl)
+              ; ("foreign_decl_with_foreign_type" >:: fun _ -> peq Astutils_testcases.foreign_decl_with_foreign_type)
+              ; ("foreign_type_choreo" >:: fun _ -> peq Astutils_testcases.foreign_decl_choreo_tforeign)
+               ]
+         
        ; "Net IR"
          >::: [ ("simple_net" >:: fun _ -> net_peq Astutils_testcases.simple_net)
               ; ("ex3_netir" >:: fun _ -> net_peq Astutils_testcases.netir_ex3)
+              ; ("net_foreign_type_decl" >:: fun _ -> net_peq Astutils_testcases.net_foreign_type_decl)
+              ; ("net_foreign_decl_with_foreign_type" >:: fun _ -> net_peq Astutils_testcases.net_foreign_decl_with_foreign_type)
               ]
-       ]
+  ]
 ;;
 
 let () = run_test_tt_main suite

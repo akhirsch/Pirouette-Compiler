@@ -42,7 +42,7 @@
 (test
  (name ffi_test)
  (modules ffi_test)
- (libraries ounit2 ast_core)
+ (libraries ounit2 ast_core ast_utils ocamlgen ppxlib)
 )
 
 ;(test
