@@ -1,5 +1,14 @@
 {-works-}
 
+
+{-type Bob := | construct : A.int: Bob;
+
+type Coin := |heads : Coin; | Tails : Coin;
+x := B.construct;
+x := B."hello";-}
+
+type X := (A.int);
+
 type X := (A.int * B.int);
 
 type X := 
