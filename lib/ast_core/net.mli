@@ -113,7 +113,7 @@ module M : sig
             in
             int_or_string ]} *)
     | TForeign of 'a Local.M.typ_id * 'a
-(** foreign type, identified only by name with no internal structure.
+(**  foreign type, identified only by name with no internal structure.
 
   {b Internal AST Structure:} [TForeign(type_id, metadata)]
 

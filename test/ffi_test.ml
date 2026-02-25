@@ -7,12 +7,13 @@ end
 
 module LocalAst = Local.With (DummyInfo)
 module ChoreoAst = Ast_core.Choreo.With (DummyInfo)
+module NetAst = Ast_core.Net.With (DummyInfo)
 
 
 (* Local FFI Type Tests *)
 
 (* The tests "test_get_info_tforegin_local" and "test_set_info_tforeign_Local"  verify that TForeign
-which is the node that was added for the FFI correctly supports the standard  get_info/set_info 
+which is the node that was added for the FFI correctly supports get_info/set_info 
 pattern that the rest of the AST nodes use*)
 let test_get_info_tforeign_Local (meta : int) =
   let typ_id = Local.M.TypId ("Int32", meta) in (* a type identifier node tagged with metadata *)
@@ -80,7 +81,61 @@ let test_set_info_foreigntypedecl_Choreo (old_meta : int) (new_meta : int) =
   assert_equal new_meta (ChoreoAst.get_info_stmt new_stmt)
 ;;
 
+(* NET tests *)
 
+let test_get_info_tforeign_Net (meta : int) =
+  let typ_id = Local.M.TypId ("Int32", meta) in (* net.TForeign takes a local.typ_id *)
+  let typ = Net.M.TForeign (typ_id, meta) in
+  assert_equal meta (NetAst.get_info_typ typ)
+;;
+
+let test_set_info_tforeign_Net (old_meta : int) (new_meta : int) =
+  let typ_id = Local.M.TypId ("Int32", old_meta) in
+  let old_typ = Net.M.TForeign (typ_id, old_meta) in
+  let new_typ = NetAst.set_info_typ new_meta old_typ in
+  assert_equal new_meta (NetAst.get_info_typ new_typ)
+;;
+
+(* get info net statement for a ForeignDecl a foreign function declaration 
+projected down to the network level*)
+let test_get_info_foreigndecl_Net (meta : int) =
+  let var_id = Local.M.VarId ("my_func", meta) in
+  (* Realistic FFI type: a foreign type located at a specific location *)
+  let loc_id = Local.M.LocId ("Alice", meta) in
+  let typ_id = Local.M.TypId ("Int32", meta) in
+  let local_typ = Local.M.TForeign (typ_id, meta) in
+  let typ = Net.M.TLoc (loc_id, local_typ, meta) in
+  let stmt = Net.M.ForeignDecl (var_id, typ, "Math:calculate", meta) in
+  assert_equal meta (NetAst.get_info_stmt stmt)
+;;
+
+(* set info net net stmt(is the net level IR after endpoint projection) for a 
+ForeignDecl a foreign function declaration projected down to the network level *)
+let test_set_info_foreigndecl_Net (old_meta : int) (new_meta : int) =
+  let var_id = Local.M.VarId ("my_func", old_meta) in
+  let loc_id = Local.M.LocId ("Alice", old_meta) in
+  let typ_id = Local.M.TypId ("Int32", old_meta) in
+  let local_typ = Local.M.TForeign (typ_id, old_meta) in (* using the local foreign type! *)
+  let typ = Net.M.TLoc (loc_id, local_typ, old_meta) in
+  let old_stmt = Net.M.ForeignDecl (var_id, typ, "Math:calculate", old_meta) in
+  let new_stmt = NetAst.set_info_stmt new_meta old_stmt in
+  assert_equal new_meta (NetAst.get_info_stmt new_stmt)
+;;
+
+(* get net stmt(net stmt is the net level IR after endpoint projection) info for 
+ForeignTypeDecl which is a foreign type projected down to net level *)
+let test_get_info_foreigntypedecl_Net (meta : int) =
+  let typ_id = Local.M.TypId ("Int32", meta) in
+  let stmt = Net.M.ForeignTypeDecl (typ_id, meta) in
+  assert_equal meta (NetAst.get_info_stmt stmt)
+;;
+
+let test_set_info_foreigntypedecl_Net (old_meta : int) (new_meta : int) =
+  let typ_id = Local.M.TypId ("Int32", old_meta) in
+  let old_stmt = Net.M.ForeignTypeDecl (typ_id, old_meta) in
+  let new_stmt = NetAst.set_info_stmt new_meta old_stmt in
+  assert_equal new_meta (NetAst.get_info_stmt new_stmt)
+;;
 
 (* add these ast_locs test *)
 (* 
@@ -109,7 +164,19 @@ let choreo_ffi_suite =
        ]
 ;;
 
+let net_ffi_suite =
+  "Net FFI Tests"
+  >::: [ "get_info ForeignDecl" >:: (fun _ -> test_get_info_foreigndecl_Net 1)
+       ; "set_info ForeignDecl" >:: (fun _ -> test_set_info_foreigndecl_Net 1 2)
+       ; "get_info ForeignTypeDecl" >:: (fun _ -> test_get_info_foreigntypedecl_Net 1)
+       ; "set_info ForeignTypeDecl" >:: (fun _ -> test_set_info_foreigntypedecl_Net 1 2)
+       ; "get_info TForeign Net" >:: (fun _ -> test_get_info_tforeign_Net 1)
+       ; "set_info TForeign Net" >:: ( fun _ -> test_set_info_tforeign_Net 1 2)
+       ]
+;;
+
 let () =
   run_test_tt_main local_ffi_suite;
-  run_test_tt_main choreo_ffi_suite
+  run_test_tt_main choreo_ffi_suite;
+  run_test_tt_main net_ffi_suite
 ;;
