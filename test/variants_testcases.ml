@@ -1,4 +1,4 @@
-let simple = "type X := constructor : X;";;
+let simple = "type X := | constructor : X;";;
 let true_constructor = "type T := true : T;";;
 let false_constructor = "type F := ;";;
 let boolean = "

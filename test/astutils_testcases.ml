@@ -116,6 +116,15 @@ let multiple_constructors2 =
 | Altima: Car;\n
 ";;
 
+(*These tests below are good edge cases that should also pass *)
+let duplicate_constructors = 
+"type Coin := 
+| heads: Coin;\n\n
+| heads: Coin;\n\n
+";;
+
+let type_constructor_same = "type Person := | Person : Person;";;
+
 (* Below are some poorly formatted variants. These should fail. *)
 
 let missing_constructor1 = "type X := ;";;
@@ -135,14 +144,3 @@ let multiple_wrong_type1 =
   | constructor1: A;\n\n
   | constructor2: B;\n\n
   ";;
-
-
-(* The tests below may or may not pass the parser, but are good edge cases either way. *)
- (* I (Sam) need to review the specification for these. *)
-let duplicate_constructors = 
-"type Coin := 
-| heads: Coin;\n\n
-| heads: Coin;\n\n
-";;
-
-let type_constructor_same = "type Person := | Person : Person;";;
