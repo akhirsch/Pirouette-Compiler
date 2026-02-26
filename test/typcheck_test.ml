@@ -1040,27 +1040,29 @@ let incorrect_foreign_type_binding =
     , m )
 ;;
 
+(* Tests for foreign type declarations and use LOCAL *)
 let foreign_type_local_suite = 
   "Foreign type Local tests"
-  >::: [ ("foreign type declaration is accepted"
-        >:: fun _ -> local_typ_eq foreign_type_int32 foreign_type_int32 
-          |> assert_true)
-          ; ("foreign type can be used in expressions"
+  >::: [ ("foreign type declaration is accepted" (* foreign type declarations are accepted by the type checker *)
           >:: fun _ -> 
-          let ctx = [ "y", foreign_type_int32] in
-          let _subst, t = infer_local_expr ctx correct_foreign_type_let in 
-          local_typ_eq t foreign_type_int32
-          |> assert_true)
-          ; ("type checking fails for invlaid foreign type usage"
+            local_typ_eq foreign_type_int32 foreign_type_int32 
+            |> assert_true)
+        ; ("foreign type can be used in expressions" (* foreign types can be used in expressions and let bindings *)
+          >:: fun _ -> 
+            let ctx = [ "y", foreign_type_int32] in
+            let _subst, t = infer_local_expr ctx correct_foreign_type_let in 
+            local_typ_eq t foreign_type_int32
+            |> assert_true)
+        ; ("type checking fails for invlaid foreign type usage" (* type checking correctly rejects invalid foreign type usage *)
           >:: fun _ ->
             Failure "Type annotation and actual type mismatch"
             |> local_expr_typ_failures incorrect_foreign_type_binding)
-          ; (" foreign types unify correctly when same"
+        ; (" foreign types unify correctly when same" (* foreign types unify with themselves *)
           >:: fun _ -> unify_local_success foreign_type_int32 foreign_type_int32 [])
-          ; (" foreign types fail to unify when different"
+        ; (" foreign types fail to unify when different" (* foreign types fail to unify with different foreign types *)
           >:: fun _ -> unify_local_failure foreign_type_int32 foreign_type_float64 
-          "Foreign type mismatch")
-          ]
+            "Foreign type mismatch")
+        ]
   ;;
 
 let all_suites =
