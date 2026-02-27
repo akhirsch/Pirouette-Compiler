@@ -90,21 +90,12 @@
 ; 0% (0 / 5) -> lib/parsing/parsed_ast.ml
 ; 2% (67 / 2362) -> lib/parsing/parser.m (focus)
 
-(test
- (name parsing_test)
- (modules parsing_test)
- (libraries ounit2 parsing ast_core))
-
 ;  (test
 ;  (name variants_test)
 ;  (modules variants_test variants_testcases)
 ;  (libraries ounit2 parsing ast_core))
 
 ;this library is a requisite for marshal_test
-
-(library
- (name types_test)
- (modules types_test))
 
 ;runs marshal_test.ml
 ; TESTED FILES 2/25

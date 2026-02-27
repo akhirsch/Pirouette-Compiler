@@ -21,6 +21,7 @@ let main_suite =
       Dotast_test.suite;
       Net_parsing_test.suite;
       Emit_core_test.all_suites;
+      Parsing_test.suite;
     ]
     
 let () = run_test_tt_main main_suite
