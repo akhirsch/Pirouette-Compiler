@@ -162,6 +162,6 @@ For detailed type rules and semantics, refer to the theory documentation here
 {1 Resources}
 
 - {{:https://github.com/Foundations-of-Decentralization-Group/Pirouette-Compiler}GitHub Repository}
-- {{:https://github.com/akhirsch/Pirouette-Compiler/blob/main/docs/compiler_Guide}Detailed Compiler Guide}
+- {{:https://github.com/akhirsch/Pirouette-Compiler/blob/main/theory/compiler_Guide}Detailed Compiler Guide}
 - {{:https://github.com/akhirsch/Pirouette-Compiler/wiki/Compiler-Pipeline-Diagram}Compiler Pipeline Diagram}
 - {{!page-user_guide}User Guide}

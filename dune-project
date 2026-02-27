@@ -44,4 +44,4 @@
   (ocamlformat (and (>= 0.27.0):dev)))
  (allow_empty))
 
-; See the complete stanza docs at https://dune.readthedocs.io/en/stable/dune-files.html#dune-project
+; See the complete stanza docs at https://dune.readthedocs.io/en/latest/reference/dune-project/index.html

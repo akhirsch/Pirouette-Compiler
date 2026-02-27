@@ -69,6 +69,6 @@ The [http_pirc] library provides the HTTP-based runtime for endpoint communicati
 
 {1 Further Reading}
 
-- {{:https://github.com/akhirsch/Pirouette-Compiler/blob/main/docs/compiler_Guide}Comprehensive Compiler Guide}
+- {{:https://github.com/akhirsch/Pirouette-Compiler/blob/main/theory/compiler_Guide}Comprehensive Compiler Guide}
 - {{:https://github.com/akhirsch/Pirouette-Compiler/wiki/Compiler-Pipeline-Diagram}Compiler Pipeline Diagram}
 - {{!page-developer_guide}Developer Guide}
