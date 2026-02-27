@@ -113,6 +113,14 @@ module M : sig
       communication and [ChooseFor]/[AllowChoice] for synchronization. Each
       expression carries metadata of type ['a], allowing compiler passes to
       attach annotations. *)
+    | TVariant of 'a constructor list *  'a
+
+    and 'a constructor =
+    { name : string
+    ; args : 'a typ list
+    ; typ  : 'a Local.M.typ_id
+    ; info : 'a
+    }
 
   type 'a expr =
     | Unit of 'a
@@ -527,6 +535,7 @@ module M : sig
       assignments, type aliases, and foreign function declarations. Each
       statement carries metadata of type ['a], allowing compiler passes to
       attach annotations.*)
+    | Construct of string * 'a expr list * 'a Local.M.typ_id * 'a
 
   and 'a stmt =
     | Decl of 'a Local.M.pattern * 'a typ * 'a

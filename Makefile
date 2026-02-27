@@ -1,5 +1,6 @@
 FILE := $(word 2, $(MAKECMDGOALS))
-LATEX_DOCS := $(shell find docs -name '*.tex')
+DOCS_DIR := theory
+LATEX_DOCS := $(shell find $(DOCS_DIR) -name '*.tex')
 
 .PHONY: build docs check-env pp json dot test-infer test-pp bisect-pp clean cleandocs cleanall
 
@@ -12,16 +13,7 @@ check-env:
 
 docs: check-env
 	@for file in $(LATEX_DOCS); do \
-		base=$$(basename $$file .tex); \
-		dir=$$(dirname $$file); \
-		if [ -f "$${dir}/$$base.bib" ]; then \
-			pdflatex -output-directory=$$dir $$file; \
-			biber --input-directory $$dir --output-directory $$dir $$base; \
-			pdflatex -output-directory=$$dir $$file; \
-			pdflatex -output-directory=$$dir $$file; \
-		else \
-			pdflatex -output-directory=$$dir $$file; \
-		fi; \
+		latexmk -lualatex -cd $$file; \
 	done
 
 pp:
@@ -70,15 +62,15 @@ help:
 	echo	"dune exec pirc -- -ast-dump pprint <YOUR_FILE>"
 
 cleandocs:
-	rm -rf $(shell find docs -name '*.aux' -o -name '*.log' -o -name '*.out' \
-	-o -name '*.bbl' -o -name '*.bcf' -o -name '*.blg' -o -name '*.run.xml' \
-	-o -name '*.lox' -o -name '*.toc')
+	@for file in $(LATEX_DOCS); do \
+		latexmk -C -cd $$file; \
+	done
 
 clean: cleandocs
 	dune clean
 
 cleanall: clean
-	rm -rf _build _coverage bisect*.coverage $(shell find docs -name '*.pdf')
+	rm -rf _coverage bisect*.coverage
 
 %:
 	@:
