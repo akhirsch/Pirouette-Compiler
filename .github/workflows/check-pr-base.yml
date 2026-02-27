@@ -22,6 +22,6 @@ jobs:
             echo "The PR is based on the latest dev."
           else
             echo "The PR is not based on the latest dev."
-            echo "You need rebase/merge."
+            echo "You need rebase/merge dev into this branch."
             exit 1
           fi
