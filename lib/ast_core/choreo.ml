@@ -24,7 +24,8 @@ module M = struct
     | Var of 'a Local.var_id * 'a
     | LocExpr of 'a Local.loc_id * 'a Local.expr * 'a
     | Send of 'a Local.loc_id * 'a expr * 'a Local.loc_id * 'a
-    | Sync of 'a Local.loc_id * 'a Local.sync_label * 'a Local.loc_id * 'a expr * 'a
+    | Sync of
+        'a Local.loc_id * 'a Local.sync_label * 'a Local.loc_id * 'a expr * 'a
     | If of 'a expr * 'a expr * 'a expr * 'a
     | Let of 'a stmt_block * 'a expr * 'a
     | FunDef of 'a pattern list * 'a expr * 'a
@@ -38,7 +39,8 @@ module M = struct
 
   and 'a stmt =
     | Decl of 'a pattern * 'a typ * 'a
-    | Assign of 'a pattern list * 'a expr * 'a (* list is only for F P1 P2 ... Pn := C *)
+    | Assign of 'a pattern list * 'a expr * 'a
+      (* list is only for F P1 P2 ... Pn := C *)
     | TypeDecl of 'a Local.typ_id * 'a typ * 'a
     | ForeignDecl of 'a Local.var_id * 'a typ * string * 'a
 
@@ -46,8 +48,8 @@ module M = struct
 end
 
 module With (Info : sig
-    type t
-  end) =
+  type t
+end) =
 struct
   type nonrec typ_id = Info.t M.typ_id
   type nonrec typ = Info.t M.typ
@@ -56,9 +58,7 @@ struct
   type nonrec stmt = Info.t M.stmt
   type nonrec stmt_block = stmt list
 
-  let get_info_typid : typ_id -> Info.t = function
-    | Typ_Id (_, i) -> i
-  ;;
+  let get_info_typid : typ_id -> Info.t = function Typ_Id (_, i) -> i
 
   let get_info_typ : typ -> Info.t = function
     | TUnit i -> i
@@ -67,7 +67,6 @@ struct
     | TMap (_, _, i) -> i
     | TProd (_, _, i) -> i
     | TSum (_, _, i) -> i
-  ;;
 
   let get_info_pattern : pattern -> Info.t = function
     | Default i -> i
@@ -76,7 +75,6 @@ struct
     | LocPat (_, _, i) -> i
     | Left (_, i) -> i
     | Right (_, i) -> i
-  ;;
 
   let get_info_expr : expr -> Info.t = function
     | Unit i -> i
@@ -94,42 +92,36 @@ struct
     | Left (_, i) -> i
     | Right (_, i) -> i
     | Match (_, _, i) -> i
-  ;;
 
   let get_info_stmt : stmt -> Info.t = function
     | Decl (_, _, i) -> i
     | Assign (_, _, i) -> i
     | TypeDecl (_, _, i) -> i
     | ForeignDecl (_, _, _, i) -> i
-  ;;
 
   let set_info_typid : Info.t -> typ_id -> typ_id =
-    fun i -> function
-    | Typ_Id (s, _) -> Typ_Id (s, i)
-  ;;
+   fun i -> function Typ_Id (s, _) -> Typ_Id (s, i)
 
   let set_info_typ : Info.t -> typ -> typ =
-    fun i -> function
+   fun i -> function
     | TUnit _ -> TUnit i
     | TLoc (loc, typ, _) -> TLoc (loc, typ, i)
     | TVar (t, _) -> TVar (t, i)
     | TMap (t1, t2, _) -> TMap (t1, t2, i)
     | TProd (t1, t2, _) -> TProd (t1, t2, i)
     | TSum (t1, t2, _) -> TSum (t1, t2, i)
-  ;;
 
   let set_info_pattern : Info.t -> pattern -> pattern =
-    fun i -> function
+   fun i -> function
     | Default _ -> Default i
     | Var (x, _) -> Var (x, i)
     | Pair (p1, p2, _) -> Pair (p1, p2, i)
     | LocPat (loc, pat, _) -> LocPat (loc, pat, i)
     | Left (p, _) -> Left (p, i)
     | Right (p, _) -> Right (p, i)
-  ;;
 
   let set_info_expr : Info.t -> expr -> expr =
-    fun i -> function
+   fun i -> function
     | Unit _ -> Unit i
     | Var (x, _) -> Var (x, i)
     | LocExpr (loc, e, _) -> LocExpr (loc, e, i)
@@ -145,13 +137,11 @@ struct
     | Left (e, _) -> Left (e, i)
     | Right (e, _) -> Right (e, i)
     | Match (e, cases, _) -> Match (e, cases, i)
-  ;;
 
   let set_info_stmt : Info.t -> stmt -> stmt =
-    fun i -> function
+   fun i -> function
     | Decl (pat, typ, _) -> Decl (pat, typ, i)
     | Assign (pats, e, _) -> Assign (pats, e, i)
     | TypeDecl (id, typ, _) -> TypeDecl (id, typ, i)
     | ForeignDecl (id, t, s, _) -> ForeignDecl (id, t, s, i)
-  ;;
 end

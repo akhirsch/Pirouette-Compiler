@@ -4,7 +4,7 @@ synopsis: "Pirouette Compiler"
 description: "Higher-order typed functional choreographies"
 maintainer: ["Maintainer Name"]
 authors: ["Author Name"]
-license: "LICENSE"
+license: "Apache-2.0"
 homepage:
   "https://github.com/Foundations-of-Decentralization-Group/Pirouette-Compiler"
 doc: "https://dl.acm.org/doi/10.1145/3498684"
