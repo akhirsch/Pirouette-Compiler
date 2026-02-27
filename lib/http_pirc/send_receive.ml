@@ -163,7 +163,10 @@ let handler _socket _request body =
        (* Eio.traceln "%s" unwrapped_sender_location; *)
        (* let sender_body = Marshal.from_string string_to_print 0 in *)
        (* Eio.Stream.add indexed_queue sender_body; *)
-       Cohttp_eio.Server.respond_string ~status:`Precondition_failed ~body:"This should not happen" ())
+       Cohttp_eio.Server.respond_string
+         ~status:`Precondition_failed
+         ~body:"This should not happen"
+         ())
 ;;
 
 (* This is the handler for incoming http requests *)

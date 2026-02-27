@@ -31,17 +31,11 @@
     - Messages are marshaled and sent in HTTP request bodies
     - Endpoints receive data via HTTP request handlers *)
 
-    (**{2 Message http Interface Module}*)
+(**{2 Message http Interface Module}*)
 
 module Msg_http_intf : Msg_intf.M
 
-val emit_toplevel_http
-  :  out_channel
-  -> string list
-  -> 'a Ast_core.Net.M.stmt_block list
-  -> string
-  -> unit
-  (** [emit_toplevel_http] generates a complete OCaml program for a single 
+(** [emit_toplevel_http] generates a complete OCaml program for a single 
   endpoint using HTTP communication and writes it to output channel [oc].
       
       Parameters:
@@ -63,3 +57,9 @@ val emit_toplevel_http
       {b Effect:} Writes a complete OCaml program for [target_endpoint] to [oc].
       The generated program is a standalone executable that runs an HTTP server
       and communicates with other endpoints via HTTP requests.*)
+val emit_toplevel_http
+  :  out_channel
+  -> string list
+  -> 'a Ast_core.Net.M.stmt_block list
+  -> string
+  -> unit

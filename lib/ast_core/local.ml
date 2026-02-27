@@ -35,7 +35,8 @@ module M = struct
     | TVar of 'a typ_id * 'a
     | TProd of 'a typ * 'a typ * 'a
     | TSum of 'a typ * 'a typ * 'a
-    | TForeign of 'a typ_id * 'a (* TForeign represents a foreign type contructor at the local level,
+    | TForeign of 'a typ_id * 'a
+  (* TForeign represents a foreign type contructor at the local level,
    identified only by name *)
 
   type 'a pattern =
@@ -202,8 +203,10 @@ struct
     | TVar (t, _) -> TVar (t, i)
     | TProd (t1, t2, _) -> TProd (t1, t2, i)
     | TSum (t1, t2, _) -> TSum (t1, t2, i)
-    | TForeign (t, _) -> TForeign (t, i) (* TForeign preserves its type name, only metadata is updated. *)
+    | TForeign (t, _) -> TForeign (t, i)
   ;;
+
+  (* TForeign preserves its type name, only metadata is updated. *)
 
   let set_info_pattern : Info.t -> pattern -> pattern =
     fun i -> function

@@ -38,17 +38,19 @@ end
 
 let emit_toplevel_init _loc_ids config_file_path =
   [ [%stri
-    let () =
-      (* print_endline "In here for testing"; *)
-      let config_file_path : string = [%e Ast_builder.Default.estring ~loc config_file_path] in
-      match Lwt_main.run (Config_parser.load_config config_file_path) with
-      | Some cfg ->
-        Send_receive.config := Some cfg;
-        (* Each process initializes its HTTP server in its own execution context *)
-        ()
-      | None ->
-        failwith (Printf.sprintf "Failed to load config from %s" config_file_path)
-    ;;]
+      let () =
+        (* print_endline "In here for testing"; *)
+        let config_file_path : string =
+          [%e Ast_builder.Default.estring ~loc config_file_path]
+        in
+        match Lwt_main.run (Config_parser.load_config config_file_path) with
+        | Some cfg ->
+          Send_receive.config := Some cfg;
+          (* Each process initializes its HTTP server in its own execution context *)
+          ()
+        | None ->
+          failwith (Printf.sprintf "Failed to load config from %s" config_file_path)
+      ;;]
   ]
 ;;
 
@@ -80,8 +82,7 @@ let emit_toplevel_http
           "Starting process_%s...\n"
           [%e Ast_builder.Default.estring ~loc loc_id];
         (* Set the current location explicitly for this process *)
-        Send_receive.init_http_servers [%e Ast_builder.Default.estring ~loc loc_id]
-          ();
+        Send_receive.init_http_servers [%e Ast_builder.Default.estring ~loc loc_id] ();
         let [%p Ast_builder.Default.pvar ~loc (spf "process_%s" loc_id)] =
           [%e emit_net_toplevel net_stmts]
         in

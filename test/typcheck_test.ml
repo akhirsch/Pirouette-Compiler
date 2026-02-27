@@ -126,8 +126,8 @@ let rec local_typ_eq t expected_t =
   | Local.TProd (t1, t2, _), Local.TProd (t1', t2', _)
   | Local.TSum (t1, t2, _), Local.TSum (t1', t2', _) ->
     local_typ_eq t1 t1' && local_typ_eq t2 t2'
-  | Local.TForeign (Local.TypId (name1, _), _), Local.TForeign (Local.TypId (name2, _), _) ->
-    name1 = name2  
+  | Local.TForeign (Local.TypId (name1, _), _), Local.TForeign (Local.TypId (name2, _), _)
+    -> name1 = name2
   | _ -> false
 ;;
 
@@ -1025,7 +1025,7 @@ let correct_foreign_type_let =
   Local.Let
     ( VarId ("x", m)
     , foreign_type_int32
-    , Local.Var (VarId ("y", m), m)  (* assume y is already bound to Int32 *)
+    , Local.Var (VarId ("y", m), m) (* assume y is already bound to Int32 *)
     , Local.Var (VarId ("x", m), m)
     , m )
 ;;
@@ -1034,36 +1034,41 @@ let correct_foreign_type_let =
 let incorrect_foreign_type_binding =
   Local.Let
     ( VarId ("x", m)
-    , foreign_type_int32        (* Declared as Int32 *)
-    , Local.Val (Local.Int (5, m), m)  (* But assigned an Int value *)
+    , foreign_type_int32 (* Declared as Int32 *)
+    , Local.Val (Local.Int (5, m), m) (* But assigned an Int value *)
     , Local.Var (VarId ("x", m), m)
     , m )
 ;;
 
 (* Tests for foreign type declarations and use LOCAL *)
-let foreign_type_local_suite = 
+let foreign_type_local_suite =
   "Foreign type Local tests"
-  >::: [ ("foreign type declaration is accepted" (* foreign type declarations are accepted by the type checker *)
-          >:: fun _ -> 
-            local_typ_eq foreign_type_int32 foreign_type_int32 
-            |> assert_true)
-        ; ("foreign type can be used in expressions" (* foreign types can be used in expressions and let bindings *)
-          >:: fun _ -> 
-            let ctx = [ "y", foreign_type_int32] in
-            let _subst, t = infer_local_expr ctx correct_foreign_type_let in 
-            local_typ_eq t foreign_type_int32
-            |> assert_true)
-        ; ("type checking fails for invlaid foreign type usage" (* type checking correctly rejects invalid foreign type usage *)
+  >::: [ ("foreign type declaration is accepted"
+          (* foreign type declarations are accepted by the type checker *)
+          >:: fun _ -> local_typ_eq foreign_type_int32 foreign_type_int32 |> assert_true)
+       ; ("foreign type can be used in expressions"
+          (* foreign types can be used in expressions and let bindings *)
           >:: fun _ ->
-            Failure "Type annotation and actual type mismatch"
-            |> local_expr_typ_failures incorrect_foreign_type_binding)
-        ; (" foreign types unify correctly when same" (* foreign types unify with themselves *)
+          let ctx = [ "y", foreign_type_int32 ] in
+          let _subst, t = infer_local_expr ctx correct_foreign_type_let in
+          local_typ_eq t foreign_type_int32 |> assert_true)
+       ; ("type checking fails for invlaid foreign type usage"
+          (* type checking correctly rejects invalid foreign type usage *)
+          >:: fun _ ->
+          Failure "Type annotation and actual type mismatch"
+          |> local_expr_typ_failures incorrect_foreign_type_binding)
+       ; (" foreign types unify correctly when same"
+          (* foreign types unify with themselves *)
           >:: fun _ -> unify_local_success foreign_type_int32 foreign_type_int32 [])
-        ; (" foreign types fail to unify when different" (* foreign types fail to unify with different foreign types *)
-          >:: fun _ -> unify_local_failure foreign_type_int32 foreign_type_float64 
+       ; (" foreign types fail to unify when different"
+          (* foreign types fail to unify with different foreign types *)
+          >:: fun _ ->
+          unify_local_failure
+            foreign_type_int32
+            foreign_type_float64
             "Foreign type mismatch")
-        ]
-  ;;
+       ]
+;;
 
 let all_suites =
   "All type inference tests"

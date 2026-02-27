@@ -33,8 +33,9 @@ let rec jsonify_local_type = function
   | Local.TSum (t1, t2, _) ->
     `Assoc [ "TSum", `List [ jsonify_local_type t1; jsonify_local_type t2 ] ]
   | Local.TForeign (TypId (id, _), _) -> `String id
-  (* returns the type name as a plain JSON string, consistent with TVar both named types *)
 ;;
+
+(* returns the type name as a plain JSON string, consistent with TVar both named types *)
 
 let rec jsonify_local_pattern = function
   | Local.Default _ -> `String "Default"
@@ -122,8 +123,9 @@ let rec jsonify_choreo_type = function
   | Choreo.TSum (t1, t2, _) ->
     `Assoc [ "TSum", `List [ jsonify_choreo_type t1; jsonify_choreo_type t2 ] ]
   | Choreo.TForeign (Typ_Id (id, _), _) -> `String id
-  (* returns the type name as a plain JSON string, consistent with TVar both named types *)
 ;;
+
+(* returns the type name as a plain JSON string, consistent with TVar both named types *)
 
 let rec jsonify_choreo_pattern = function
   | Choreo.Default _ -> `String "Default"
@@ -167,9 +169,8 @@ let rec jsonify_choreo_stmt = function
             ] )
       ]
   | Choreo.ForeignTypeDecl (TypId (id, _), _) ->
-    `Assoc 
-      [ ("ForeignTypeDecl", `Assoc [ "type_id", `String id ]) ]
-  (*  converts a choreo statement into a JSON representation. 
+    `Assoc [ "ForeignTypeDecl", `Assoc [ "type_id", `String id ] ]
+(*  converts a choreo statement into a JSON representation. 
   Each statement variant becomes a JSON object with the constructor name as the key.
   ForeignDecl it includes the variable name, type signature, and external string name
   ForeignTypeDecl it just includes the type name *)

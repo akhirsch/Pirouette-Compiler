@@ -10,7 +10,8 @@ module M = struct
     | TMap of 'a typ * 'a typ * 'a
     | TProd of 'a typ * 'a typ * 'a
     | TSum of 'a typ * 'a typ * 'a
-    | TForeign of 'a typ_id * 'a (* TForeign constructor a foreign type at the choreography level,
+    | TForeign of 'a typ_id * 'a
+  (* TForeign constructor a foreign type at the choreography level,
    identified only by name *)
 
   type 'a pattern =
@@ -44,10 +45,12 @@ module M = struct
     | TypeDecl of 'a Local.typ_id * 'a typ * 'a
     | ForeignDecl of 'a Local.var_id * 'a typ * string * 'a
     (* ForeignDecl declares a foreign FUNCTION: variable name, its type signature, and the external symbol string aka its name *)
-    | ForeignTypeDecl of 'a Local.typ_id * 'a (* declares a foreign type name with no internal structure *)
-    (*  ForeignDecl adds a callable foreign function and ForeignTypeDecl adds a usable foreign type name. 
+    | ForeignTypeDecl of 'a Local.typ_id * 'a
+  (* declares a foreign type name with no internal structure *)
+  (*  ForeignDecl adds a callable foreign function and ForeignTypeDecl adds a usable foreign type name. 
     Both need to exist as statements so they can appear in a stmt_block and be processed sequentially by 
     the type checker alongside regular declarations like Decl and Assign*)
+
   and 'a stmt_block = 'a stmt list
 end
 
@@ -73,7 +76,8 @@ struct
     | TMap (_, _, i) -> i
     | TProd (_, _, i) -> i
     | TSum (_, _, i) -> i
-    | TForeign (_, i) -> i (* Extract metadata from a choreo type node here i is returned which is meta *)
+    | TForeign (_, i) ->
+      i (* Extract metadata from a choreo type node here i is returned which is meta *)
   ;;
 
   let get_info_pattern : pattern -> Info.t = function
@@ -103,15 +107,17 @@ struct
     | Match (_, _, i) -> i
   ;;
 
-  let get_info_stmt : stmt -> Info.t = function (* extracting metadata *)
+  let get_info_stmt : stmt -> Info.t = function
+    (* extracting metadata *)
     | Decl (_, _, i) -> i
     | Assign (_, _, i) -> i
     | TypeDecl (_, _, i) -> i
     | ForeignDecl (_, _, _, i) -> i
     | ForeignTypeDecl (_, i) -> i
-    (* ForeignDecl has 4 fields: variable name, type, external symbol, and metadata.
-   ForeignTypeDecl has 2 fields: type name and metadata. *)
   ;;
+
+  (* ForeignDecl has 4 fields: variable name, type, external symbol, and metadata.
+   ForeignTypeDecl has 2 fields: type name and metadata. *)
 
   let set_info_typid : Info.t -> typ_id -> typ_id =
     fun i -> function
@@ -126,8 +132,10 @@ struct
     | TMap (t1, t2, _) -> TMap (t1, t2, i)
     | TProd (t1, t2, _) -> TProd (t1, t2, i)
     | TSum (t1, t2, _) -> TSum (t1, t2, i)
-    | TForeign (t, _) -> TForeign (t, i) (* TForeign preserves its type name, only metadata is updated. *)
+    | TForeign (t, _) -> TForeign (t, i)
   ;;
+
+  (* TForeign preserves its type name, only metadata is updated. *)
 
   let set_info_pattern : Info.t -> pattern -> pattern =
     fun i -> function
@@ -164,7 +172,9 @@ struct
     | Decl (pat, typ, _) -> Decl (pat, typ, i)
     | Assign (pats, e, _) -> Assign (pats, e, i)
     | TypeDecl (id, typ, _) -> TypeDecl (id, typ, i)
-    | ForeignDecl (id, t, s, _) -> ForeignDecl (id, t, s, i) (* preserves variable name, type, and external symbol. *)
-    | ForeignTypeDecl (id, _) -> ForeignTypeDecl (id, i) (* preserves the type name *)
+    | ForeignDecl (id, t, s, _) ->
+      ForeignDecl (id, t, s, i) (* preserves variable name, type, and external symbol. *)
+    | ForeignTypeDecl (id, _) -> ForeignTypeDecl (id, i)
   ;;
+  (* preserves the type name *)
 end

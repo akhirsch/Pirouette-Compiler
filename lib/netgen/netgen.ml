@@ -5,7 +5,7 @@ module Net = Ast_core.Net.M
 let _m = Obj.magic () (* dummy metainfo to make the types work *)
 
 (* Use this list to create a whitelist of locations/agents/domains that will NOT have type information for their variables erased when compiling for other locations/agents/domains*)
-let whitelisted_locs = ["PIRSTDLIBLOC"]
+let whitelisted_locs = [ "PIRSTDLIBLOC" ]
 
 (* TODO: change Hashtbl to List *)
 let rec merge_net_stmt (stmt : 'a Net.stmt) (stmt' : 'a Net.stmt) : 'a Net.stmt option =
@@ -134,11 +134,14 @@ let rec epp_choreo_type (typ : 'a Choreo.typ) (loc : string) : 'a Net.typ =
   match typ with
   | TLoc ((LocId (loc1, _) as locid), t1, _) ->
     (* If the location of the type is the location of the domain, or the location of the type is whitelisted e.g. in the case of the stdlib providing functions where type info should be shown to all other domains, keep type info*)
-    if ((List.mem loc1 whitelisted_locs) || (loc1 = loc)) then TLoc (locid, t1, _m) else TUnit _m
+    if List.mem loc1 whitelisted_locs || loc1 = loc
+    then TLoc (locid, t1, _m)
+    else TUnit _m
   | TMap (t1, t2, _) -> TMap (epp_choreo_type t1 loc, epp_choreo_type t2 loc, _m)
   | TProd (t1, t2, _) -> TProd (epp_choreo_type t1 loc, epp_choreo_type t2 loc, _m)
   | TSum (t1, t2, _) -> TSum (epp_choreo_type t1 loc, epp_choreo_type t2 loc, _m)
-  | Choreo.TForeign (Choreo.Typ_Id (name, _), _) -> Net.TForeign (Local.TypId (name, _m), _m)
+  | Choreo.TForeign (Choreo.Typ_Id (name, _), _) ->
+    Net.TForeign (Local.TypId (name, _m), _m)
   (* TForeign has no location to project, but preserves the type name through to the net level.
    Choreo uses Choreo.Typ_Id while Net uses Local.TypId, so we extract the name string
    and rewrap it in the correct type id constructor *)
@@ -167,8 +170,7 @@ let rec epp_choreo_stmt (stmt : 'a Choreo.stmt) (loc : string) : 'a Net.stmt =
   | ForeignDecl (id, t, s, _) -> ForeignDecl (id, epp_choreo_type t loc, s, _m)
   (*  ForeignDecl to net level, projecting its type signature for the given location. *)
   | ForeignTypeDecl (id, _) -> ForeignTypeDecl (id, _m)
-  (* ForeignTypeDecl passes through unchanged no type to project name preserved*)
-  
+(* ForeignTypeDecl passes through unchanged no type to project name preserved*)
 
 and epp_choreo_expr (expr : 'a Choreo.expr) (loc : string) : 'a Net.expr =
   match expr with

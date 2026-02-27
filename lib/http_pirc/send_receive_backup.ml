@@ -12,7 +12,6 @@ let config = ref None
 let message_queues : (string, string) Htbl.t = Htbl.create ~hashed_type:(module String) ()
 let message_condition = Lwt_condition.create ()
 
-
 (* Helper to get location config *)
 let get_location_config location =
   match !config with
@@ -68,7 +67,7 @@ let unmarshal_data data_str =
 (* Internal Mapping Functions *)
 let map_send_location location = location
 let map_receive_location location = location
-  
+
 (* This is the handler for incoming http requests *)
 let handler _socket request body =
   let x : Cohttp_eio.Body.t = body in

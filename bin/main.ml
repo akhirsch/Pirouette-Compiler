@@ -133,18 +133,23 @@ let () =
     exit 1);
   (* Lex the input file *)
   let lexbuf = Lexing.from_channel (Option.get !file_ic) in
-
   (* Fetch the standard libary (recompile if needed through use of optional flag), 
     perform alpha renaming to ensure IDs are non-conflicting with OCaml, 
     then swap out all info attributes (Hardcoded to be unit when specifically Stdlib is compiled) with Obj.magic 
     so that the types can be compatible with the program AST when we concat the ASTs *)
   (* Parse the input file, rename IDs, and concatenate it to the stdlib AST *)
-  let user_program = (A_rname.Rename.ast_list_alpha_rename ((Parsing.Parse.parse_with_error !input_filename lexbuf))) in
+  let user_program =
+    A_rname.Rename.ast_list_alpha_rename
+      (Parsing.Parse.parse_with_error !input_filename lexbuf)
+  in
   (* BECAREFUL ABOUT LOCS. Since it takes in the user_program, it does NOT consider locations within the stdlib_ast *)
   let locs = Ast_utils.extract_locs user_program in
-  let stdlib_ast = Ast_utils.ast_list_info_map (fun _ -> Obj.magic ()) ((Stdlib_utils.Stdlib_linker.get_stdlib_ast ~recompile:false ())) in
+  let stdlib_ast =
+    Ast_utils.ast_list_info_map
+      (fun _ -> Obj.magic ())
+      (Stdlib_utils.Stdlib_linker.get_stdlib_ast ~recompile:false ())
+  in
   let program = stdlib_ast @ user_program in
-
   (* Dump the choreography AST *)
   (match !ast_dump_format with
    | None -> ()

@@ -14,11 +14,13 @@ let rec extract_type : 'a Choreo.typ -> LocSet.t = function
   | TVar (Typ_Id (id, _), _) -> LocSet.singleton id
   | TMap (t1, t2, _) | TProd (t1, t2, _) | TSum (t1, t2, _) ->
     LocSet.union (extract_type t1) (extract_type t2)
-  | TForeign (_, _) -> LocSet.empty (* foreign types have no associated location*)
-  (* extract_type is traversing a Choreo.typ to collect all the location identifiers (LocSet) 
+  | TForeign (_, _) -> LocSet.empty
+;;
+
+(* foreign types have no associated location*)
+(* extract_type is traversing a Choreo.typ to collect all the location identifiers (LocSet) 
   ex: TLoc contributes a location, TMap/TProd/TSum recurse into their subtypes to find locations within them. 
   TForeign contributes nothing because a foreign type name is not a location and contains no locations *)
-;;
 
 let[@specialise] rec extract_stmt_block (stmts : 'a Choreo.stmt_block) =
   List.fold_left (fun acc stmt -> LocSet.union acc (extract_stmt stmt)) LocSet.empty stmts
@@ -30,7 +32,9 @@ and extract_stmt : 'a Choreo.stmt -> LocSet.t = function
       (List.fold_left (fun acc p -> LocSet.union acc (extract_pattern p)) LocSet.empty ps)
       (extract_expr e)
   | TypeDecl (_, t, _) -> extract_type t
-  | ForeignDecl (_, t, _, _) -> extract_type t (* ForeignDecl is extracting locations from its type signature t 
+  | ForeignDecl (_, t, _, _) ->
+    extract_type t
+    (* ForeignDecl is extracting locations from its type signature t 
   because the type of a foreign function could reference locations ex Alice.Int -> Bob.String. *)
   | ForeignTypeDecl (_, _) -> LocSet.empty (* foreign types have no associated location *)
 

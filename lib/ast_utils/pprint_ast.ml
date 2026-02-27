@@ -37,7 +37,8 @@ let rec pprint_local_type ppf (typ : 'a Local.typ) =
     fprintf ppf "@[<h>%a * %a@]" pprint_local_type t1 pprint_local_type t2
   | TSum (t1, t2, _) ->
     fprintf ppf "@[<h>%a + %a@]" pprint_local_type t1 pprint_local_type t2
-  | TForeign (TypId (id, _), _) -> fprintf ppf "@[<h>%s@]" id (*  TForeign is a leaf node, just print the name *)
+  | TForeign (TypId (id, _), _) ->
+    fprintf ppf "@[<h>%s@]" id (*  TForeign is a leaf node, just print the name *)
 ;;
 
 (** [pprint_local_pattern] takes a formatter [ppf] and a local pattern,
@@ -166,7 +167,8 @@ let rec pprint_choreo_type ppf (typ : 'a Choreo.typ) =
     fprintf ppf "@[<h>%a *@ %a@]" pprint_choreo_type t1 pprint_choreo_type t2
   | TSum (t1, t2, _) ->
     fprintf ppf "@[<h>(%a) + (%a)@]" pprint_choreo_type t1 pprint_choreo_type t2
-  | TForeign (Typ_Id (id, _), _) -> fprintf ppf "@[<h>%s@]" id (*  TForeign is a leaf node, just print the name*)
+  | TForeign (Typ_Id (id, _), _) ->
+    fprintf ppf "@[<h>%s@]" id (*  TForeign is a leaf node, just print the name*)
 ;;
 
 (** [pp_choreo_pattern] takes a formatter [fmt] and a choreo pattern,
@@ -219,9 +221,8 @@ and pprint_choreo_stmt ppf (stmt : 'a Choreo.stmt) =
     fprintf ppf "@[<h>foreign %s : %a := \"%s\";@]" id pprint_choreo_type t s
     (* ForeignDecl carries a type signature t which is a Choreo.typ 
     it describes the foreign function's type in Pirouette terms*)
-  | ForeignTypeDecl (TypId (id, _), _) ->
-    fprintf ppf "@[<h>foreign type %s;@]" id
-    (* ForeignTypeDecl prettyprints its type name *)
+  | ForeignTypeDecl (TypId (id, _), _) -> fprintf ppf "@[<h>foreign type %s;@]" id
+(* ForeignTypeDecl prettyprints its type name *)
 
 (** [pp_choreo_expr] takes a formatter [ppf] and a choreo expression
     and prints the formatted code of the choreo expression
@@ -299,12 +300,12 @@ let rec pprint_net_type ppf (typ : 'a Net.typ) =
     fprintf ppf "@[<h>(%a) * (%a)@]" pprint_net_type t1 pprint_net_type t2
   | TSum (t1, t2, _) ->
     fprintf ppf "@[<h>(%a) + (%a)@]" pprint_net_type t1 pprint_net_type t2
-  | TForeign (Local.TypId (id, _), _) ->
-    fprintf ppf "@[<h>%s@]" id
-  (* TForeign is a leaf node it has no inner type to recurse into, just a name. 
+  | TForeign (Local.TypId (id, _), _) -> fprintf ppf "@[<h>%s@]" id
+;;
+
+(* TForeign is a leaf node it has no inner type to recurse into, just a name. 
   There's nothing to pretty print recursively, you just print the name directly, 
   same as TUnit just prints "unit" and doesn't recurse *)
-;;
 
 let[@specialise] rec pprint_net_stmt_block ppf (stmts : 'a Net.stmt_block) =
   fprintf ppf "@[<v>%a@]" (pp_print_list pprint_net_stmt) stmts
@@ -322,7 +323,8 @@ and pprint_net_stmt ppf (stmt : 'a Net.stmt) =
       pprint_net_expr
       e
   | TypeDecl (TypId (id, _), t, _) -> fprintf ppf "@[<h>%s : %a;@]" id pprint_net_type t
-  | ForeignDecl (VarId (id, _), t, s, _) -> (* pprint the name, type signature, and external string name *)
+  | ForeignDecl (VarId (id, _), t, s, _) ->
+    (* pprint the name, type signature, and external string name *)
     fprintf ppf "@[<h>foreign %s : %a := \"%s\";@]" id pprint_net_type t s
   | ForeignTypeDecl (TypId (id, _), _) ->
     fprintf ppf "@[<h>foreign type %s;@]" id (* pp just the foreign type name *)

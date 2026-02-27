@@ -16,7 +16,6 @@
     All AST nodes are parameterized by metadata type ['a] for compiler passes
     to attach annotations. *)
 module M : sig
-
   (** {1 Network Types} 
   
   ['a typ] represent types at the network level, forming the bridge between 
@@ -42,7 +41,6 @@ module M : sig
             TUnit(())              
           in
           unit_type]} *)
-
     | TLoc of 'a Local.M.loc_id * 'a Local.M.typ * 'a
     (** Location-qualified type: a value of a local type at a specific location.
           
@@ -61,7 +59,6 @@ module M : sig
                    ())
             in              
             alice_int]} *)
-
     | TMap of 'a typ * 'a typ * 'a
     (** Function type
           
@@ -78,7 +75,6 @@ module M : sig
               TMap(TInt(()), TString(()), ())
             in
             int_to_string]} *)
-
     | TProd of 'a typ * 'a typ * 'a
     (** Product type (pairs)
           
@@ -95,7 +91,6 @@ module M : sig
               TProd(TInt(()), TString(()), ())
             in
             int_string_pair]} *)
-
     | TSum of 'a typ * 'a typ * 'a
     (** Sum type (tagged unions)
           
@@ -113,7 +108,7 @@ module M : sig
             in
             int_or_string ]} *)
     | TForeign of 'a Local.M.typ_id * 'a
-(**  foreign type, identified only by name with no internal structure.
+    (**  foreign type, identified only by name with no internal structure.
 
   {b Internal AST Structure:} [TForeign(type_id, metadata)]
 
@@ -128,7 +123,6 @@ module M : sig
           TForeign(Local.M.TypId("Int32", ()), ())
         in
         foreign_type]} *)
-  
 
   (** {1 Network Expressions} 
       
@@ -156,7 +150,6 @@ module M : sig
               Unit(())              
             in
             unit_expr]} *)
-
     | Var of 'a Local.M.var_id * 'a
     (** Variable reference
           
@@ -173,7 +166,6 @@ module M : sig
               Var(Local.M.VarId("x", ()), ())              
             in
             var_x]} *)
-
     | Ret of 'a Local.M.expr * 'a
     (** Return a local expression: wraps a computation in a network context.
     
@@ -201,7 +193,6 @@ module M : sig
           in
           ret_val
         ]}*)
-
     | If of 'a expr * 'a expr * 'a expr * 'a
     (** Conditional expression
       
@@ -221,7 +212,6 @@ module M : sig
                ()) (* () is the metadata*)
           in
           if_expr]} *)
-
     | Let of 'a stmt list * 'a expr * 'a
     (** Let binding with statement block
           
@@ -242,7 +232,6 @@ module M : sig
                 ())
             in
             let_expr]} *)
-
     | Send of 'a expr * 'a Local.M.loc_id * 'a
     (** Send expression: transmits a value to a specified location.
       
@@ -266,7 +255,6 @@ module M : sig
                  ())
           in
           send_to_bob]} *)
-
     | Recv of 'a Local.M.loc_id * 'a
     (** Receive expression: receives a value from a specified location.
       
@@ -288,7 +276,6 @@ module M : sig
             Recv(Local.M.LocId("Alice", ()), ())
           in
           recv_from_alice]} *)
-
     | ChooseFor of 'a Local.M.sync_label * 'a Local.M.loc_id * 'a expr * 'a
     (** Make a choice and inform a location: selects a branch and notifies peer.
       
@@ -317,7 +304,6 @@ module M : sig
                       ())
           in
           choose_ready]} *)
-
     | AllowChoice of 'a Local.M.loc_id * ('a Local.M.sync_label * 'a expr) list * 'a
     (** Allow/offer choices from a location: receives choice and branches accordingly.
       
@@ -347,7 +333,6 @@ module M : sig
                         ())
           in
           allow_alice_choice]} *)
-
     | FunDef of 'a Local.M.pattern list * 'a expr * 'a
     (** Function Definition
           
@@ -372,7 +357,6 @@ module M : sig
                    ())
           in
           fun_xy]} *)
-
     | FunApp of 'a expr * 'a expr * 'a
     (** Function Application
           
@@ -391,7 +375,6 @@ module M : sig
             ())
           in
           add_3]} *)
-
     | Pair of 'a expr * 'a expr * 'a
     (** Pair Construction
     
@@ -410,7 +393,6 @@ module M : sig
                    ())
             in
             pair_xy]}*)
-
     | Fst of 'a expr * 'a
     (** First projection from pair
           
@@ -427,7 +409,6 @@ module M : sig
             Snd(Var(Local.M.VarId("z", ()), ()), ())              
           in
           first]} *)
-
     | Snd of 'a expr * 'a
     (** Second projection from pair
           
@@ -444,7 +425,6 @@ module M : sig
             Snd(Var(Local.M.VarId("p", ()), ()), ())              
           in
           second]} *)
-
     | Left of 'a expr * 'a
     (** Left injection into sum type
           
@@ -461,7 +441,6 @@ module M : sig
             Right(Var(Local.M.VarId("x", ()), ()), ())
           in
           left_y]} *)
-
     | Right of 'a expr * 'a
     (** Right injection into sum type
           
@@ -478,7 +457,6 @@ module M : sig
             Right(Var(Local.M.VarId("x", ()), ()), ())
           in
           right_x]} *)
-
     | Match of 'a expr * ('a Local.M.pattern * 'a expr) list * 'a
     (** Pattern matching
       
@@ -519,7 +497,7 @@ module M : sig
           in
           match_expr]} *)
 
-    (** {1 Network Statements}
+  (** {1 Network Statements}
     
     ['a stmt] represent statements in projected endpoint programs after 
     choreographic projection. These include variable declarations, assignments, 
@@ -545,7 +523,6 @@ module M : sig
                  ())
           in
           x_int_decl]} *)
-
     | Assign of 'a Local.M.pattern list * 'a expr * 'a
     (** Assignment
           
@@ -564,7 +541,6 @@ module M : sig
                 ())
           in
           x_assign]} *)
-
     | TypeDecl of 'a Local.M.typ_id * 'a typ * 'a
     (** Type alias declaration: a way to give more meaningful name to an 
     existing type. Not creating a new type.
@@ -588,14 +564,11 @@ module M : sig
             ())
           in
           result_decl]} *)
-
     | ForeignDecl of 'a Local.M.var_id * 'a typ * string * 'a
-    
     | ForeignTypeDecl of 'a Local.M.typ_id * 'a
-    
-    (** {1 Net Statement Block}*)
 
-  and 'a stmt_block = 'a stmt list
+  (** {1 Net Statement Block}*)
+
   (** Statement Block: a sequence of statements executed in order.
   
   {b Internal AST Structure:} [stmt_block] is a list of ['a stmt]
@@ -633,7 +606,7 @@ module M : sig
            (* Assigning "x + 10" to variable "y" *)
         in
         stmt_block]} *)
-
+  and 'a stmt_block = 'a stmt list
 end
 
 (**{b With:} This module uses a functor for creating network AST types 
@@ -642,7 +615,8 @@ with concrete metadata.
     Instantiates the polymorphic network AST with a specific metadata type. *)
 module With : functor
     (Info : sig
-       type t (** [type t] is the concrete metadata type*)
+       (** [type t] is the concrete metadata type*)
+       type t
      end)
     -> sig
   type nonrec typ = Info.t M.typ
@@ -650,7 +624,7 @@ module With : functor
   type nonrec stmt = Info.t M.stmt
   type nonrec stmt_block = Info.t M.stmt_block
 
-(** {1 Metadata Acessors}
+  (** {1 Metadata Acessors}
 
   Functions to extract metadata from AST nodes. *)
 
@@ -663,7 +637,7 @@ module With : functor
   (** [get_info_stmt s] is the metadata from statement [s]. *)
   val get_info_stmt : stmt -> Info.t
 
-(** {1 Metadata Modifiers}
+  (** {1 Metadata Modifiers}
 
   Functions to replace metadata in AST nodes*)
 

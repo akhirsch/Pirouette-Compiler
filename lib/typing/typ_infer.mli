@@ -42,20 +42,19 @@
       (* And verifies the send operation is well-typed *)
     ]} *)
 
-module Local = Ast_core.Local.M
 (** Alias for Local AST module. *)
+module Local = Ast_core.Local.M
 
-module Choreo = Ast_core.Choreo.M
 (** Alias for Choreographic AST module. *)
+module Choreo = Ast_core.Choreo.M
 
 (** {1 Type System Types} *)
 
-type errmsg = string
 (** Error messages for type inference failures.
     
   Used to track and report type errors with descriptive messages. *)
+type errmsg = string
 
-type typvar = string
 (** Type variables for polymorphism.
     
   Represents unknown types during inference, typically named ['a], ['b], etc.
@@ -69,16 +68,16 @@ type typvar = string
     (* After inference: *)
     (* Type: int -> int  (type variable resolved to int) *)
   ]} *)
+type typvar = string
 
-type ftv = (typvar, errmsg) result
 (** Free type variables with error tracking.
     
   Either [Ok] for a valid type variable or [Error] for a type error.
     
   The ['a] in [ftv] allows associating error information with type variables
   during inference. *)
+type ftv = (typvar, errmsg) result
 
-type local_subst = (typvar * ftv Local.typ) list
 (** Substitution for local types.
     
   Maps type variables to local types. Represents solutions to type equations
@@ -91,8 +90,8 @@ type local_subst = (typvar * ftv Local.typ) list
       
     (* Applying this substitution to 'a -> 'b gives: int -> bool *)
   ]} *)
+type local_subst = (typvar * ftv Local.typ) list
 
-type choreo_subst = (typvar * ftv Choreo.typ) list
 (** Substitution for choreographic types.
     
   Maps type variables to choreographic types, including location-qualified types.
@@ -102,8 +101,8 @@ type choreo_subst = (typvar * ftv Choreo.typ) list
     (* Substitution: ['a → Alice.int] *)
     [("'a", TLoc(LocId("Alice"), TInt))]
   ]} *)
+type choreo_subst = (typvar * ftv Choreo.typ) list
 
-type local_ctx = (string * ftv Local.typ) list
 (** Type context for local variables.
     
   Maps variable names to their inferred local types. Used during type inference
@@ -114,8 +113,8 @@ type local_ctx = (string * ftv Local.typ) list
     (* Context: {x: int, y: bool} *)
     [("x", TInt); ("y", TBool)]
   ]} *)
+type local_ctx = (string * ftv Local.typ) list
 
-type choreo_ctx = (string * ftv Choreo.typ) list
 (** Type context for choreographic variables.
     
   Maps variable names to their choreographic types (which may include
@@ -127,8 +126,8 @@ type choreo_ctx = (string * ftv Choreo.typ) list
     [("x", TLoc(LocId("Alice"), TInt)); 
       ("y", TLoc(LocId("Bob"), TString))]
   ]} *)
+type choreo_ctx = (string * ftv Choreo.typ) list
 
-type global_ctx = (string * string * ftv Local.typ) list
 (** Global context for location-qualified variables.
     
   Maps pairs of (location, variable) to local types. Used to track variables
@@ -142,14 +141,11 @@ type global_ctx = (string * string * ftv Local.typ) list
     [("Alice", "x", TInt); 
       ("Bob", "y", TString)]
   ]} *)
+type global_ctx = (string * string * ftv Local.typ) list
 
 (** {1 Type Inference Functions} *)
 
-val infer_local_expr
-  :  local_ctx
-  -> ftv Ast_core.Local.M.expr
-  -> local_subst * ftv Ast_core.Local.M.typ
-  (** [infer_local_expr ctx expr] infers the type of a local expression.
+(** [infer_local_expr ctx expr] infers the type of a local expression.
     
     Performs type inference on pure local computations without communication.
     Returns a substitution and the inferred type.
@@ -163,12 +159,12 @@ val infer_local_expr
     - Inferred type for the expression 
     
     {b Raises:} Type error if expression is ill-typed*)
-
-val infer_local_pattern
+val infer_local_expr
   :  local_ctx
-  -> ftv Ast_core.Local.M.pattern
-  -> local_subst * ftv Ast_core.Local.M.typ * local_ctx
-  (** [infer_local_pattern ctx pat] infers the type of a local pattern and
+  -> ftv Ast_core.Local.M.expr
+  -> local_subst * ftv Ast_core.Local.M.typ
+
+(** [infer_local_pattern ctx pat] infers the type of a local pattern and
     extends the context with pattern variables.
     
     Analyzes pattern structure (variables, pairs, sum types) and returns:
@@ -177,13 +173,12 @@ val infer_local_pattern
     - Extended context with pattern variables 
     
     {b Uses:} let-bindings and match expressions to bind pattern variables. *)
+val infer_local_pattern
+  :  local_ctx
+  -> ftv Ast_core.Local.M.pattern
+  -> local_subst * ftv Ast_core.Local.M.typ * local_ctx
 
-val infer_choreo_expr
-  :  choreo_ctx
-  -> global_ctx
-  -> ftv Ast_core.Choreo.M.expr
-  -> choreo_subst * ftv Ast_core.Choreo.M.typ
-  (** [infer_choreo_expr ctx gctx expr] infers the type of a choreographic expression.
+(** [infer_choreo_expr ctx gctx expr] infers the type of a choreographic expression.
     
     Handles choreographic constructs including:
     - Location-qualified expressions ([[Alice] expr])
@@ -201,13 +196,13 @@ val infer_choreo_expr
     - Inferred choreographic type
     
     {b Raises:} Type error if choreography is ill-typed.*)
-
-val infer_choreo_pattern
+val infer_choreo_expr
   :  choreo_ctx
   -> global_ctx
-  -> ftv Ast_core.Choreo.M.pattern
-  -> choreo_subst * ftv Ast_core.Choreo.M.typ * choreo_ctx
-  (** [infer_choreo_pattern ctx gctx pat] infers the type of a choreographic pattern.
+  -> ftv Ast_core.Choreo.M.expr
+  -> choreo_subst * ftv Ast_core.Choreo.M.typ
+
+(** [infer_choreo_pattern ctx gctx pat] infers the type of a choreographic pattern.
     
     Handles patterns including:
     - Simple variables
@@ -215,12 +210,12 @@ val infer_choreo_pattern
     - Pairs and sum types
     
     {b Returns} extended choreographic context with pattern variables. *)
-
-val infer_choreo_stmt
+val infer_choreo_pattern
   :  choreo_ctx
   -> global_ctx
-  -> ftv Ast_core.Choreo.M.stmt
+  -> ftv Ast_core.Choreo.M.pattern
   -> choreo_subst * ftv Ast_core.Choreo.M.typ * choreo_ctx
+
 (** [infer_choreo_stmt ctx gctx stmt] infers the type of a choreographic statement.
     
     Handles:
@@ -230,13 +225,13 @@ val infer_choreo_stmt
     - Foreign declarations
     
     {b Returns} updated context with new bindings. *)
-
-val infer_choreo_stmt_block
+val infer_choreo_stmt
   :  choreo_ctx
   -> global_ctx
-  -> ftv Ast_core.Choreo.M.stmt_block
+  -> ftv Ast_core.Choreo.M.stmt
   -> choreo_subst * ftv Ast_core.Choreo.M.typ * choreo_ctx
-  (** [infer_choreo_stmt_block ctx gctx stmts] infers types for a statement block.
+
+(** [infer_choreo_stmt_block ctx gctx stmts] infers types for a statement block.
     
     This is the main entry point for type checking a complete choreography.
     Processes statements sequentially, threading context through.
@@ -252,6 +247,11 @@ val infer_choreo_stmt_block
     - Final context with all bindings 
     
     {b Raises:} Type error with descriptive message if choreography is ill-typed. *)
+val infer_choreo_stmt_block
+  :  choreo_ctx
+  -> global_ctx
+  -> ftv Ast_core.Choreo.M.stmt_block
+  -> choreo_subst * ftv Ast_core.Choreo.M.typ * choreo_ctx
 
 (*Functions below are included here to allow testings of these functions*)
 
@@ -260,50 +260,50 @@ val infer_choreo_stmt_block
     The following functions are exposed for testing purposes. They implement
     core type inference operations used internally. *)
 
-val unify_local : ftv Local.typ -> ftv Local.typ -> local_subst
 (** [unify_local] unifies two local types.
     
     Finds a substitution that makes [t1] and [t2] equal. Core of the type
     inference algorithm.
     
     {b Raises:} Type error if types cannot be unified. *)
+val unify_local : ftv Local.typ -> ftv Local.typ -> local_subst
 
-val unify_choreo : ftv Choreo.typ -> ftv Choreo.typ -> choreo_subst
 (** [unify_choreo] unifies two choreographic types.
     
     Like [unify_local] but handles location-qualified types. *)
+val unify_choreo : ftv Choreo.typ -> ftv Choreo.typ -> choreo_subst
 
-val apply_subst_typ_local : local_subst -> ftv Local.typ -> ftv Local.typ
 (** [apply_subst_typ_local] applies substitution to a local type.
     
     Replaces type variables with their bindings from substitution. *)
+val apply_subst_typ_local : local_subst -> ftv Local.typ -> ftv Local.typ
 
-val apply_subst_typ_choreo : choreo_subst -> ftv Choreo.typ -> ftv Choreo.typ
 (** [apply_subst_typ_choreo] applies substitution to a choreographic type.
     
     Like [apply_subst_typ_local] but for choreographic types. *)
+val apply_subst_typ_choreo : choreo_subst -> ftv Choreo.typ -> ftv Choreo.typ
 
-val extract_local_ctx : global_ctx -> string -> local_ctx
 (** [extract_local_ctx] extracts local context for a specific location.
     
     Filters global context to variables belonging to [loc].
     
    {b Uses:} during endpoint projection to get relevant variables for each endpoint. *)
+val extract_local_ctx : global_ctx -> string -> local_ctx
 
-val get_choreo_subst : local_subst -> ftv Local.loc_id -> choreo_subst
 (** [get_choreo_subst] converts local substitution to 
     choreographic substitution for a location.
     
     Lifts local type bindings to location-qualified types. *)
+val get_choreo_subst : local_subst -> ftv Local.loc_id -> choreo_subst
 
-val get_choreo_ctx : local_ctx -> ftv Local.loc_id -> choreo_ctx
 (** [get_choreo_ctx] converts local context to choreographic
     context for a location.
     
     Qualifies all types with the given location. *)
+val get_choreo_ctx : local_ctx -> ftv Local.loc_id -> choreo_ctx
 
-val get_local_subst : choreo_subst -> ftv Local.loc_id -> local_subst
 (** [get_local_subst] extracts local substitution for a
     specific location from choreographic substitution.
     
     Inverse of [get_choreo_subst]. *)
+val get_local_subst : choreo_subst -> ftv Local.loc_id -> local_subst

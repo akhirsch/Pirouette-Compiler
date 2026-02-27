@@ -79,7 +79,8 @@ let local_unop_neg _ =
   assert_equal true (contains_substring result "-");
   assert_equal true (contains_substring result "5")
 ;;
- let local_binop_plus _ =
+
+let local_binop_plus _ =
   let expr = BinOp (Val (Int (5, ()), ()), Plus (), Val (Int (3, ()), ()), ()) in
   let result = expr_to_string (emit_local_pexp expr) in
   assert_equal true (contains_substring result "5");
@@ -681,7 +682,10 @@ let net_binding_main_error _ =
 ;;
 
 let net_binding_foreign_decl _ =
-  let stmt = Net.ForeignDecl (VarId ("pir_func", ()), TUnit (), "Foreign_function:foreign_function", ()) in
+  let stmt =
+    Net.ForeignDecl
+      (VarId ("pir_func", ()), TUnit (), "Foreign_function:foreign_function", ())
+  in
   let pattern_test pat =
     match pat.ppat_desc with
     | Ppat_var { txt = var_name; _ } -> var_name = "pir_func"
@@ -854,7 +858,11 @@ let net_binding_suite =
 
 let all_suites =
   "Emit_Core Tests"
-  >::: [ local_expr_suite; local_pat_suite; net_expr_suite; net_binding_suite; (*ffi_suite*) ]
+  >::: [ local_expr_suite
+       ; local_pat_suite
+       ; net_expr_suite
+       ; net_binding_suite (*ffi_suite*)
+       ]
 ;;
 
 let () = run_test_tt_main all_suites

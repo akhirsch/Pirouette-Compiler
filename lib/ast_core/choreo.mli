@@ -8,15 +8,15 @@ All AST nodes are parameterized by a metadata type ['a], allowing different
     compiler passes to attach their own annotations (source locations, type 
     information, etc.). *)
 module M : sig
-
   (** {1 Type Identifiers} 
     
     Pairs a type name with metadata. Used to name types in choreographic declarations 
     and references. Each identifier carries metadata of type ['a], allowing the compiler 
     to track source locations and attach type information.*)
 
-  type 'a typ_id = Typ_Id of string * 'a
-(** Type identifiers: [typ_id] (name + metadata). 
+  type 'a typ_id =
+    | Typ_Id of string * 'a
+    (** Type identifiers: [typ_id] (name + metadata). 
 
     {b Internal AST Structure:} [Typ_Id(name, meta)]  
     - [name]: type name as a string (e.g., "Sum", "Result").  
@@ -35,7 +35,7 @@ module M : sig
         result_id
       ]}*)
 
-   (** {1 Choreographic Types} 
+  (** {1 Choreographic Types} 
    
    ['a typ] represent the types of values and communications
     in a choreography. Each node carries metadata of type ['a], allowing compiler
@@ -64,7 +64,6 @@ module M : sig
         (* unit_type now represents the unit type in the AST *)
         unit_type
       ]} *)
-
     | TLoc of 'a Local.M.loc_id * 'a Local.M.typ * 'a
     (** Location-qualified type: a value of a local type at a specific location
 
@@ -85,7 +84,6 @@ module M : sig
           (* () is unit type metadata*)
         in        
         alice_int]} *)
-
     | TVar of 'a typ_id * 'a
     (** Type variable 
 
@@ -102,7 +100,6 @@ module M : sig
         TVar(Typ_Id("a",()),())
       in
       type_var_a]}*)
-
     | TMap of 'a typ * 'a typ * 'a
     (** Function type (domain -> codomain)
 
@@ -119,7 +116,6 @@ module M : sig
         TMap(TInt(()), TString(()), ())
       in
       int_to_string]}*)
-
     | TProd of 'a typ * 'a typ * 'a
     (** Product type (pair).
 
@@ -136,7 +132,6 @@ module M : sig
         TProd(TInt(()), TString(()), ())
       in
       int_string_pair]}*)
-
     | TSum of 'a typ * 'a typ * 'a
     (** Sum type: tagged union representing a choice between two alternatives.
           
@@ -158,8 +153,7 @@ module M : sig
         in
         int_or_string
       ]}*)
-
-    | TForeign of 'a typ_id * 'a 
+    | TForeign of 'a typ_id * 'a
     (** foreign type identified only by name.
 
       two foreign types are equal only if they have the same name
@@ -203,7 +197,6 @@ module M : sig
         in
         wildcard
       ]}*)
-
     | Var of 'a Local.M.var_id * 'a
     (** Variable binding 
 
@@ -221,7 +214,6 @@ module M : sig
         in
         var_x
       ]}*)
-
     | Pair of 'a pattern * 'a pattern * 'a
     (** Pair pattern for destructuring products. Contains a pattern for the first 
         element, a pattern for the second element, and metadata. 
@@ -242,7 +234,6 @@ module M : sig
                ())
         in
         pair_xy]}*)
-
     | LocPat of 'a Local.M.loc_id * 'a Local.M.pattern * 'a
     (** Location-qualified pattern: matches a local pattern at a specific location 
 
@@ -261,7 +252,6 @@ module M : sig
                  ())
         in
         alice_x]}*)
-
     | Left of 'a pattern * 'a
     (** Left constructor of sum type. 
     
@@ -278,7 +268,6 @@ module M : sig
           Left(Var(var_id_x, ()), ())
         in
         left_x]}*)
-
     | Right of 'a pattern * 'a
     (** Right constructor of sum type.
 
@@ -295,7 +284,7 @@ module M : sig
         Right(Var(var_id_x, ()), ())
       in
       right_x]}*)
-    
+
   (** {1 Choreographic Expressions} 
   
       ['a expr] annotated with metadata of type ['a].
@@ -319,7 +308,6 @@ module M : sig
           Unit(())
         in
         unit_expr]}*)
-
     | Var of 'a Local.M.var_id * 'a
     (** Variable reference.
 
@@ -336,7 +324,6 @@ module M : sig
           Var(Local.M.VarId("x", ()), ())
         in
         var_x]}*)
-
     | LocExpr of 'a Local.M.loc_id * 'a Local.M.expr * 'a
     (** Location-qualified expression: a local expression at a specific location 
     
@@ -354,7 +341,6 @@ module M : sig
           Local.M.Var(Local.M.VarId("x", ()), ()),())
         in
         alice_x]}*)
-
     | Send of 'a Local.M.loc_id * 'a expr * 'a Local.M.loc_id * 'a
     (** Message send:
 
@@ -373,7 +359,6 @@ module M : sig
       {[
         let s = Send ("Alice", Int 42, "Bob", m_send)
         ]}*)
-
     | Sync of 'a Local.M.loc_id * 'a Local.M.sync_label * 'a Local.M.loc_id * 'a expr * 'a
     (** Synchronizing choices: transfers control flow, One location makes a choice and synchronizes with another location about which 
     branch to take.
@@ -411,7 +396,6 @@ The continuation can be any expression (Send, Let, Unit, etc.)
                ())
         in
         alice_ready_bob]}*)
-
     | If of 'a expr * 'a expr * 'a expr * 'a
     (** Conditional expression: Standard if-then-else conditional
     
@@ -430,7 +414,6 @@ The continuation can be any expression (Send, Let, Unit, etc.)
            Var(Local.M.VarId("e2", ()), ()), ())
       in
       if_expr]}*)
-
     | Let of 'a stmt_block * 'a expr * 'a
     (** Let binding of a statement block: Introduces local bindings 
     
@@ -452,7 +435,6 @@ The continuation can be any expression (Send, Let, Unit, etc.)
         in
         let_expr
       ]}*)
-
     | FunDef of 'a pattern list * 'a expr * 'a
     (** Function definition 
     
@@ -472,7 +454,6 @@ The continuation can be any expression (Send, Let, Unit, etc.)
               ())
       in
       fun_xy]}*)
-
     | FunApp of 'a expr * 'a expr * 'a
     (** Function Application
 
@@ -492,7 +473,6 @@ The continuation can be any expression (Send, Let, Unit, etc.)
         in
         add_3
       ]}*)
-
     | Pair of 'a expr * 'a expr * 'a
     (** Pair construction: Creates a pair value containing two expressions. 
      {b Internal AST Structure:}[Pair(left_expr, right_expr, meta)]
@@ -510,7 +490,6 @@ The continuation can be any expression (Send, Let, Unit, etc.)
             ())
       in
       pair_xy]}*)
-
     | Fst of 'a expr * 'a
     (** First projection from pair: extracts the first element from a pair expression.
     
@@ -526,7 +505,6 @@ The continuation can be any expression (Send, Let, Unit, etc.)
       let p = (5, "hello")
       let x = fst p     (* x = 5 *)
     ]} *)
-
     | Snd of 'a expr * 'a
     (** Second projection from pair: extracts the second element from a pair expression.
     
@@ -542,7 +520,6 @@ The continuation can be any expression (Send, Let, Unit, etc.)
       let p = (5, "hello")
       let y = snd p     (* y = "hello" *)
     ]} *)
-
     | Left of 'a expr * 'a
     (** Left injection into sum type: constructs a Left value containing the given expression.
       
@@ -561,7 +538,6 @@ The continuation can be any expression (Send, Let, Unit, etc.)
       {[
         Left (Int 5, m) 
       ]}*)
-
     | Right of 'a expr * 'a
     (** Right injection into sum type: constructs a Left value containing the given expression.
       
@@ -580,7 +556,6 @@ The continuation can be any expression (Send, Let, Unit, etc.)
       {[
         Right (String "hello", m) 
       ]}*)
-
     | Match of 'a expr * ('a pattern * 'a expr) list * 'a
     (** Pattern matching expression: matches an expression against a list of pattern-case pairs.
       
@@ -614,7 +589,7 @@ The continuation can be any expression (Send, Let, Unit, etc.)
         match_expr
       ]} *)
 
-(** {1 Choreographic Statements} 
+  (** {1 Choreographic Statements} 
     
     annotated with metadata of type ['a]. 
     Statements declare variables, types, and perform assignments. *)
@@ -638,7 +613,6 @@ The continuation can be any expression (Send, Let, Unit, etc.)
               ())
       in
       x_int_decl]}*)
-
     | Assign of 'a pattern list * 'a expr * 'a
     (** Assignment: binds patterns to the result of evaluating an expression.
         
@@ -663,7 +637,6 @@ The continuation can be any expression (Send, Let, Unit, etc.)
         a constructor in the real implementation (e.g. IntLiteral)*)
         in
         x_assign]}*)
-
     | TypeDecl of 'a Local.M.typ_id * 'a typ * 'a
     (** Type alias declaration: defines a new type name for an existing type.
         
@@ -683,7 +656,6 @@ The continuation can be any expression (Send, Let, Unit, etc.)
           in
           result_type_decl
         ]} *)
-
     | ForeignDecl of 'a Local.M.var_id * 'a typ * string * 'a
     (** Foreign function declaration: declares an external function with its type and external name.
         
@@ -706,16 +678,14 @@ The continuation can be any expression (Send, Let, Unit, etc.)
                     ())
       in
       print_foreign]}*)
-
     | ForeignTypeDecl of 'a Local.M.typ_id * 'a
 
-(** {1 Choreographic Statement Block}
+  (** {1 Choreographic Statement Block}
 
   A block of statements forming a sequence of declarations and assignments.
     Statements in a block are executed in order, with each statement potentially
     introducing bindings visible to subsequent statements. *)
 
-  and 'a stmt_block = 'a stmt list
   (** Block of Statements
     
     {b Internal AST Structure:} [stmt_block] is a list of ['a stmt]
@@ -737,7 +707,7 @@ The continuation can be any expression (Send, Let, Unit, etc.)
           Assign([Var(VarId("y", ()), ())], Unit(()), ())]
         in
         stmt_block]} *)
-
+  and 'a stmt_block = 'a stmt list
 end
 
 (** {b With:} This module uses a Functor for creating AST types with concrete metadata. A functor is a parametrized 
@@ -763,10 +733,10 @@ end
     for the specified metadata type.*)
 module With : functor
     (Info : sig
-       type t (** The concrete metadata type for this instantiation. AST types with [Info.t] metadata *)
+       (** The concrete metadata type for this instantiation. AST types with [Info.t] metadata *)
+       type t
      end)
     -> sig
-
   type nonrec typ_id = Info.t M.typ_id
   type nonrec typ = Info.t M.typ
   type nonrec pattern = Info.t M.pattern
@@ -778,35 +748,33 @@ module With : functor
 
   (** [get_info_typid tid] is the metadata annotation from type identifier [tid].*)
   val get_info_typid : typ_id -> Info.t
-  
+
   (** [get_info_typ t] is the metadata annotation from type [t].*)
   val get_info_typ : typ -> Info.t
 
   (** [get_info_pattern p] is the metadata annotation from pattern [p].*)
   val get_info_pattern : pattern -> Info.t
-  
+
   (** [get_info_expr e] is the metadata annotation from expression [e].*)
   val get_info_expr : expr -> Info.t
-  
+
   (** [get_info_stmt s] is the metadata annotation from statement [s].*)
   val get_info_stmt : stmt -> Info.t
 
   (** {1 Metadata Modifiers} Functions to set metadata at AST nodes *)
-  
+
   (** [set_info_typid info tid] is type identifier [tid] with its metadata replaced by [info].*)
   val set_info_typid : Info.t -> typ_id -> typ_id
-  
+
   (** [set_info_typ info t] is type [t] with its metadata replaced by [info].*)
   val set_info_typ : Info.t -> typ -> typ
-  
+
   (**[set_info_pattern info p] is pattern [p] with its metadata replaced by [info].*)
   val set_info_pattern : Info.t -> pattern -> pattern
-  
+
   (** [set_info_expr info e] is expression [e] with its metadata replaced by [info].*)
   val set_info_expr : Info.t -> expr -> expr
-  
+
   (** [set_info_stmt info s] is statement [s] with its metadata replaced by [info].*)
   val set_info_stmt : Info.t -> stmt -> stmt
-  
-
 end

@@ -1,5 +1,5 @@
 val parse_with_error : string -> Lexing.lexbuf -> Parsed_ast.Choreo.stmt_block
-val parse_net_with_error : Lexing.lexbuf -> Parsed_ast.Net.stmt_block
+
 (** [parse_net_with_error] parses network IR Pirouette code from a 
     lexer buffer into a network AST.
     
@@ -14,5 +14,4 @@ val parse_net_with_error : Lexing.lexbuf -> Parsed_ast.Net.stmt_block
     {b Returns:} A network statement block representing the parsed program.
 
     {b Raises:} Parsing exceptions if the source code contains syntax errors. *)
-
-
+val parse_net_with_error : Lexing.lexbuf -> Parsed_ast.Net.stmt_block
