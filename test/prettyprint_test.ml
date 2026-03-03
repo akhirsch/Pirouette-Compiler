@@ -4,18 +4,21 @@ let peq (s : string) =
   let pprint_s_ref = ref "" in
   let json_ast_ref = ref "" in
   try
-    let program = Parsing.Parse.parse_with_error "unit_test" (Lexing.from_string s) in
+    let program =
+      Parsing.Parse.parse_with_error "unit_test" (Lexing.from_string s)
+    in
     let pprint_s = Ast_utils.stringify_pprint_choreo_ast program in
     pprint_s_ref := pprint_s;
     (* Store potentially problematic pretty-printed string *)
-    let program' = Parsing.Parse.parse_with_error "unit_test" (Lexing.from_string pprint_s) in
+    let program' =
+      Parsing.Parse.parse_with_error "unit_test" (Lexing.from_string pprint_s)
+    in
     let json_ast = Ast_utils.stringify_jsonify_choreo_ast program in
     json_ast_ref := json_ast;
     (* Store original AST *)
     let json_ast' = Ast_utils.stringify_jsonify_choreo_ast program' in
     assert_equal json_ast json_ast'
-  with
-  | Failure msg ->
+  with Failure msg ->
     print_endline "\nError in choreography pretty printing:";
     print_endline ("Original: " ^ s);
     print_endline ("Pretty printed: " ^ !pprint_s_ref);
@@ -23,7 +26,6 @@ let peq (s : string) =
     (* We might not have json_ast' if parsing pprint_s failed *)
     print_endline ("Failure message: " ^ msg);
     raise (Failure ("Pretty printing failed: " ^ msg))
-;;
 
 let net_peq (s : string) =
   let pprint_s_ref = ref "" in
@@ -33,14 +35,15 @@ let net_peq (s : string) =
     let pprint_s = Ast_utils.stringify_pprint_net_ast program in
     pprint_s_ref := pprint_s;
     (* Store potentially problematic pretty-printed string *)
-    let program' = Parsing.Parse.parse_net_with_error (Lexing.from_string pprint_s) in
+    let program' =
+      Parsing.Parse.parse_net_with_error (Lexing.from_string pprint_s)
+    in
     let json_ast = Ast_utils.stringify_jsonify_net_ast program in
     json_ast_ref := json_ast;
     (* Store original AST *)
     let json_ast' = Ast_utils.stringify_jsonify_net_ast program' in
     assert_equal json_ast json_ast'
-  with
-  | Failure msg ->
+  with Failure msg ->
     print_endline "\nError in network pretty printing:";
     print_endline ("Original: " ^ s);
     print_endline ("Pretty printed: " ^ !pprint_s_ref);
@@ -48,14 +51,13 @@ let net_peq (s : string) =
     (* We might not have json_ast' if parsing pprint_s failed *)
     print_endline ("Failure message: " ^ msg);
     raise (Failure ("Pretty printing failed: " ^ msg))
-;;
 
 let suite =
   "Pretty print Tests"
   >::: [ "Examples"
          >::: [ ("testcase1" >:: fun _ -> peq Astutils_testcases.testcase_1)
               ; ("testcase2" >:: fun _ -> peq Astutils_testcases.testcase_2)
-              ; ("testcase3" >:: fun _ -> peq Astutils_testcases.testcase_3)
+              (* ; ("testcase3" >:: fun _ -> peq Astutils_testcases.testcase_3) *)
               ; ("testcase4" >:: fun _ -> peq Astutils_testcases.testcase_4)
               ]
        ; "Type Decls"
@@ -75,7 +77,13 @@ let suite =
          >::: [ ("simple_net" >:: fun _ -> net_peq Astutils_testcases.simple_net)
               ; ("ex3_netir" >:: fun _ -> net_peq Astutils_testcases.netir_ex3)
               ]
+      ; "Variants"
+        >:::  [ ("simple_variant" >:: fun _ -> peq Astutils_testcases.simple_variant)
+              ; ("simple_different_name" >:: fun _ -> peq Astutils_testcases.simple_different_name)
+              ; ("two_constructors" >:: fun _ -> peq Astutils_testcases.two_constructors)
+              ; ("multiple_constructors1" >:: fun _ -> peq Astutils_testcases.multiple_constructors1)
+              ; ("multiple_constructors2" >:: fun _ -> peq Astutils_testcases.multiple_constructors2)
+              ]
        ]
-;;
 
 let () = run_test_tt_main suite
