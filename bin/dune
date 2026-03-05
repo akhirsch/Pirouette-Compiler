@@ -1,7 +1,5 @@
 (executable
  (name main)
- (public_name pirc)
- (package pirc)
  (libraries
   ast_utils
   parsing
@@ -11,7 +9,3 @@
   lwt
   a_rname
   stdlib_utils))
-
-(documentation
- (package pirc)
- (mld_files index))

@@ -18,24 +18,15 @@
 (documentation https://dl.acm.org/doi/10.1145/3498684)
 
 (package
- (name http_pirc)
- (synopsis "Pirouette Compiler (HTTP)")
+ (name pirc)
+ (synopsis "Pirouette Compiler")
+ (description "Higher-order typed functional choreographies")
  (depends
   (lwt :build)
   (eio_main :build)
   (cohttp-eio :build)
   (cohttp-lwt-unix :build)
-  (cohttp :build))
- (allow_empty))
-
-(package
- (name pirc)
- (synopsis "Pirouette Compiler")
- (description "Higher-order typed functional choreographies")
- (depends
-  (eio_main :build)
-  (cohttp-eio :build)
-  (cohttp-lwt-unix :build)
+  (cohttp :build)
   (dune :build)
   (lwt :build)
   (lwt_ppx :build)
@@ -53,4 +44,4 @@
   (ocamlformat (and (>= 0.27.0):dev)))
  (allow_empty))
 
-; See the complete stanza docs at https://dune.readthedocs.io/en/stable/dune-files.html#dune-project
+; See the complete stanza docs at https://dune.readthedocs.io/en/latest/reference/dune-project/index.html

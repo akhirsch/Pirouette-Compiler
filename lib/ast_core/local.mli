@@ -336,6 +336,13 @@ module M : sig
               sum_int_string
             ]}*)
     | TVariant of 'a constructor list * 'a
+        (** {1 Local Patterns}
+
+            ['a pattern] represent patterns for matching and destructuring
+            values in local computation. These patterns bind variables, match
+            literals, and destructure compound data at a single endpoint. Each
+            pattern carries metadata of type ['a] for source location tracking
+            and type information.*)
 
   and 'a constructor = {
     name : string;
@@ -343,13 +350,6 @@ module M : sig
     typ : 'a typ_id;
     info : 'a;
   }
-
-  (** {1 Local Patterns}
-
-      ['a pattern] represent patterns for matching and destructuring values in
-      local computation. These patterns bind variables, match literals, and
-      destructure compound data at a single endpoint. Each pattern carries
-      metadata of type ['a] for source location tracking and type information.*)
 
   type 'a pattern =
     | Default of 'a
@@ -459,14 +459,13 @@ module M : sig
               right_y
             ]}*)
     | PConstruct of string * 'a pattern list * 'a typ_id * 'a
+        (** {1 Local Expressions}
 
-  (** {1 Local Expressions}
-
-      ['a expr] represent pure computations at a single endpoint with no
-      communication or distribution. Local expressions include values,
-      variables, operators, conditionals, and pattern matching - all executed
-      locally. Each expression carries metadata of type ['a] for source location
-      tracking and type information.*)
+            ['a expr] represent pure computations at a single endpoint with no
+            communication or distribution. Local expressions include values,
+            variables, operators, conditionals, and pattern matching - all
+            executed locally. Each expression carries metadata of type ['a] for
+            source location tracking and type information.*)
 
   type 'a expr =
     | Unit of 'a
@@ -709,15 +708,45 @@ module With : functor
   (** {1 Type Aliases}*)
 
   type nonrec value = Info.t M.value
+  (** [value] is a type alias for {!Local.M.value}, representing literal values
+      in a local computation at a single endpoint *)
+
   type nonrec loc_id = Info.t M.loc_id
+  (**[loc_id] (Location ID) is a type alias for {!Local.M.loc_id}, representing
+     internal representations of names defined in Pirouette source code *)
+
   type nonrec var_id = Info.t M.var_id
+  (**[var_id] (Variable ID) is a type alias for {!Local.M.var_id}, representing
+     variable names defined in Pirouette source code*)
+
   type nonrec typ_id = Info.t M.typ_id
+  (**[typ_id] (Type ID) is a type alias for {!Local.M.typ_id}, representing type
+     names*)
+
   type nonrec sync_label = Info.t M.sync_label
+  (**[sync_label] (Synchronization Label) is a type alias for
+     {!Local.M.sync_label}, representing labels for Synchronization choices*)
+
   type nonrec un_op = Info.t M.un_op
+  (**[un_op] (Unary Operator) is a type alias for {!Local.M.un_op}, representing
+     operations performed on a single value*)
+
   type nonrec bin_op = Info.t M.bin_op
+  (**[bin_op] (Binary Operator) is a type alias for {!Local.M.bin_op},
+     representing operations performed on two values*)
+
   type nonrec typ = Info.t M.typ
+  (**[typ] (Type) is a type alias for {!Local.M.typ}, representing the type of
+     values at a single endpoint*)
+
   type nonrec pattern = Info.t M.pattern
+  (**[pattern] is a type alias for {!Local.M.pattern}, representing patterns for
+     pattern matching and destructuring values*)
+
   type nonrec expr = Info.t M.expr
+  (**[expr] (Expression) is a type alias for {!Local.M.expr}, representing pure
+     computations at a single endpoint*)
+
   type nonrec constructor = Info.t M.constructor
 
   (** {1 Metadata Accessors}
