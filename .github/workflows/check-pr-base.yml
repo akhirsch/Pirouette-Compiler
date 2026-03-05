@@ -7,7 +7,7 @@ on:
       - 'dev'
 
 jobs:
-  main-sync:
+  dev-sync:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -21,7 +21,7 @@ jobs:
           if git merge-base --is-ancestor origin/dev ${{ github.event.pull_request.head.sha }}; then
             echo "The PR is based on the latest dev."
           else
-            echo "The PR is not based on the latest dev."
+            echo "The PR is not an ancestor of the latest dev."
             echo "You need rebase/merge dev into this branch."
             exit 1
           fi
