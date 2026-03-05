@@ -1,12 +1,18 @@
-{0 Http_pirc Package}
+{0 Pirouette Compiler}
 
 {1 Overview}
 
-The [Http_pirc] package contains the HTTP-based runtime for Pirouette choreographies 
-and the core compiler libraries. This package serves two audiences:
+The Pirouette compiler implements higher-order typed functional choreographies,
+allowing developers to write distributed protocols as single, unified programs
+that are then compiled to individual endpoint implementations.
 
-- {b Runtime users}: Use [Config_parser] and [Send_receive] for HTTP-based endpoint communication
-- {b Compiler developers}: Access internal libraries for AST manipulation, parsing, type checking, and code generation
+The compiler translates choreographies (global descriptions of multi-party protocols)
+into executable code for each participant through a multi-stage pipeline:
+parsing, type checking, endpoint projection, and code generation.
+
+Pirouette supports multiple communication backends (HTTP, shared memory) and
+generates standalone programs that preserve the protocol guarantees specified
+in the choreography.
 
 {1 HTTP Runtime Modules}
 {3 Config_parser}
@@ -39,10 +45,10 @@ Lexer and parser implementation using Menhir:
 
 - {!Parsing.Lexer} - Main Lexer
 - {!Parsing.Net_lexer} - Network Lexer
-- {!Parsing.Net_parser} - Network Parser
-- {!Parsing.Parse} - Parseing entry point 
+- {!page-Net_parser} - Network Parser
+- {!Parsing.Parse} - Parsing entry point 
 - {!Parsing.Parsed_ast} - Parsed AST representation 
-- {!Parsing.Parser} - Main Parser
+- {!page-Parser} - Main Parser
 
 {3 {!Typing} - Type System}
 
@@ -78,12 +84,8 @@ See the {{!page-developer_guide}Developer Guide} for detailed information on:
 - Development setup and testing
 
 {1 Documentation}
-{{:../index.html} All Packages} | {{!page-user_guide}User Guide} | {{!page-developer_guide}Developer Guide}
-
-- {{:../index.html}All Packages} - Documentation Navigation
+{{!page-user_guide}User Guide} | {{!page-developer_guide}Developer Guide} | {{:https://dl.acm.org/doi/10.1145/3498684}Pirouette Paper} | {{:https://github.com/Foundations-of-Decentralization-Group/Pirouette-Compiler}GitHub Repository}
 - {{!page-user_guide}User Guide} - How to use the Pirouette compiler
 - {{!page-developer_guide}Developer Guide} - Contributing and internal architecture
-
-{1 See Also}
-
-- The main {{:../pirc/index.html}pirc compiler} documentation
+- {{:https://dl.acm.org/doi/10.1145/3498684}Pirouette Paper} - Dr. Hirsch's paper on Pirouette
+- {{:https://github.com/Foundations-of-Decentralization-Group/Pirouette-Compiler}GitHub Repository} - Pirouette Compiler codebase

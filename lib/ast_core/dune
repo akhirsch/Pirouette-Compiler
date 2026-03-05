@@ -1,5 +1,5 @@
 (library
  (name ast_core)
- (public_name http_pirc.ast_core)
+ (public_name pirc.ast_core)
  (instrumentation
   (backend bisect_ppx)))

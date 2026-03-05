@@ -151,19 +151,25 @@ module M : sig
               let int_or_string = TSum (TInt (), TString (), ()) in
               int_or_string
             ]}*)
+    | TVariant of 'a constructor list * 'a
+
+        (** {1 Choreographic Patterns}
+            ['a pattern] for destructuring values, annotated with metadata of
+            type ['a]. Patterns can match values distributed across multiple
+            locations.*)
+
+
+  and 'a constructor = {
+    name : string;
+    args : 'a typ list;
+    typ : 'a Local.M.typ_id;
+    info : 'a;
+  }
 
   (** {1 Choreographic Patterns}
 
       ['a pattern] for destructuring values, annotated with metadata of type
       ['a]. Patterns can match values distributed across multiple locations. *)
-    | TVariant of 'a constructor list * 'a
-
-      and 'a constructor =
-    { name : string
-    ; args : 'a typ list
-    ; typ  : 'a Local.M.typ_id
-    ; info : 'a
-    }
 
   type 'a pattern =
     | Default of 'a
@@ -271,13 +277,12 @@ module M : sig
               let right_x = Right (Var (var_id_x, ()), ()) in
               right_x
             ]}*)
-
-  (** {1 Choreographic Expressions}
-
-      ['a expr] annotated with metadata of type ['a]. Expressions describe
-      computations and communications in a choreography, including message
-      passing between locations. *)
     | PConstruct of string * 'a pattern list * 'a Local.M.typ_id * 'a
+        (** {1 Choreographic Expressions}
+
+            ['a expr] annotated with metadata of type ['a]. Expressions describe
+            computations and communications in a choreography, including message
+            passing between locations. *)
 
 
   type 'a expr =
@@ -609,12 +614,11 @@ module M : sig
               in
               match_expr
             ]} *)
-
-  (** {1 Choreographic Statements}
-
-      annotated with metadata of type ['a]. Statements declare variables, types,
-      and perform assignments. *)
     | Construct of string * 'a expr list * 'a Local.M.typ_id * 'a
+        (** {1 Choreographic Statements}
+
+            annotated with metadata of type ['a]. Statements declare variables,
+            types, and perform assignments. *)
 
   and 'a stmt =
     | Decl of 'a pattern * 'a typ * 'a
@@ -776,11 +780,29 @@ module With : functor
    end)
   -> sig
   type nonrec typ_id = Info.t M.typ_id
+  (** [typ_id] (Type ID) is a type alias for {!Choreo.M.typ_id}, representing
+      names for types in choreographic declarations and references*)
+
   type nonrec typ = Info.t M.typ
+  (** [typ] (Type) is a type alias for {!Choreo.M.typ}, representing the types
+      of values and communications in a choreography*)
+
   type nonrec pattern = Info.t M.pattern
+  (** [pattern] is a type alias for {!Choreo.M.pattern}, representing names for
+      types in Choreographic declarations and references*)
+
   type nonrec expr = Info.t M.expr
+  (** [expr] (Expression) is a type alias for {!Choreo.M.expr}, representing
+      computations and communications in a choreography*)
+
   type nonrec stmt = Info.t M.stmt
+  (** [stmt] (Statement) is a type alias for {!Choreo.M.stmt}, declaring that a
+      pattern has a certain type*)
+
   type nonrec stmt_block = stmt list
+  (** [stmt_block] (Statement Block) is a type alias representing a list of
+      statements*)
+
   type nonrec constructor = Info.t M.constructor
 
   (** {1 Metadata Accessors}
@@ -825,5 +847,6 @@ module With : functor
   val set_info_stmt : Info.t -> stmt -> stmt
   (** [set_info_stmt info s] is statement [s] with its metadata replaced by
       [info].*)
+
   val set_info_constructor : Info.t -> constructor -> constructor
 end

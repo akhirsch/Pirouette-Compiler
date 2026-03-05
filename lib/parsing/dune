@@ -11,7 +11,7 @@
 
 (library
  (name parsing)
- (public_name http_pirc.parsing)
+ (public_name pirc.parsing)
  (private_modules lexer parser)
  (libraries ast_core)
  (preprocess
