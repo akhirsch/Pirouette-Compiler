@@ -9,12 +9,12 @@ module M = struct
     | TSum of 'a typ * 'a typ * 'a
     | TVariant of 'a constructor list * 'a
 
-   and 'a constructor =
-    { name : string
-    ; args : 'a typ list
-    ; typ  : 'a Local.typ_id
-    ; info : 'a
-    }
+  and 'a constructor = {
+    name : string;
+    args : 'a typ list;
+    typ : 'a Local.typ_id;
+    info : 'a;
+  }
 
   type 'a expr =
     | Unit of 'a
@@ -61,7 +61,6 @@ struct
     | TProd (_, _, i) -> i
     | TSum (_, _, i) -> i
     | TVariant (_, i) -> i
-  ;;
 
   let get_info_expr : expr -> Info.t = function
     | Unit i -> i
@@ -82,7 +81,6 @@ struct
     | Right (_, i) -> i
     | Match (_, _, i) -> i
     | Construct (_, _, _, i) -> i
-  ;;
 
   let get_info_stmt : stmt -> Info.t = function
     | Decl (_, _, i) -> i
@@ -98,7 +96,6 @@ struct
     | TProd (t1, t2, _) -> TProd (t1, t2, i)
     | TSum (t1, t2, _) -> TSum (t1, t2, i)
     | TVariant (cs, _) -> TVariant (cs, i)
-  ;;
 
   let set_info_expr : Info.t -> expr -> expr =
    fun i -> function
@@ -120,7 +117,6 @@ struct
     | Right (e, _) -> Right (e, i)
     | Match (e, cases, _) -> Match (e, cases, i)
     | Construct (s, es, typ, _) -> Construct (s, es, typ, i)
-  ;;
 
   let set_info_stmt : Info.t -> stmt -> stmt =
    fun i -> function

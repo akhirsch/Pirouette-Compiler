@@ -30,12 +30,12 @@ module M = struct
     | TSum of 'a typ * 'a typ * 'a
     | TVariant of 'a constructor list * 'a
 
-      and 'a constructor =
-    { name : string
-    ; args : 'a typ list
-    ; typ  : 'a typ_id
-    ; info : 'a
-    }
+  and 'a constructor = {
+    name : string;
+    args : 'a typ list;
+    typ : 'a typ_id;
+    info : 'a;
+  }
 
   type 'a pattern =
     | Default of 'a
@@ -111,7 +111,6 @@ struct
     | TProd (_, _, i) -> i
     | TSum (_, _, i) -> i
     | TVariant (_, i) -> i
-  ;;
 
   let get_info_pattern : pattern -> Info.t = function
     | Default i -> i
@@ -121,7 +120,6 @@ struct
     | Left (_, i) -> i
     | Right (_, i) -> i
     | PConstruct (_, _, _, i) -> i
-  ;;
 
   let get_info_expr : expr -> Info.t = function
     | Unit i -> i
@@ -137,11 +135,9 @@ struct
     | Right (_, i) -> i
     | Match (_, _, i) -> i
     | Construct (_, _, _, i) -> i
-  ;;
 
-    let get_info_constructor : constructor -> Info.t = function
+  let get_info_constructor : constructor -> Info.t = function
     | { name = _; args = _; typ = _; info = i } -> i
-  ;;
 
   let set_info_value : Info.t -> value -> value =
    fun i -> function
@@ -185,8 +181,7 @@ struct
     | TVar (t, _) -> TVar (t, i)
     | TProd (t1, t2, _) -> TProd (t1, t2, i)
     | TSum (t1, t2, _) -> TSum (t1, t2, i)
-    | TVariant (cs,  _) -> TVariant (cs, i)
-  ;;
+    | TVariant (cs, _) -> TVariant (cs, i)
 
   let set_info_pattern : Info.t -> pattern -> pattern =
    fun i -> function
@@ -197,7 +192,6 @@ struct
     | Left (p, _) -> Left (p, i)
     | Right (p, _) -> Right (p, i)
     | PConstruct (name, ps, t, _) -> PConstruct (name, ps, t, i)
-  ;;
 
   let set_info_expr : Info.t -> expr -> expr =
    fun i -> function
@@ -214,10 +208,8 @@ struct
     | Right (e, _) -> Right (e, i)
     | Match (e, cases, _) -> Match (e, cases, i)
     | Construct (s, es, t, _) -> Construct (s, es, t, i)
-  ;;
 
-    let set_info_constructor : Info.t -> constructor -> constructor =
-    fun i -> function
+  let set_info_constructor : Info.t -> constructor -> constructor =
+   fun i -> function
     | { name; args; typ; info = _ } -> { name; args; typ; info = i }
-  ;;
 end
