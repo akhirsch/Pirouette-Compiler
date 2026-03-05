@@ -87,31 +87,24 @@ let netir_ex3 =
    y2 := allow choice from P1 with\n\
   \      | L -> ret (5)\n\
   \      | R -> ret (9);\n"
-;;
 
 (* Below are some tests for variants *)
-let simple_variant = "type X := | constructor: X;";;
-let simple_different_name = "type Person := | Sam: Male;";;
-let two_constructors = 
-"type Coin := 
-| heads: win;\n\n
-| tails: loss;\n\n
-";;
+let simple_variant = "type X := | constructor: X;"
+let simple_different_name = "type Person := | Sam: Male;"
+let two_constructors = "type Coin := \n| heads: win;\n\n\n| tails: loss;\n\n\n"
 
-let multiple_constructors1 = 
-"type SchoolEmployee := 
-| Principal: Administrator;\n\n
-| Teacher: Educator;\n\n
-| Janitor: Maintenance;\n\n
-| Security: Maintenance;\n\n
-| IT: Maintenance;\n
-";;
+let multiple_constructors1 =
+  "type SchoolEmployee := \n\
+   | Principal: Administrator;\n\n\n\
+   | Teacher: Educator;\n\n\n\
+   | Janitor: Maintenance;\n\n\n\
+   | Security: Maintenance;\n\n\n\
+   | IT: Maintenance;\n\n"
 
-let multiple_constructors2 = 
-"type Car := 
-| Civic: Honda;\n\n
-| Accord: Honda;\n\n
-| Camry: Toyota;\n\n
-| Corolla: Honda;\n\n
-| Altima: Nissan;\n
-";;
+let multiple_constructors2 =
+  "type Car := \n\
+   | Civic: Honda;\n\n\n\
+   | Accord: Honda;\n\n\n\
+   | Camry: Toyota;\n\n\n\
+   | Corolla: Honda;\n\n\n\
+   | Altima: Nissan;\n\n"

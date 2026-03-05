@@ -153,12 +153,12 @@ module M : sig
             ]}*)
     | TVariant of 'a constructor list * 'a
 
-  and 'a constructor =
-    { name : string
-    ; args : 'a typ list
-    ; typ  : 'a Local.M.typ_id
-    ; info : 'a
-    }
+  and 'a constructor = {
+    name : string;
+    args : 'a typ list;
+    typ : 'a Local.M.typ_id;
+    info : 'a;
+  }
 
   (** {1 Choreographic Patterns}
 
@@ -824,6 +824,6 @@ module With : functor
   val set_info_stmt : Info.t -> stmt -> stmt
   (** [set_info_stmt info s] is statement [s] with its metadata replaced by
       [info].*)
-  
+
   val set_info_constructor : Info.t -> constructor -> constructor
 end

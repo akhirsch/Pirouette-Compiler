@@ -166,7 +166,7 @@ let rec ast_choreo_pattern_stringify : 'a Ast_core.Choreo.M.pattern -> string =
       "(Left (" ^ ast_choreo_pattern_stringify choreo_pattern ^ ", ()))"
   | Right (choreo_pattern, _) ->
       "(Right (" ^ ast_choreo_pattern_stringify choreo_pattern ^ ", ()))"
-  | PConstruct(_, _, _, _) -> "" (*PLACEHOLDER*)
+  | PConstruct (_, _, _, _) -> "" (*PLACEHOLDER*)
 
 let rec ast_choreo_pattern_list_stringify :
     'a Ast_core.Choreo.M.pattern list -> string = function
