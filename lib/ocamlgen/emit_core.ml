@@ -169,19 +169,7 @@ and emit_foreign_decl id typ external_name =
   in
   value_binding ~loc ~pat:(pvar ~loc id) ~expr:fun_expr
 
-(* this version will work to pass the test in emit_core_test : test_basic_external_function 
-  however it loses the type saftey so this is not a fix but it does show that the version above needs to be fixed. *)
-(*  let fun_expr =
-    pexp_fun
-      ~loc
-      Nolabel
-      None
-      (pvar ~loc ("arg"))
-      [%expr
-        [%e evar ~loc (package_string ^ function_name)]
-        [%e evar ~loc "arg"]]
-  in
-  value_binding ~loc ~pat:(pvar ~loc id) ~expr:fun_expr *)
+  
 
 and emit_net_pexp ~(self_id : string) (module Msg : Msg_intf) (exp : 'a Net.expr) =
   match exp with

@@ -44,7 +44,7 @@ let parse_location_config yaml =
     ]} *)
 let parse_config yaml =
   match yaml with
-  | `O [ ("locations", `A locs) (**locs is a list of YAML entries*) ] ->
+  | `O [ ("locations", `A locs) (*locs is a list of YAML entries*) ] ->
     let parsed_locs = List.filter_map parse_location_config locs in
     Some { locations = parsed_locs }
   | _ -> None
