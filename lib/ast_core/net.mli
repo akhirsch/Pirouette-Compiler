@@ -104,7 +104,7 @@ module M : sig
               let int_or_string = TSum (TInt (), TString (), ()) in
               int_or_string
             ]} *)
-    | TVariant of 'a constructor list *  'a
+    | TVariant of 'a constructor list * 'a
 
   (** {1 Network Expressions}
 
@@ -114,13 +114,13 @@ module M : sig
       communication and [ChooseFor]/[AllowChoice] for synchronization. Each
       expression carries metadata of type ['a], allowing compiler passes to
       attach annotations. *)
-    
-    and 'a constructor =
-    { name : string
-    ; args : 'a typ list
-    ; typ  : 'a Local.M.typ_id
-    ; info : 'a
-    }
+
+  and 'a constructor = {
+    name : string;
+    args : 'a typ list;
+    typ : 'a Local.M.typ_id;
+    info : 'a;
+  }
 
   type 'a expr =
     | Unit of 'a
@@ -527,15 +527,14 @@ module M : sig
               in
               match_expr
             ]} *)
-      | Construct of string * 'a expr list * 'a Local.M.typ_id * 'a
-  (** {1 Network Statements}
+    | Construct of string * 'a expr list * 'a Local.M.typ_id * 'a
+        (** {1 Network Statements}
 
-      ['a stmt] represent statements in projected endpoint programs after
-      choreographic projection. These include variable declarations,
-      assignments, type aliases, and foreign function declarations. Each
-      statement carries metadata of type ['a], allowing compiler passes to
-      attach annotations.*)
-    
+            ['a stmt] represent statements in projected endpoint programs after
+            choreographic projection. These include variable declarations,
+            assignments, type aliases, and foreign function declarations. Each
+            statement carries metadata of type ['a], allowing compiler passes to
+            attach annotations.*)
 
   and 'a stmt =
     | Decl of 'a Local.M.pattern * 'a typ * 'a

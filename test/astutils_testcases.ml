@@ -87,41 +87,35 @@ let netir_ex3 =
    y2 := allow choice from P1 with\n\
   \      | L -> ret (5)\n\
   \      | R -> ret (9);\n"
-;;
 
 (* Below are some well-formatted tests for variants. These should pass. *)
-let simple_variant = "type X := | constructor: X;";;
-let simple_different_name = "type Person := | Sam: Person;";;
-let two_constructors = 
-"type Coin := 
-| heads: Coin;\n\n
-| tails: Coin;\n\n
-";;
+let simple_variant = "type X := | constructor: X;"
+let simple_different_name = "type Person := | Sam: Person;"
+let two_constructors = "type Coin := \n| heads: Coin;\n\n\n| tails: Coin;\n\n\n"
 
-let multiple_constructors1 = 
-"type SchoolEmployee := 
-| Principal: SchoolEmployee;\n\n
-| Teacher: SchoolEmployee;\n\n
-| Janitor: SchoolEmployee;\n\n
-| Security: SchoolEmployee;\n\n
-| IT: SchoolEmployee;\n
-";;
+let multiple_constructors1 =
+  "type SchoolEmployee := \n\
+   | Principal: SchoolEmployee;\n\n\n\
+   | Teacher: SchoolEmployee;\n\n\n\
+   | Janitor: SchoolEmployee;\n\n\n\
+   | Security: SchoolEmployee;\n\n\n\
+   | IT: SchoolEmployee;\n\n"
 
-let multiple_constructors2 = 
-"type Car := 
-| Civic: Car;\n\n
-| Accord: Car;\n\n
-| Camry: Car;\n\n
-| Corolla: Car;\n\n
-| Altima: Car;\n
-";;
+let multiple_constructors2 =
+  "type Car := \n\
+   | Civic: Car;\n\n\n\
+   | Accord: Car;\n\n\n\
+   | Camry: Car;\n\n\n\
+   | Corolla: Car;\n\n\n\
+   | Altima: Car;\n\n"
 
 (* Below are some poorly formatted variants. These should fail. *)
 
-let missing_constructor1 = "type X := ;";;
-let missing_constructor2 = "type X := : X;";;
-let missing_constructor_name = "type X := | : X;";;
-let missing_type = "type X := | constructor;";;
+let missing_constructor1 = "type X := ;"
+let missing_constructor2 = "type X := : X;"
+let missing_constructor_name = "type X := | : X;"
+let missing_type = "type X := | constructor;"
+
 (* let wrong_constructor_type = "type A := | constructor: B;";;
 let wrong_constructor_type = "type A := | constructor: B;";; *)
 (* let multiple_wrong_type1 = 
@@ -130,17 +124,13 @@ let wrong_constructor_type = "type A := | constructor: B;";; *)
   | constructor2: A;\n\n
   ";; *)
 
-let multiple_wrong_type1 = 
-  "type A := 
-  | constructor1: A;\n\n
-  | constructor2: B;\n\n
-  ";;
+let multiple_wrong_type1 =
+  "type A := \n  | constructor1: A;\n\n\n  | constructor2: B;\n\n\n  "
 
 (*These tests below are edge cases that should not pass *)
-let duplicate_constructors = (* constructors can't have the same name *)
-"type Coin := 
-| heads: Coin;\n\n
-| heads: Coin;\n\n
-";;
+let duplicate_constructors =
+  (* constructors can't have the same name *)
+  "type Coin := \n| heads: Coin;\n\n\n| heads: Coin;\n\n\n"
 
-let type_constructor_same = "type Person := | Person : Person;";; (* constructors and types can't have the same name *)
+let type_constructor_same = "type Person := | Person : Person;"
+(* constructors and types can't have the same name *)

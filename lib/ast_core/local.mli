@@ -337,12 +337,12 @@ module M : sig
             ]}*)
     | TVariant of 'a constructor list * 'a
 
-  and 'a constructor =
-    { name : string
-    ; args : 'a typ list
-    ; typ  : 'a typ_id
-    ; info : 'a
-    }
+  and 'a constructor = {
+    name : string;
+    args : 'a typ list;
+    typ : 'a typ_id;
+    info : 'a;
+  }
 
   (** {1 Local Patterns}
 
@@ -756,6 +756,7 @@ module With : functor
       Functions to set metadata at AST nodes *)
 
   val get_info_constructor : constructor -> Info.t
+
   val set_info_value : Info.t -> value -> value
   (** [set_info_value info v] is value [v] with metadata replaced by [info]. *)
 

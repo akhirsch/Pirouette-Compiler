@@ -834,9 +834,6 @@ let choreo_stmt_suite =
 
 (*-----------------------Variant tests-------------------------------*)
 
-
-
-
 (*------------------Bisect (Coverage check) test--------------------------*)
 let unification_suite =
   "Unification helper functions tests"

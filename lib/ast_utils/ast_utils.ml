@@ -147,9 +147,14 @@ let rec ast_local_pattern_info_map :
       Left (ast_local_pattern_info_map map pattern, map metadata)
   | Right (pattern, metadata) ->
       Right (ast_local_pattern_info_map map pattern, map metadata)
-  | PConstruct (name, patternlist, TypId(typ, info), metadata) ->
-      PConstruct (name, List.map (ast_local_pattern_info_map map) patternlist, TypId(typ, map info), map metadata) (*PLACEHOLDER*)
-      
+  | PConstruct (name, patternlist, TypId (typ, info), metadata) ->
+      PConstruct
+        ( name,
+          List.map (ast_local_pattern_info_map map) patternlist,
+          TypId (typ, map info),
+          map metadata )
+(*PLACEHOLDER*)
+
 let ast_local_loc_id :
     ('a -> 'b) -> 'a Ast_core.Local.M.loc_id -> 'b Ast_core.Local.M.loc_id =
  fun map -> function
@@ -175,17 +180,23 @@ let rec ast_local_type_info_map :
         ( ast_local_type_info_map map typ1,
           ast_local_type_info_map map typ2,
           map metadata )
-| TVariant (cl, metadata) ->
+  | TVariant (cl, metadata) ->
       TVariant
         ( List.map
-            (fun { Ast_core.Local.M.name; args; typ = TypId(typid, type_metadata); info } ->
-              { Ast_core.Local.M.name
-              ; args = List.map (ast_local_type_info_map map) args
-              ; typ = TypId(typid, map type_metadata)
-              ; info = map info
+            (fun {
+                   Ast_core.Local.M.name;
+                   args;
+                   typ = TypId (typid, type_metadata);
+                   info;
+                 } ->
+              {
+                Ast_core.Local.M.name;
+                args = List.map (ast_local_type_info_map map) args;
+                typ = TypId (typid, map type_metadata);
+                info = map info;
               })
-            cl
-        , map metadata ) 
+            cl,
+          map metadata )
 
 let rec info_map_pattern_match :
     ('a -> 'b) ->
@@ -239,10 +250,13 @@ and ast_local_expr_info_map :
         ( ast_local_expr_info_map map expr,
           info_map_pattern_match map patterns,
           map metadata )
-  | Construct (name, patternlist, TypId(typ, info), metadata) ->
-    Construct (name, List.map (ast_local_expr_info_map map) patternlist, TypId(typ, map info), map metadata) (*PLACEHOLDER 3, NEEDS TO BE REPLACED*)
-
-
+  | Construct (name, patternlist, TypId (typ, info), metadata) ->
+      Construct
+        ( name,
+          List.map (ast_local_expr_info_map map) patternlist,
+          TypId (typ, map info),
+          map metadata )
+(*PLACEHOLDER 3, NEEDS TO BE REPLACED*)
 
 let rec ast_choreo_type_info_map :
     ('a -> 'b) -> 'a Ast_core.Choreo.M.typ -> 'b Ast_core.Choreo.M.typ =
@@ -273,14 +287,21 @@ let rec ast_choreo_type_info_map :
   | TVariant (cl, metadata) ->
       TVariant
         ( List.map
-            (fun { Ast_core.Choreo.M.name; args; typ = TypId(typid, type_metadata); info } ->
-              { Ast_core.Choreo.M.name
-              ; args = List.map (ast_choreo_type_info_map map) args
-              ; typ = TypId(typid, map type_metadata)
-              ; info = map info
+            (fun {
+                   Ast_core.Choreo.M.name;
+                   args;
+                   typ = TypId (typid, type_metadata);
+                   info;
+                 } ->
+              {
+                Ast_core.Choreo.M.name;
+                args = List.map (ast_choreo_type_info_map map) args;
+                typ = TypId (typid, map type_metadata);
+                info = map info;
               })
-            cl
-        , map metadata ) (*PLACEHOLDER 4, NEEDS TO BE REPLACED*)
+            cl,
+          map metadata )
+(*PLACEHOLDER 4, NEEDS TO BE REPLACED*)
 
 let rec ast_choreo_pattern_info_map :
     ('a -> 'b) -> 'a Ast_core.Choreo.M.pattern -> 'b Ast_core.Choreo.M.pattern =
@@ -302,9 +323,14 @@ let rec ast_choreo_pattern_info_map :
       Left (ast_choreo_pattern_info_map map choreo_pattern, map metadata)
   | Right (choreo_pattern, metadata) ->
       Right (ast_choreo_pattern_info_map map choreo_pattern, map metadata)
-  | PConstruct (name, patternlist, TypId(typ, info), metadata) -> (*PLACEHOdlER,*)
-      PConstruct (name, List.map (ast_choreo_pattern_info_map map) patternlist, TypId(typ, map info), map metadata)
-    (* PConstruct (name, ast_choreo_pattern_list_info_map ast_choreo_pattern_info_map map patternlist, typ, map metadata) *)
+  | PConstruct (name, patternlist, TypId (typ, info), metadata) ->
+      (*PLACEHOdlER,*)
+      PConstruct
+        ( name,
+          List.map (ast_choreo_pattern_info_map map) patternlist,
+          TypId (typ, map info),
+          map metadata )
+(* PConstruct (name, ast_choreo_pattern_list_info_map ast_choreo_pattern_info_map map patternlist, typ, map metadata) *)
 
 (* making above and below function mutually recursive *)
 and ast_choreo_pattern_list_info_map :
@@ -391,8 +417,13 @@ and ast_choreo_expr_info_map :
         ( ast_choreo_expr_info_map map expr,
           info_map_pattern_match map patterns,
           map metadata )
-  | Construct (name, patternlist, TypId(typ, info), metadata) ->
-    Construct (name, List.map (ast_choreo_expr_info_map map) patternlist, TypId(typ, map info), map metadata) (*PLACEHOLDER*)
+  | Construct (name, patternlist, TypId (typ, info), metadata) ->
+      Construct
+        ( name,
+          List.map (ast_choreo_expr_info_map map) patternlist,
+          TypId (typ, map info),
+          map metadata )
+(*PLACEHOLDER*)
 
 and ast_info_map :
     ('a -> 'b) -> 'a Ast_core.Choreo.M.stmt -> 'b Ast_core.Choreo.M.stmt =
