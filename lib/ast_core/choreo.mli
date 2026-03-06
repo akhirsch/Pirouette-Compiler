@@ -153,6 +153,10 @@ module M : sig
             ]}*)
     | TVariant of 'a constructor list * 'a
 
+  (** {1 Choreographic Patterns}
+      ['a pattern] for destructuring values, annotated with metadata of type
+      ['a]. Patterns can match values distributed across multiple locations.*)
+
   and 'a constructor = {
     name : string;
     args : 'a typ list;
@@ -775,11 +779,29 @@ module With : functor
    end)
   -> sig
   type nonrec typ_id = Info.t M.typ_id
+  (** [typ_id] (Type ID) is a type alias for {!Choreo.M.typ_id}, representing
+      names for types in choreographic declarations and references*)
+
   type nonrec typ = Info.t M.typ
+  (** [typ] (Type) is a type alias for {!Choreo.M.typ}, representing the types
+      of values and communications in a choreography*)
+
   type nonrec pattern = Info.t M.pattern
+  (** [pattern] is a type alias for {!Choreo.M.pattern}, representing names for
+      types in Choreographic declarations and references*)
+
   type nonrec expr = Info.t M.expr
+  (** [expr] (Expression) is a type alias for {!Choreo.M.expr}, representing
+      computations and communications in a choreography*)
+
   type nonrec stmt = Info.t M.stmt
+  (** [stmt] (Statement) is a type alias for {!Choreo.M.stmt}, declaring that a
+      pattern has a certain type*)
+
   type nonrec stmt_block = stmt list
+  (** [stmt_block] (Statement Block) is a type alias representing a list of
+      statements*)
+
   type nonrec constructor = Info.t M.constructor
 
   (** {1 Metadata Accessors}

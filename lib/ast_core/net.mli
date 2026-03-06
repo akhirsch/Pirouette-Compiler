@@ -105,15 +105,15 @@ module M : sig
               int_or_string
             ]} *)
     | TVariant of 'a constructor list * 'a
+        (** {1 Network Expressions}
 
-  (** {1 Network Expressions}
-
-      ['a expr] represent computations in projected endpoint programs after
-      choreographic projection. Unlike choreographic expressions which describe
-      global protocols, network expressions include explicit [Send]/[Recv] for
-      communication and [ChooseFor]/[AllowChoice] for synchronization. Each
-      expression carries metadata of type ['a], allowing compiler passes to
-      attach annotations. *)
+            ['a expr] represent computations in projected endpoint programs
+            after choreographic projection. Unlike choreographic expressions
+            which describe global protocols, network expressions include
+            explicit [Send]/[Recv] for communication and
+            [ChooseFor]/[AllowChoice] for synchronization. Each expression
+            carries metadata of type ['a], allowing compiler passes to attach
+            annotations. *)
 
   and 'a constructor = {
     name : string;
@@ -655,9 +655,20 @@ module With : functor
    end)
   -> sig
   type nonrec typ = Info.t M.typ
+  (** [typ] (Type) is a type alias for {!Net.M.typ}, representing a type at the
+      network level, bridging choreographic types and backend code generation*)
+
   type nonrec expr = Info.t M.expr
+  (** [expr] (Expression) is a type alias for {!Net.M.expr}, representing
+      computations in projected endpoint programs after choregraphic projection*)
+
   type nonrec stmt = Info.t M.stmt
+  (** [stmt] (Statement) is a type alias for {!Net.M.stmt}, representing
+      expressions in projected endpoint programs after choregraphic projection*)
+
   type nonrec stmt_block = Info.t M.stmt_block
+  (** [stmt_block] (Statement Block) is a type alias for {!Net.M.stmt_block},
+      representing a list of statements*)
 
   (** {1 Metadata Acessors}
 

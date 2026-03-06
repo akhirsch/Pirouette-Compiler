@@ -153,15 +153,15 @@ For detailed type rules and semantics, refer to the theory documentation here
 
 {1 Navigation}
 
-{{:../index.html} All Packages} | {{!page-user_guide}User Guide} | {{!page-developer_guide}Developer Guide}
+{{:../pirc/index.html}Pirc Documentation} | {{!page-user_guide}User Guide} | {{!page-developer_guide}Developer Guide}
 
-- {{:../index.html}All Packages} - Documentation Navigation
+- {{:../pirc/index.html}Pirc Documentation} - Main Pirouette compiler documentation page
 - {{!page-user_guide}User Guide} - How to use the Pirouette compiler
 - {{!page-developer_guide}Developer Guide} - Contributing and internal architecture
 
 {1 Resources}
 
 - {{:https://github.com/Foundations-of-Decentralization-Group/Pirouette-Compiler}GitHub Repository}
-- {{:https://github.com/akhirsch/Pirouette-Compiler/blob/main/docs/compiler_Guide}Detailed Compiler Guide}
+- {{:https://github.com/akhirsch/Pirouette-Compiler/blob/main/theory/compiler_Guide}Detailed Compiler Guide}
 - {{:https://github.com/akhirsch/Pirouette-Compiler/wiki/Compiler-Pipeline-Diagram}Compiler Pipeline Diagram}
 - {{!page-user_guide}User Guide}

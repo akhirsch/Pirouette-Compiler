@@ -79,6 +79,8 @@ let rec emit_local_pexp (expr : 'a Local.expr) =
           Builder.pexp_construct constructor_lid
             (Some (Builder.pexp_tuple args)))
 (* not right*)
+
+(* let ty = emit_local_pexp typ *)
 (* ===================================================================================== *)
 
 and emit_local_ppat (pat : 'a Local.pattern) =
