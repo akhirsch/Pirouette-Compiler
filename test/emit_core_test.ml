@@ -700,7 +700,7 @@ let net_binding_other _ =
   assert_equal true (net_binding_test ~node_id:"testing" stmt pattern_test "()")
 
 (*----------------------------FFI test cases--------------------------------------*)
-(* 
+
 let test_basic_external_function _ =
   let binding =
     emit_foreign_decl "my_func" (TUnit ()) "Simple_function.simple_function"
@@ -743,7 +743,7 @@ let test_empty_function_name _ =
     (Failure
        "Invalid external function format. Expected \
         [Package:][Submodule.]function[@searchpath]") (fun () ->
-      emit_foreign_decl "bad_fn" (TUnit ()) "module:" |> ignore) *)
+      emit_foreign_decl "bad_fn" (TUnit ()) "module:" |> ignore)
 
 (*----------------------------- test suites ------------------------------------*)
 let local_expr_suite =
@@ -828,7 +828,7 @@ let net_binding_suite =
          "Other binding" >:: net_binding_other;
        ]
 
-(* let ffi_suite =
+let ffi_suite =
   "Foreign function tests"
   >::: [
          "test_basic_external_function" >:: test_basic_external_function;
@@ -838,7 +838,7 @@ let net_binding_suite =
          "test_invalid_external_format" >:: test_search_path_only;
          "test_empty_module_path" >:: test_empty_package_name;
          "test_empty_function_name" >:: test_empty_function_name;
-       ] *)
+       ]
 
 let all_suites =
   "Emit_Core Tests"
@@ -847,7 +847,7 @@ let all_suites =
          local_pat_suite;
          net_expr_suite;
          net_binding_suite;
-         (* ffi_suite; *)
+         ffi_suite;
        ]
 
 let () = run_test_tt_main all_suites
