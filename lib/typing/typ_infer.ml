@@ -109,8 +109,10 @@ and occurs_in_choreo var_name t2 =
   | Choreo.TLoc (_, t, _) -> occurs_in_local var_name t
   | Choreo.TVar (Choreo.Typ_Id (var_name', _), _) -> var_name = var_name'
   | Choreo.TMap (t1, t2, _) | Choreo.TProd (t1, t2, _) | Choreo.TSum (t1, t2, _)
-    ->
+      ->
       occurs_in_choreo var_name t1 || occurs_in_choreo var_name t2
+  | Choreo.TVariant (_, _) -> failwith "Type of patterns are not sum types"
+
 
 (*traverse the substitution list `s`, apply all occurences of subst to `t`*)
 and apply_subst_typ_local s t =
@@ -353,9 +355,10 @@ let rec infer_local_expr local_ctx = function
               [] typ_ls'
           in
           (compose_subst_local s_comp s3, List.hd typ_ls')
-      | _ -> failwith "Type of patterns are not sum types")
-
-    | Local.Construct (name, args, Local.TypId (typ_name, _), _) ->
+          (* | _ -> failwith "not implemented" *)
+      |_ -> failwith "Type of patterns are not sum types")
+      | _ -> failwith "Type of patterns are not sum types"
+      (* | Local.Construct (name, args, Local.TypId (typ_name, _), _) ->
     (* Look up the variant type declaration to find this constructor's expected arg types *)
       let arg_types_inferred =
         List.map (fun e ->
@@ -374,6 +377,7 @@ let rec infer_local_expr local_ctx = function
         | None -> failwith ("Unknown variant type: " ^ typ_name)
       in
       (s_combined, apply_subst_typ_local s_combined result_typ)
+      | _ -> failwith "Type of patterns are not sum types") *)
 
 and typeof_Val = function
   | Int _ -> TInt m
@@ -404,7 +408,7 @@ and infer_local_pattern local_ctx = function
   | Local.Right (p, _) ->
     let s, t, ctx = infer_local_pattern local_ctx p in
     s, Local.TSum (Local.TVar (Local.TypId (gen_ftv (), m), m), t, m), ctx
-  | Local.PConstruct (name, pats, Local.TypId (typ_name, _), _) ->
+  (* | Local.PConstruct (name, pats, Local.TypId (typ_name, _), _) ->
     let ls = List.map (infer_local_pattern local_ctx) pats in
     let s_combined, t_list, ctx_combined =
       List.fold_right
@@ -417,7 +421,8 @@ and infer_local_pattern local_ctx = function
       | Some t -> apply_subst_typ_local s_combined t
       | None -> failwith ("Unknown variant type in pattern: " ^ typ_name)
     in
-    (s_combined, result_typ, ctx_combined)
+    (s_combined, result_typ, ctx_combined) *)
+    | _ -> failwith "Type of patterns are not sum types"
 ;;
 
 (* ============================== Choreo ============================== *)
@@ -673,6 +678,7 @@ and infer_choreo_expr choreo_ctx (global_ctx : global_ctx) = function
           in
           (compose_subst_choreo s_comp s3, List.hd typ_ls')
       | _ -> failwith "Type of patterns are not sum types")
+      |_ -> failwith "Type of patterns are not sum types"
 
 and infer_choreo_pattern choreo_ctx global_ctx = function
   | Choreo.Default _ -> ([], Choreo.TUnit m, [])
@@ -725,8 +731,7 @@ and infer_choreo_pattern choreo_ctx global_ctx = function
           (Local.LocId ("dummy", m), Local.TVar (Local.TypId (gen_ftv (), m), m), m)
     in
     s, Choreo.TSum (Choreo.TVar (Choreo.Typ_Id (gen_ftv (), m), m), t_wrapped, m), ctx
-  | Choreo.
-  | Choreo.PConstruct (name, pats, Local.TypId (typ_name, _), _) ->
+  (* | Choreo.PConstruct (name, pats, Local.TypId (typ_name, _), _) ->
     let ls = List.map (infer_choreo_pattern choreo_ctx global_ctx) pats in
     let s_combined, t_list, ctx_combined =
       List.fold_right
@@ -739,5 +744,6 @@ and infer_choreo_pattern choreo_ctx global_ctx = function
       | Some t -> apply_subst_typ_choreo s_combined t
       | None -> failwith ("Unknown variant type in choreo pattern: " ^ typ_name)
     in
-    (s_combined, result_typ, ctx_combined)
+    (s_combined, result_typ, ctx_combined) *)
+    | _ -> failwith "Type of patterns are not sum types"
 ;;

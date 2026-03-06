@@ -122,13 +122,13 @@ let missing_constructor1 = "type X := ;";;
 let missing_constructor2 = "type X := : X;";;
 let missing_constructor_name = "type X := | : X;";;
 let missing_type = "type X := | constructor;";;
-let wrong_constructor_type = "type A := | constructor: B;";;
-let wrong_constructor_type = "type A := | constructor: B;";;
-let multiple_wrong_type1 = 
+(* let wrong_constructor_type = "type A := | constructor: B;";;
+let wrong_constructor_type = "type A := | constructor: B;";; *)
+(* let multiple_wrong_type1 = 
   "type A := 
   | constructor1: B;\n\n
   | constructor2: A;\n\n
-  ";;
+  ";; *)
 
 let multiple_wrong_type1 = 
   "type A := 
