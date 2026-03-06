@@ -832,6 +832,11 @@ let choreo_stmt_suite =
            |> choreo_expr_typ_failures choreo_decl_pattern_mismatch );
        ]
 
+(*-----------------------Variant tests-------------------------------*)
+
+
+
+
 (*------------------Bisect (Coverage check) test--------------------------*)
 let unification_suite =
   "Unification helper functions tests"
