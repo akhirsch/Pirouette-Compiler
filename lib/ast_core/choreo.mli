@@ -153,11 +153,9 @@ module M : sig
             ]}*)
     | TVariant of 'a constructor list * 'a
 
-        (** {1 Choreographic Patterns}
-            ['a pattern] for destructuring values, annotated with metadata of
-            type ['a]. Patterns can match values distributed across multiple
-            locations.*)
-
+  (** {1 Choreographic Patterns}
+      ['a pattern] for destructuring values, annotated with metadata of type
+      ['a]. Patterns can match values distributed across multiple locations.*)
 
   and 'a constructor = {
     name : string;
@@ -283,7 +281,6 @@ module M : sig
             ['a expr] annotated with metadata of type ['a]. Expressions describe
             computations and communications in a choreography, including message
             passing between locations. *)
-
 
   type 'a expr =
     | Unit of 'a

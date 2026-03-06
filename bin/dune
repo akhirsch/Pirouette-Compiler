@@ -3,6 +3,7 @@
  (libraries
   ast_utils
   parsing
+  typing
   netgen
   ocamlgen
   http_pirc
