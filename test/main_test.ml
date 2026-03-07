@@ -5,6 +5,7 @@ open OUnit2
 
 Create your test module, as one would expect
 Create a comprehensive test suite in that test module.
+*DO NOT* call "run_test_tt_main" in that file; if that test fails, no more tests will be run.
 Add that module's suite to the list below.
 In the test/dune file;
   Add the module to the "main_test" stanza, in the "modules" section.

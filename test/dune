@@ -1,3 +1,15 @@
+; *TO ADD A NEW TEST SUITE*
+
+; Create your test module, as one would expect
+; Create a comprehensive test suite in that test module.
+; *DO NOT* call "run_test_tt_main" in that file; if that test fails, no more tests will be run.
+; Add that module's suite in main_test.ml
+; In this file;
+;   Add the module (name of new test file) to the stanza below, in the "modules" section.
+;   Add any used libraries to the "libraries" section, if they're not already there.
+
+;This stanza runs all of our tests, running a single all-encompasing test ensures that the testing process 
+;doesn't end prematurely due to a test failing.
 (test
   (name main_test)
   (modules main_test 
@@ -28,6 +40,9 @@
       (pps bisect_ppx ppxlib.metaquot)
   )
 )
+
+;The following tests were commented out since before the tests were consolidated.
+;They follow the old format, and would need to be added to the above stanza to be reactivated.
 
 ; (executable
 ;  (name pipeline_gen))
