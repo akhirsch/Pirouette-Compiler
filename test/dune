@@ -10,36 +10,34 @@
 
 ;This stanza runs all of our tests, running a single all-encompasing test ensures that the testing process 
 ;doesn't end prematurely due to a test failing.
+
 (test
-  (name main_test)
-  (modules main_test 
-    prettyprint_test
-    typcheck_test
-    parsing_test
-    marshal_test
-    dotast_test
-    net_parsing_test
-    emit_core_test
-    types_test
-    astutils_testcases
-    )
-  (libraries 
-    ounit2 
-    parsing 
-    ast_utils
-    stdlib_utils
-    typing
-    ast_core
-    http_pirc
-    ppxlib
-    ocamlgen
-    cohttp-lwt-unix
-    logs
-  )
-  (preprocess
-      (pps bisect_ppx ppxlib.metaquot)
-  )
-)
+ (name main_test)
+ (modules
+  main_test
+  prettyprint_test
+  typcheck_test
+  parsing_test
+  marshal_test
+  dotast_test
+  net_parsing_test
+  emit_core_test
+  types_test
+  astutils_testcases)
+ (libraries
+  ounit2
+  parsing
+  ast_utils
+  stdlib_utils
+  typing
+  ast_core
+  http_pirc
+  ppxlib
+  ocamlgen
+  cohttp-lwt-unix
+  logs)
+ (preprocess
+  (pps bisect_ppx ppxlib.metaquot)))
 
 ;The following tests were commented out since before the tests were consolidated.
 ;They follow the old format, and would need to be added to the above stanza to be reactivated.

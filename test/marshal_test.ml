@@ -62,4 +62,3 @@ let suite =
          "test_marshal_unmarshal_color" >:: test_marshal_unmarshal_color;
          "test_marshal_unmarshal_person" >:: test_marshal_unmarshal_person;
        ]
-

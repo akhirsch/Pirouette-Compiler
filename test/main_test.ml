@@ -15,14 +15,14 @@ In the test/dune file;
 let main_suite =
   "Top Level test suite"
   >::: [
-      Prettyprint_test.suite;
-      Typcheck_test.all_suites;
-      Parsing_test.suite;
-      Marshal_test.suite;
-      Dotast_test.suite;
-      Net_parsing_test.suite;
-      Emit_core_test.all_suites;
-      Parsing_test.suite;
-    ]
-    
+         Prettyprint_test.suite;
+         Typcheck_test.all_suites;
+         Parsing_test.suite;
+         Marshal_test.suite;
+         Dotast_test.suite;
+         Net_parsing_test.suite;
+         Emit_core_test.all_suites;
+         Parsing_test.suite;
+       ]
+
 let () = run_test_tt_main main_suite
