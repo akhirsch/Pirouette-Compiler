@@ -46,8 +46,18 @@ let rec ast_local_type_alpha_rename :
         ( ast_local_type_alpha_rename typ1,
           ast_local_type_alpha_rename typ2,
           metadata )
-  | TVariant (cl, metadata) -> TVariant (cl, metadata)
-(*PLACEHOLDER, the renaming might happen in constructor directly, but if not this would need to change*)
+  | TVariant (cl, metadata) ->
+      TVariant
+        ( List.map
+            (fun { Ast_core.Local.M.name; args; typ; info } ->
+              {
+                Ast_core.Local.M.name;
+                args = List.map ast_local_type_alpha_rename args;
+                typ;
+                info;
+              })
+            cl,
+          metadata )
 
 let rec alpha_rename_pattern_match :
     ('a Ast_core.Local.M.pattern * 'a Ast_core.Local.M.expr) list ->
@@ -93,8 +103,8 @@ and ast_local_expr_alpha_rename :
           alpha_rename_pattern_match patterns,
           metadata )
   | Construct (name, arglist, typ, metadata) ->
-      Construct (name, arglist, typ, metadata)
-(*PLACEHOLDER, no renaming done*)
+      Construct
+        (name, List.map ast_local_expr_alpha_rename arglist, typ, metadata)
 
 let rec ast_choreo_type_alpha_rename :
     'a Ast_core.Choreo.M.typ -> 'a Ast_core.Choreo.M.typ = function
@@ -121,8 +131,18 @@ let rec ast_choreo_type_alpha_rename :
         ( ast_choreo_type_alpha_rename typ1,
           ast_choreo_type_alpha_rename typ2,
           metadata )
-  | TVariant (cl, metadata) -> TVariant (cl, metadata)
-(*PLACEHOLDER*)
+  | TVariant (cl, metadata) ->
+      TVariant
+        ( List.map
+            (fun { Ast_core.Choreo.M.name; args; typ; info } ->
+              {
+                Ast_core.Choreo.M.name;
+                args = List.map ast_choreo_type_alpha_rename args;
+                typ;
+                info;
+              })
+            cl,
+          metadata )
 
 let rec ast_choreo_pattern_alpha_rename :
     'a Ast_core.Choreo.M.pattern -> 'a Ast_core.Choreo.M.pattern = function
@@ -143,9 +163,13 @@ let rec ast_choreo_pattern_alpha_rename :
       Left (ast_choreo_pattern_alpha_rename choreo_pattern, metadata)
   | Right (choreo_pattern, metadata) ->
       Right (ast_choreo_pattern_alpha_rename choreo_pattern, metadata)
-  | PConstruct (name, arglist, typ, metadata) ->
-      PConstruct (name, arglist, typ, metadata)
-(*PLACEHOLDER*)
+  | PConstruct (name, patternlist, typ, metadata) ->
+      PConstruct
+        ( name,
+          List.map ast_choreo_pattern_alpha_rename patternlist,
+          typ,
+          metadata )
+(*PLACEHOLDER, NEEDS TO BE TESTED*)
 
 let rec ast_choreo_pattern_list_alpha_rename :
     'a Ast_core.Choreo.M.pattern list -> 'a Ast_core.Choreo.M.pattern list =
@@ -225,7 +249,8 @@ and ast_choreo_expr_alpha_rename :
           alpha_rename_pattern_match patterns,
           metadata )
   | Construct (name, arglist, typ, metadata) ->
-      Construct (name, arglist, typ, metadata)
+      Construct
+        (name, List.map ast_choreo_expr_alpha_rename arglist, typ, metadata)
 
 and ast_alpha_rename : 'a Ast_core.Choreo.M.stmt -> 'a Ast_core.Choreo.M.stmt =
   function

@@ -153,11 +153,9 @@ module M : sig
             ]}*)
     | TVariant of 'a constructor list * 'a
 
-        (** {1 Choreographic Patterns}
-            ['a pattern] for destructuring values, annotated with metadata of
-            type ['a]. Patterns can match values distributed across multiple
-            locations.*)
-
+  (** {1 Choreographic Patterns}
+      ['a pattern] for destructuring values, annotated with metadata of type
+      ['a]. Patterns can match values distributed across multiple locations.*)
 
   and 'a constructor = {
     name : string;
@@ -278,12 +276,12 @@ module M : sig
               right_x
             ]}*)
     | PConstruct of string * 'a pattern list * 'a Local.M.typ_id * 'a
-        (** {1 Choreographic Expressions}
 
-            ['a expr] annotated with metadata of type ['a]. Expressions describe
-            computations and communications in a choreography, including message
-            passing between locations. *)
+  (** {1 Choreographic Expressions}
 
+      ['a expr] annotated with metadata of type ['a]. Expressions describe
+      computations and communications in a choreography, including message
+      passing between locations. *)
 
   type 'a expr =
     | Unit of 'a
@@ -615,10 +613,11 @@ module M : sig
               match_expr
             ]} *)
     | Construct of string * 'a expr list * 'a Local.M.typ_id * 'a
-        (** {1 Choreographic Statements}
 
-            annotated with metadata of type ['a]. Statements declare variables,
-            types, and perform assignments. *)
+  (** {1 Choreographic Statements}
+
+      annotated with metadata of type ['a]. Statements declare variables, types,
+      and perform assignments. *)
 
   and 'a stmt =
     | Decl of 'a pattern * 'a typ * 'a

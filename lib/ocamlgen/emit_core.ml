@@ -159,7 +159,17 @@ and emit_foreign_decl id typ external_name =
           | TSum (typ1, typ2, _) ->
               "(" ^ find_local_type_sig typ1 ^ " + " ^ find_local_type_sig typ2
               ^ ")"
-          | TVariant (_, _) -> "NO" (*PLACEHOLDER*)
+          | TVariant (cl, _) ->
+              String.concat " | "
+                (List.map
+                   (fun { Local.name; args; _ } ->
+                     match args with
+                     | [] -> name
+                     | _ ->
+                         name ^ " of "
+                         ^ String.concat " * "
+                             (List.map find_local_type_sig args))
+                   cl)
         in
         find_local_type_sig local_type
     | TMap (typ1, typ2, _) ->
@@ -168,7 +178,16 @@ and emit_foreign_decl id typ external_name =
         "(" ^ find_type_sig typ1 ^ " * " ^ find_type_sig typ2 ^ ")"
     | TSum (typ1, typ2, _) ->
         "(" ^ find_type_sig typ1 ^ " + " ^ find_type_sig typ2 ^ ")"
-    | TVariant (_, _) -> "VARIANTS NOT DONE STOP TRYING TO USE" (*PLACEHOLDER*)
+    | TVariant (cl, _) ->
+        String.concat " | "
+          (List.map
+             (fun { Net.name; args; _ } ->
+               match args with
+               | [] -> name
+               | _ ->
+                   name ^ " of "
+                   ^ String.concat " * " (List.map find_type_sig args))
+             cl)
   in
 
   (* The full type signature of a function. We apply this type signature to the identifier, then we set the value of the identifier to be equal to 'fun arg ->[ffi]]'. This works because of currying. *)

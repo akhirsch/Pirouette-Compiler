@@ -303,6 +303,7 @@ local_pattern:
   | LEFT p=local_pattern { Left (p, gen_pos $startpos $endpos) }
   | RIGHT p=local_pattern { Right (p, gen_pos $startpos $endpos) }
   | LPAREN p=local_pattern RPAREN { Local.set_info_pattern (gen_pos $startpos $endpos) p }
+ 
 
 net_type:
   | UNIT_T { TUnit (gen_pos $startpos $endpos) }
@@ -311,6 +312,7 @@ net_type:
   | t1=net_type TIMES t2=net_type { TProd (t1, t2, gen_pos $startpos $endpos) }
   | t1=net_type PLUS t2=net_type { TSum (t1, t2, gen_pos $startpos $endpos) }
   | LPAREN t=net_type RPAREN { Net.set_info_typ (gen_pos $startpos $endpos) t }
+  
 
 local_type:
   | UNIT_T { TUnit (gen_pos $startpos $endpos) }
@@ -320,7 +322,8 @@ local_type:
   | t1=local_type TIMES t2=local_type { TProd (t1, t2, gen_pos $startpos $endpos) }
   | t1=local_type PLUS t2=local_type { TSum (t1, t2, gen_pos $startpos $endpos) }
   | LPAREN t=local_type RPAREN { Local.set_info_typ (gen_pos $startpos $endpos) t }
-  
+ 
+
 loc_id:
   | id=ID { LocId (id, gen_pos $startpos $endpos) }
 

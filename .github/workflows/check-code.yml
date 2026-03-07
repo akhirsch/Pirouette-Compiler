@@ -62,3 +62,35 @@ jobs:
         run: opam exec -- dune build
       - name: Build Docs
         run: opam exec -- dune build @doc
+        
+  Run-Test-Suite:
+    strategy:
+      fail-fast: false
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set-up OCaml
+        uses: ocaml/setup-ocaml@v3
+        with:
+          ocaml-compiler: 5.2.1
+
+      - name: Install dependencies
+        run: opam install . --deps-only --with-test
+
+      - name: Build
+        run: opam exec -- dune build
+
+      - name: Run Tests
+        run: |
+          TEST_OUTPUT=$(opam exec -- dune test)
+          if [[ -n TEST_OUTPUT ]] ; # Ounit2 produces no output when all tests pass.
+          then
+            echo $TEST_OUTPUT
+            exit 1
+          else
+            echo "All tests were passed."
+          fi

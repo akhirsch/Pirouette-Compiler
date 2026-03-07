@@ -336,13 +336,6 @@ module M : sig
               sum_int_string
             ]}*)
     | TVariant of 'a constructor list * 'a
-        (** {1 Local Patterns}
-
-            ['a pattern] represent patterns for matching and destructuring
-            values in local computation. These patterns bind variables, match
-            literals, and destructure compound data at a single endpoint. Each
-            pattern carries metadata of type ['a] for source location tracking
-            and type information.*)
 
   and 'a constructor = {
     name : string;
@@ -350,6 +343,13 @@ module M : sig
     typ : 'a typ_id;
     info : 'a;
   }
+
+  (** {1 Local Patterns}
+
+      ['a pattern] represent patterns for matching and destructuring values in
+      local computation. These patterns bind variables, match literals, and
+      destructure compound data at a single endpoint. Each pattern carries
+      metadata of type ['a] for source location tracking and type information.*)
 
   type 'a pattern =
     | Default of 'a
@@ -459,13 +459,14 @@ module M : sig
               right_y
             ]}*)
     | PConstruct of string * 'a pattern list * 'a typ_id * 'a
-        (** {1 Local Expressions}
 
-            ['a expr] represent pure computations at a single endpoint with no
-            communication or distribution. Local expressions include values,
-            variables, operators, conditionals, and pattern matching - all
-            executed locally. Each expression carries metadata of type ['a] for
-            source location tracking and type information.*)
+  (** {1 Local Expressions}
+
+      ['a expr] represent pure computations at a single endpoint with no
+      communication or distribution. Local expressions include values,
+      variables, operators, conditionals, and pattern matching - all executed
+      locally. Each expression carries metadata of type ['a] for source location
+      tracking and type information.*)
 
   type 'a expr =
     | Unit of 'a
