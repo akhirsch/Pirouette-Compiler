@@ -503,10 +503,13 @@ let ast_utils_ffi_suite =
            test_parse_external_name_multiple_at () );
        ]
 
-let () =
-  run_test_tt_main local_ffi_suite;
-  run_test_tt_main choreo_ffi_suite;
-  run_test_tt_main net_ffi_suite;
-  run_test_tt_main ast_locs_ffi_suite;
-  run_test_tt_main ast_utils_ffi_suite;
-  run_test_tt_main emit_core_ffi_suite
+let main_suite = 
+  "FFI test suite"
+  >::: [
+    local_ffi_suite;
+    choreo_ffi_suite;
+    net_ffi_suite;
+    ast_locs_ffi_suite;
+    ast_utils_ffi_suite;
+    emit_core_ffi_suite;
+  ]

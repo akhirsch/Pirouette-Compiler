@@ -23,6 +23,7 @@ let main_suite =
          Net_parsing_test.suite;
          Emit_core_test.all_suites;
          Parsing_test.suite;
+         Ffi_test.main_suite;
        ]
 
 let () = run_test_tt_main main_suite
