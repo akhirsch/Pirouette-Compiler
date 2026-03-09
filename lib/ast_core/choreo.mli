@@ -296,11 +296,12 @@ module M : sig
               right_x
             ]}*)
     | PConstruct of string * 'a pattern list * 'a Local.M.typ_id * 'a
-        (** {1 Choreographic Expressions}
 
-            ['a expr] annotated with metadata of type ['a]. Expressions describe
-            computations and communications in a choreography, including message
-            passing between locations. *)
+  (** {1 Choreographic Expressions}
+
+      ['a expr] annotated with metadata of type ['a]. Expressions describe
+      computations and communications in a choreography, including message
+      passing between locations. *)
 
   type 'a expr =
     | Unit of 'a
@@ -632,10 +633,11 @@ module M : sig
               match_expr
             ]} *)
     | Construct of string * 'a expr list * 'a Local.M.typ_id * 'a
-        (** {1 Choreographic Statements}
 
-            annotated with metadata of type ['a]. Statements declare variables,
-            types, and perform assignments. *)
+  (** {1 Choreographic Statements}
+
+      annotated with metadata of type ['a]. Statements declare variables, types,
+      and perform assignments. *)
 
   and 'a stmt =
     | Decl of 'a pattern * 'a typ * 'a

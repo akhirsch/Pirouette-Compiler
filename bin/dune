@@ -1,11 +1,13 @@
 (executable
  (name main)
  (libraries
+  ast_core
   ast_utils
   parsing
   netgen
   ocamlgen
   http_pirc
+  typing
   lwt
   a_rname
   stdlib_utils))

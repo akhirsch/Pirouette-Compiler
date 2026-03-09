@@ -122,18 +122,29 @@ module Choreo = Ast_core.Choreo.M
     ]} *)
 
 (** Global context for location-qualified variables.
+    
+  Maps pairs of (location, variable) to local types. Used to track variables
+  owned by specific locations.
+    
+  {b Structure:} [(location_name, variable_name, local_type)]
+    
+  {b Example:}
+  {[
+    (* Context: {Alice.x: int, Bob.y: string} *)
+    [("Alice", "x", TInt); 
+      ("Bob", "y", TString)]
+  ]} *)
 
-    Maps pairs of (location, variable) to local types. Used to track variables
-    owned by specific locations.
 
-    {b Structure:} [(location_name, variable_name, local_type)]
-
-    {b Example:}
-    {[
-      (* Context: {Alice.x: int, Bob.y: string} *)
-      [ ("Alice", "x", TInt); ("Bob", "y", TString) ]
-    ]} *)
+type errmsg = string
+type typvar = string
+type ftv = (typvar, errmsg) result
+type local_subst = (typvar * ftv Local.typ) list
+type choreo_subst = (typvar * ftv Choreo.typ) list
+type local_ctx = (string * ftv Local.typ) list
+type choreo_ctx = (string * ftv Choreo.typ) list
 type global_ctx = (string * string * ftv Local.typ) list
+
 
 (** {1 Type Inference Functions} *)
 
@@ -156,10 +167,7 @@ val infer_local_expr :
 
     {b Raises:} Type error if expression is ill-typed*)
 
-val infer_local_pattern :
-  local_ctx ->
-  ftv Ast_core.Local.M.pattern ->
-  local_subst * ftv Ast_core.Local.M.typ * local_ctx
+
 (** [infer_local_pattern ctx pat] infers the type of a local pattern and extends
     the context with pattern variables.
 
@@ -290,21 +298,21 @@ val apply_subst_typ_choreo : choreo_subst -> ftv Choreo.typ -> ftv Choreo.typ
     {b Uses:} during endpoint projection to get relevant variables for each
     endpoint. *)
 
-val get_choreo_subst : local_subst -> ftv Local.loc_id -> choreo_subst
+
 (** [get_choreo_subst] converts local substitution to choreographic substitution
     for a location.
 
     Lifts local type bindings to location-qualified types. *)
 val get_choreo_subst : local_subst -> ftv Local.loc_id -> choreo_subst
 
-val get_choreo_ctx : local_ctx -> ftv Local.loc_id -> choreo_ctx
+
 (** [get_choreo_ctx] converts local context to choreographic context for a
     location.
 
     Qualifies all types with the given location. *)
 val get_choreo_ctx : local_ctx -> ftv Local.loc_id -> choreo_ctx
 
-val get_local_subst : choreo_subst -> ftv Local.loc_id -> local_subst
+
 (** [get_local_subst] extracts local substitution for a specific location from
     choreographic substitution.
 
