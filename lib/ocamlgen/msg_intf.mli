@@ -23,6 +23,7 @@
     {b Note:} Different backends implement this interface differently. *)
 
 (** {2 Module M: [emit_net_send] and [emit_net_recv]}*)
+
 (** {2 Module M: [emit_net_send] and [emit_net_recv]}*)
 
 module type M = sig
@@ -46,7 +47,6 @@ module type M = sig
 
       The generated code will be compiled and executed at runtime to actually
       transmit the marshaled data over the network.*)
-  
 
   val emit_net_recv : src:string -> dst:string -> Ppxlib.expression
   (** [emit_net_recv] generates OCaml code for receiving marshaled data from
