@@ -23,14 +23,13 @@ let rec ast_local_pattern_stringify : 'a Ast_core.Local.M.pattern -> string =
 
 let ast_local_loc_id : 'a Ast_core.Local.M.loc_id -> string = function
   | LocId (local_id_name, _) -> "(LocId (\"" ^ local_id_name ^ "\", ()))"
-;;
 
 let rec ast_local_type_stringify : 'a Ast_core.Local.M.typ -> string = function
   | TUnit _ -> "(TUnit ())"
   | TInt _ -> "(TInt ())"
   | TString _ -> "(TString ())"
   | TBool _ -> "(TBool ())"
-| TVar (TypId (typ_name, _), _) ->
+  | TVar (TypId (typ_name, _), _) ->
       "(TVar (TypId (\"" ^ typ_name ^ "\", ()), ()))"
   | TProd (typ1, typ2, _) ->
       "(TProd ("
@@ -46,7 +45,7 @@ let rec ast_local_type_stringify : 'a Ast_core.Local.M.typ -> string = function
       ^ ", ()))"
   | TVariant (_, _) -> "" (*PLACEHODLER*)
   | TForeign (TypId (typ_name, _), _) ->
-    "(TForeign (TypId (\"" ^ typ_name ^ "\", ()), ()))"
+      "(TForeign (TypId (\"" ^ typ_name ^ "\", ()), ()))"
 
 let ast_local_bin_op_stringify : 'a Ast_core.Local.M.bin_op -> string = function
   | Plus _ -> "(Plus ())"
@@ -151,7 +150,7 @@ let rec ast_choreo_type_stringify : 'a Ast_core.Choreo.M.typ -> string =
       ^ ", ()))"
   | TVariant (_, _) -> "" (*PLACEHODLER*)
   | TForeign (Typ_Id (typ_name, _), _) ->
-    "(TForeign (Typ_Id (\"" ^ typ_name ^ "\", ()), ()))"
+      "(TForeign (Typ_Id (\"" ^ typ_name ^ "\", ()), ()))"
 
 let rec ast_choreo_pattern_stringify : 'a Ast_core.Choreo.M.pattern -> string =
   function
@@ -256,33 +255,27 @@ and ast_choreo_expr_stringify : 'a Ast_core.Choreo.M.expr -> string = function
 
 and ast_stringify : 'a Ast_core.Choreo.M.stmt -> string = function
   | Decl (stm_pattern, stmt_type, _) ->
-    "(Decl ("
-    ^ ast_choreo_pattern_stringify stm_pattern
-    ^ ", "
-    ^ ast_choreo_type_stringify stmt_type
-    ^ ", ()))"
+      "(Decl ("
+      ^ ast_choreo_pattern_stringify stm_pattern
+      ^ ", "
+      ^ ast_choreo_type_stringify stmt_type
+      ^ ", ()))"
   | Assign (stmt_pattern_list, stmt_expr, _) ->
-    "(Assign ("
-    ^ ast_choreo_pattern_list_stringify stmt_pattern_list
-    ^ ", "
-    ^ ast_choreo_expr_stringify stmt_expr
-    ^ ", ()))"
+      "(Assign ("
+      ^ ast_choreo_pattern_list_stringify stmt_pattern_list
+      ^ ", "
+      ^ ast_choreo_expr_stringify stmt_expr
+      ^ ", ()))"
   | TypeDecl (TypId (type_name, _), stmt_type, _) ->
-    "(TypeDecl (TypId (\""
-    ^ type_name
-    ^ "\" , ()), "
-    ^ ast_choreo_type_stringify stmt_type
-    ^ ", ()))"
+      "(TypeDecl (TypId (\"" ^ type_name ^ "\" , ()), "
+      ^ ast_choreo_type_stringify stmt_type
+      ^ ", ()))"
   | ForeignDecl (VarId (name, _), stmt_type, stmt_foreign_str, _) ->
-    "(ForeignDecl (VarId ( \""
-    ^ name
-    ^ "\" , ()), "
-    ^ ast_choreo_type_stringify stmt_type
-    ^ ", \""
-    ^ stmt_foreign_str
-    ^ "\", ()))"
+      "(ForeignDecl (VarId ( \"" ^ name ^ "\" , ()), "
+      ^ ast_choreo_type_stringify stmt_type
+      ^ ", \"" ^ stmt_foreign_str ^ "\", ()))"
   | ForeignTypeDecl (TypId (type_name, _), _) ->
-    "(ForeignTypeDecl (TypId (\"" ^ type_name ^ "\", ()), ()))"
+      "(ForeignTypeDecl (TypId (\"" ^ type_name ^ "\", ()), ()))"
 
 and ast_list_stringify : 'a Ast_core.Choreo.M.stmt_block -> string = function
   | [] -> "[]"

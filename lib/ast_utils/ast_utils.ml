@@ -67,8 +67,7 @@ let parse_external_name name =
           "Invalid external function format. Expected \
            [Package:][Submodule.]function[@searchpath]"
   in
-  package_name, function_name, search_path
-;;
+  (package_name, function_name, search_path)
 
 (* Extract all unique FFI information from a list of statements *)
 (* collect_ffi_info walks through a list of choreo statements, finds every ForeignDecl
@@ -173,7 +172,7 @@ let rec ast_local_type_info_map :
   | TInt metadata -> TInt (map metadata)
   | TString metadata -> TString (map metadata)
   | TBool metadata -> TBool (map metadata)
-   | TVar (TypId (typ_name, type_metadata), metadata) ->
+  | TVar (TypId (typ_name, type_metadata), metadata) ->
       TVar (TypId (typ_name, map type_metadata), map metadata)
   | TProd (typ1, typ2, metadata) ->
       TProd
@@ -202,8 +201,8 @@ let rec ast_local_type_info_map :
               })
             cl,
           map metadata )
-    | TForeign (TypId (typ_name, type_metadata), metadata) ->
-    TForeign (TypId (typ_name, map type_metadata), map metadata)
+  | TForeign (TypId (typ_name, type_metadata), metadata) ->
+      TForeign (TypId (typ_name, map type_metadata), map metadata)
 
 let rec info_map_pattern_match :
     ('a -> 'b) ->
@@ -248,7 +247,7 @@ and ast_local_expr_info_map :
           map metadata )
   | Fst (expr, metadata) -> Fst (ast_local_expr_info_map map expr, map metadata)
   | Snd (expr, metadata) -> Snd (ast_local_expr_info_map map expr, map metadata)
- | Left (expr, metadata) ->
+  | Left (expr, metadata) ->
       Left (ast_local_expr_info_map map expr, map metadata)
   | Right (expr, metadata) ->
       Right (ast_local_expr_info_map map expr, map metadata)
@@ -308,9 +307,9 @@ let rec ast_choreo_type_info_map :
               })
             cl,
           map metadata )
-(*PLACEHOLDER 4, NEEDS TO BE REPLACED*)
+  (*PLACEHOLDER 4, NEEDS TO BE REPLACED*)
   | TForeign (Typ_Id (type_name, type_metadata), metadata) ->
-    TForeign (Typ_Id (type_name, map type_metadata), map metadata)
+      TForeign (Typ_Id (type_name, map type_metadata), map metadata)
 
 let rec ast_choreo_pattern_info_map :
     ('a -> 'b) -> 'a Ast_core.Choreo.M.pattern -> 'b Ast_core.Choreo.M.pattern =
@@ -416,7 +415,8 @@ and ast_choreo_expr_info_map :
           ast_choreo_expr_info_map map expr2,
           map metadata )
   | Fst (expr, metadata) -> Fst (ast_choreo_expr_info_map map expr, map metadata)
-  | Snd (expr, metadata) -> Snd (ast_choreo_expr_info_map map expr, map metadata)| Left (expr, metadata) ->
+  | Snd (expr, metadata) -> Snd (ast_choreo_expr_info_map map expr, map metadata)
+  | Left (expr, metadata) ->
       Left (ast_choreo_expr_info_map map expr, map metadata)
   | Right (expr, metadata) ->
       Right (ast_choreo_expr_info_map map expr, map metadata)
@@ -458,10 +458,13 @@ and ast_info_map :
           stmt_foreign_str,
           map metadata )
   | ForeignTypeDecl (TypId (type_name, type_metadata), metadata) ->
-    ForeignTypeDecl (TypId (type_name, map type_metadata), map metadata)
+      ForeignTypeDecl (TypId (type_name, map type_metadata), map metadata)
 (* Map metadata over a ForeignTypeDecl*)
 
-and ast_list_info_map : ('a -> 'b) -> 'a Ast_core.Choreo.M.stmt_block -> 'b Ast_core.Choreo.M.stmt_block = 
-  fun map -> function
+and ast_list_info_map :
+    ('a -> 'b) ->
+    'a Ast_core.Choreo.M.stmt_block ->
+    'b Ast_core.Choreo.M.stmt_block =
+ fun map -> function
   | [] -> []
   | h :: d -> ast_info_map map h :: ast_list_info_map map d

@@ -48,10 +48,11 @@ and extract_stmt : 'a Choreo.stmt -> LocSet.t = function
         (extract_expr e)
   | TypeDecl (_, t, _) -> extract_type t
   | ForeignDecl (_, t, _, _) ->
-    extract_type t
-    (* ForeignDecl is extracting locations from its type signature t 
+      extract_type t
+      (* ForeignDecl is extracting locations from its type signature t 
   because the type of a foreign function could reference locations ex Alice.Int -> Bob.String. *)
-  | ForeignTypeDecl (_, _) -> LocSet.empty (* foreign types have no associated location *)
+  | ForeignTypeDecl (_, _) ->
+      LocSet.empty (* foreign types have no associated location *)
 
 and extract_expr : 'a Choreo.expr -> LocSet.t = function
   | Unit _ | Var _ -> LocSet.empty

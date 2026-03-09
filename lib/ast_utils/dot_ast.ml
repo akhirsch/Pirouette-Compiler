@@ -101,7 +101,7 @@ let rec dot_local_type (string_of_info : 'a -> string) (typ : 'a Local.typ) :
       let edge2 = spf "%s -> %s;\n" node_name n2 in
       (prod_node ^ edge1 ^ edge2 ^ c1 ^ c2, node_name)
   | TSum (typ1, typ2, info) ->
-let c1, n1 = dot_local_type string_of_info typ1 in
+      let c1, n1 = dot_local_type string_of_info typ1 in
       let c2, n2 = dot_local_type string_of_info typ2 in
       let sum_node =
         spf "%s [label=\"Sum %s\"];\n" node_name (string_of_info info)
@@ -143,8 +143,8 @@ let c1, n1 = dot_local_type string_of_info typ1 in
       in
       (variant_node ^ all_cons_code, node_name)
   | TForeign (TypId (id, _), info) ->
-    spf "%s [label=\"TForeign %s %s\"];\n" node_name id (string_of_info info), node_name
-
+      ( spf "%s [label=\"TForeign %s %s\"];\n" node_name id (string_of_info info),
+        node_name )
 
 (* creates a leaf node labeled with the foreign type name and metadata 
     no children since this type has internal structure to recurse into similar to tbool above*)
@@ -433,7 +433,7 @@ let rec dot_choreo_type (string_of_info : 'a -> string) (typ : 'a Choreo.typ) :
       let edge2 = spf "%s -> %s;\n" node_name n2 in
       (prod_node ^ edge1 ^ edge2 ^ c1 ^ c2, node_name)
   | TSum (typ1, typ2, info) ->
-    let c1, n1 = dot_choreo_type string_of_info typ1 in
+      let c1, n1 = dot_choreo_type string_of_info typ1 in
       let c2, n2 = dot_choreo_type string_of_info typ2 in
       let sum_node =
         spf "%s [label=\"Sum %s\"];\n" node_name (string_of_info info)
@@ -478,8 +478,8 @@ let rec dot_choreo_type (string_of_info : 'a -> string) (typ : 'a Choreo.typ) :
       in
       (variant_node ^ all_cons_code, node_name)
   | TForeign (Typ_Id (id, _), info) ->
-    spf "%s [label=\"TForeign %s %s\"];\n" node_name id (string_of_info info), node_name
-
+      ( spf "%s [label=\"TForeign %s %s\"];\n" node_name id (string_of_info info),
+        node_name )
 
 (* creates a leaf node labeled with the foreign type name and metadata — no children 
     since foreign types have internal structure to recurse into, same as TBool above *)
@@ -633,24 +633,25 @@ and dot_stmt (string_of_info : 'a -> string) (stmt : 'a Choreo.stmt) :
     variant_node ^ typ1edge ^ constructor ^ typ2edge, node_name *)
   | ForeignDecl (VarId (id, _), typ, s, info) ->
       Printf.eprintf "DEBUG: matched ForeignDecl \n%!";
-    let node_name = generate_node_name () in
+      let node_name = generate_node_name () in
       Printf.eprintf "DEBUG: About to create decl_node\n%!";
-    Printf.eprintf "DEBUG: id=%s, s=%s\n%!" id s;
-    let decl_node =
+      Printf.eprintf "DEBUG: id=%s, s=%s\n%!" id s;
+      let decl_node =
         spf "%s [label=\"ForeignDecl: %s -> %s %s\"];\n" node_name id s
           (string_of_info info)
       in
       Printf.eprintf "DEBUG: About to call dot_choreo_type\n%!";
-    let c, n = dot_choreo_type string_of_info typ in
+      let c, n = dot_choreo_type string_of_info typ in
       Printf.eprintf "DEBUG: dot_choreo_type returned\n%!";
-    let edge = spf "%s -> %s;\n" node_name n in
+      let edge = spf "%s -> %s;\n" node_name n in
       (decl_node ^ edge ^ c, node_name)
   | ForeignTypeDecl (TypId (id, _), info) ->
-    Printf.eprintf "DEBUG: matched ForeignTypeDecl \n%!";
-    let decl_node =
-      spf "%s [label=\"ForeignTypeDecl %s %s\"];\n" node_name id (string_of_info info)
-    in
-    decl_node, node_name
+      Printf.eprintf "DEBUG: matched ForeignTypeDecl \n%!";
+      let decl_node =
+        spf "%s [label=\"ForeignTypeDecl %s %s\"];\n" node_name id
+          (string_of_info info)
+      in
+      (decl_node, node_name)
 
 (** [dot_choreo_expr chor_expr] creates the dot code for choreo expressions
     [chor_expr]

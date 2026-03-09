@@ -279,7 +279,7 @@ let rec jsonify_choreo_stmt = function
               ] );
         ]
   | Choreo.ForeignTypeDecl (TypId (id, _), _) ->
-    `Assoc [ "ForeignTypeDecl", `Assoc [ "type_id", `String id ] ]
+      `Assoc [ ("ForeignTypeDecl", `Assoc [ ("type_id", `String id) ]) ]
 (*  converts a choreo statement into a JSON representation. 
   Each statement variant becomes a JSON object with the constructor name as the key.
   ForeignDecl it includes the variable name, type signature, and external string name
@@ -470,7 +470,7 @@ let rec jsonify_net_stmt = function
               ] );
         ]
   | Net.ForeignTypeDecl (TypId (id, _), _) ->
-    `Assoc [ "ForeignTypeDecl", `Assoc [ "id", `String id ] ]
+      `Assoc [ ("ForeignTypeDecl", `Assoc [ ("id", `String id) ]) ]
 
 and jsonify_net_expr = function
   | Net.Unit _ -> `String "Unit"

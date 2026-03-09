@@ -152,25 +152,23 @@ module M : sig
               int_or_string
             ]}*)
     | TForeign of 'a typ_id * 'a
-    (** foreign type identified only by name.
+        (** foreign type identified only by name.
 
-      two foreign types are equal only if they have the same name
+            two foreign types are equal only if they have the same name
 
-      {b Internal AST Structure:} [TForeign(type_id, meta)]
+            {b Internal AST Structure:} [TForeign(type_id, meta)]
 
-      {b Pirouette Syntax:}
-      {[
-        foreign type Int32;     (* declaration *)
-        Int32                   (* usage in type signature *)
-      ]}
+            {b Pirouette Syntax:}
+            {[
+              foreign type Int32;     (* declaration *)
+              Int32                   (* usage in type signature *)
+            ]}
 
-      {b Ocaml:}
-      {[
-        let foreign_type =
-          TForeign(Typ_Id("Int32", ()), ())
-        in
-        foreign_type
-      ]}*)
+            {b Ocaml:}
+            {[
+              let foreign_type = TForeign (Typ_Id ("Int32", ()), ()) in
+              foreign_type
+            ]}*)
     | TVariant of 'a constructor list * 'a
 
   (** {1 Choreographic Patterns}
@@ -735,7 +733,7 @@ module M : sig
             ]}*)
     | ForeignTypeDecl of 'a Local.M.typ_id * 'a
 
-    and 'a stmt_block = 'a stmt list
+  and 'a stmt_block = 'a stmt list
 
   (** {1 Choreographic Statement Block}
 

@@ -835,7 +835,6 @@ let net_binding_suite =
          "Other binding" >:: net_binding_other;
        ]
 
-
 (*let ffi_suite =
   "Foreign function tests"
   >::: [ "test_basic_external_function" >:: test_basic_external_function
@@ -850,11 +849,11 @@ let net_binding_suite =
 
 let all_suites =
   "Emit_Core Tests"
-  >::: [ local_expr_suite
-       ; local_pat_suite
-       ; net_expr_suite
-       ; net_binding_suite (*ffi_suite*)
+  >::: [
+         local_expr_suite;
+         local_pat_suite;
+         net_expr_suite;
+         net_binding_suite (*ffi_suite*);
        ]
-;;
 
 let () = run_test_tt_main all_suites

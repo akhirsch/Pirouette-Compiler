@@ -136,9 +136,11 @@ and emit_net_binding ~(self_id : string) (module Msg : Msg_intf)
   | _ -> Builder.value_binding ~pat:[%pat? _unit] ~expr:Builder.eunit
 
 (* when i comment out this to make the emit_core_test test_basic_external_function run i have to do _typ because it is unused. *)
-and emit_foreign_decl id typ external_name  =
+and emit_foreign_decl id typ external_name =
   let open Ast_builder.Default in
-  let package_name, function_name, _ = Ast_utils.parse_external_name external_name in
+  let package_name, function_name, _ =
+    Ast_utils.parse_external_name external_name
+  in
   let package_string =
     match package_name with Some pack -> pack ^ "." | None -> ""
   in

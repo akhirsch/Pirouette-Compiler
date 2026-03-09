@@ -129,7 +129,7 @@ let net_foreign_type_decl = "foreign type Int32;\n"
 let net_foreign_decl_with_foreign_type =
   "foreign type Int32;\nforeign myFunc : Int32 := \"Pet:feed\";\n"
 ;;
-=======
+
    | Civic: Car;\n\n\n\
    | Accord: Car;\n\n\n\
    | Camry: Car;\n\n\n\

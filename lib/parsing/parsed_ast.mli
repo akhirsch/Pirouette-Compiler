@@ -43,7 +43,7 @@ module Pos_info : sig
         { fname = "source.pir"; start = (3, 0); stop = (3, 16) }
       ]} *)
 
-
+  val string_of_pos : t -> string
   (** [string_of_pos] converts position information to a human-readable string.
 
       Used for displaying error messages with source locations.
@@ -54,7 +54,6 @@ module Pos_info : sig
         string_of_pos pos
         (* Returns: "source.pir:3:0-16" *)
       ]} *)
-  val string_of_pos : t -> string
 end
 
 (**{1 Local AST Types with Position Info}*)
@@ -78,6 +77,7 @@ module Local : sig
 
   (** {2 Position Information Accessors} *)
 
+  val get_info_value : value -> Pos_info.t
   (** [get_info_value v] extracts position information from a value.
 
       {b Example:}
@@ -86,29 +86,33 @@ module Local : sig
         let pos_info = get_info_value v in
         (* pos_info contains the source location of "42" *)
       ]} *)
-  val get_info_value : value -> Pos_info.t
 
-  (** [get_info_locid] extracts position information from a location identifier [loc_id]. *)
+  (** [get_info_locid] extracts position information from a location identifier
+      [loc_id]. *)
   val get_info_locid : loc_id -> Pos_info.t
   (** [get_info_locid] extracts position information from a location identifier
       [loc_id]. *)
 
-  (** [get_info_varid] extracts position information from a variable identifier [var_id]. *)
+  (** [get_info_varid] extracts position information from a variable identifier
+      [var_id]. *)
   val get_info_varid : var_id -> Pos_info.t
   (** [get_info_varid] extracts position information from a variable identifier
       [var_id]. *)
 
-  (** [get_info_typid] extracts position information from a type identifier [type_id]. *)
+  (** [get_info_typid] extracts position information from a type identifier
+      [type_id]. *)
   val get_info_typid : typ_id -> Pos_info.t
   (** [get_info_typid] extracts position information from a type identifier
       [type_id]. *)
 
-  (** [get_info_unop] extracts position information from a unary operator [un_op]. *)
+  (** [get_info_unop] extracts position information from a unary operator
+      [un_op]. *)
   val get_info_unop : un_op -> Pos_info.t
   (** [get_info_unop] extracts position information from a unary operator
       [un_op]. *)
 
-  (** [get_info_binop] extracts position information from a binary operator [bin_op]. *)
+  (** [get_info_binop] extracts position information from a binary operator
+      [bin_op]. *)
   val get_info_binop : bin_op -> Pos_info.t
   (** [get_info_binop] extracts position information from a binary operator
       [bin_op]. *)
@@ -132,12 +136,14 @@ module Local : sig
   val set_info_value : Pos_info.t -> value -> value
   (** [set_info_value] updates the position information in a value. *)
 
-  (** [set_info_locid] updates the position information in a location identifier. *)
+  (** [set_info_locid] updates the position information in a location
+      identifier. *)
   val set_info_locid : Pos_info.t -> loc_id -> loc_id
   (** [set_info_locid] updates the position information in a location
       identifier. *)
 
-  (** [set_info_varid] updates the position information in a variable identifier. *)
+  (** [set_info_varid] updates the position information in a variable
+      identifier. *)
   val set_info_varid : Pos_info.t -> var_id -> var_id
   (** [set_info_varid] updates the position information in a variable
       identifier. *)
@@ -187,39 +193,46 @@ module Choreo : sig
   val get_info_typ : typ -> Pos_info.t
   (** [get_info_typ] extracts position information from a choreographic type. *)
 
-  (** [get_info_pattern] extracts position information from a choreographic pattern. *)
+  (** [get_info_pattern] extracts position information from a choreographic
+      pattern. *)
   val get_info_pattern : pattern -> Pos_info.t
   (** [get_info_pattern] extracts position information from a choreographic
       pattern. *)
 
-  (** [get_info_expr] extracts position information from a choreographic expression.*)
+  (** [get_info_expr] extracts position information from a choreographic
+      expression.*)
   val get_info_expr : expr -> Pos_info.t
   (** [get_info_expr] extracts position information from a choreographic
       expression.*)
 
-  (** [get_info_stmt] extracts position information from a choreographic statement. *)
+  (** [get_info_stmt] extracts position information from a choreographic
+      statement. *)
   val get_info_stmt : stmt -> Pos_info.t
   (** [get_info_stmt] extracts position information from a choreographic
       statement. *)
 
   (** {2 Position Information Setters} *)
 
-  (** [set_info_typ] updates the position information in a choreographic type. *)
+  (** [set_info_typ] updates the position information in a choreographic type.
+  *)
   val set_info_typ : Pos_info.t -> typ -> typ
   (** [set_info_typ] updates the position information in a choreographic type.
   *)
 
-  (** [set_info_pattern] updates the position information in a choreographic pattern. *)
+  (** [set_info_pattern] updates the position information in a choreographic
+      pattern. *)
   val set_info_pattern : Pos_info.t -> pattern -> pattern
   (** [set_info_pattern] updates the position information in a choreographic
       pattern. *)
 
-  (** [set_info_expr] updates the position information in a choreographic expression. *)
+  (** [set_info_expr] updates the position information in a choreographic
+      expression. *)
   val set_info_expr : Pos_info.t -> expr -> expr
   (** [set_info_expr] updates the position information in a choreographic
       expression. *)
 
-  (** [set_info_stmt] updates the position information in a choreographic statement. *)
+  (** [set_info_stmt] updates the position information in a choreographic
+      statement. *)
   val set_info_stmt : Pos_info.t -> stmt -> stmt
   (** [set_info_stmt] updates the position information in a choreographic
       statement. *)
@@ -244,12 +257,14 @@ module Net : sig
   val get_info_typ : typ -> Pos_info.t
   (** [get_info_typ] extracts position information from a network type. *)
 
-  (** [get_info_expr] extracts position information from a network expression. *)
+  (** [get_info_expr] extracts position information from a network expression.
+  *)
   val get_info_expr : expr -> Pos_info.t
   (** [get_info_expr] extracts position information from a network expression.
   *)
 
-  (** [get_info_stmt s] extracts position information from a network statement. *)
+  (** [get_info_stmt s] extracts position information from a network statement.
+  *)
   val get_info_stmt : stmt -> Pos_info.t
   (** [get_info_stmt s] extracts position information from a network statement.
   *)
@@ -260,12 +275,14 @@ module Net : sig
   val set_info_typ : Pos_info.t -> typ -> typ
   (** [set_info_typ] updates the position information in a network type. *)
 
-  (** [set_info_expr] updates the position information in a network expression. *)
+  (** [set_info_expr] updates the position information in a network expression.
+  *)
   val set_info_expr : Pos_info.t -> expr -> expr
   (** [set_info_expr] updates the position information in a network expression.
   *)
 
-  (** [set_info_stmt] updates the position information in a network statement. *)
+  (** [set_info_stmt] updates the position information in a network statement.
+  *)
   val set_info_stmt : Pos_info.t -> stmt -> stmt
   (** [set_info_stmt] updates the position information in a network statement.
   *)

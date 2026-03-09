@@ -144,7 +144,7 @@ let rec epp_choreo_type (typ : 'a Choreo.typ) (loc : string) : 'a Net.typ =
       TProd (epp_choreo_type t1 loc, epp_choreo_type t2 loc, _m)
   | TSum (t1, t2, _) -> TSum (epp_choreo_type t1 loc, epp_choreo_type t2 loc, _m)
   | Choreo.TForeign (Choreo.Typ_Id (name, _), _) ->
-    Net.TForeign (Local.TypId (name, _m), _m)
+      Net.TForeign (Local.TypId (name, _m), _m)
   (* TForeign has no location to project, but preserves the type name through to the net level.
    Choreo uses Choreo.Typ_Id while Net uses Local.TypId, so we extract the name string
    and rewrap it in the correct type id constructor *)

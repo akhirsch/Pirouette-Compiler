@@ -38,7 +38,6 @@ module M = struct
     info : 'a;
   }
 
-
   type 'a pattern =
     | Default of 'a
     | Val of 'a value * 'a
@@ -112,7 +111,8 @@ struct
     | TVar (_, i) -> i
     | TProd (_, _, i) -> i
     | TSum (_, _, i) -> i
-    | TForeign (_, i) -> i (* TForeign returns only its metadata, type name is ignored. *)
+    | TForeign (_, i) ->
+        i (* TForeign returns only its metadata, type name is ignored. *)
     | TVariant (_, i) -> i
 
   let get_info_pattern : pattern -> Info.t = function

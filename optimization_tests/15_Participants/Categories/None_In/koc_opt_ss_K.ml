@@ -6,10 +6,10 @@ let () =
   let config_file_path : string = "koc_opt_ss.yaml" in
   match Lwt_main.run (Config_parser.load_config config_file_path) with
   | Some cfg ->
-    Send_receive.config := Some cfg;
-    ()
-  | None -> failwith (Printf.sprintf "Failed to load config from %s" config_file_path)
-;;
+      Send_receive.config := Some cfg;
+      ()
+  | None ->
+      failwith (Printf.sprintf "Failed to load config from %s" config_file_path)
 
 let () =
   Printf.printf "Starting process_%s...\n" "K";
@@ -25,15 +25,14 @@ let () =
         | Error msg -> failwith ("Receive error: " ^ msg)
       with
       | "L" ->
-        let rec x = 10 in
-        broadcast_opt ()
+          let rec x = 10 in
+          broadcast_opt ()
       | "R" ->
-        let rec x = 9 in
-        ()
+          let rec x = 9 in
+          ()
       | _ -> failwith "Runtime Error: Unmatched label"
     in
     let rec _unit_11 = broadcast_opt () in
     ()
   in
   ignore process_K
-;;

@@ -19,7 +19,6 @@ module M = struct
     typ : 'a Local.typ_id;
     info : 'a;
   }
-  
 
   type 'a pattern =
     | Default of 'a
@@ -92,7 +91,8 @@ struct
     | TProd (_, _, i) -> i
     | TSum (_, _, i) -> i
     | TForeign (_, i) ->
-      i (* Extract metadata from a choreo type node here i is returned which is meta *)
+        i
+        (* Extract metadata from a choreo type node here i is returned which is meta *)
     | TVariant (_, i) -> i
 
   let get_info_pattern : pattern -> Info.t = function
@@ -187,7 +187,8 @@ struct
     | TypeDecl (id, typ, _) -> TypeDecl (id, typ, i)
     (* | Variant (t1, constructors, _) -> Variant (t1, constructors, i) *)
     | ForeignDecl (id, t, s, _) ->
-      ForeignDecl (id, t, s, i) (* preserves variable name, type, and external symbol. *)
+        ForeignDecl (id, t, s, i)
+        (* preserves variable name, type, and external symbol. *)
     | ForeignTypeDecl (id, _) -> ForeignTypeDecl (id, i)
 
   let set_info_constructor : Info.t -> constructor -> constructor =

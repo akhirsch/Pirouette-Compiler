@@ -39,7 +39,8 @@ let rec pprint_local_type ppf (typ : 'a Local.typ) =
   | TSum (t1, t2, _) ->
       fprintf ppf "@[<h>%a + %a@]" pprint_local_type t1 pprint_local_type t2
   | TForeign (TypId (id, _), _) ->
-    fprintf ppf "@[<h>%s@]" id (*  TForeign is a leaf node, just print the name *)
+      fprintf ppf "@[<h>%s@]"
+        id (*  TForeign is a leaf node, just print the name *)
   | Local.TVariant (constructors, _) ->
       fprintf ppf "@[type<v 0>%a@]"
         (pp_print_list
@@ -196,8 +197,7 @@ let rec pprint_choreo_type ppf (typ : 'a Choreo.typ) =
                       pprint_choreo_type)
                    args typ_id))
         constructors
-  | TForeign (Typ_Id (id, _), _) ->
-    fprintf ppf "@[<h>%s@]" id 
+  | TForeign (Typ_Id (id, _), _) -> fprintf ppf "@[<h>%s@]" id
 
 (** [pp_choreo_pattern] takes a formatter [fmt] and a choreo pattern, and prints
     the formatted code of the choreo pattern
@@ -254,9 +254,10 @@ and pprint_choreo_stmt ppf (stmt : 'a Choreo.stmt) =
       fprintf ppf "@[<h>type %s := %a;@]" id pprint_choreo_type t
   | ForeignDecl (VarId (id, _), t, s, _) ->
       fprintf ppf "@[<h>foreign %s : %a := \"%s\";@]" id pprint_choreo_type t s
-    (* ForeignDecl carries a type signature t which is a Choreo.typ 
+      (* ForeignDecl carries a type signature t which is a Choreo.typ 
     it describes the foreign function's type in Pirouette terms*)
-  | ForeignTypeDecl (TypId (id, _), _) -> fprintf ppf "@[<h>foreign type %s;@]" id
+  | ForeignTypeDecl (TypId (id, _), _) ->
+      fprintf ppf "@[<h>foreign type %s;@]" id
 (* ForeignTypeDecl prettyprints its type name *)
 
 (** [pp_choreo_expr] takes a formatter [ppf] and a choreo expression and prints
@@ -367,9 +368,10 @@ and pprint_net_stmt ppf (stmt : 'a Net.stmt) =
       fprintf ppf "@[<h>%s : %a;@]" id pprint_net_type t
   | ForeignDecl (VarId (id, _), t, s, _) ->
       (* pprint the name, type signature, and external string name *)
-    fprintf ppf "@[<h>foreign %s : %a := \"%s\";@]" id pprint_net_type t s
+      fprintf ppf "@[<h>foreign %s : %a := \"%s\";@]" id pprint_net_type t s
   | ForeignTypeDecl (TypId (id, _), _) ->
-    fprintf ppf "@[<h>foreign type %s;@]" id (* pp just the foreign type name *)
+      fprintf ppf "@[<h>foreign type %s;@]"
+        id (* pp just the foreign type name *)
 
 and pprint_net_expr ppf (expr : 'a Net.expr) =
   match expr with

@@ -36,11 +36,11 @@ module LocSet : sig
       - [union s1 s2]: Combine two location sets
       - [elements s]: Convert to list for iteration *)
 
-  (** Element type: locatuon names as strings (e.g. "Alice", "Bob", "Server")*)
   type elt = string
+  (** Element type: locatuon names as strings (e.g. "Alice", "Bob", "Server")*)
 
-  (** The type of location sets. *)
   type t = Set.Make(String).t
+  (** The type of location sets. *)
 
   (** [empty] is the empty location set.
 
@@ -138,20 +138,20 @@ module LocSet : sig
         LocSet.diff s1 s2 = {"Alice", "Carol"}
       ]} *)
 
+  val compare : t -> t -> int
   (** [compare] returns a total ordering on sets.
 
       {b Category:} Comparison *)
-  val compare : t -> t -> int
 
+  val equal : t -> t -> bool
   (** [equal] returns [true] if [s1] and [s2] contain the same locations.
 
       {b Category:} Comparison *)
-  val equal : t -> t -> bool
 
+  val subset : t -> t -> bool
   (** [subset] returns [true] if [s1] is a subset of [s2].
 
       {b Category:} Comparison *)
-  val subset : t -> t -> bool
 
   (** [iter f s] applies [f] to each location in [s] in ascending order.
 
@@ -211,8 +211,8 @@ module LocSet : sig
         let s = LocSet.of_list [ "Alice"; "Bob"; "Carol" ] in
         LocSet.cardinal s = 3
       ]} *)
-       
-    val elements : t -> elt list
+
+  val elements : t -> elt list
   (** [elements] returns the list of locations in [s] in ascending order.
 
       {b Category:} Queries
