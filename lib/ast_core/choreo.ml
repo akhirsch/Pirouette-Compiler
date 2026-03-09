@@ -10,6 +10,7 @@ module M = struct
     | TMap of 'a typ * 'a typ * 'a
     | TProd of 'a typ * 'a typ * 'a
     | TSum of 'a typ * 'a typ * 'a
+    | TForeign of 'a typ_id * 'a
     | TVariant of 'a constructor list * 'a
 
   and 'a constructor = {
@@ -18,9 +19,7 @@ module M = struct
     typ : 'a Local.typ_id;
     info : 'a;
   }
-    | TForeign of 'a typ_id * 'a
-  (* TForeign constructor a foreign type at the choreography level,
-   identified only by name *)
+  
 
   type 'a pattern =
     | Default of 'a

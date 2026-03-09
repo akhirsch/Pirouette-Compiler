@@ -28,6 +28,7 @@ module M = struct
     | TVar of 'a typ_id * 'a
     | TProd of 'a typ * 'a typ * 'a
     | TSum of 'a typ * 'a typ * 'a
+    | TForeign of 'a typ_id * 'a
     | TVariant of 'a constructor list * 'a
 
   and 'a constructor = {
@@ -36,9 +37,7 @@ module M = struct
     typ : 'a typ_id;
     info : 'a;
   }
-    | TForeign of 'a typ_id * 'a
-  (* TForeign represents a foreign type contructor at the local level,
-   identified only by name *)
+
 
   type 'a pattern =
     | Default of 'a

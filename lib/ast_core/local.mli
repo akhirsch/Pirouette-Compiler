@@ -335,7 +335,7 @@ module M : sig
               let sum_int_string = TSum (TInt (), TString (), ()) in
               sum_int_string
             ]}*)
-    | TVariant of 'a constructor list * 'a    | TForeign of 'a typ_id * 'a
+    | TForeign of 'a typ_id * 'a    
     (** Foreign type at the local level, identified only by name.
 
       Foreign types are declared at the choreography level and referenced at the local level
@@ -357,6 +357,7 @@ module M : sig
         in
         foreign_type
       ]}*)
+    | TVariant of 'a constructor list * 'a
 
         (** {1 Local Patterns}
 

@@ -5,7 +5,7 @@ module Net = Ast_core.Net.M
 let _m = Obj.magic () (* dummy metainfo to make the types work *)
 
 (* Use this list to create a whitelist of locations/agents/domains that will NOT have type information for their variables erased when compiling for other locations/agents/domains*)
-let whitelisted_locs = [ "PIRSTDLIBLOC" ]
+let _whitelisted_locs = [ "PIRSTDLIBLOC" ]
 let whitelisted_locs = [ "PIRSTDLIBLOC" ]
 
 (* TODO: change Hashtbl to List *)

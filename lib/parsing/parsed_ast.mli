@@ -42,11 +42,7 @@ module Pos_info : sig
         (* For the code: "x := [Alice] 5" at line 3, columns 0-16 *)
         { fname = "source.pir"; start = (3, 0); stop = (3, 16) }
       ]} *)
-  type t =
-    { fname : string (** Source File name *)
-    ; start : int * int (** Start position: (line, column) *)
-    ; stop : int * int (** Stop position: (line, column) *)
-    }
+
 
   (** [string_of_pos] converts position information to a human-readable string.
 

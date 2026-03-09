@@ -7,6 +7,7 @@ module M = struct
     | TMap of 'a typ * 'a typ * 'a
     | TProd of 'a typ * 'a typ * 'a
     | TSum of 'a typ * 'a typ * 'a
+    | TForeign of 'a Local.typ_id * 'a
     | TVariant of 'a constructor list * 'a
 
   and 'a constructor = {
@@ -15,8 +16,7 @@ module M = struct
     typ : 'a Local.typ_id;
     info : 'a;
   }
-    | TForeign of
-        'a Local.typ_id * 'a (* foreign type constructor local.type_id is the name *)
+  
 
   type 'a expr =
     | Unit of 'a

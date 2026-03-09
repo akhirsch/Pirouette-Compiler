@@ -3,6 +3,7 @@
  (public_name pirc.ocamlgen)
  (libraries ast_core ast_utils ppxlib cohttp-eio eio_main)
  (modules emit_core msg_intf toplevel_domain toplevel_http toplevel_mpi)
+ (flags (:standard -w -32))
  (preprocess
   (pps ppxlib.metaquot))
  (instrumentation

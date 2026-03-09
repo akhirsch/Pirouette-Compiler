@@ -151,18 +151,6 @@ module M : sig
               let int_or_string = TSum (TInt (), TString (), ()) in
               int_or_string
             ]}*)
-    | TVariant of 'a constructor list * 'a
-
-  (** {1 Choreographic Patterns}
-      ['a pattern] for destructuring values, annotated with metadata of type
-      ['a]. Patterns can match values distributed across multiple locations.*)
-
-  and 'a constructor = {
-    name : string;
-    args : 'a typ list;
-    typ : 'a Local.M.typ_id;
-    info : 'a;
-  }
     | TForeign of 'a typ_id * 'a
     (** foreign type identified only by name.
 
@@ -183,6 +171,18 @@ module M : sig
         in
         foreign_type
       ]}*)
+    | TVariant of 'a constructor list * 'a
+
+  (** {1 Choreographic Patterns}
+      ['a pattern] for destructuring values, annotated with metadata of type
+      ['a]. Patterns can match values distributed across multiple locations.*)
+
+  and 'a constructor = {
+    name : string;
+    args : 'a typ list;
+    typ : 'a Local.M.typ_id;
+    info : 'a;
+  }
 
   (** {1 Choreographic Patterns}
 
@@ -732,6 +732,8 @@ module M : sig
               print_foreign
             ]}*)
     | ForeignTypeDecl of 'a Local.M.typ_id * 'a
+
+    and 'a stmt_block = 'a stmt list
 
   (** {1 Choreographic Statement Block}
 

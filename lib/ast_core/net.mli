@@ -104,22 +104,23 @@ module M : sig
               let int_or_string = TSum (TInt (), TString (), ()) in
               int_or_string
             ]} *)
-    | TVariant of 'a constructor list * 'a    | TForeign of 'a Local.M.typ_id * 'a
-    (**  foreign type, identified only by name with no internal structure.
+    | TForeign of 'a Local.M.typ_id * 'a   
+        (** Foreign Type 
 
-  {b Internal AST Structure:} [TForeign(type_id, metadata)]
+            {b Internal AST Structure:} [TForeign(type_id, metadata)]
 
-  {b Pirouette Syntax:}
-      {[
-        foreign type Int32;
-      ]}
+            {b Pirouette Syntax:}
+            {[
+              foreign type Int32;
+            ]}
 
-  {b OCaml AST Construction:}
-      {[
-        let foreign_type =
-          TForeign(Local.M.TypId("Int32", ()), ())
-        in
-        foreign_type]} *)
+            {b OCaml AST Construction:}
+            {[
+              let foreign_type =
+              TForeign(Local.M.TypId("Int32", ()), ())
+              in
+            foreign_type]} *)
+    | TVariant of 'a constructor list * 'a 
 
         (** {1 Network Expressions}
 
@@ -615,6 +616,8 @@ module M : sig
             ]} *)
     | ForeignDecl of 'a Local.M.var_id * 'a typ * string * 'a
     | ForeignTypeDecl of 'a Local.M.typ_id * 'a
+
+    and 'a stmt_block = 'a stmt list
 
   (** {1 Net Statement Block}*)
 

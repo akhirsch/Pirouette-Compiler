@@ -10,7 +10,7 @@ let peq (s : string) =
     let pprint_s = Ast_utils.stringify_pprint_choreo_ast program in
     pprint_s_ref := pprint_s;
     (* Store potentially problematic pretty-printed string *)
-    let program' =
+    let _program' =
       Parsing.Parse.parse_with_error "unit_test" (Lexing.from_string pprint_s)
     in
     let program' =

@@ -34,7 +34,7 @@ let rec unify_local t1 t2 : local_subst =
     let s1 = unify_local t1a t2a in
     let s2 = unify_local (apply_subst_typ_local s1 t1b) (apply_subst_typ_local s1 t2b) in
     s1 @ s2
-  | Local.TVariant (cl, _) ->
+  | Local.TVariant (cl, _) -> failwith "Not implemented"
     (* need to unravel constructor list, name, arg list, typ *)
     (* unify the arg types, unify the variant type decl and the typ at the end *)
   | Local.TForeign (Local.TypId (ft1, _), _), Local.TForeign (Local.TypId (ft2, _), _) ->
@@ -64,7 +64,7 @@ and unify_choreo t1 t2 : choreo_subst =
       unify_choreo (apply_subst_typ_choreo s1 t1b) (apply_subst_typ_choreo s1 t2b)
     in
     s1 @ s2
-  | Choreo.TVariant (cla, _), Choreo.TVariant (clb, _) ->
+  | Choreo.TVariant (cla, _), Choreo.TVariant (clb, _) -> failwith "Not implemented"
       (* if id1 = id2 from typid*)
   (* something *)
   | ( Choreo.TForeign (Choreo.Typ_Id (ft1, _), _)
@@ -83,7 +83,7 @@ and occurs_in_local var_name t2 =
   | Local.TVar (Local.TypId (var_name', _), _) -> var_name = var_name'
   | Local.TProd (t2a, t2b, _) | Local.TSum (t2a, t2b, _) ->
     occurs_in_local var_name t2a || occurs_in_local var_name t2b
-  | TVariant (cl, _) ->
+  | TVariant (cl, _) -> failwith "Not implemented"
   (* someting *)
   | Local.TForeign (_, _) -> false
 (* Foreign typescontain no type variables,
@@ -112,7 +112,7 @@ and apply_subst_typ_local s t =
       Local.TProd (apply_subst_typ_local s t1, apply_subst_typ_local s t2, m)
   | Local.TSum (t1, t2, _) ->
     Local.TSum (apply_subst_typ_local s t1, apply_subst_typ_local s t2, m)
-  | Local.TVariant (cl, _) ->
+  | Local.TVariant (cl, _) -> failwith "Not implemented"
   (* something *)
   | Local.TForeign (typ_id, _) -> Local.TForeign (typ_id, m)
 (* no sub to preform
@@ -132,7 +132,7 @@ and apply_subst_typ_choreo s t =
       Choreo.TProd (apply_subst_typ_choreo s t1, apply_subst_typ_choreo s t2, m)
   | Choreo.TSum (t1, t2, _) ->
     Choreo.TSum (apply_subst_typ_choreo s t1, apply_subst_typ_choreo s t2, m)
-  | Choreo.TVariant (cl, _) ->
+  | Choreo.TVariant (cl, _) -> failwith "Not implemented"
   (* aaaaahhhhhhh *)
   | Choreo.TForeign (typ_id, _) -> Choreo.TForeign (typ_id, m)
 (* no substitution for TForeign. 
@@ -690,5 +690,5 @@ and infer_choreo_pattern choreo_ctx global_ctx = function
           (Local.LocId ("dummy", m), Local.TVar (Local.TypId (gen_ftv (), m), m), m)
     in
     s, Choreo.TSum (Choreo.TVar (Choreo.Typ_Id (gen_ftv (), m), m), t_wrapped, m), ctx
-  | Choreo.
+  
 ;;

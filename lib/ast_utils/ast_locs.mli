@@ -211,7 +211,8 @@ module LocSet : sig
         let s = LocSet.of_list [ "Alice"; "Bob"; "Carol" ] in
         LocSet.cardinal s = 3
       ]} *)
-
+       
+    val elements : t -> elt list
   (** [elements] returns the list of locations in [s] in ascending order.
 
       {b Category:} Queries
