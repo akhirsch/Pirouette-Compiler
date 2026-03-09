@@ -103,7 +103,6 @@ let multiple_constructors1 =
 
 let multiple_constructors2 =
   "type Car := \n\
-<<<<<<< HEAD
    | Civic: Honda;\n\n\n\
    | Accord: Honda;\n\n\n\
    | Camry: Toyota;\n\n\n\
@@ -130,12 +129,6 @@ let net_foreign_decl_with_foreign_type =
   "foreign type Int32;\nforeign myFunc : Int32 := \"Pet:feed\";\n"
 ;;
 
-   | Civic: Car;\n\n\n\
-   | Accord: Car;\n\n\n\
-   | Camry: Car;\n\n\n\
-   | Corolla: Car;\n\n\n\
-   | Altima: Car;\n\n"
-
 (* Below are some poorly formatted variants. These should fail. *)
 
 let missing_constructor1 = "type X := ;"
@@ -161,4 +154,4 @@ let duplicate_constructors =
 
 let type_constructor_same = "type Person := | Person : Person;"
 (* constructors and types can't have the same name *)
->>>>>>> origin/dev
+
