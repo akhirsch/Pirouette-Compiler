@@ -104,16 +104,31 @@ module M : sig
               let int_or_string = TSum (TInt (), TString (), ()) in
               int_or_string
             ]} *)
-    | TVariant of 'a constructor list * 'a
-        (** {1 Network Expressions}
+    | TForeign of 'a Local.M.typ_id * 'a
+        (** Foreign Type
 
-            ['a expr] represent computations in projected endpoint programs
-            after choreographic projection. Unlike choreographic expressions
-            which describe global protocols, network expressions include
-            explicit [Send]/[Recv] for communication and
-            [ChooseFor]/[AllowChoice] for synchronization. Each expression
-            carries metadata of type ['a], allowing compiler passes to attach
-            annotations. *)
+            {b Internal AST Structure:} [TForeign(type_id, metadata)]
+
+            {b Pirouette Syntax:}
+            {[
+              foreign type Int32;
+            ]}
+
+            {b OCaml AST Construction:}
+            {[
+              let foreign_type = TForeign (Local.M.TypId ("Int32", ()), ()) in
+              foreign_type
+            ]} *)
+    | TVariant of 'a constructor list * 'a
+
+  (** {1 Network Expressions}
+
+      ['a expr] represent computations in projected endpoint programs after
+      choreographic projection. Unlike choreographic expressions which describe
+      global protocols, network expressions include explicit [Send]/[Recv] for
+      communication and [ChooseFor]/[AllowChoice] for synchronization. Each
+      expression carries metadata of type ['a], allowing compiler passes to
+      attach annotations. *)
 
   and 'a constructor = {
     name : string;
@@ -598,10 +613,12 @@ module M : sig
               result_decl
             ]} *)
     | ForeignDecl of 'a Local.M.var_id * 'a typ * string * 'a
+    | ForeignTypeDecl of 'a Local.M.typ_id * 'a
+
+  and 'a stmt_block = 'a stmt list
 
   (** {1 Net Statement Block}*)
 
-  and 'a stmt_block = 'a stmt list
   (** Statement Block: a sequence of statements executed in order.
 
       {b Internal AST Structure:} [stmt_block] is a list of ['a stmt]

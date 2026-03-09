@@ -44,6 +44,8 @@ let rec ast_local_type_stringify : 'a Ast_core.Local.M.typ -> string = function
       ^ ast_local_type_stringify typ2
       ^ ", ()))"
   | TVariant (_, _) -> "" (*PLACEHODLER*)
+  | TForeign (TypId (typ_name, _), _) ->
+      "(TForeign (TypId (\"" ^ typ_name ^ "\", ()), ()))"
 
 let ast_local_bin_op_stringify : 'a Ast_core.Local.M.bin_op -> string = function
   | Plus _ -> "(Plus ())"
@@ -147,6 +149,8 @@ let rec ast_choreo_type_stringify : 'a Ast_core.Choreo.M.typ -> string =
       ^ ast_choreo_type_stringify typ2
       ^ ", ()))"
   | TVariant (_, _) -> "" (*PLACEHODLER*)
+  | TForeign (Typ_Id (typ_name, _), _) ->
+      "(TForeign (Typ_Id (\"" ^ typ_name ^ "\", ()), ()))"
 
 let rec ast_choreo_pattern_stringify : 'a Ast_core.Choreo.M.pattern -> string =
   function
@@ -270,6 +274,8 @@ and ast_stringify : 'a Ast_core.Choreo.M.stmt -> string = function
       "(ForeignDecl (VarId ( \"" ^ name ^ "\" , ()), "
       ^ ast_choreo_type_stringify stmt_type
       ^ ", \"" ^ stmt_foreign_str ^ "\", ()))"
+  | ForeignTypeDecl (TypId (type_name, _), _) ->
+      "(ForeignTypeDecl (TypId (\"" ^ type_name ^ "\", ()), ()))"
 
 and ast_list_stringify : 'a Ast_core.Choreo.M.stmt_block -> string = function
   | [] -> "[]"
@@ -286,13 +292,10 @@ let compile_stdlib () : unit =
            as \"PIR_STDLIB\"=[ABSOLUTE_PATH_TO_YOUR_STDLIB]\n";
         exit 1
   in
-
   (* Create an OCaml file representation -via opening the file for reading as an in channel- of the path to the standard library file *)
   let file_ic_stlid = open_in path_to_stdlib in
-
   (* Lex the file *)
   let lexbuf_stdlib = Lexing.from_channel file_ic_stlid in
-
   (* Return the AST created from the parsed lex *)
   let stdlib_ast =
     A_rname.Rename.ast_list_alpha_rename

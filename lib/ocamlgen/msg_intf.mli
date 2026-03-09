@@ -24,6 +24,8 @@
 
 (** {2 Module M: [emit_net_send] and [emit_net_recv]}*)
 
+(** {2 Module M: [emit_net_send] and [emit_net_recv]}*)
+
 module type M = sig
   (** This module contains backend specific transport for marshaled data and
       code generation for send/recv operations.*)

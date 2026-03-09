@@ -135,6 +135,7 @@ and emit_net_binding ~(self_id : string) (module Msg : Msg_intf)
       emit_foreign_decl id typ external_name
   | _ -> Builder.value_binding ~pat:[%pat? _unit] ~expr:Builder.eunit
 
+(* when i comment out this to make the emit_core_test test_basic_external_function run i have to do _typ because it is unused. *)
 and emit_foreign_decl id typ external_name =
   let open Ast_builder.Default in
   let package_name, function_name, _ =
@@ -170,6 +171,7 @@ and emit_foreign_decl id typ external_name =
                          ^ String.concat " * "
                              (List.map find_local_type_sig args))
                    cl)
+          | TForeign (TypId (typ_id, _), _) -> "(" ^ typ_id ^ ")"
         in
         find_local_type_sig local_type
     | TMap (typ1, typ2, _) ->
@@ -188,14 +190,17 @@ and emit_foreign_decl id typ external_name =
                    name ^ " of "
                    ^ String.concat " * " (List.map find_type_sig args))
              cl)
+    | TForeign (TypId (typ_id, _), _) -> "(" ^ typ_id ^ ")"
   in
-
   (* The full type signature of a function. We apply this type signature to the identifier, then we set the value of the identifier to be equal to 'fun arg ->[ffi]]'. This works because of currying. *)
   let type_sig = find_type_sig typ in
 
   let fun_expr =
     pexp_fun ~loc Nolabel None
       (pvar ~loc (": " ^ type_sig))
+      (* jackie note : this needs to be fixed this is a broken identifier not a type annotation *)
+      (* above we are using the type_sig string as a pattern variable name in pvar
+      this is what is generating the wrong output for emit_core_test ffi test: test_basic_external_function *)
       [%expr
         [%e evar ~loc "fun arg ->"]
           [%e evar ~loc (package_string ^ function_name)]
