@@ -114,21 +114,18 @@ for the bisect report *)
 let foreign_type_decl = "foreign type Int32;\n"
 
 let foreign_decl_with_foreign_type =
-  "foreign type Int32;\nforeign myFunc : Alice.Int32 -> Bob.Int32 := \"Pet:feed\";\n"
-
+  "foreign type Int32;\n\
+   foreign myFunc : Alice.Int32 -> Bob.Int32 := \"Pet:feed\";\n"
 
 let foreign_decl_choreo_tforeign =
   "foreign type Int32;\nforeign myFunc : Int32 := \"Pet:feed\";\n"
-
 
 (* Int32 is a bare choreo-level foreign type, not located at any participant *)
 
 let net_foreign_type_decl = "foreign type Int32;\n"
 
 let net_foreign_decl_with_foreign_type =
-  "foreign type Int32;\n\
-  foreign myFunc : Int32 := \"Pet:feed\";\n"
-
+  "foreign type Int32;\nforeign myFunc : Int32 := \"Pet:feed\";\n"
 
 (* Below are some poorly formatted variants. These should fail. *)
 
@@ -155,4 +152,3 @@ let duplicate_constructors =
 
 let type_constructor_same = "type Person := | Person : Person;"
 (* constructors and types can't have the same name *)
-
