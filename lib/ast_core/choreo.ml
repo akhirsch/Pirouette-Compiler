@@ -10,6 +10,14 @@ module M = struct
     | TMap of 'a typ * 'a typ * 'a
     | TProd of 'a typ * 'a typ * 'a
     | TSum of 'a typ * 'a typ * 'a
+    | TVariant of 'a constructor list * 'a
+
+  and 'a constructor = {
+    name : string;
+    args : 'a typ list;
+    typ : 'a Local.typ_id;
+    info : 'a;
+  }
     | TForeign of 'a typ_id * 'a
   (* TForeign constructor a foreign type at the choreography level,
    identified only by name *)
@@ -21,13 +29,15 @@ module M = struct
     | LocPat of 'a Local.loc_id * 'a Local.pattern * 'a
     | Left of 'a pattern * 'a
     | Right of 'a pattern * 'a
+    | PConstruct of string * 'a pattern list * 'a Local.typ_id * 'a
 
   type 'a expr =
     | Unit of 'a
     | Var of 'a Local.var_id * 'a
     | LocExpr of 'a Local.loc_id * 'a Local.expr * 'a
     | Send of 'a Local.loc_id * 'a expr * 'a Local.loc_id * 'a
-    | Sync of 'a Local.loc_id * 'a Local.sync_label * 'a Local.loc_id * 'a expr * 'a
+    | Sync of
+        'a Local.loc_id * 'a Local.sync_label * 'a Local.loc_id * 'a expr * 'a
     | If of 'a expr * 'a expr * 'a expr * 'a
     | Let of 'a stmt_block * 'a expr * 'a
     | FunDef of 'a pattern list * 'a expr * 'a
@@ -38,11 +48,14 @@ module M = struct
     | Left of 'a expr * 'a
     | Right of 'a expr * 'a
     | Match of 'a expr * ('a pattern * 'a expr) list * 'a
+    | Construct of string * 'a expr list * 'a Local.typ_id * 'a
 
   and 'a stmt =
     | Decl of 'a pattern * 'a typ * 'a
-    | Assign of 'a pattern list * 'a expr * 'a (* list is only for F P1 P2 ... Pn := C *)
+    | Assign of 'a pattern list * 'a expr * 'a
+      (* list is only for F P1 P2 ... Pn := C *)
     | TypeDecl of 'a Local.typ_id * 'a typ * 'a
+    (* | Variant of 'a Local.typ_id * 'a list * 'a only accepted type string, but since I think that was the source of error for foriegn declaration I'm not sure that is rigth *)
     | ForeignDecl of 'a Local.var_id * 'a typ * string * 'a
     (* ForeignDecl declares a foreign FUNCTION: variable name, its type signature, and the external symbol string aka its name *)
     | ForeignTypeDecl of 'a Local.typ_id * 'a
@@ -55,8 +68,8 @@ module M = struct
 end
 
 module With (Info : sig
-    type t
-  end) =
+  type t
+end) =
 struct
   type nonrec typ_id = Info.t M.typ_id
   type nonrec typ = Info.t M.typ
@@ -64,10 +77,13 @@ struct
   type nonrec expr = Info.t M.expr
   type nonrec stmt = Info.t M.stmt
   type nonrec stmt_block = stmt list
+  type nonrec constructor = Info.t M.constructor
 
-  let get_info_typid : typ_id -> Info.t = function
-    | Typ_Id (_, i) -> i
-  ;;
+  (* let get_type_typid : typ_id -> string = function
+  | Typ_id (t, _) -> t
+;; *)
+
+  let get_info_typid : typ_id -> Info.t = function Typ_Id (_, i) -> i
 
   let get_info_typ : typ -> Info.t = function
     | TUnit i -> i
@@ -78,7 +94,7 @@ struct
     | TSum (_, _, i) -> i
     | TForeign (_, i) ->
       i (* Extract metadata from a choreo type node here i is returned which is meta *)
-  ;;
+    | TVariant (_, i) -> i
 
   let get_info_pattern : pattern -> Info.t = function
     | Default i -> i
@@ -87,7 +103,7 @@ struct
     | LocPat (_, _, i) -> i
     | Left (_, i) -> i
     | Right (_, i) -> i
-  ;;
+    | PConstruct (_, _, _, i) -> i
 
   let get_info_expr : expr -> Info.t = function
     | Unit i -> i
@@ -105,27 +121,25 @@ struct
     | Left (_, i) -> i
     | Right (_, i) -> i
     | Match (_, _, i) -> i
-  ;;
+    | Construct (_, _, _, i) -> i
 
   let get_info_stmt : stmt -> Info.t = function
     (* extracting metadata *)
     | Decl (_, _, i) -> i
     | Assign (_, _, i) -> i
     | TypeDecl (_, _, i) -> i
+    (* | Variant (_,_,i) -> i *)
     | ForeignDecl (_, _, _, i) -> i
     | ForeignTypeDecl (_, i) -> i
-  ;;
 
   (* ForeignDecl has 4 fields: variable name, type, external symbol, and metadata.
    ForeignTypeDecl has 2 fields: type name and metadata. *)
 
   let set_info_typid : Info.t -> typ_id -> typ_id =
-    fun i -> function
-    | Typ_Id (s, _) -> Typ_Id (s, i)
-  ;;
+   fun i -> function Typ_Id (s, _) -> Typ_Id (s, i)
 
   let set_info_typ : Info.t -> typ -> typ =
-    fun i -> function
+   fun i -> function
     | TUnit _ -> TUnit i
     | TLoc (loc, typ, _) -> TLoc (loc, typ, i)
     | TVar (t, _) -> TVar (t, i)
@@ -133,22 +147,22 @@ struct
     | TProd (t1, t2, _) -> TProd (t1, t2, i)
     | TSum (t1, t2, _) -> TSum (t1, t2, i)
     | TForeign (t, _) -> TForeign (t, i)
-  ;;
+    | TVariant (cs, _) -> TVariant (cs, i)
 
   (* TForeign preserves its type name, only metadata is updated. *)
 
   let set_info_pattern : Info.t -> pattern -> pattern =
-    fun i -> function
+   fun i -> function
     | Default _ -> Default i
     | Var (x, _) -> Var (x, i)
     | Pair (p1, p2, _) -> Pair (p1, p2, i)
     | LocPat (loc, pat, _) -> LocPat (loc, pat, i)
     | Left (p, _) -> Left (p, i)
     | Right (p, _) -> Right (p, i)
-  ;;
+    | PConstruct (name, ps, t, _) -> PConstruct (name, ps, t, i)
 
   let set_info_expr : Info.t -> expr -> expr =
-    fun i -> function
+   fun i -> function
     | Unit _ -> Unit i
     | Var (x, _) -> Var (x, i)
     | LocExpr (loc, e, _) -> LocExpr (loc, e, i)
@@ -164,17 +178,21 @@ struct
     | Left (e, _) -> Left (e, i)
     | Right (e, _) -> Right (e, i)
     | Match (e, cases, _) -> Match (e, cases, i)
-  ;;
+    | Construct (s, es, t, _) -> Construct (s, es, t, i)
 
   (* Replace metadata on a statement node, preserving its structure and contents. *)
   let set_info_stmt : Info.t -> stmt -> stmt =
-    fun i -> function
+   fun i -> function
     | Decl (pat, typ, _) -> Decl (pat, typ, i)
     | Assign (pats, e, _) -> Assign (pats, e, i)
     | TypeDecl (id, typ, _) -> TypeDecl (id, typ, i)
+    (* | Variant (t1, constructors, _) -> Variant (t1, constructors, i) *)
     | ForeignDecl (id, t, s, _) ->
       ForeignDecl (id, t, s, i) (* preserves variable name, type, and external symbol. *)
     | ForeignTypeDecl (id, _) -> ForeignTypeDecl (id, i)
-  ;;
+
+  let set_info_constructor : Info.t -> constructor -> constructor =
+   fun i -> function
+    | { name; args; typ; info = _ } -> { name; args; typ; info = i }
   (* preserves the type name *)
 end

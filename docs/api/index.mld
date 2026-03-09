@@ -1,0 +1,91 @@
+{0 Pirouette Compiler}
+
+{1 Overview}
+
+The Pirouette compiler implements higher-order typed functional choreographies,
+allowing developers to write distributed protocols as single, unified programs
+that are then compiled to individual endpoint implementations.
+
+The compiler translates choreographies (global descriptions of multi-party protocols)
+into executable code for each participant through a multi-stage pipeline:
+parsing, type checking, endpoint projection, and code generation.
+
+Pirouette supports multiple communication backends (HTTP, shared memory) and
+generates standalone programs that preserve the protocol guarantees specified
+in the choreography.
+
+{1 HTTP Runtime Modules}
+{3 Config_parser}
+- {!Http_pirc.Config_parser} - Parse YAML configuration files mapping locations to HTTP addresses
+{3 Send_receive}
+- {!Http_pirc.Send_receive} - Send and receive messages between endpoints over HTTP
+
+{1 Internal Compiler Libraries}
+
+Core libraries used throughout the Pirouette compilation pipeline:
+{3 {!Ast_core} - Core AST definitions}
+
+Core abstract syntax tree structures:
+
+- {!Ast_core.Choreo} - Choreography AST
+- {!Ast_core.Local} - Local endpoint AST
+- {!Ast_core.Net} - Network AST
+
+{3 {!Ast_utils} - AST Utilities}
+
+AST traversal and manipulation utilities:
+
+- Functions for extracting locations
+- AST transformation helpers
+- Utility functions for AST analysis
+
+{3 {!Parsing} - Lexer and Parser}
+
+Lexer and parser implementation using Menhir:
+
+- {!Parsing.Lexer} - Main Lexer
+- {!Parsing.Net_lexer} - Network Lexer
+- {!page-Net_parser} - Network Parser
+- {!Parsing.Parse} - Parsing entry point 
+- {!Parsing.Parsed_ast} - Parsed AST representation 
+- {!page-Parser} - Main Parser
+
+{3 {!Typing} - Type System}
+
+Type checking and inference:
+
+- Type rules for choreographies
+- Location-aware types
+- Type safety verification
+
+{3 {!Netgen} - Code Generation}
+
+Network code generation and endpoint projection:
+
+- Projects choreographies onto endpoints
+- Generates communication protocols
+- Ensures protocol compliance
+
+{3 {!Ocamlgen} - OCaml Backend}
+
+OCaml backend code generation with multiple output targets:
+
+- {!Ocamlgen.Emit_core} - Core emission logic
+- {!Ocamlgen.Msg_intf} - Message interface definitions
+- {!Ocamlgen.Toplevel_domain} - Domain-based backend
+- {!Ocamlgen.Toplevel_http} - HTTP-based backend
+- {!Ocamlgen.Toplevel_mpi} - MPI-based backend
+
+{1 For Developers}
+
+See the {{!page-developer_guide}Developer Guide} for detailed information on:
+- Compilation pipeline architecture
+- Contributing guidelines
+- Development setup and testing
+
+{1 Documentation}
+{{!page-user_guide}User Guide} | {{!page-developer_guide}Developer Guide} | {{:https://dl.acm.org/doi/10.1145/3498684}Pirouette Paper} | {{:https://github.com/Foundations-of-Decentralization-Group/Pirouette-Compiler}GitHub Repository}
+- {{!page-user_guide}User Guide} - How to use the Pirouette compiler
+- {{!page-developer_guide}Developer Guide} - Contributing and internal architecture
+- {{:https://dl.acm.org/doi/10.1145/3498684}Pirouette Paper} - Dr. Hirsch's paper on Pirouette
+- {{:https://github.com/Foundations-of-Decentralization-Group/Pirouette-Compiler}GitHub Repository} - Pirouette Compiler codebase
