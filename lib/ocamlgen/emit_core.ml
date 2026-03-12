@@ -144,21 +144,21 @@ and emit_foreign_decl id typ external_name =
     match package_name with Some pack -> pack ^ "." | None -> ""
   in
   (* A function that takes in a Net type and pretty prints the type into Ocaml. Note, loc.types turn into just types*)
-  let rec find_type_sig : 'a Net.typ -> label = function
-    | TUnit _ -> "(unit)"
+  let rec find_type_sig : 'a Net.typ -> core_type = function
+    | TUnit _ -> [%type: unit]
     | TLoc (_, local_type, _) ->
-        let rec find_local_type_sig : 'a Local.typ -> label = function
-          | TUnit _ -> "(unit)"
-          | TInt _ -> "(int)"
-          | TString _ -> "(string)"
-          | TBool _ -> "(bool)"
-          | TVar (TypId (typ_id, _), _) -> "(" ^ typ_id ^ ")"
+        let rec find_local_type_sig : 'a Local.typ -> core_type = function
+          | TUnit _ -> [%type: unit]
+          | TInt _ -> [%type: int]
+          | TString _ -> [%type: string]
+          | TBool _ -> [%type: bool]
+          | TVar (TypId (typ_id, _), _) -> Ast_builder.Default.ptyp_var ~loc typ_id
           | TProd (typ1, typ2, _) ->
-              "(" ^ find_local_type_sig typ1 ^ " * " ^ find_local_type_sig typ2
-              ^ ")"
+              Ast_builder.Default.ptyp_tuple ~loc[find_local_type_sig typ1; find_local_type_sig typ2]
           | TSum (typ1, typ2, _) ->
-              "(" ^ find_local_type_sig typ1 ^ " + " ^ find_local_type_sig typ2
-              ^ ")"
+              (* Ast_builder.Default.type_extension ~loc   *)
+              (* "(" ^ find_local_type_sig typ1 ^ " + " ^ find_local_type_sig typ2
+              ^ ")" *)
           | TVariant (cl, _) ->
               String.concat " | "
                 (List.map
