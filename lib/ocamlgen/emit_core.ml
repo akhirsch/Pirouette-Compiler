@@ -160,7 +160,7 @@ and emit_foreign_decl id typ external_name =
               (* "(" ^ find_local_type_sig typ1 ^ " + " ^ find_local_type_sig typ2
               ^ ")" *)
           | TVariant (cl, _) ->
-              String.concat " | "
+              (* String.concat " | "
                 (List.map
                    (fun { Local.name; args; _ } ->
                      match args with
@@ -169,7 +169,8 @@ and emit_foreign_decl id typ external_name =
                          name ^ " of "
                          ^ String.concat " * "
                              (List.map find_local_type_sig args))
-                   cl)
+                   cl) *)
+                   Ast_builder.Default.ptyp_variant ~loc cl
         in
         find_local_type_sig local_type
     | TMap (typ1, typ2, _) ->
