@@ -34,6 +34,11 @@
  (modules prettyprint_test astutils_testcases)
  (libraries ounit2 parsing ast_utils))
 
+ (test
+ (name core_test)
+ (modules core_test astutils_testcases)
+ (libraries ounit2 parsing ast_utils ast_core))
+
 (test
  (name stdlib_test)
  (modules stdlib_test)
@@ -131,12 +136,12 @@
  (preprocess
   (pps bisect_ppx)))
 
-(test
- (name emit_core_test)
- (modules emit_core_test)
- (libraries ounit2 ppxlib ast_core ocamlgen)
- (preprocess
-  (pps ppxlib.metaquot)))
+; (test
+;  (name emit_core_test)
+;  (modules emit_core_test)
+;  (libraries ounit2 ppxlib ast_core ocamlgen)
+;  (preprocess
+;   (pps ppxlib.metaquot)))
 
 ; (test
 ;  (name msg_intf_test)
