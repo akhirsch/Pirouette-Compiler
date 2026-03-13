@@ -119,6 +119,10 @@ struct
     (* | Variant (_,_,i) -> i *)
     | ForeignDecl (_, _, _, i) -> i
 
+    
+  let get_info_constructor : constructor -> Info.t = function
+  | { name = _; args = _; typ = _; info = i } -> i
+
   let set_info_typid : Info.t -> typ_id -> typ_id =
    fun i -> function Typ_Id (s, _) -> Typ_Id (s, i)
 
