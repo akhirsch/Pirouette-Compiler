@@ -61,6 +61,7 @@ module M = struct
   (*  ForeignDecl adds a callable foreign function and ForeignTypeDecl adds a usable foreign type name. 
     Both need to exist as statements so they can appear in a stmt_block and be processed sequentially by 
     the type checker alongside regular declarations like Decl and Assign*)
+    | ImportDecl of string * 'a
 
   and 'a stmt_block = 'a stmt list
 end
@@ -130,6 +131,7 @@ struct
     (* | Variant (_,_,i) -> i *)
     | ForeignDecl (_, _, _, i) -> i
     | ForeignTypeDecl (_, i) -> i
+    | ImportDecl (_, i) -> i
 
   (* ForeignDecl has 4 fields: variable name, type, external symbol, and metadata.
    ForeignTypeDecl has 2 fields: type name and metadata. *)
@@ -190,6 +192,7 @@ struct
         ForeignDecl (id, t, s, i)
         (* preserves variable name, type, and external symbol. *)
     | ForeignTypeDecl (id, _) -> ForeignTypeDecl (id, i)
+    | ImportDecl (s, _) -> ImportDecl (s, i)
 
   let set_info_constructor : Info.t -> constructor -> constructor =
    fun i -> function
