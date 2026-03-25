@@ -50,12 +50,10 @@ module Choreo = Ast_core.Choreo.M
 
 (** {1 Type System Types} *)
 
-type errmsg = string
 (** Error messages for type inference failures.
 
     Used to track and report type errors with descriptive messages. *)
 
-type typvar = string
 (** Type variables for polymorphism.
 
     Represents unknown types during inference, typically named ['a], ['b], etc.
@@ -70,7 +68,6 @@ type typvar = string
       (* Type: int -> int  (type variable resolved to int) *)
     ]} *)
 
-type ftv = (typvar, errmsg) result
 (** Free type variables with error tracking.
 
     Either [Ok] for a valid type variable or [Error] for a type error.
@@ -78,7 +75,6 @@ type ftv = (typvar, errmsg) result
     The ['a] in [ftv] allows associating error information with type variables
     during inference. *)
 
-type local_subst = (typvar * ftv Local.typ) list
 (** Substitution for local types.
 
     Maps type variables to local types. Represents solutions to type equations
@@ -92,7 +88,6 @@ type local_subst = (typvar * ftv Local.typ) list
       (* Applying this substitution to 'a -> 'b gives: int -> bool *)
     ]} *)
 
-type choreo_subst = (typvar * ftv Choreo.typ) list
 (** Substitution for choreographic types.
 
     Maps type variables to choreographic types, including location-qualified
@@ -104,7 +99,6 @@ type choreo_subst = (typvar * ftv Choreo.typ) list
       [ ("'a", TLoc (LocId "Alice", TInt)) ]
     ]} *)
 
-type local_ctx = (string * ftv Local.typ) list
 (** Type context for local variables.
 
     Maps variable names to their inferred local types. Used during type
@@ -116,7 +110,6 @@ type local_ctx = (string * ftv Local.typ) list
       [ ("x", TInt); ("y", TBool) ]
     ]} *)
 
-type choreo_ctx = (string * ftv Choreo.typ) list
 (** Type context for choreographic variables.
 
     Maps variable names to their choreographic types (which may include location
@@ -128,7 +121,6 @@ type choreo_ctx = (string * ftv Choreo.typ) list
       [ ("x", TLoc (LocId "Alice", TInt)); ("y", TLoc (LocId "Bob", TString)) ]
     ]} *)
 
-type global_ctx = (string * string * ftv Local.typ) list
 (** Global context for location-qualified variables.
 
     Maps pairs of (location, variable) to local types. Used to track variables
@@ -141,6 +133,15 @@ type global_ctx = (string * string * ftv Local.typ) list
       (* Context: {Alice.x: int, Bob.y: string} *)
       [ ("Alice", "x", TInt); ("Bob", "y", TString) ]
     ]} *)
+
+type errmsg = string
+type typvar = string
+type ftv = (typvar, errmsg) result
+type local_subst = (typvar * ftv Local.typ) list
+type choreo_subst = (typvar * ftv Choreo.typ) list
+type local_ctx = (string * ftv Local.typ) list
+type choreo_ctx = (string * ftv Choreo.typ) list
+type global_ctx = (string * string * ftv Local.typ) list
 
 (** {1 Type Inference Functions} *)
 
@@ -286,7 +287,6 @@ val apply_subst_typ_choreo : choreo_subst -> ftv Choreo.typ -> ftv Choreo.typ
 
     Like [apply_subst_typ_local] but for choreographic types. *)
 
-val extract_local_ctx : global_ctx -> string -> local_ctx
 (** [extract_local_ctx] extracts local context for a specific location.
 
     Filters global context to variables belonging to [loc].

@@ -10,6 +10,7 @@ module M = struct
     | TMap of 'a typ * 'a typ * 'a
     | TProd of 'a typ * 'a typ * 'a
     | TSum of 'a typ * 'a typ * 'a
+    | TForeign of 'a typ_id * 'a
     | TVariant of 'a constructor list * 'a
 
   and 'a constructor = {
@@ -54,6 +55,12 @@ module M = struct
     | TypeDecl of 'a Local.typ_id * 'a typ * 'a
     (* | Variant of 'a Local.typ_id * 'a list * 'a only accepted type string, but since I think that was the source of error for foriegn declaration I'm not sure that is rigth *)
     | ForeignDecl of 'a Local.var_id * 'a typ * string * 'a
+    (* ForeignDecl declares a foreign FUNCTION: variable name, its type signature, and the external symbol string aka its name *)
+    | ForeignTypeDecl of 'a Local.typ_id * 'a
+  (* declares a foreign type name with no internal structure *)
+  (*  ForeignDecl adds a callable foreign function and ForeignTypeDecl adds a usable foreign type name. 
+    Both need to exist as statements so they can appear in a stmt_block and be processed sequentially by 
+    the type checker alongside regular declarations like Decl and Assign*)
 
   and 'a stmt_block = 'a stmt list
 end
@@ -83,6 +90,9 @@ struct
     | TMap (_, _, i) -> i
     | TProd (_, _, i) -> i
     | TSum (_, _, i) -> i
+    | TForeign (_, i) ->
+        i
+        (* Extract metadata from a choreo type node here i is returned which is meta *)
     | TVariant (_, i) -> i
 
   let get_info_pattern : pattern -> Info.t = function
@@ -113,11 +123,16 @@ struct
     | Construct (_, _, _, i) -> i
 
   let get_info_stmt : stmt -> Info.t = function
+    (* extracting metadata *)
     | Decl (_, _, i) -> i
     | Assign (_, _, i) -> i
     | TypeDecl (_, _, i) -> i
     (* | Variant (_,_,i) -> i *)
     | ForeignDecl (_, _, _, i) -> i
+    | ForeignTypeDecl (_, i) -> i
+
+  (* ForeignDecl has 4 fields: variable name, type, external symbol, and metadata.
+   ForeignTypeDecl has 2 fields: type name and metadata. *)
 
   let set_info_typid : Info.t -> typ_id -> typ_id =
    fun i -> function Typ_Id (s, _) -> Typ_Id (s, i)
@@ -130,7 +145,10 @@ struct
     | TMap (t1, t2, _) -> TMap (t1, t2, i)
     | TProd (t1, t2, _) -> TProd (t1, t2, i)
     | TSum (t1, t2, _) -> TSum (t1, t2, i)
+    | TForeign (t, _) -> TForeign (t, i)
     | TVariant (cs, _) -> TVariant (cs, i)
+
+  (* TForeign preserves its type name, only metadata is updated. *)
 
   let set_info_pattern : Info.t -> pattern -> pattern =
    fun i -> function
@@ -161,15 +179,20 @@ struct
     | Match (e, cases, _) -> Match (e, cases, i)
     | Construct (s, es, t, _) -> Construct (s, es, t, i)
 
+  (* Replace metadata on a statement node, preserving its structure and contents. *)
   let set_info_stmt : Info.t -> stmt -> stmt =
    fun i -> function
     | Decl (pat, typ, _) -> Decl (pat, typ, i)
     | Assign (pats, e, _) -> Assign (pats, e, i)
     | TypeDecl (id, typ, _) -> TypeDecl (id, typ, i)
     (* | Variant (t1, constructors, _) -> Variant (t1, constructors, i) *)
-    | ForeignDecl (id, t, s, _) -> ForeignDecl (id, t, s, i)
+    | ForeignDecl (id, t, s, _) ->
+        ForeignDecl (id, t, s, i)
+        (* preserves variable name, type, and external symbol. *)
+    | ForeignTypeDecl (id, _) -> ForeignTypeDecl (id, i)
 
   let set_info_constructor : Info.t -> constructor -> constructor =
    fun i -> function
     | { name; args; typ; info = _ } -> { name; args; typ; info = i }
+  (* preserves the type name *)
 end

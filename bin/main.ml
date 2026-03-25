@@ -126,7 +126,6 @@ let () =
     exit 1);
   (* Lex the input file *)
   let lexbuf = Lexing.from_channel (Option.get !file_ic) in
-
   (* Fetch the standard libary (recompile if needed through use of optional flag), 
     perform alpha renaming to ensure IDs are non-conflicting with OCaml, 
     then swap out all info attributes (Hardcoded to be unit when specifically Stdlib is compiled) with Obj.magic 
@@ -144,7 +143,6 @@ let () =
       (Stdlib_utils.Stdlib_linker.get_stdlib_ast ~recompile:false ())
   in
   let program = stdlib_ast @ user_program in
-
   (* Dump the choreography AST *)
   (match !ast_dump_format with
   | None -> ()
