@@ -834,6 +834,19 @@ let choreo_stmt_suite =
 
 (*-----------------------Variant tests-------------------------------*)
 
+let correct_argint = Choreo.TInt() * Choreo.TInt() (*you can continue this pattern*)
+let correct_argstring = Choreo.TString()
+let correct_argbool = Choreo.TBool()
+
+let correct_argunit = Choreo.TUnit()
+
+let correct_constructor = Choreo.Construct((*name*), (*arglist*), Choreo.Typ_Id(), m)
+
+let correct_variant_simple = Choreo.TypeDecl(Local.TypID((*typid*)),Choreo.TVariant((*put constructors here*)), m)
+
+let correct_variant_3con = ""
+
+
 
 
 

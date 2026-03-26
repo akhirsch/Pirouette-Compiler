@@ -122,7 +122,7 @@ let simple_many_args =
 
 let simple_mixed_args = 
 "type operation := 
-| plus : Int -> Int -> String -> Bool -> operation;\n\n
+| plus : Int , Int , String , Bool , operation;\n\n
 ";;
 
 let nats = 
