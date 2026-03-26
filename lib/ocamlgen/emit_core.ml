@@ -146,7 +146,7 @@ and emit_foreign_decl id external_name =
   in
   let fun_expr =
     pexp_fun ~loc Nolabel None
-      (pvar ~loc id)
+      (pvar ~loc "arg")
       [%expr
           [%e evar ~loc (package_string ^ function_name)]
           [%e evar ~loc "arg"]]

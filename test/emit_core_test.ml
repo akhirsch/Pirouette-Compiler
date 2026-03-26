@@ -704,7 +704,6 @@ let net_binding_other _ =
 let test_basic_external_function _ =
   let binding = emit_foreign_decl "my_func" "Simple_function.simple_function" in
   let result = expr_to_string binding.pvb_expr in
-  print_endline (" ACTUAL OUTPUT: " ^ result ); (* JACKIE - added this line to show the result of the test *)
   assert_equal
     ~msg:"Basic external function should create a simple wrapper"
     "fun arg -> Simple_function.simple_function arg"
@@ -714,7 +713,6 @@ let test_basic_external_function _ =
  let test_package_external_function _ =
   let binding = emit_foreign_decl "custom_fn" "Math:calculate" in
   let result = expr_to_string binding.pvb_expr in
-  print_endline (" ACTUAL OUTPUT: " ^ result );
   assert_equal
     ~msg:"Module path external function should create proper module access"
     "fun arg -> Math.calculate arg" (String.trim result)
@@ -722,7 +720,6 @@ let test_basic_external_function _ =
 let test_package_submodule_external_function _ =
   let binding = emit_foreign_decl "deep_fn" "Math:Deep.calculate" in
   let result = expr_to_string binding.pvb_expr in
-  print_endline (" ACTUAL OUTPUT: " ^ result );
   assert_equal
     ~msg:
       "Nested module path external function should create proper module access"
