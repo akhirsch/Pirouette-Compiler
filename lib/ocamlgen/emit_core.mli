@@ -337,13 +337,12 @@ val emit_net_pexp :
     that represents code, not a string.*)
 
 val emit_foreign_decl :
-  string -> 'a Ast_core.Net.M.typ -> string -> Ppxlib.value_binding
-(** [emit_foreign_decl var_name typ external_name] generates an OCaml external
+  string -> string -> Ppxlib.value_binding
+(** [emit_foreign_decl var_name external_name] generates an OCaml external
     declaration for a foreign function.
 
     Parameters:
     - [var_name]: local name for the function
-    - [typ]: type of the foreign function
     - [external_name]: external name to link against
 
     Creates OCaml [external] declarations that bind foreign functions from other

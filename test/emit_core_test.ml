@@ -680,10 +680,6 @@ let net_binding_foreign_decl _ =
     Net.ForeignDecl
       (VarId ("pir_func", ()), TUnit (), "Foreign_function:foreign_function", ())
   in
-  let stmt =
-    Net.ForeignDecl
-      (VarId ("pir_func", ()), TUnit (), "Foreign_function:foreign_function", ())
-  in
   let pattern_test pat =
     match pat.ppat_desc with
     | Ppat_var { txt = var_name; _ } -> var_name = "pir_func"
@@ -705,8 +701,8 @@ let net_binding_other _ =
 
 (*----------------------------FFI test cases--------------------------------------*)
 
-(*let test_basic_external_function _ =
-  let binding = emit_foreign_decl "my_func" (TUnit ()) "Simple_function.simple_function" in
+let test_basic_external_function _ =
+  let binding = emit_foreign_decl "my_func" "Simple_function.simple_function" in
   let result = expr_to_string binding.pvb_expr in
   print_endline (" ACTUAL OUTPUT: " ^ result ); (* JACKIE - added this line to show the result of the test *)
   assert_equal
@@ -716,7 +712,7 @@ let net_binding_other _ =
 ;;
 
  let test_package_external_function _ =
-  let binding = emit_foreign_decl "custom_fn" (TUnit ()) "Math:calculate" in
+  let binding = emit_foreign_decl "custom_fn" "Math:calculate" in
   let result = expr_to_string binding.pvb_expr in
   print_endline (" ACTUAL OUTPUT: " ^ result );
   assert_equal
@@ -724,7 +720,7 @@ let net_binding_other _ =
     "fun arg -> Math.calculate arg" (String.trim result)
 
 let test_package_submodule_external_function _ =
-  let binding = emit_foreign_decl "deep_fn" (TUnit ()) "Math:Deep.calculate" in
+  let binding = emit_foreign_decl "deep_fn" "Math:Deep.calculate" in
   let result = expr_to_string binding.pvb_expr in
   print_endline (" ACTUAL OUTPUT: " ^ result );
   assert_equal
@@ -737,21 +733,21 @@ let test_search_path_only _ =
     (Failure
        "Invalid external function format. Expected \
         [Package:][Submodule.]function[@searchpath]") (fun () ->
-      emit_foreign_decl "bad_fn" (TUnit ()) "@search_path_only" |> ignore)
+      emit_foreign_decl "bad_fn" "@search_path_only" |> ignore)
 
 let test_empty_package_name _ =
   assert_raises
     (Failure
        "Invalid external function format. Expected \
         [Package:][Submodule.]function[@searchpath]") (fun () ->
-      emit_foreign_decl "bad_fn" (TUnit ()) ":function" |> ignore)
+      emit_foreign_decl "bad_fn" ":function" |> ignore)
 
 let test_empty_function_name _ =
   assert_raises
     (Failure "Invalid external function format. Expected [Package:][Submodule.]function[@searchpath]")
-    (fun () -> emit_foreign_decl "bad_fn" (TUnit ()) "module:" |> ignore)
+    (fun () -> emit_foreign_decl "bad_fn" "module:" |> ignore)
 ;;
-*)
+
 (*----------------------------- test suites ------------------------------------*)
 let local_expr_suite =
   "Local expression tests"
@@ -835,7 +831,7 @@ let net_binding_suite =
          "Other binding" >:: net_binding_other;
        ]
 
-(*let ffi_suite =
+let ffi_suite =
   "Foreign function tests"
   >::: [ "test_basic_external_function" >:: test_basic_external_function
        ; "test_module_path_external_function" >:: test_package_external_function
@@ -845,7 +841,7 @@ let net_binding_suite =
        ; "test_empty_module_path" >:: test_empty_package_name
        ; "test_empty_function_name" >:: test_empty_function_name
        ]
-;; *)
+;;
 
 let all_suites =
   "Emit_Core Tests"
@@ -853,7 +849,8 @@ let all_suites =
          local_expr_suite;
          local_pat_suite;
          net_expr_suite;
-         net_binding_suite (*ffi_suite*);
+         net_binding_suite;
+         ffi_suite;
        ]
 
 let () = run_test_tt_main all_suites
