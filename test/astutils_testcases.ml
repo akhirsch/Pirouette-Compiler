@@ -116,6 +116,44 @@ let multiple_constructors2 =
 | Altima: Car;\n
 ";;
 
+(* These tests are to ensure that variants can also have constructors which take multiple arguments *)
+let simple_with_args = 
+"type Operation := 
+| op : Operation , Operation;\n\n
+";;
+
+let simple_many_args = 
+"type Op := 
+| plus : Op , Op , Op , Op , Op;\n\n
+";;
+
+let simple_mixed_args = 
+"type operation := 
+| plus : Int -> Int -> String -> Bool -> operation;\n\n
+";;
+
+let nats = 
+"type nat := 
+| zero : nat;\n\n
+| suc : nat , nat;\n\n
+";;
+
+let multiple_constructors_with_args = 
+"type IntOp := 
+| plus : Int , Int , IntOp;\n\n
+| minus : Int , Int , IntOp;\n\n
+| multiply : Int , Int , IntOp;\n\n
+| negative : Int , IntOp;\n\n
+";;
+
+(* Variants should also allow for recursive constructors. Below are some tests for that functionality *)
+
+let rec_variant_simple = 
+"type increment := 
+| zero : increment ;\n\n
+| add1 : increment , increment;\n\n
+";;
+
 (* Below are some poorly formatted variants. These should fail. *)
 
 let missing_constructor1 = "type X := ;";;
