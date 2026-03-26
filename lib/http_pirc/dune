@@ -1,6 +1,6 @@
 (library
  (name http_pirc)
- (public_name http_pirc)
+ (public_name pirc)
  (modules send_receive config_parser)
  (libraries
   cohttp-lwt-unix
@@ -21,12 +21,12 @@
   (pps lwt_ppx)))
 
 (documentation
- (package http_pirc)
- (mld_files index user_guide developer_guide))
+ (package pirc)
+ (mld_files user_guide developer_guide))
 
 (executable
  (name mock_server)
  (public_name mock_server)
- (package http_pirc)
+ (package pirc)
  (modules mock_server)
  (libraries cohttp cohttp-lwt-unix lwt))

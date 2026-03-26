@@ -1,9 +1,12 @@
 val jsonify_un_op : 'a Ast_core.Local.M.un_op -> [> `String of string ]
 val jsonify_bin_op : 'a Ast_core.Local.M.bin_op -> [> `String of string ]
 
-val jsonify_local_type
-  :  'a Ast_core.Local.M.typ
-  -> ([> `Assoc of (string * [> `List of 'b list | `String of string ]) list | `String of string ] as 'b)
+val jsonify_local_type :
+  'a Ast_core.Local.M.typ ->
+  ([> `Assoc of (string * [> `List of 'b list | `String of string ]) list
+   | `String of string ]
+   as
+   'b)
 
 val jsonify_local_pattern :
   'a Ast_core.Local.M.pattern ->
@@ -27,11 +30,13 @@ val jsonify_local_expr :
 
 val jsonify_choreo_type :
   'a Ast_core.Choreo.M.typ ->
-  ([> `Assoc of (string * [> `Assoc of (string * 'b) list
-                           | `List of 'b list
-                           | `String of string ]) list
+  ([> `Assoc of
+      (string
+      * [> `Assoc of (string * 'b) list | `List of 'b list | `String of string ])
+      list
    | `String of string ]
-   as 'b)
+   as
+   'b)
 
 val jsonify_choreo_pattern :
   'a Ast_core.Choreo.M.pattern ->

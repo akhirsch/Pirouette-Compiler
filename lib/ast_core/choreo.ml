@@ -12,12 +12,12 @@ module M = struct
     | TSum of 'a typ * 'a typ * 'a
     | TVariant of 'a constructor list * 'a
 
-      and 'a constructor =
-    { name : string
-    ; args : 'a typ list
-    ; typ  : 'a Local.typ_id
-    ; info : 'a
-    }
+  and 'a constructor = {
+    name : string;
+    args : 'a typ list;
+    typ : 'a Local.typ_id;
+    info : 'a;
+  }
 
   type 'a pattern =
     | Default of 'a
@@ -70,7 +70,7 @@ struct
   type nonrec stmt_block = stmt list
   type nonrec constructor = Info.t M.constructor
 
-(* let get_type_typid : typ_id -> string = function
+  (* let get_type_typid : typ_id -> string = function
   | Typ_id (t, _) -> t
 ;; *)
 
@@ -84,7 +84,6 @@ struct
     | TProd (_, _, i) -> i
     | TSum (_, _, i) -> i
     | TVariant (_, i) -> i
-  ;;
 
   let get_info_pattern : pattern -> Info.t = function
     | Default i -> i
@@ -94,8 +93,6 @@ struct
     | Left (_, i) -> i
     | Right (_, i) -> i
     | PConstruct (_, _, _, i) -> i
-
-  ;;
 
   let get_info_expr : expr -> Info.t = function
     | Unit i -> i
@@ -114,7 +111,6 @@ struct
     | Right (_, i) -> i
     | Match (_, _, i) -> i
     | Construct (_, _, _, i) -> i
-  ;;
 
   let get_info_stmt : stmt -> Info.t = function
     | Decl (_, _, i) -> i
@@ -122,6 +118,10 @@ struct
     | TypeDecl (_, _, i) -> i
     (* | Variant (_,_,i) -> i *)
     | ForeignDecl (_, _, _, i) -> i
+
+    
+  let get_info_constructor : constructor -> Info.t = function
+  | { name = _; args = _; typ = _; info = i } -> i
 
   let set_info_typid : Info.t -> typ_id -> typ_id =
    fun i -> function Typ_Id (s, _) -> Typ_Id (s, i)
@@ -135,7 +135,6 @@ struct
     | TProd (t1, t2, _) -> TProd (t1, t2, i)
     | TSum (t1, t2, _) -> TSum (t1, t2, i)
     | TVariant (cs, _) -> TVariant (cs, i)
-  ;;
 
   let set_info_pattern : Info.t -> pattern -> pattern =
    fun i -> function
@@ -146,7 +145,6 @@ struct
     | Left (p, _) -> Left (p, i)
     | Right (p, _) -> Right (p, i)
     | PConstruct (name, ps, t, _) -> PConstruct (name, ps, t, i)
-  ;;
 
   let set_info_expr : Info.t -> expr -> expr =
    fun i -> function
@@ -166,7 +164,6 @@ struct
     | Right (e, _) -> Right (e, i)
     | Match (e, cases, _) -> Match (e, cases, i)
     | Construct (s, es, t, _) -> Construct (s, es, t, i)
-  ;;
 
   let set_info_stmt : Info.t -> stmt -> stmt =
    fun i -> function
@@ -175,10 +172,8 @@ struct
     | TypeDecl (id, typ, _) -> TypeDecl (id, typ, i)
     (* | Variant (t1, constructors, _) -> Variant (t1, constructors, i) *)
     | ForeignDecl (id, t, s, _) -> ForeignDecl (id, t, s, i)
-  ;;
 
-    let set_info_constructor : Info.t -> constructor -> constructor =
-    fun i -> function
+  let set_info_constructor : Info.t -> constructor -> constructor =
+   fun i -> function
     | { name; args; typ; info = _ } -> { name; args; typ; info = i }
-  ;;
 end

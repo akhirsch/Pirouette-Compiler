@@ -16,6 +16,11 @@ docs: check-env
 		latexmk -lualatex -cd $$file; \
 	done
 
+pirc_docs:
+	dune clean
+	dune build @doc
+	xdg-open _build/default/_doc/_html/index.html
+
 pp:
 	dune exec pirc -- -pprint $(FILE)
 

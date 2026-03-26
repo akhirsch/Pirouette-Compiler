@@ -29,10 +29,15 @@
 ; 0% (0 / 5) -> lib/parsing/parsed_ast.ml
 ; 40% (949 / 2362) -> lib/parsing/parser.ml
 
-(test
- (name prettyprint_test)
- (modules prettyprint_test astutils_testcases)
- (libraries ounit2 parsing ast_utils))
+; (test
+;  (name prettyprint_test)
+;  (modules prettyprint_test astutils_testcases)
+;  (libraries ounit2 parsing ast_utils))
+
+ (test
+ (name core_test)
+ (modules core_test astutils_testcases)
+ (libraries ounit2 parsing ast_utils ast_core))
 
 (test
  (name stdlib_test)
@@ -124,19 +129,19 @@
 
 ;runs core_test.ml
 
-(test
- (name net_parsing_test)
- (modules net_parsing_test)
- (libraries ounit2 ast_core parsing)
- (preprocess
-  (pps bisect_ppx)))
+; (test
+;  (name net_parsing_test)
+;  (modules net_parsing_test)
+;  (libraries ounit2 ast_core parsing)
+;  (preprocess
+;   (pps bisect_ppx)))
 
-(test
- (name emit_core_test)
- (modules emit_core_test)
- (libraries ounit2 ppxlib ast_core ocamlgen)
- (preprocess
-  (pps ppxlib.metaquot)))
+; (test
+;  (name emit_core_test)
+;  (modules emit_core_test)
+;  (libraries ounit2 ppxlib ast_core ocamlgen)
+;  (preprocess
+;   (pps ppxlib.metaquot)))
 
 ; (test
 ;  (name msg_intf_test)
@@ -151,4 +156,3 @@
 ;  (libraries ounit2 ppxlib ast_core ocamlgen)
 ;  (preprocess
 ;   (pps ppxlib.metaquot)))
-

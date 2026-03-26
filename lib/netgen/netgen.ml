@@ -142,6 +142,7 @@ let rec epp_choreo_type (typ : 'a Choreo.typ) (loc : string) : 'a Net.typ =
   | TProd (t1, t2, _) ->
       TProd (epp_choreo_type t1 loc, epp_choreo_type t2 loc, _m)
   | TSum (t1, t2, _) -> TSum (epp_choreo_type t1 loc, epp_choreo_type t2 loc, _m)
+  | TVariant (_, _) -> TUnit _m (*PLACEHOLDER*)
   | _ -> TUnit _m
 
 let rec epp_choreo_pattern (pat : 'a Choreo.pattern) (loc : string) :
@@ -154,8 +155,9 @@ let rec epp_choreo_pattern (pat : 'a Choreo.pattern) (loc : string) :
   | LocPat (LocId (id, _), p, _) -> if id = loc then p else Default _m
   | Left (p, _) -> Left (epp_choreo_pattern p loc, _m)
   | Right (p, _) -> Right (epp_choreo_pattern p loc, _m)
-  | PConstruct (id, pats, typid, _) -> PConstruct (id, List.map (fun p -> epp_choreo_pattern p loc) pats, typid,  _m)
-;;
+  | PConstruct (id, pats, typid, _) ->
+      PConstruct
+        (id, List.map (fun p -> epp_choreo_pattern p loc) pats, typid, _m)
 
 let rec epp_choreo_stmt (stmt : 'a Choreo.stmt) (loc : string) : 'a Net.stmt =
   match stmt with
@@ -248,7 +250,7 @@ and epp_choreo_expr (expr : 'a Choreo.expr) (loc : string) : 'a Net.expr =
                   (epp_choreo_pattern p loc, epp_choreo_expr e loc))
                 cases,
               _m ))
-  | _ -> Unit _m
+  | _ -> Unit _m (*PLACEHOLDER*)
 
 let epp_choreo_to_net stmt_block loc =
   List.map (fun stmt -> epp_choreo_stmt stmt loc) stmt_block
