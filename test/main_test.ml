@@ -30,9 +30,9 @@ let () =
   (*There doesn't seem to be a built-in way to get a testcase count, so we do it manually.*)
   let rec get_test_count test_list =
     match test_list with
-    | TestList tests :: xs -> get_test_count tests + get_test_count xs
-    | TestCase _ :: xs -> 1 + get_test_count xs
-    | TestLabel (_, test) :: xs -> get_test_count [ test ] + get_test_count xs
+    | OUnitTest.TestList tests :: xs -> get_test_count tests + get_test_count xs
+    | OUnitTest.TestCase _ :: xs -> 1 + get_test_count xs
+    | OUnitTest.TestLabel (_, test) :: xs -> get_test_count [ test ] + get_test_count xs
     | [] -> 0
   in
 
