@@ -680,10 +680,6 @@ let net_binding_foreign_decl _ =
     Net.ForeignDecl
       (VarId ("pir_func", ()), TUnit (), "Foreign_function:foreign_function", ())
   in
-  let stmt =
-    Net.ForeignDecl
-      (VarId ("pir_func", ()), TUnit (), "Foreign_function:foreign_function", ())
-  in
   let pattern_test pat =
     match pat.ppat_desc with
     | Ppat_var { txt = var_name; _ } -> var_name = "pir_func"
