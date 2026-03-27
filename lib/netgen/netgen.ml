@@ -177,6 +177,8 @@ let rec epp_choreo_stmt (stmt : 'a Choreo.stmt) (loc : string) : 'a Net.stmt =
   (*  ForeignDecl to net level, projecting its type signature for the given location. *)
   | ForeignTypeDecl (id, _) -> ForeignTypeDecl (id, _m)
 (* ForeignTypeDecl passes through unchanged no type to project name preserved*)
+  | ImportDecl (_, _) -> 
+    failwith "ImportDecl should have been resolved before this pass to netgen"
 
 and epp_choreo_expr (expr : 'a Choreo.expr) (loc : string) : 'a Net.expr =
   match expr with

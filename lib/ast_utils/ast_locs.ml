@@ -53,6 +53,9 @@ and extract_stmt : 'a Choreo.stmt -> LocSet.t = function
   because the type of a foreign function could reference locations ex Alice.Int -> Bob.String. *)
   | ForeignTypeDecl (_, _) ->
       LocSet.empty (* foreign types have no associated location *)
+  | ImportDecl (_, _) -> 
+      failwith "ImportDecl should have been resolved before this pass into ast_locs"
+
 
 and extract_expr : 'a Choreo.expr -> LocSet.t = function
   | Unit _ | Var _ -> LocSet.empty

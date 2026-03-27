@@ -652,6 +652,8 @@ and dot_stmt (string_of_info : 'a -> string) (stmt : 'a Choreo.stmt) :
           (string_of_info info)
       in
       (decl_node, node_name)
+  | ImportDecl (_, _) -> 
+    failwith "ImportDecl should have been resolved before this pass to dot_ast"
 
 (** [dot_choreo_expr chor_expr] creates the dot code for choreo expressions
     [chor_expr]

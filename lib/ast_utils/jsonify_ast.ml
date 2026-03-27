@@ -284,6 +284,8 @@ let rec jsonify_choreo_stmt = function
   Each statement variant becomes a JSON object with the constructor name as the key.
   ForeignDecl it includes the variable name, type signature, and external string name
   ForeignTypeDecl it just includes the type name *)
+  | ImportDecl (_, _) -> 
+    failwith "ImportDecl should have been resolved before this pass to jsonify"
 
 and jsonify_choreo_expr = function
   | Choreo.Unit _ -> `String "Unit"

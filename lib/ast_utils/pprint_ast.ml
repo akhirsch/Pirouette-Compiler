@@ -259,6 +259,8 @@ and pprint_choreo_stmt ppf (stmt : 'a Choreo.stmt) =
   | ForeignTypeDecl (TypId (id, _), _) ->
       fprintf ppf "@[<h>foreign type %s;@]" id
 (* ForeignTypeDecl prettyprints its type name *)
+  | ImportDecl (_, _) -> 
+      failwith "ImportDecl should have been resolved before this pass to jsonify"
 
 (** [pp_choreo_expr] takes a formatter [ppf] and a choreo expression and prints
     the formatted code of the choreo expression
