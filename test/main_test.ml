@@ -32,7 +32,8 @@ let () =
     match test_list with
     | OUnitTest.TestList tests :: xs -> get_test_count tests + get_test_count xs
     | OUnitTest.TestCase _ :: xs -> 1 + get_test_count xs
-    | OUnitTest.TestLabel (_, test) :: xs -> get_test_count [ test ] + get_test_count xs
+    | OUnitTest.TestLabel (_, test) :: xs ->
+        get_test_count [ test ] + get_test_count xs
     | [] -> 0
   in
 
