@@ -652,8 +652,11 @@ and dot_stmt (string_of_info : 'a -> string) (stmt : 'a Choreo.stmt) :
           (string_of_info info)
       in
       (decl_node, node_name)
-  | ImportDecl (_, _) -> 
-    failwith "ImportDecl should have been resolved before this pass to dot_ast"
+  | ImportDecl (s, info) ->
+    let import_node =
+      spf "%s [label=\"ImportDecl %s %s\"];\n" node_name s (string_of_info info)
+    in
+    (import_node, node_name)
 
 (** [dot_choreo_expr chor_expr] creates the dot code for choreo expressions
     [chor_expr]
