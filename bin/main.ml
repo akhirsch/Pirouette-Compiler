@@ -135,6 +135,8 @@ let () =
     A_rname.Rename.ast_list_alpha_rename
       (Parsing.Parse.parse_with_error !input_filename lexbuf)
   in
+  let user_program = Import_resolver.resolve_imports
+    (Filename.dirname !input_filename) user_program in
   (* BECAREFUL ABOUT LOCS. Since it takes in the user_program, it does NOT consider locations within the stdlib_ast *)
   let locs = Ast_utils.extract_locs user_program in
   let stdlib_ast =
@@ -142,8 +144,6 @@ let () =
       (fun _ -> Obj.magic ())
       (Stdlib_utils.Stdlib_linker.get_stdlib_ast ~recompile:false ())
   in
-  let user_program = Import_resolver.resolve_imports 
-  (Filename.dirname !input_filename) user_program in
   let program = stdlib_ast @ user_program in
   (* Dump the choreography AST *)
   (match !ast_dump_format with
