@@ -142,6 +142,8 @@ let () =
       (fun _ -> Obj.magic ())
       (Stdlib_utils.Stdlib_linker.get_stdlib_ast ~recompile:false ())
   in
+  let user_program = Import_resolver.resolve_imports 
+  (Filename.dirname !input_filename) user_program in
   let program = stdlib_ast @ user_program in
   (* Dump the choreography AST *)
   (match !ast_dump_format with
