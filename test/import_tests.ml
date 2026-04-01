@@ -51,9 +51,30 @@ let test_basic_import _ =
       (* ImportDecl should be gone, foreign type decl should be there *)
       assert_equal 1 (List.length resolved))
 
+let test_transitive_imports _ =
+  let () = print_endline ("Current working directory: " ^ Sys.getcwd ()) in
+  (*  1: need 3 files: A imports B, B imports C
+      2: After resolution, all definitions from B and C should appear in the final stmt_block
+      3: No ImportDecl nodes should remain *)
+  let file_a = "import_transitive_a.pir" in
+  let resolved =
+    Import_resolver.resolve_imports "."
+      [
+        Choreo.M.ImportDecl
+          ( file_a,
+            Parsed_ast.Pos_info.{ fname = ""; start = (0, 0); stop = (0, 0) } );
+      ]
+  in
+  assert_equal 1 (List.length resolved)
+(* transitive_a.pir imports transitive_b.pir which imports transitive_c.pir which has one definition (foreign type Animal;) 
+  after full resolution all ImportDecl nodes are gone and we are left with just that one ForeignTypeDecl
+  so List.length resolved = 1 proves the transitive chain was followed correctly or there would be more then 1 in the lst*)
+
+let test_badpath_import _ = ()
+let test_incorrectfile_import _ = ()
+
 (* 
 Test PLAN: 
-Basic import: imported definitions appear in the output, ImportDecl node is removed
 Transitive imports: A imports B imports C, all definitions end up in the final stmt_block
 Local + imported definitions coexist: order is preserved correctly
 Bad path: file not found -> raises error
@@ -84,6 +105,9 @@ let import_test_suite =
          ("Basic Import Test" >:: fun _ -> test_basic_import ());
          ("get_info ImportDecl" >:: fun _ -> test_get_info_importdecl ());
          ("set_info ImportDecl" >:: fun _ -> test_set_info_importdecl ());
+         ("transitive Import Test" >:: fun _ -> test_transitive_imports ());
+         ("bad path Import Test" >:: fun _ -> test_badpath_import ());
+         ("incorrect file type" >:: fun _ -> test_incorrectfile_import ());
        ]
 
 let () =

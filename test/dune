@@ -47,7 +47,12 @@
 (test
  (name import_tests)
  (modules import_tests)
- (libraries ounit2 ast_core parsing pirc.import_resolver))
+ (libraries ounit2 ast_core parsing pirc.import_resolver)
+ (deps
+  import_transitive_a.pir
+  import_transitive_b.pir
+  import_transitive_c.pir
+  helpers.pir))
 
 ;(test
 ;(name send_receive_test)
