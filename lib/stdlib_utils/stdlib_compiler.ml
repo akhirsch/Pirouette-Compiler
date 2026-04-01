@@ -276,8 +276,8 @@ and ast_stringify : 'a Ast_core.Choreo.M.stmt -> string = function
       ^ ", \"" ^ stmt_foreign_str ^ "\", ()))"
   | ForeignTypeDecl (TypId (type_name, _), _) ->
       "(ForeignTypeDecl (TypId (\"" ^ type_name ^ "\", ()), ()))"
-  | ImportDecl (_, _) -> 
-    failwith "ImportDecl should have been resolved before this pass"
+  | ImportDecl (_, _) ->
+      failwith "ImportDecl should have been resolved before this pass"
 
 and ast_list_stringify : 'a Ast_core.Choreo.M.stmt_block -> string = function
   | [] -> "[]"

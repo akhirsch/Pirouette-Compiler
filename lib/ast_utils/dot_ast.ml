@@ -652,10 +652,11 @@ and dot_stmt (string_of_info : 'a -> string) (stmt : 'a Choreo.stmt) :
       in
       (decl_node, node_name)
   | ImportDecl (s, info) ->
-    let import_node =
-      spf "%s [label=\"ImportDecl %s %s\"];\n" node_name s (string_of_info info)
-    in
-    (import_node, node_name)
+      let import_node =
+        spf "%s [label=\"ImportDecl %s %s\"];\n" node_name s
+          (string_of_info info)
+      in
+      (import_node, node_name)
 
 (** [dot_choreo_expr chor_expr] creates the dot code for choreo expressions
     [chor_expr]

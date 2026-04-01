@@ -57,8 +57,8 @@ module M = struct
     | ForeignDecl of 'a Local.var_id * 'a typ * string * 'a
     (* ForeignDecl declares a foreign FUNCTION: variable name, its type signature, and the external symbol string aka its name *)
     | ForeignTypeDecl of 'a Local.typ_id * 'a
-  (* declares a foreign type name with no internal structure *)
-  (*  ForeignDecl adds a callable foreign function and ForeignTypeDecl adds a usable foreign type name. 
+    (* declares a foreign type name with no internal structure *)
+    (*  ForeignDecl adds a callable foreign function and ForeignTypeDecl adds a usable foreign type name. 
     Both need to exist as statements so they can appear in a stmt_block and be processed sequentially by 
     the type checker alongside regular declarations like Decl and Assign*)
     | ImportDecl of string * 'a
