@@ -52,7 +52,7 @@ let test_basic_import _ =
       assert_equal 1 (List.length resolved))
 
 let test_transitive_imports _ =
-  let () = print_endline ("Current working directory: " ^ Sys.getcwd ()) in
+  (* let () = print_endline ("Current working directory: " ^ Sys.getcwd ()) in *)
   (*  1: need 3 files: A imports B, B imports C
       2: After resolution, all definitions from B and C should appear in the final stmt_block
       3: No ImportDecl nodes should remain *)
@@ -70,9 +70,21 @@ let test_transitive_imports _ =
   after full resolution all ImportDecl nodes are gone and we are left with just that one ForeignTypeDecl
   so List.length resolved = 1 proves the transitive chain was followed correctly or there would be more then 1 in the lst*)
 
-let test_badpath_import _ = ()
-let test_incorrectfile_import _ = ()
-
+let test_badpath_import _ =
+  let filename = "missingfile.pir" in
+  assert_raises
+    (Import_resolver.Import_error ("File not found: ./missingfile.pir"))
+    (fun () ->
+      Import_resolver.resolve_imports "."
+        [Choreo.M.ImportDecl (filename, Parsed_ast.Pos_info.{ fname = ""; start = (0,0); stop = (0,0) })])
+let test_incorrectfile_import _ =
+  with_tmp_pir "this is not valid pirouette!!!" (fun tmp ->
+    assert_raises
+      (Import_resolver.Import_error ("Failed to parse imported file: " ^ tmp ^ "\nParse error at [" ^ tmp ^ "]:  [Ln 1, Col 8]"))
+      (fun () ->
+        Import_resolver.resolve_imports ""
+          [Choreo.M.ImportDecl (tmp, Parsed_ast.Pos_info.{ fname = ""; start = (0,0); stop = (0,0) })]))
+          
 (* 
 Test PLAN: 
 Transitive imports: A imports B imports C, all definitions end up in the final stmt_block
