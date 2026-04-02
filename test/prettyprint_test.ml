@@ -96,6 +96,11 @@ let suite =
               ; ("two_constructors" >:: fun _ -> peq Astutils_testcases.two_constructors)
               ; ("multiple_constructors1" >:: fun _ -> peq Astutils_testcases.multiple_constructors1)
               ; ("multiple_constructors2" >:: fun _ -> peq Astutils_testcases.multiple_constructors2)
+              ; ("simple_with_args" >:: fun _ -> peq Astutils_testcases.simple_with_args)
+              ; ("simple_many_args" >:: fun _ -> peq Astutils_testcases.simple_many_args)
+              ; ("simple_mixed_args" >:: fun _ -> peq Astutils_testcases.simple_mixed_args)
+              ; ("nats" >:: fun _ -> peq Astutils_testcases.nats)
+              ; ("multiple_constructors_with_args" >:: fun _ -> peq Astutils_testcases.nats)
               ] *);
        ]
 
