@@ -832,7 +832,236 @@ let choreo_stmt_suite =
            |> choreo_expr_typ_failures choreo_decl_pattern_mismatch );
        ]
 
-(*-----------------------Variant tests-------------------------------*)
+(*--------------------------------------------Variant tests----------------------------------------------------*)
+
+(*
+let correct_argint = (Local.TInt m) * (Local.TInt m) (*you can continue this pattern*)
+*)
+
+(*--------Local Variants Testing---------*)
+let local_no_args_constructor : ftv Local.constructor = {
+  name = "Name"; 
+  args = []; 
+  typ = Local.TypId( "VariantType", m ); 
+  info = m
+}
+
+(** 
+These are all the argument types a variant constructor can take. 
+We want to write tests that include all of them. 
+- Note that a variant constructor can also take a variant as an argument. 
+  Variants are a recursive type. *)
+let local_argunit = Local.TUnit m
+let local_argint = Local.TInt m
+let local_argstring = Local.TString m
+let local_argbool = Local.TBool m
+let local_argvar = Local.TVar(Local.TypId("VarName", m),m)
+let local_argprod = Local.TProd(Local.TUnit m,Local.TUnit m,m)
+let local_argsum = Local.TSum(Local.TUnit m,Local.TUnit m,m)
+let local_argvariant = Local.TVariant([local_no_args_constructor],m)
+
+(**
+These are some example constructors that the variants can have.
+For the purposes of testing simplicity, they all have the same return type so that they can be used in the same variant together.
+*)
+let local_simple_constructor : ftv Local.constructor = {
+  name = "Name"; 
+  args = [local_argunit]; 
+  typ = Local.TypId( "VariantType", m ); 
+  info = m
+}
+
+let local_constructor_3_argsA : ftv Local.constructor = {
+  name = "A"; 
+  args = [local_argunit; local_argunit; local_argunit]; 
+  typ = Local.TypId( "VariantType", m ); 
+  info = m
+}
+
+let local_constructor_3_argsB : ftv Local.constructor = {
+  name = "B"; 
+  args = [local_argunit; local_argunit; local_argunit]; 
+  typ = Local.TypId( "VariantType", m ); 
+  info = m
+}
+
+let local_constructor_3_argsC : ftv Local.constructor = {
+  name = "C"; 
+  args = [local_argunit; local_argunit; local_argunit]; 
+  typ = Local.TypId( "VariantType", m ); 
+  info = m
+}
+
+let local_constructor_10_args : ftv Local.constructor = {
+  name = "10_Args"; 
+  args = [local_argunit; local_argunit; local_argunit; local_argunit; local_argunit; 
+          local_argunit; local_argunit; local_argunit; local_argunit; local_argunit]; 
+  typ = Local.TypId( "VariantType", m ); 
+  info = m
+}
+(*this constructor makes for a great test because it ensures that the all types can be handled as arguments*)
+let local_constructor_mixed_args : ftv Local.constructor = {
+  name = "mixed_args"; 
+  args = [local_argint; local_argstring; local_argbool; local_argvar; local_argprod; local_argsum; local_argvariant]; 
+  typ = Local.TypId( "VariantType", m ); 
+  info = m
+}
+
+let correct_local_variant_simple1 = Local.TVariant([local_no_args_constructor], m)
+let correct_local_variant_simple2 = Local.TVariant([local_simple_constructor], m)
+let correct_local_variant_3constructs = 
+    Local.TVariant( 
+      [local_constructor_3_argsA ; 
+      local_constructor_3_argsB ; 
+      local_constructor_3_argsC], 
+      m )
+let correct_local_variant_big_constructor = 
+    Local.TVariant( 
+      [local_constructor_10_args ; 
+      local_constructor_3_argsB ; 
+      local_constructor_3_argsC], 
+      m )
+      
+(* this variant has a mixture of constructor forms which take a mixture of arguments, which adds variability in testing. *)
+let correct_local_variant_mixed = 
+    Local.TVariant( 
+      [local_constructor_mixed_args ; 
+      local_constructor_10_args ; 
+      local_constructor_3_argsC], 
+      m )     
+      
+      
+      
+(*This is where the tests for the choreo variants are run*)
+let local_variant_suite =
+  "Local variants tests"
+  >::: [
+         (*unify_local good inputs tests*)
+         ( "simple test 1" >:: fun _ ->
+         unify_local_success correct_local_variant_simple1 correct_local_variant_simple1 []);
+         ( "simple test 2" >:: fun _ ->
+         unify_local_success correct_local_variant_simple2 correct_local_variant_simple2 []);
+         ( "simple test 3" >:: fun _ ->
+         unify_local_success correct_local_variant_big_constructor correct_local_variant_big_constructor []);
+         ( "simple test 4" >:: fun _ ->
+         unify_local_success correct_local_variant_mixed correct_local_variant_mixed []);
+         
+         (*unify_local bad inputs tests*)
+         ( "constructor amount mismatch: 0 and 1" >:: fun _ ->
+         unify_local_failure correct_local_variant_simple1 correct_local_variant_simple2 "Variant constructor count mismatch");
+         ( "constructor amount mismatch: 1 and 3" >:: fun _ ->
+         unify_local_failure correct_local_variant_simple1 correct_local_variant_3constructs "Variant constructor count mismatch");
+         
+       ]
+
+
+(*-----------Choreo Variants------------*)
+(* 
+Choreo variants are extremely similar to Local types when it comes to testing,
+so you'll notice that the test cases are almost identical for the majority of the suite.
+*)
+
+let choreo_no_args_constructor : ftv Choreo.constructor = {
+  name = "Name"; 
+  args = []; 
+  typ = Local.TypId( "VariantType", m ); 
+  info = m
+}
+let choreo_argunit = Choreo.TUnit m
+let choreo_argloc = Choreo.TLoc (Local.LocId ("Name", m), Local.TInt m, m)
+let choreo_argvar = Choreo.TVar (Choreo.Typ_Id ("Name", m), m)
+let choreo_argmap = Choreo.TProd (Choreo.TUnit m, Choreo.TUnit m, m)
+let choreo_argprod = Choreo.TProd (Choreo.TUnit m, Choreo.TUnit m, m)
+let choreo_argsum = Choreo.TProd (Choreo.TUnit m, Choreo.TUnit m, m)
+let choreo_argvariant = Choreo.TVariant([choreo_no_args_constructor],m)
+
+
+let choreo_simple_constructor : ftv Choreo.constructor = {
+  name = "Name"; 
+  args = [choreo_argunit]; 
+  typ = Local.TypId( "VariantType", m ); 
+  info = m
+}
+let choreo_constructor_3_argsA : ftv Choreo.constructor = {
+  name = "A"; 
+  args = [choreo_argunit; choreo_argunit; choreo_argunit]; 
+  typ = Local.TypId( "VariantType", m ); 
+  info = m
+}
+let choreo_constructor_3_argsB : ftv Choreo.constructor = {
+  name = "B"; 
+  args = [choreo_argunit; choreo_argunit; choreo_argunit]; 
+  typ = Local.TypId( "VariantType", m ); 
+  info = m
+}
+let choreo_constructor_3_argsC : ftv Choreo.constructor = {
+  name = "C"; 
+  args = [choreo_argunit; choreo_argunit; choreo_argunit]; 
+  typ = Local.TypId( "VariantType", m ); 
+  info = m
+}
+let choreo_constructor_10_args : ftv Choreo.constructor = {
+  name = "10_Args"; 
+  args = [choreo_argunit; choreo_argunit; choreo_argunit; choreo_argunit; choreo_argunit; 
+          choreo_argunit; choreo_argunit; choreo_argunit; choreo_argunit; choreo_argunit]; 
+  typ = Local.TypId( "VariantType", m ); 
+  info = m
+}
+let choreo_constructor_mixed_args : ftv Choreo.constructor = {
+  name = "mixed_args"; 
+  args = [choreo_argunit; choreo_argloc; choreo_argvar; choreo_argmap; choreo_argprod; choreo_argsum; choreo_argvariant]; 
+  typ = Local.TypId( "VariantType", m ); 
+  info = m
+}
+
+
+(* These are some choreo variant constructions that will be used on the actual type checker for testing *)
+let correct_choreo_variant_simple1 = Choreo.TVariant([choreo_no_args_constructor], m)
+let correct_choreo_variant_simple2 = Choreo.TVariant([choreo_simple_constructor], m)
+let correct_choreo_variant_3constructs = 
+  Choreo.TVariant( 
+    [choreo_constructor_3_argsA ; 
+    choreo_constructor_3_argsB ;
+    choreo_constructor_3_argsC], 
+  m )
+
+let correct_choreo_variant_big_constructor = 
+    Choreo.TVariant( 
+      [choreo_constructor_10_args ; 
+      choreo_constructor_3_argsB ; 
+      choreo_constructor_3_argsC], 
+      m )
+let correct_choreo_variant_mixed = 
+    Choreo.TVariant( 
+      [choreo_constructor_mixed_args ; 
+      choreo_constructor_10_args ; 
+      choreo_constructor_3_argsC], 
+      m ) 
+
+
+(*This is where the tests for the choreo variants are run*)
+let choreo_variant_suite =
+  "Local variants tests"
+  >::: [
+         (*unify_choreo good inputs tests*)
+         ( "simple test 1" >:: fun _ ->
+         unify_choreo_success correct_choreo_variant_simple1 correct_choreo_variant_simple1 []);
+         ( "simple test 2" >:: fun _ ->
+         unify_choreo_success correct_choreo_variant_simple2 correct_choreo_variant_simple2 []);
+         ( "simple test 3" >:: fun _ ->
+         unify_choreo_success correct_choreo_variant_big_constructor correct_choreo_variant_big_constructor []);
+         ( "simple test 4" >:: fun _ ->
+         unify_choreo_success correct_choreo_variant_mixed correct_choreo_variant_mixed []);
+         
+         (*unify_choreo bad inputs tests*)
+         ( "constructor amount mismatch: 0 and 1" >:: fun _ ->
+         unify_choreo_failure correct_choreo_variant_simple1 correct_choreo_variant_simple2 "Variant constructor count mismatch");
+         ( "constructor amount mismatch: 1 and 3" >:: fun _ ->
+         unify_choreo_failure correct_choreo_variant_simple1 correct_choreo_variant_3constructs "Variant constructor count mismatch");
+         
+       ]
+
+
 
 (*------------------Bisect (Coverage check) test--------------------------*)
 let unification_suite =
@@ -987,6 +1216,8 @@ let all_suites =
          correct_choreo_pattern_suite;
          incorrect_choreo_type_suite;
          choreo_stmt_suite;
+         local_variant_suite;
+         choreo_variant_suite;
          (*Unification test suite*)
          unification_suite;
          (*Helper functions test suite*)
