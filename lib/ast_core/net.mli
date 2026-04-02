@@ -116,7 +116,7 @@ module M : sig
             annotations. *)
 
   and 'a constructor = {
-    name : string;
+    name : 'a Local.M.typ_id;
     args : 'a typ list;
     typ : 'a Local.M.typ_id;
     info : 'a;
@@ -527,7 +527,7 @@ module M : sig
               in
               match_expr
             ]} *)
-    | Construct of string * 'a expr list * 'a Local.M.typ_id * 'a
+    | Construct of 'a Local.M.typ_id * 'a expr list * 'a Local.M.typ_id * 'a
         (** {1 Network Statements}
 
             ['a stmt] represent statements in projected endpoint programs after

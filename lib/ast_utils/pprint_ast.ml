@@ -42,11 +42,11 @@ let rec pprint_local_type ppf (typ : 'a Local.typ) =
       fprintf ppf "@[type<v 0>%a@]"
         (pp_print_list
            ~pp_sep:(fun ppf () -> fprintf ppf "@ | ")
-           (fun ppf { Local.name; args; typ = TypId (typ_id, _); info = _ } ->
+           (fun ppf { Local.name = TypId (ntyp_id, _); args; typ = TypId (typ_id, _); info = _ } ->
              match args with
-             | [] -> fprintf ppf "@[<h>%s : %s@]" name typ_id
+             | [] -> fprintf ppf "@[<h>%s : %s@]" ntyp_id typ_id
              | _ ->
-                 fprintf ppf "@[<h>%s : %a -> %s@]" name
+                 fprintf ppf "@[<h>%s : %a -> %s@]" ntyp_id
                    (pp_print_list
                       ~pp_sep:(fun ppf () -> fprintf ppf ",@ ")
                       pprint_local_type)
@@ -76,11 +76,11 @@ let rec pprint_local_pattern ppf (pat : 'a Local.pattern) =
         pprint_local_pattern p2
   | Left (p, _) -> fprintf ppf "@[<hv2>left@ %a@]" pprint_local_pattern p
   | Right (p, _) -> fprintf ppf "@[<hv2>right@ %a@]" pprint_local_pattern p
-  | Local.PConstruct (name, patterns, TypId (typ_id, _), _) -> (
+  | Local.PConstruct (TypId(ntyp_id, _), patterns, TypId (typ_id, _), _) -> (
       match patterns with
-      | [] -> fprintf ppf "@[<h>%s : %s@]" name typ_id
+      | [] -> fprintf ppf "@[<h>%s : %s@]" ntyp_id typ_id
       | _ ->
-          fprintf ppf "@[<h>%s : %a : %s@]" name
+          fprintf ppf "@[<h>%s : %a : %s@]" ntyp_id
             (pp_print_list
                ~pp_sep:(fun ppf () -> fprintf ppf ",@ ")
                pprint_local_pattern)

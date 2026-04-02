@@ -115,7 +115,7 @@ let rec dot_local_type (string_of_info : 'a -> string) (typ : 'a Local.typ) :
       in
       let constructor_nodes =
         List.map
-          (fun { Local.name; args; typ = _; info = cons_info } ->
+          (fun { Local.name = TypId (ntyp_id, _); args; typ = TypId(typ, _); info = cons_info } ->
             (*temp fix for typ*)
             let cons_node_name = generate_node_name () in
             let cons_node =

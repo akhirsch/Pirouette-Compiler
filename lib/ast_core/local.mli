@@ -338,7 +338,7 @@ module M : sig
     | TVariant of 'a constructor list * 'a
 
   and 'a constructor = {
-    name : string;
+    name : 'a typ_id;
     args : 'a typ list;
     typ : 'a typ_id;
     info : 'a;
@@ -458,7 +458,7 @@ module M : sig
               in
               right_y
             ]}*)
-    | PConstruct of string * 'a pattern list * 'a typ_id * 'a
+    | PConstruct of 'a typ_id * 'a pattern list * 'a typ_id * 'a
 
   (** {1 Local Expressions}
 
@@ -692,7 +692,7 @@ module M : sig
               in
               match_expr
             ]}*)
-    | Construct of string * 'a expr list * 'a typ_id * 'a
+    | Construct of 'a typ_id * 'a expr list * 'a typ_id * 'a
 end
 
 (** {b With:} Module that uses a Functor for creating local AST types with

@@ -303,7 +303,7 @@ local_pattern:
   | LEFT p=local_pattern { Left (p, gen_pos $startpos $endpos) }
   | RIGHT p=local_pattern { Right (p, gen_pos $startpos $endpos) }
   | LPAREN p=local_pattern RPAREN { Local.set_info_pattern (gen_pos $startpos $endpos) p }
-  | name=ID COLON args=separated_list(COMMA, local_pattern) COLON typ=typ_id { PConstruct (name, args, typ, gen_pos $startpos $endpos) }
+  | name=typ_id COLON args=separated_list(COMMA, local_pattern) COLON typ=typ_id { PConstruct (name, args, typ, gen_pos $startpos $endpos) }
 
 net_type:
   | UNIT_T { TUnit (gen_pos $startpos $endpos) }
@@ -390,17 +390,17 @@ constructor_arg_list_local:
   | t=local_type COMMA rest=constructor_arg_list_local { t :: rest }
 
 %inline net_constructor_def:
-  | BAR name=ID COLON typ=typ_id SEMICOLON
+  | BAR name=typ_id COLON typ=typ_id SEMICOLON
     { Ast_core.Net.M.{ name = name; args = []; typ = typ; info = gen_pos $startpos $endpos } }
-  | BAR name=ID COLON t=net_type COLON typ=typ_id SEMICOLON
+  | BAR name=typ_id COLON t=net_type COLON typ=typ_id SEMICOLON
     { Ast_core.Net.M.{ name = name; args = [t]; typ = typ; info = gen_pos $startpos $endpos } }
-  | BAR name=ID COLON args=constructor_arg_list_net COLON typ=typ_id SEMICOLON
+  | BAR name=typ_id COLON args=constructor_arg_list_net COLON typ=typ_id SEMICOLON
     { Ast_core.Net.M.{ name = name; args = args; typ = typ; info = gen_pos $startpos $endpos } }
 
 %inline local_constructor_def:
-  | BAR name=ID COLON typ=typ_id SEMICOLON
+  | BAR name=typ_id COLON typ=typ_id SEMICOLON
     { Ast_core.Local.M.{ name = name; args = []; typ = typ; info = gen_pos $startpos $endpos } }
-  | BAR name=ID COLON t=local_type COLON typ=typ_id SEMICOLON
+  | BAR name=typ_id COLON t=local_type COLON typ=typ_id SEMICOLON
     { Ast_core.Local.M.{ name = name; args = [t]; typ = typ; info = gen_pos $startpos $endpos } }
-  | BAR name=ID COLON args=constructor_arg_list_local COLON typ=typ_id SEMICOLON
+  | BAR name=typ_id COLON args=constructor_arg_list_local COLON typ=typ_id SEMICOLON
     { Ast_core.Local.M.{ name = name; args = args; typ = typ; info = gen_pos $startpos $endpos } }

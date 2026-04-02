@@ -13,7 +13,7 @@ module M = struct
     | TVariant of 'a constructor list * 'a
 
   and 'a constructor = {
-    name : string;
+    name : 'a Local.typ_id;
     args : 'a typ list;
     typ : 'a Local.typ_id;
     info : 'a;
@@ -26,7 +26,7 @@ module M = struct
     | LocPat of 'a Local.loc_id * 'a Local.pattern * 'a
     | Left of 'a pattern * 'a
     | Right of 'a pattern * 'a
-    | PConstruct of string * 'a pattern list * 'a Local.typ_id * 'a
+    | PConstruct of 'a Local.typ_id * 'a pattern list * 'a Local.typ_id * 'a
 
   type 'a expr =
     | Unit of 'a
@@ -45,7 +45,7 @@ module M = struct
     | Left of 'a expr * 'a
     | Right of 'a expr * 'a
     | Match of 'a expr * ('a pattern * 'a expr) list * 'a
-    | Construct of string * 'a expr list * 'a Local.typ_id * 'a
+    | Construct of 'a Local.typ_id * 'a expr list * 'a Local.typ_id * 'a
 
   and 'a stmt =
     | Decl of 'a pattern * 'a typ * 'a

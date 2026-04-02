@@ -39,10 +39,10 @@ let rec jsonify_local_type = function
           ( "TVariant",
             `List
               (List.map
-                 (fun { Local.name; args; typ = TypId (typ_id, _); info = _ } ->
+                 (fun { Local.name = TypId(ntyp_id, _); args; typ = TypId (typ_id, _); info = _ } ->
                    `Assoc
                      [
-                       ("name", `String name);
+                       ("name", `String ntyp_id);
                        ("args", `List (List.map jsonify_local_type args));
                        ("typ", `String typ_id);
                      ])
@@ -68,13 +68,13 @@ let rec jsonify_local_pattern = function
         [
           ("Pair", `List [ jsonify_local_pattern p1; jsonify_local_pattern p2 ]);
         ]
-  | Local.PConstruct (name, patterns, TypId (typ_id, _), _) ->
+  | Local.PConstruct ( TypId(ntyp_id, _), patterns, TypId (typ_id, _), _) ->
       `Assoc
         [
           ( "PConstruct",
             `Assoc
               [
-                ("name", `String name);
+                ("name", `String ntyp_id);
                 ("patterns", `List (List.map jsonify_local_pattern patterns));
                 ("typ", `String typ_id);
               ] );
@@ -149,13 +149,13 @@ let rec jsonify_local_expr = function
                        cases) );
               ] );
         ]
-  | Local.Construct (name, exprs, TypId (typ_id, _), _) ->
+  | Local.Construct (TypId(ntyp_id, _), exprs, TypId (typ_id, _), _) ->
       `Assoc
         [
           ( "Construct",
             `Assoc
               [
-                ("name", `String name);
+                ("name", `String ntyp_id);
                 ("exprs", `List (List.map jsonify_local_expr exprs));
                 ("typ", `String typ_id);
               ] );
@@ -188,14 +188,14 @@ let rec jsonify_choreo_type = function
             `List
               (List.map
                  (fun {
-                        Choreo.name;
+                        Choreo.name = Local.TypId( ntyp_id, _);
                         args;
                         typ = Local.TypId (typ_id, _);
                         info = _;
                       } ->
                    `Assoc
                      [
-                       ("name", `String name);
+                       ("name", `String ntyp_id);
                        ("args", `List (List.map jsonify_choreo_type args));
                        ("typ", `String typ_id);
                      ])
@@ -221,13 +221,13 @@ let rec jsonify_choreo_pattern = function
               [ ("loc", `String loc); ("local_patt", jsonify_local_pattern p) ]
           );
         ]
-  | Choreo.PConstruct (name, patterns, Local.TypId (typ_id, _), _) ->
+  | Choreo.PConstruct (Local.TypId(ntyp_id, _), patterns, Local.TypId (typ_id, _), _) ->
       `Assoc
         [
           ( "PConstruct",
             `Assoc
               [
-                ("name", `String name);
+                ("name", `String ntyp_id);
                 ("patterns", `List (List.map jsonify_choreo_pattern patterns));
                 ("typ", `String typ_id);
               ] );
@@ -370,13 +370,13 @@ and jsonify_choreo_expr = function
                 ("cases", `List (List.map jsonify_choreo_case cases));
               ] );
         ]
-  | Choreo.Construct (name, exprs, Local.TypId (typ_id, _), _) ->
+  | Choreo.Construct (Local.TypId(ntyp_id, _), exprs, Local.TypId (typ_id, _), _) ->
       `Assoc
         [
           ( "Construct",
             `Assoc
               [
-                ("name", `String name);
+                ("name", `String ntyp_id);
                 ("exprs", `List (List.map jsonify_choreo_expr exprs));
                 ("typ", `String typ_id);
               ] );
