@@ -73,18 +73,32 @@ let test_transitive_imports _ =
 let test_badpath_import _ =
   let filename = "missingfile.pir" in
   assert_raises
-    (Import_resolver.Import_error ("File not found: ./missingfile.pir"))
+    (Import_resolver.Import_error "File not found: ./missingfile.pir")
     (fun () ->
       Import_resolver.resolve_imports "."
-        [Choreo.M.ImportDecl (filename, Parsed_ast.Pos_info.{ fname = ""; start = (0,0); stop = (0,0) })])
+        [
+          Choreo.M.ImportDecl
+            ( filename,
+              Parsed_ast.Pos_info.{ fname = ""; start = (0, 0); stop = (0, 0) }
+            );
+        ])
+
 let test_incorrectfile_import _ =
   with_tmp_pir "this is not valid pirouette!!!" (fun tmp ->
-    assert_raises
-      (Import_resolver.Import_error ("Failed to parse imported file: " ^ tmp ^ "\nParse error at [" ^ tmp ^ "]:  [Ln 1, Col 8]"))
-      (fun () ->
-        Import_resolver.resolve_imports ""
-          [Choreo.M.ImportDecl (tmp, Parsed_ast.Pos_info.{ fname = ""; start = (0,0); stop = (0,0) })]))
-          
+      assert_raises
+        (Import_resolver.Import_error
+           ("Failed to parse imported file: " ^ tmp ^ "\nParse error at [" ^ tmp
+          ^ "]:  [Ln 1, Col 8]"))
+        (* above catches the error from the import resolver and then also the specific parse error that the parser returns. *)
+        (fun () ->
+          Import_resolver.resolve_imports ""
+            [
+              Choreo.M.ImportDecl
+                ( tmp,
+                  Parsed_ast.Pos_info.
+                    { fname = ""; start = (0, 0); stop = (0, 0) } );
+            ]))
+
 (* 
 Test PLAN: 
 Transitive imports: A imports B imports C, all definitions end up in the final stmt_block

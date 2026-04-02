@@ -23,9 +23,12 @@ let resolve_imports base_dir stmts =
               let ic = open_in full_path in
               let lexbuf = Lexing.from_channel ic in
               let imported_stmts =
-              try Parsing.Parse.parse_with_error full_path lexbuf
-              with Failure msg ->
-              raise (Import_error ("Failed to parse imported file: " ^ full_path ^ "\n" ^ msg))
+                try Parsing.Parse.parse_with_error full_path lexbuf
+                with Failure msg ->
+                  raise
+                    (Import_error
+                       ("Failed to parse imported file: " ^ full_path ^ "\n"
+                      ^ msg))
               in
               close_in ic;
               (* how main parses a file:
