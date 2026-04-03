@@ -4,6 +4,7 @@ open Parsing
 
 module TestInfo = struct
   type t = Parsed_ast.Pos_info.t
+  (* needed for position info for metadata get/set tests *)
 end
 
 module ChoreoAst = Ast_core.Choreo.With (TestInfo)
