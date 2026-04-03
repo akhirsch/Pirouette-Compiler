@@ -2,7 +2,7 @@ FILE := $(word 2, $(MAKECMDGOALS))
 DOCS_DIR := theory
 LATEX_DOCS := $(shell find $(DOCS_DIR) -name '*.tex')
 
-.PHONY: build docs check-env pp json dot test-infer test-pp bisect-pp clean cleandocs cleanall
+.PHONY: build docs check-env pp json dot test test-infer test-pp bisect-pp clean cleandocs cleanall
 
 build:
 	dune build
@@ -30,6 +30,9 @@ json:
 dot: 
 	dune exec pirc -- -dot $(FILE)
 
+test: 
+	dune test
+
 test-infer: cleanall
 	dune exec --instrument-with bisect_ppx test/typcheck_test.exe
 	bisect-ppx-report html
@@ -52,6 +55,7 @@ test-emit-core: cleanall
 test-toplevel-shm: cleanall
 	dune exec --instrument-with bisect_ppx test/toplevel_shm_test.exe
 	bisect-ppx-report html
+	
 bisect-all: cleanall
 	dune runtest --instrument-with bisect_ppx
 	bisect-ppx-report html
