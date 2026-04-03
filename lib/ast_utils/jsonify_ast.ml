@@ -408,11 +408,11 @@ let rec jsonify_net_type = function
           ( "TVariant",
             `List
               (List.map
-                 (fun { Net.name; args; typ = _; info = _ } ->
+                 (fun { Net.name = TypId (id, _ ); args; typ = _; info = _ } ->
                    (* had to add typ but it shouldn't... fix laterrrrrrr*)
                    `Assoc
                      [
-                       ("name", `String name);
+                       ("name", `String id);
                        ("args", `List (List.map jsonify_net_type args));
                      ])
                  constructors) );
@@ -559,14 +559,14 @@ and jsonify_net_expr = function
                 ("cases", `List (List.map jsonify_net_case cases));
               ] );
         ]
-  | Net.Construct (name, exprs, Local.TypId (typ_id, _), _) ->
+  | Net.Construct (Local.TypId(id, _), args, Local.TypId (typ_id, _), _) ->
       `Assoc
         [
           ( "Construct",
             `Assoc
               [
-                ("name", `String name);
-                ("exprs", `List (List.map jsonify_net_expr exprs));
+                ("name", `String id);
+                ("args", `List (List.map jsonify_net_expr args));
                 ("typ", `String typ_id);
               ] );
         ]

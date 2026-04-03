@@ -131,6 +131,8 @@ and emit_net_binding ~(self_id : string) (module Msg : Msg_intf)
       | f :: ps ->
           Builder.value_binding ~pat:(emit_local_ppat f)
             ~expr:(emit_net_fun_body ~self_id (module Msg) ps e))
+  | TypeDecl (TypId (id, _), typ, _) ->
+    "type" ^ id ^ find_type_sig typ (*shouldn't hard code printing type keyword, but temp fix for now*)
   | ForeignDecl (VarId (id, _), typ, external_name, _) ->
       emit_foreign_decl id typ external_name
   | _ -> Builder.value_binding ~pat:[%pat? _unit] ~expr:Builder.eunit

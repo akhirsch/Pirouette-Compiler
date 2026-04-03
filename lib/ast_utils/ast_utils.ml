@@ -256,7 +256,6 @@ and ast_local_expr_info_map :
           List.map (ast_local_expr_info_map map) patternlist,
           TypId (typ, map info),
           map metadata )
-(*PLACEHOLDER 3, NEEDS TO BE REPLACED*)
 
 let rec ast_choreo_type_info_map :
     ('a -> 'b) -> 'a Ast_core.Choreo.M.typ -> 'b Ast_core.Choreo.M.typ =
@@ -301,7 +300,6 @@ let rec ast_choreo_type_info_map :
               })
             cl,
           map metadata )
-(*PLACEHOLDER 4, NEEDS TO BE REPLACED*)
 
 let rec ast_choreo_pattern_info_map :
     ('a -> 'b) -> 'a Ast_core.Choreo.M.pattern -> 'b Ast_core.Choreo.M.pattern =
@@ -324,13 +322,12 @@ let rec ast_choreo_pattern_info_map :
   | Right (choreo_pattern, metadata) ->
       Right (ast_choreo_pattern_info_map map choreo_pattern, map metadata)
   | PConstruct (name, patternlist, TypId (typ, info), metadata) ->
-      (*PLACEHOdlER,*)
+
       PConstruct
         ( name,
           List.map (ast_choreo_pattern_info_map map) patternlist,
           TypId (typ, map info),
           map metadata )
-(* PConstruct (name, ast_choreo_pattern_list_info_map ast_choreo_pattern_info_map map patternlist, typ, map metadata) *)
 
 (* making above and below function mutually recursive *)
 and ast_choreo_pattern_list_info_map :
@@ -423,7 +420,6 @@ and ast_choreo_expr_info_map :
           List.map (ast_choreo_expr_info_map map) patternlist,
           TypId (typ, map info),
           map metadata )
-(*PLACEHOLDER*)
 
 and ast_info_map :
     ('a -> 'b) -> 'a Ast_core.Choreo.M.stmt -> 'b Ast_core.Choreo.M.stmt =

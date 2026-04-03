@@ -110,38 +110,40 @@ let rec dot_local_type (string_of_info : 'a -> string) (typ : 'a Local.typ) :
       let edge2 = spf "%s -> %s;\n" node_name n2 in
       (sum_node ^ edge1 ^ edge2 ^ c1 ^ c2, node_name)
   | TVariant (constructors, info) ->
-      let variant_node =
-        spf "%s [label=\"Variant %s\"];\n" node_name (string_of_info info)
-      in
-      let constructor_nodes =
-        List.map
-          (fun { Local.name = TypId (ntyp_id, _); args; typ = TypId(typ, _); info = cons_info } ->
-            (*temp fix for typ*)
-            let cons_node_name = generate_node_name () in
-            let cons_node =
-              spf "%s [label=\"Constructor %s %s\"];\n" cons_node_name name
-                (string_of_info cons_info)
-            in
-            let cons_edge = spf "%s -> %s;\n" node_name cons_node_name in
-            let args_code, args_edges =
-              List.fold_left
-                (fun (code_acc, edges_acc) arg_type ->
-                  let arg_code, arg_node =
-                    dot_local_type string_of_info arg_type
-                  in
-                  let arg_edge = spf "%s -> %s;\n" cons_node_name arg_node in
-                  (code_acc ^ arg_code, edges_acc ^ arg_edge))
-                ("", "") args
-            in
-            (cons_node ^ cons_edge ^ args_code, args_edges))
-          constructors
-      in
-      let all_cons_code =
-        List.fold_left
-          (fun acc (code, edges) -> acc ^ code ^ edges)
-          "" constructor_nodes
-      in
-      (variant_node ^ all_cons_code, node_name)
+    let variant_node =
+      spf "%s [label=\"Variant %s\"];\n" node_name (string_of_info info)
+    in
+    let constructor_nodes =
+      List.map
+        (fun { Local.name = TypId (ntyp_id, _); args; typ = TypId (typid, _); info = cons_info } ->
+          let cons_node_name = generate_node_name () in
+          let cons_node =
+            spf "%s [label=\"Constructor %s %s\"];\n" cons_node_name ntyp_id
+              (string_of_info cons_info)
+          in
+          let cons_edge = spf "%s -> %s;\n" node_name cons_node_name in
+          let args_code, args_edges =
+            List.fold_left
+              (fun (code_acc, edges_acc) arg_type ->
+                let arg_code, arg_node =
+                  dot_local_type string_of_info arg_type
+                in
+                let arg_edge = spf "%s -> %s;\n" cons_node_name arg_node in
+                (code_acc ^ arg_code, edges_acc ^ arg_edge))
+              ("", "") args
+          in
+          let typid_node_name = generate_node_name () in
+          let typid_node = spf "%s [label=\"TypId %s\"];\n" typid_node_name typid in
+          let typid_edge = spf "%s -> %s;\n" cons_node_name typid_node_name in
+          (cons_node ^ cons_edge ^ args_code ^ typid_node, args_edges ^ typid_edge))
+        constructors
+    in
+    let all_cons_code =
+      List.fold_left
+        (fun acc (code, edges) -> acc ^ code ^ edges)
+        "" constructor_nodes
+    in
+    (variant_node ^ all_cons_code, node_name)
 
 (* node name format: n + node_counter *)
 
@@ -202,9 +204,9 @@ let rec dot_local_pattern (string_of_info : 'a -> string)
       in
       let edge = spf "%s -> %s;\n" node_name n in
       (right_node ^ edge ^ c, node_name)
-  | PConstruct (name, patterns, TypId (typ, _), info) ->
+  | PConstruct (TypId(ntyp, _), patterns, TypId (typ, _), info) ->
       let pconstruct_node =
-        spf "%s [label=\"Constructor %s %s\"];\n" node_name name
+        spf "%s [label=\"Constructor %s %s\"];\n" node_name ntyp
           (string_of_info info)
       in
       let pat_code =
@@ -360,9 +362,9 @@ let rec dot_local_expr (string_of_info : 'a -> string)
       let edge1 = spf "%s -> %s;\n" node_name n1 in
       let edge2 = spf "%s -> %s;\n" node_name n2 in
       (match_node ^ edge1 ^ edge2 ^ c1 ^ c2, node_name)
-  | Construct (name, exprs, TypId (typ, _), info) ->
+  | Construct (TypId (ntyp, _), exprs, TypId (typ, _), info) ->
       let construct_node =
-        spf "%s [label=\"Construct %s %s\"];\n" node_name name
+        spf "%s [label=\"Construct %s %s\"];\n" node_name ntyp
           (string_of_info info)
       in
       let exprs_code =
@@ -441,11 +443,11 @@ let rec dot_choreo_type (string_of_info : 'a -> string) (typ : 'a Choreo.typ) :
       in
       let constructor_nodes =
         List.map
-          (fun { Choreo.name; args; typ = TypId (typc, _); info = cons_info } ->
+          (fun { Choreo.name = TypId(ntyp, _); args; typ = TypId (typc, _); info = cons_info } ->
             (*(Choreo.Typ_Id(typ, _)). Local.TypId(typ, i)*)
             let cons_node_name = generate_node_name () in
             let cons_node =
-              spf "%s [label=\"Constructor %s %s\"];\n" cons_node_name name
+              spf "%s [label=\"Constructor %s %s\"];\n" cons_node_name ntyp
                 (string_of_info cons_info)
             in
             let cons_edge = spf "%s -> %s;\n" node_name cons_node_name in
@@ -524,7 +526,7 @@ let rec dot_choreo_pattern (string_of_info : 'a -> string)
       in
       let edge = spf "%s -> %s;\n" node_name n in
       (right_node ^ edge ^ c, node_name)
-  | PConstruct (name, patterns, TypId (typ, _), info) ->
+  | PConstruct (TypId(name, _), patterns, TypId (typ, _), info) ->
       let pconstruct_node =
         spf "%s [label=\"Constructor %s %s\"];\n" node_name name
           (string_of_info info)
@@ -610,14 +612,6 @@ and dot_stmt (string_of_info : 'a -> string) (stmt : 'a Choreo.stmt) :
       let c, n = dot_choreo_type string_of_info typ in
       let edge = spf "%s -> %s;\n" node_name n in
       (var_node ^ edge ^ c, node_name)
-  (* | Variant (TypId (id1, _), s, TypId (id2, _), info ) ->
-    let variant_node = spf "%s [label=\"VariantDeclaration %s\"];\n" node_name (string_of_info info) in
-    (* let var_node1 = spf "%s [label=\"%s %s\"];\n" node_name id1 (string_of_info info) in *)
-    (* let var_node2 = spf "%s [label=\"%s %s\"];\n" node_name id2 (string_of_info info) in *)
-    let typ1edge = spf "%s -> %s;\n" node_name (id1^"_1") in (* temporarily added numbers so that the dot visualizer doesn't mistake it for the same thing*)
-    let typ2edge = spf "%s -> %s;\n" node_name (id2^"_2") in
-    let constructor = spf "%s -> %s;\n" node_name s in
-    variant_node ^ typ1edge ^ constructor ^ typ2edge, node_name *)
   | ForeignDecl (VarId (id, _), typ, s, info) ->
       let node_name = generate_node_name () in
       let decl_node =
@@ -797,7 +791,7 @@ and dot_choreo_expr (string_of_info : 'a -> string) (expr : 'a Choreo.expr) :
       let edge1 = spf "%s -> %s;\n" node_name n1 in
       let edge2 = spf "%s -> %s;\n" node_name n2 in
       (match_node ^ edge1 ^ edge2 ^ c1 ^ c2, node_name)
-  | Construct (name, exprs, TypId (typ, _), info) ->
+  | Construct (TypId(name, _), exprs, TypId (typ, _), info) ->
       let construct_node =
         spf "%s [label=\"Construct %s %s\"];\n" node_name name
           (string_of_info info)

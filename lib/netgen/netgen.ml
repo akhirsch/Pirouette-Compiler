@@ -130,6 +130,27 @@ and merge_net_expr (expr : 'a Net.expr) (expr' : 'a Net.expr) :
               Hashtbl.fold (fun l e acc -> (l, e) :: acc) tbl []),
              _m ))
       (* use list *)
+    | Construct (name, arglist, typ, _), Construct (name', arglist', typ', _)
+    when name = name' && typ = typ' ->
+    if List.length arglist <> List.length arglist' then None
+    else
+      let merged_args =
+        let exception Not_matched in
+        try
+          List.fold_left2
+            (fun acc e e' ->
+              match acc with
+              | Some acc -> (
+                  match merge_net_expr e e' with
+                  | Some e -> Some (e :: acc)
+                  | None -> raise Not_matched)
+              | None -> raise Not_matched)
+            (Some []) arglist arglist'
+        with Not_matched -> None
+      in
+      (match merged_args with
+      | Some args -> Some (Construct (name, List.rev args, typ, _m))
+      | None -> None)
   | _ -> None
 
 let rec epp_choreo_type (typ : 'a Choreo.typ) (loc : string) : 'a Net.typ =
@@ -142,7 +163,14 @@ let rec epp_choreo_type (typ : 'a Choreo.typ) (loc : string) : 'a Net.typ =
   | TProd (t1, t2, _) ->
       TProd (epp_choreo_type t1 loc, epp_choreo_type t2 loc, _m)
   | TSum (t1, t2, _) -> TSum (epp_choreo_type t1 loc, epp_choreo_type t2 loc, _m)
-  | TVariant (_, _) -> TUnit _m (*PLACEHOLDER*)
+  | TVariant (constructors, _) ->
+    TVariant (
+      List.map (fun { Choreo.name; args; typ; info = _ } ->
+        { Net.name; 
+          args = List.map (fun t -> epp_choreo_type t loc) args; 
+          typ; 
+          info = _m })
+      constructors, _m)
   | _ -> TUnit _m
 
 let rec epp_choreo_pattern (pat : 'a Choreo.pattern) (loc : string) :
