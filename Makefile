@@ -33,29 +33,6 @@ dot:
 test: 
 	dune test
 
-test-infer: cleanall
-	dune exec --instrument-with bisect_ppx test/typcheck_test.exe
-	bisect-ppx-report html
-
-test-pp: cleanall
-	dune exec test/prettyprint_test.exe
-
-bisect-pp: cleanall
-	dune exec --instrument-with bisect_ppx test/prettyprint_test.exe
-	bisect-ppx-report html
-
-test-msg-intf: cleanall
-	dune exec --instrument-with bisect_ppx test/msg_intf_test.exe
-	bisect-ppx-report html
-
-test-emit-core: cleanall
-	dune exec --instrument-with bisect_ppx test/emit_core_test.exe
-	bisect-ppx-report html
-
-test-toplevel-shm: cleanall
-	dune exec --instrument-with bisect_ppx test/toplevel_shm_test.exe
-	bisect-ppx-report html
-
 bisect-all: cleanall
 	dune runtest --instrument-with bisect_ppx
 	bisect-ppx-report html
