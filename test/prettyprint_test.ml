@@ -101,5 +101,3 @@ let suite =
               ; ("multiple_constructors2" >:: fun _ -> peq Astutils_testcases.multiple_constructors2)
               ] *);
        ]
-
-let () = run_test_tt_main suite

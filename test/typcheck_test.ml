@@ -1050,7 +1050,3 @@ let all_suites =
          (* Helper functions test suite *)
          helper_suite;
        ]
-
-let () =
-  print_endline "\nRunning all type inference tests";
-  run_test_tt_main all_suites
