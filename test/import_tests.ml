@@ -125,6 +125,70 @@ let test_set_info_importdecl () =
   let new_stmt = ChoreoAst.set_info_stmt new_pos old_stmt in
   assert_equal new_pos (ChoreoAst.get_info_stmt new_stmt)
 
+(*----------------------- Jsonify Test ---------------------------------------*)
+
+let test_jsonify_importdecl () =
+  let stmts =
+    [
+      Choreo.M.ImportDecl ("helpers.pir", dummy_pos);
+      Choreo.M.ForeignTypeDecl (Local.M.TypId ("Int32", dummy_pos), dummy_pos);
+      Choreo.M.ForeignDecl
+        ( Local.M.VarId ("my_func", dummy_pos),
+          Choreo.M.TLoc
+            ( Local.M.LocId ("Alice", dummy_pos),
+              Local.M.TForeign (Local.M.TypId ("Int32", dummy_pos), dummy_pos),
+              dummy_pos ),
+          "Pet:feed",
+          dummy_pos );
+      Choreo.M.ForeignDecl
+        ( Local.M.VarId ("my_func2", dummy_pos),
+          Choreo.M.TForeign (Choreo.M.Typ_Id ("Int32", dummy_pos), dummy_pos),
+          "Pet:feed2",
+          dummy_pos );
+    ]
+  in
+  let result = Ast_utils.stringify_jsonify_choreo_ast stmts in
+  assert_bool "JSON should contain ImportDecl and ForeignTypeDecl"
+    (String.length result > 0)
+
+(*------------------------ pprint Test ------------------------------------*)
+
+let test_pprint_importdecl () =
+  let stmts =
+    [
+      Choreo.M.ImportDecl ("helpers.pir", dummy_pos);
+      Choreo.M.ForeignTypeDecl (Local.M.TypId ("Int32", dummy_pos), dummy_pos);
+      Choreo.M.ForeignDecl
+        ( Local.M.VarId ("my_func", dummy_pos),
+          Choreo.M.TLoc
+            ( Local.M.LocId ("Alice", dummy_pos),
+              Local.M.TForeign (Local.M.TypId ("Int32", dummy_pos), dummy_pos),
+              dummy_pos ),
+          "Pet:feed",
+          dummy_pos );
+      Choreo.M.ForeignDecl
+        ( Local.M.VarId ("my_func2", dummy_pos),
+          Choreo.M.TForeign (Choreo.M.Typ_Id ("Int32", dummy_pos), dummy_pos),
+          "Pet:feed2",
+          dummy_pos );
+    ]
+  in
+  let result = Ast_utils.stringify_pprint_choreo_ast stmts in
+  assert_bool "pprint should contain import" (String.length result > 0)
+(*-------------------------- Ast_utils test --------------------------------*)
+
+let test_ast_info_map_importdecl () =
+  let stmt = Choreo.M.ImportDecl ("helpers.pir", dummy_pos) in
+  let result = Ast_utils.ast_list_info_map (fun _ -> dummy_pos) [ stmt ] in
+  assert_equal [ Choreo.M.ImportDecl ("helpers.pir", dummy_pos) ] result
+
+(*--------------------------- Position Info test ---------------------------*)
+let test_string_of_pos () =
+  let result = Parsed_ast.Pos_info.string_of_pos dummy_pos in
+  assert_equal "[0:0-0:0]" result
+(* created this test when i created my own struct, and saw that there was no 
+bisect coverage - this tests adds coverage *)
+
 (* TEST SUITE CALLS *)
 let import_test_suite =
   "Import Tests"
@@ -135,8 +199,17 @@ let import_test_suite =
          ("transitive Import Test" >:: fun _ -> test_transitive_imports ());
          ("bad path Import Test" >:: fun _ -> test_badpath_import ());
          ("incorrect file type" >:: fun _ -> test_incorrectfile_import ());
+         (" JSON test" >:: fun _ -> test_jsonify_importdecl ());
+         (" Pprint test" >:: fun _ -> test_pprint_importdecl ());
+         ( " Import AST utils map test" >:: fun _ ->
+           test_ast_info_map_importdecl () );
        ]
+
+let pos_info_test =
+  "Pos info Test" >::: [ ("Pos info test" >:: fun _ -> test_string_of_pos ()) ]
 
 let () =
   print_endline "\nRunning Import Tests";
-  run_test_tt_main import_test_suite
+  run_test_tt_main import_test_suite;
+  print_endline "\n Running Position info Test";
+  run_test_tt_main pos_info_test
