@@ -145,11 +145,9 @@ and emit_foreign_decl id external_name =
     match package_name with Some pack -> pack ^ "." | None -> ""
   in
   let fun_expr =
-    pexp_fun ~loc Nolabel None
-      (pvar ~loc "arg")
+    pexp_fun ~loc Nolabel None (pvar ~loc "arg")
       [%expr
-          [%e evar ~loc (package_string ^ function_name)]
-          [%e evar ~loc "arg"]]
+        [%e evar ~loc (package_string ^ function_name)] [%e evar ~loc "arg"]]
   in
   value_binding ~loc ~pat:(pvar ~loc id) ~expr:fun_expr
 

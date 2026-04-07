@@ -287,6 +287,7 @@ val apply_subst_typ_choreo : choreo_subst -> ftv Choreo.typ -> ftv Choreo.typ
 
     Like [apply_subst_typ_local] but for choreographic types. *)
 
+val extract_local_ctx : global_ctx -> string -> local_ctx
 (** [extract_local_ctx] extracts local context for a specific location.
 
     Filters global context to variables belonging to [loc].

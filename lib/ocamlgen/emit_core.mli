@@ -336,8 +336,7 @@ val emit_net_pexp :
     [Ppxlib.expression] is an OCaml data structure (records, variants, lists)
     that represents code, not a string.*)
 
-val emit_foreign_decl :
-  string -> string -> Ppxlib.value_binding
+val emit_foreign_decl : string -> string -> Ppxlib.value_binding
 (** [emit_foreign_decl var_name external_name] generates an OCaml external
     declaration for a foreign function.
 
