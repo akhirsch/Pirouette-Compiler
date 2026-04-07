@@ -31,18 +31,10 @@ let resolve_imports base_dir stmts =
                       ^ msg))
               in
               close_in ic;
-              (* how main parses a file:
-            let lexbuf = Lexing.from_channel (open_in full_path) in
-            let imported_stmts = Parsing.Parse.parse_with_error full_path lexbuf in 
-            so we open a file from the fullpath , create the lexer buffer from that open file/channel 
-            and then feed the fullpath and the lexer buffer to the same parser call as in main *)
               resolve_imports_helper (full_path :: seen_files)
                 (Filename.dirname full_path)
                 imported_stmts
-            (* recursive call with updated seen_files *)
-        | other -> [ other ]
-        (* my catch all that  it just passes through anything else that isnt an ImportDecl untouched
-       for anyting else it would just gets wrapped in a list and passed along as-is*))
+        | other -> [ other ])
       stmts
   in
   resolve_imports_helper [] base_dir stmts

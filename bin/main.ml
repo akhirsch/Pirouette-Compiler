@@ -159,7 +159,7 @@ let () =
            | "pprint" -> ".ast"
            | "dot" -> ".dot"
            | _ -> invalid_arg "Invalid ast-dump format"))
-        program);
+        user_program);
   (* Extract locations, ffi information, and generate network IR *)
   let ffi_info = Ast_utils.collect_ffi_info program in
   let package_names =
