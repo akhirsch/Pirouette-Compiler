@@ -1,7 +1,7 @@
 (library
  (name stdlib_utils)
  (public_name pirc.stdlib_utils)
- (modules stdlib_linker stdlib_ast stdlib_compiler)
+ (modules stdlib_src)
  (libraries
   ast_utils
   ast_core
@@ -14,3 +14,14 @@
   a_rname)
  (preprocess
   (pps ppxlib.metaquot)))
+
+(rule
+ (target stdlib_src.ml)
+ (deps stdlib.pir)
+ (action
+  (with-stdout-to
+   stdlib_src.ml
+   (progn
+    (echo "let src = {pir|")
+    (cat stdlib.pir)
+    (echo "|pir}")))))

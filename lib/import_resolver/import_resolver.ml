@@ -1,6 +1,12 @@
 exception Import_error of string
 
+let get_stdlib_stmts () =
+  let lexbuf = Lexing.from_string Stdlib_utils.Stdlib_src.src in
+  try Parsing.Parse.parse_with_error "stdlib" lexbuf
+  with Failure msg -> raise (Import_error ("Failed to parse stdlib: " ^ msg))
+
 let resolve_imports base_dir stmts =
+  let stdlib_stmts = get_stdlib_stmts () in
   let rec resolve_imports_helper seen_files base_dir stmts =
     List.concat_map
       (fun stmt ->
@@ -31,10 +37,18 @@ let resolve_imports base_dir stmts =
                       ^ msg))
               in
               close_in ic;
+              (* how main parses a file:
+            let lexbuf = Lexing.from_channel (open_in full_path) in
+            let imported_stmts = Parsing.Parse.parse_with_error full_path lexbuf in 
+            so we open a file from the fullpath , create the lexer buffer from that open file/channel 
+            and then feed the fullpath and the lexer buffer to the same parser call as in main *)
               resolve_imports_helper (full_path :: seen_files)
                 (Filename.dirname full_path)
                 imported_stmts
-        | other -> [ other ])
+            (* recursive call with updated seen_files *)
+        | other -> [ other ]
+        (* my catch all that  it just passes through anything else that isnt an ImportDecl untouched
+       for anyting else it would just gets wrapped in a list and passed along as-is*))
       stmts
   in
-  resolve_imports_helper [] base_dir stmts
+  resolve_imports_helper [] base_dir (stdlib_stmts @ stmts)

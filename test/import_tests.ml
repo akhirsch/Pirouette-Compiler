@@ -33,7 +33,9 @@ let test_basic_import _ =
   1. Create a temp file with some valid Pirouette content
   2. Create a program that imports it
   3. Run the resolver
-  4. Check the result
+  4. Check the result - no ImportDecl nodes should remain after resolution
+  stdlib is now implicitly injected so we cant check List.length directly
+  instead we check that all ImportDecl nodes were resolved away
   *)
   with_tmp_pir "foreign type Int32;" (fun tmp ->
       let import_stmt =
@@ -49,8 +51,12 @@ let test_basic_import _ =
     stop : int * int (* line, column *);
     } *)
       let resolved = Import_resolver.resolve_imports "" [ import_stmt ] in
-      (* ImportDecl should be gone, foreign type decl should be there *)
-      assert_equal 1 (List.length resolved))
+      (* ImportDecl should be gone - filter for any remaining ImportDecl nodes and assert none exist *)
+      assert_equal 0
+        (List.length
+           (List.filter
+              (function Choreo.M.ImportDecl _ -> true | _ -> false)
+              resolved)))
 
 let test_transitive_imports _ =
   (* let () = print_endline ("Current working directory: " ^ Sys.getcwd ()) in *)
@@ -66,10 +72,14 @@ let test_transitive_imports _ =
             Parsed_ast.Pos_info.{ fname = ""; start = (0, 0); stop = (0, 0) } );
       ]
   in
-  assert_equal 1 (List.length resolved)
-(* transitive_a.pir imports transitive_b.pir which imports transitive_c.pir which has one definition (foreign type Animal;) 
-  after full resolution all ImportDecl nodes are gone and we are left with just that one ForeignTypeDecl
-  so List.length resolved = 1 proves the transitive chain was followed correctly or there would be more then 1 in the lst*)
+  (* stdlib is now implicitly injected so we cant check List.length directly
+  instead we check that all ImportDecl nodes were resolved 
+  transitive_a imports transitive_b imports transitive_c, all ImportDecls should be gone *)
+  assert_equal 0
+    (List.length
+       (List.filter
+          (function Choreo.M.ImportDecl _ -> true | _ -> false)
+          resolved))
 
 let test_badpath_import _ =
   let filename = "missingfile.pir" in
