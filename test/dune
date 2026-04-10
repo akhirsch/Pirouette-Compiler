@@ -35,11 +35,6 @@
  (libraries ounit2 parsing ast_utils))
 
 (test
- (name stdlib_test)
- (modules stdlib_test)
- (libraries stdlib_utils))
-
-(test
  (name ffi_test)
  (modules ffi_test)
  (libraries ounit2 ast_core ast_utils ocamlgen ppxlib))
@@ -152,6 +147,11 @@
  (libraries ounit2 ppxlib ast_core ocamlgen)
  (preprocess
   (pps ppxlib.metaquot)))
+
+(test
+ (name core_test)
+ (modules core_test astutils_testcases)
+ (libraries ounit2 parsing ast_utils ast_core))
 
 ; (test
 ;  (name msg_intf_test)

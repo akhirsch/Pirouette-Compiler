@@ -132,6 +132,19 @@ let () =
     so that the types can be compatible with the program AST when we concat the ASTs *)
   (* Parse the input file, rename IDs, and concatenate it to the stdlib AST *)
   let user_program = Parsing.Parse.parse_with_error !input_filename lexbuf in
+  (* Dump the choreography AST before the resolver so it is just raw ast no stdlib prepended *)
+  (match !ast_dump_format with
+  | Some format ->
+      dump_choreo_ast format
+        (change_extension !input_filename
+           (match format with
+           | "json" -> ".json"
+           | "pprint" -> ".ast"
+           | "dot" -> ".dot"
+           | _ -> invalid_arg "Invalid ast-dump format"))
+        user_program
+  | None -> ());
+
   let user_program =
     Import_resolver.resolve_imports
       (Filename.dirname !input_filename)
@@ -142,18 +155,6 @@ let () =
   (* stdlib is now implicitly injected by the import resolver *)
   let locs = Ast_utils.extract_locs user_program in
 
-  (* Dump the choreography AST *)
-  (match !ast_dump_format with
-  | None -> ()
-  | Some format ->
-      dump_choreo_ast format
-        (change_extension !input_filename
-           (match format with
-           | "json" -> ".json"
-           | "pprint" -> ".ast"
-           | "dot" -> ".dot"
-           | _ -> invalid_arg "Invalid ast-dump format"))
-        user_program);
   (* Extract locations, ffi information, and generate network IR *)
   let ffi_info = Ast_utils.collect_ffi_info user_program in
   let package_names =
