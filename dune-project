@@ -22,7 +22,6 @@
  (synopsis "Pirouette Compiler")
  (description "Higher-order typed functional choreographies")
  (depends
-  (lwt :build)
   (eio_main :build)
   (cohttp-eio :build)
   (cohttp-lwt-unix :build)
