@@ -130,8 +130,8 @@ let rec ast_choreo_type_stringify : 'a Ast_core.Choreo.M.typ -> string =
       ^ ", ()))"
   | TVar (Typ_Id (type_name, _), _) ->
       "(TVar (Typ_Id (\"" ^ type_name ^ "\", ()), ()))"
-  | TMap (typ1, typ2, _) ->
-      "(TMap ("
+  | TFun (typ1, typ2, _) ->
+      "(TFun ("
       ^ ast_choreo_type_stringify typ1
       ^ ", "
       ^ ast_choreo_type_stringify typ2

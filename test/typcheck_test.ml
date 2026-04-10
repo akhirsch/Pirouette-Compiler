@@ -279,7 +279,7 @@ let rec chreo_typ_eq t expected_t =
   | ( Choreo.TLoc (Local.LocId (l1, _), t1, _),
       Choreo.TLoc (Local.LocId (l2, _), t2, _) ) ->
       l1 = l2 && local_typ_eq t1 t2
-  | Choreo.TMap (t1, t2, _), Choreo.TMap (t1', t2', _)
+  | Choreo.TFun (t1, t2, _), Choreo.TFun (t1', t2', _)
   | Choreo.TProd (t1, t2, _), Choreo.TProd (t1', t2', _)
   | Choreo.TSum (t1, t2, _), Choreo.TSum (t1', t2', _) ->
       chreo_typ_eq t1 t1' && chreo_typ_eq t2 t2'
@@ -585,7 +585,7 @@ let choreo_const_suite =
            Choreo.TLoc (Local.LocId ("Alice", m), Local.TInt m, m)
            |> choreo_expr_typ_eq correct_choreo_if );
          ( "Correct infer function definition" >:: fun _ ->
-           Choreo.TMap
+           Choreo.TFun
              ( Choreo.TVar (Choreo.Typ_Id ("T0", m), m),
                Choreo.TLoc (Local.LocId ("Alice", m), Local.TInt m, m),
                m )
@@ -897,8 +897,8 @@ let unification_suite =
            unify_choreo_success tvar tvar [] );
          ( "Correct unify_choreo map" >:: fun _ ->
            unify_choreo_success
-             (Choreo.TMap (Choreo.TUnit m, Choreo.TUnit m, m))
-             (Choreo.TMap (Choreo.TUnit m, Choreo.TUnit m, m))
+             (Choreo.TFun (Choreo.TUnit m, Choreo.TUnit m, m))
+             (Choreo.TFun (Choreo.TUnit m, Choreo.TUnit m, m))
              [] );
          ( "Correct unify_choreo prod" >:: fun _ ->
            unify_choreo_success
@@ -912,8 +912,8 @@ let unification_suite =
              [] );
          ( "Incorrect unify_choreo map mismatch" >:: fun _ ->
            unify_choreo_failure
-             (Choreo.TMap (Choreo.TUnit m, Choreo.TUnit m, m))
-             (Choreo.TMap
+             (Choreo.TFun (Choreo.TUnit m, Choreo.TUnit m, m))
+             (Choreo.TFun
                 ( Choreo.TLoc (Local.LocId ("Alice", m), Local.TInt m, m),
                   Choreo.TUnit m,
                   m ))

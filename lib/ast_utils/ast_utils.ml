@@ -275,8 +275,8 @@ let rec ast_choreo_type_info_map :
           map metadata )
   | TVar (Typ_Id (type_name, type_metadata), metadata) ->
       TVar (Typ_Id (type_name, map type_metadata), map metadata)
-  | TMap (typ1, typ2, metadata) ->
-      TMap
+  | TFun (typ1, typ2, metadata) ->
+      TFun
         ( ast_choreo_type_info_map map typ1,
           ast_choreo_type_info_map map typ2,
           map metadata )

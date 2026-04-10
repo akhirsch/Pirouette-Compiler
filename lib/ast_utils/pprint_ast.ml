@@ -166,7 +166,7 @@ let rec pprint_local_expr ppf (expr : 'a Local.expr) =
 
     - For variant [TLoc], it calls helper function [pprint_local_type] to pretty
       print the local type
-    - For variants [TSend], [TProd], [TMap] and [TSum], it calls helper function
+    - For variants [TSend], [TProd], [TFun] and [TSum], it calls helper function
       [pprint_choreo_type] to pretty print the choreo type *)
 let rec pprint_choreo_type ppf (typ : 'a Choreo.typ) =
   match typ with
@@ -174,7 +174,7 @@ let rec pprint_choreo_type ppf (typ : 'a Choreo.typ) =
   | TLoc (LocId (loc, _), t, _) ->
       fprintf ppf "@[<h>%s.(%a)@]" loc pprint_local_type t
   | TVar (Typ_Id (id, _), _) -> fprintf ppf "@[<h>%s@]" id
-  | TMap (t1, t2, _) ->
+  | TFun (t1, t2, _) ->
       fprintf ppf "@[<h>%a ->@ %a@]" pprint_choreo_type t1 pprint_choreo_type t2
   | TProd (t1, t2, _) ->
       fprintf ppf "@[<h>%a *@ %a@]" pprint_choreo_type t1 pprint_choreo_type t2
@@ -326,7 +326,7 @@ let rec pprint_net_type ppf (typ : 'a Net.typ) =
   | TUnit _ -> fprintf ppf "@[<h>unit@]"
   | TLoc (Local.LocId (loc, _), t, _) ->
       fprintf ppf "@[<h>%s.%a@]" loc pprint_local_type t
-  | TMap (t1, t2, _) ->
+  | TFun (t1, t2, _) ->
       fprintf ppf "@[<h>(%a) -> (%a)@]" pprint_net_type t1 pprint_net_type t2
   | TProd (t1, t2, _) ->
       fprintf ppf "@[<h>(%a) * (%a)@]" pprint_net_type t1 pprint_net_type t2

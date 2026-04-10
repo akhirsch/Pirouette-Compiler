@@ -174,7 +174,7 @@ and emit_foreign_decl id typ external_name =
           | TForeign (TypId (typ_id, _), _) -> "(" ^ typ_id ^ ")"
         in
         find_local_type_sig local_type
-    | TMap (typ1, typ2, _) ->
+    | TFun (typ1, typ2, _) ->
         "(" ^ find_type_sig typ1 ^ " -> " ^ find_type_sig typ2 ^ ")"
     | TProd (typ1, typ2, _) ->
         "(" ^ find_type_sig typ1 ^ " * " ^ find_type_sig typ2 ^ ")"
@@ -221,7 +221,7 @@ and emit_net_pexp ~(self_id : string) (module Msg : Msg_intf)
         (Some (emit_net_pexp ~self_id (module Msg) e3))
   | Let (stmts, e, _) ->
       Builder.pexp_let Recursive (*FIXME: how to handle tuples?*)
-        (* -From Audvy: We could create a function that taktes in stmts and outputs their Net Type, and then match on that, and only apply the Recursive flag on TMaps
+        (* -From Audvy: We could create a function that taktes in stmts and outputs their Net Type, and then match on that, and only apply the Recursive flag on TFuns
       OR
       We create a function that takes in stmts and outputs the amount of identifiers on the left hand side. It anything more than 1 (exluding args), than it cannot be a func, so use the Nonrecursive flag*)
         (List.map (emit_net_binding ~self_id (module Msg)) stmts)

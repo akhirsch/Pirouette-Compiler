@@ -310,7 +310,7 @@ local_pattern:
 net_type:
   | UNIT_T { TUnit (gen_pos $startpos $endpos) }
   | id=loc_id DOT t=local_type { TLoc (id, t, gen_pos $startpos $endpos) }
-  | t1=net_type ARROW t2=net_type { TMap (t1, t2, gen_pos $startpos $endpos) }
+  | t1=net_type ARROW t2=net_type { TFun (t1, t2, gen_pos $startpos $endpos) }
   | t1=net_type TIMES t2=net_type { TProd (t1, t2, gen_pos $startpos $endpos) }
   | t1=net_type PLUS t2=net_type { TSum (t1, t2, gen_pos $startpos $endpos) }
   | LPAREN t=net_type RPAREN { Net.set_info_typ (gen_pos $startpos $endpos) t }

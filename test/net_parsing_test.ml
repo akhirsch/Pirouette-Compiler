@@ -83,7 +83,7 @@ let declaration_tests =
                 _ );
             Net.M.Decl
               ( Local.M.Var (Local.M.VarId ("y", _), _),
-                Net.M.TMap (Net.M.TUnit _, Net.M.TUnit _, _),
+                Net.M.TFun (Net.M.TUnit _, Net.M.TUnit _, _),
                 _ );
             Net.M.Decl
               ( Local.M.Var (Local.M.VarId ("z", _), _),

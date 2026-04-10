@@ -131,7 +131,7 @@ let rec epp_choreo_type (typ : 'a Choreo.typ) (loc : string) : 'a Net.typ =
       (* If the location of the type is the location of the domain, or the location of the type is whitelisted e.g. in the case of the stdlib providing functions where type info should be shown to all other domains, keep type info*)
       if List.mem loc1 whitelisted_locs || loc1 = loc then TLoc (locid, t1, _m)
       else TUnit _m
-  | TMap (t1, t2, _) -> TMap (epp_choreo_type t1 loc, epp_choreo_type t2 loc, _m)
+  | TFun (t1, t2, _) -> TFun (epp_choreo_type t1 loc, epp_choreo_type t2 loc, _m)
   | TProd (t1, t2, _) ->
       TProd (epp_choreo_type t1 loc, epp_choreo_type t2 loc, _m)
   | TSum (t1, t2, _) -> TSum (epp_choreo_type t1 loc, epp_choreo_type t2 loc, _m)

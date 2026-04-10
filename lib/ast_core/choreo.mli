@@ -99,10 +99,10 @@ module M : sig
               let type_var_a = TVar (Typ_Id ("a", ()), ()) in
               type_var_a
             ]}*)
-    | TMap of 'a typ * 'a typ * 'a
+    | TFun of 'a typ * 'a typ * 'a
         (** Function type (domain -> codomain)
 
-            {b Internal AST Structure:} [TMap(domain, codomain, meta)]
+            {b Internal AST Structure:} [TFun(domain, codomain, meta)]
 
             {b Pirouette Syntax:}
             {[
@@ -111,7 +111,7 @@ module M : sig
 
             {b Ocaml:}
             {[
-              let int_to_string = TMap (TInt (), TString (), ()) in
+              let int_to_string = TFun (TInt (), TString (), ()) in
               int_to_string
             ]}*)
     | TProd of 'a typ * 'a typ * 'a
@@ -725,7 +725,7 @@ module M : sig
               let print_foreign =
                 ForeignDecl
                   ( Local.M.VarId ("print", ()),
-                    TMap (TString (), TUnit (), ()),
+                    TFun (TString (), TUnit (), ()),
                     "print",
                     () )
               in
