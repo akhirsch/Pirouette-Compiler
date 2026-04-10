@@ -59,7 +59,7 @@ let test_basic_import _ =
               resolved)))
 
 let test_transitive_imports _ =
-  (* let () = print_endline ("Current working directory: " ^ Sys.getcwd ()) in *)
+  print_endline ("Current working directory: " ^ Sys.getcwd ());
   (*  1: need 3 files: A imports B, B imports C
       2: After resolution, all definitions from B and C should appear in the final stmt_block
       3: No ImportDecl nodes should remain *)
@@ -213,13 +213,5 @@ let import_test_suite =
          (" Pprint test" >:: fun _ -> test_pprint_importdecl ());
          ( " Import AST utils map test" >:: fun _ ->
            test_ast_info_map_importdecl () );
+         ("Pos info test" >:: fun _ -> test_string_of_pos ());
        ]
-
-let pos_info_test =
-  "Pos info Test" >::: [ ("Pos info test" >:: fun _ -> test_string_of_pos ()) ]
-
-let () =
-  print_endline "\nRunning Import Tests";
-  run_test_tt_main import_test_suite;
-  print_endline "\n Running Position info Test";
-  run_test_tt_main pos_info_test
