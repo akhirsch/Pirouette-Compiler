@@ -344,6 +344,6 @@ val emit_foreign_decl : string -> string -> Ppxlib.value_binding
     - [var_name]: local name for the function
     - [external_name]: external name to link against
 
-    Creates OCaml [external] declarations that bind foreign functions from other
-    languages (typically C) or libraries. Does not require a message module
-    since FFI is independent of communication backend.*)
+    Creates OCaml [external] declarations that bind foreign functions from
+    OCaml. Does not require a message module since FFI is independent of
+    communication backend.*)

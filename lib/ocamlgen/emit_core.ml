@@ -135,7 +135,10 @@ and emit_net_binding ~(self_id : string) (module Msg : Msg_intf)
       emit_foreign_decl id external_name
   | _ -> Builder.value_binding ~pat:[%pat? _unit] ~expr:Builder.eunit
 
-(*This funciton generates the function calls for foerign declarations*)
+(*This function generates the function calls for foreign declarations
+  Currently we're not attaching type annotations, this is something that should be added down the line.
+  See "Emit Core Type Annotations" on the design doc section of the wiki for more  
+*)
 and emit_foreign_decl id external_name =
   let open Ast_builder.Default in
   let package_name, function_name, _ =
