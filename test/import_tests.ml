@@ -59,13 +59,13 @@ let test_basic_import _ =
               resolved)))
 
 let test_transitive_imports _ =
-  print_endline ("Current working directory: " ^ Sys.getcwd ());
+  (*print_endline ("Current working directory: " ^ Sys.getcwd ());*)
   (*  1: need 3 files: A imports B, B imports C
       2: After resolution, all definitions from B and C should appear in the final stmt_block
       3: No ImportDecl nodes should remain *)
   let file_a = "import_transitive_a.pir" in
   let resolved =
-    Import_resolver.resolve_imports "."
+    Import_resolver.resolve_imports "import_test_files"
       [
         Choreo.M.ImportDecl
           ( file_a,
@@ -109,6 +109,24 @@ let test_incorrectfile_import _ =
                   Parsed_ast.Pos_info.
                     { fname = ""; start = (0, 0); stop = (0, 0) } );
             ]))
+
+let test_diamond_import _ =
+  (* diamond: A imports B and C, B also imports C
+     C should only appear once in the resolved output *)
+  let file_a = "diamond_cycle_a.pir" in
+  let resolved =
+    Import_resolver.resolve_imports "import_test_files"
+      [
+        Choreo.M.ImportDecl
+          ( file_a,
+            Parsed_ast.Pos_info.{ fname = ""; start = (0, 0); stop = (0, 0) } );
+      ]
+  in
+  assert_equal 0
+    (List.length
+       (List.filter
+          (function Choreo.M.ImportDecl _ -> true | _ -> false)
+          resolved))
 
 (* 
 Test PLAN: 
@@ -214,4 +232,5 @@ let import_test_suite =
          ( " Import AST utils map test" >:: fun _ ->
            test_ast_info_map_importdecl () );
          ("Pos info test" >:: fun _ -> test_string_of_pos ());
+         ("Diamond cycle import test" >:: fun _ -> test_diamond_import ());
        ]

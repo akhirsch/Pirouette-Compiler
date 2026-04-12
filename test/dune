@@ -45,7 +45,7 @@
  (preprocess
   (pps bisect_ppx ppxlib.metaquot))
  (deps
-  (glob_files *.pir)))
+  (glob_files import_test_files/*.pir)))
 
 ;The following tests were commented out since before the tests were consolidated.
 ;They follow the old format, and would need to be added to the above stanza and main_test.ml to be reactivated.
