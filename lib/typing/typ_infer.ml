@@ -500,6 +500,8 @@ let rec infer_choreo_stmt choreo_ctx global_ctx stmt :
       (Local.VarId (var_name, _), choreo_typ, _foreign_symbol, _) ->
       ([], choreo_typ, (var_name, choreo_typ) :: choreo_ctx)
   | Choreo.ForeignTypeDecl (_, _) -> ([], Choreo.TUnit m, choreo_ctx)
+  | ImportDecl (_, _) ->
+      failwith "ImportDecl should have been resolved before this pass"
 
 and infer_choreo_stmt_block choreo_ctx global_ctx stmts :
     choreo_subst * ftv Choreo.typ * choreo_ctx =

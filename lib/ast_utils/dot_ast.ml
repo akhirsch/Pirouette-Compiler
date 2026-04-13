@@ -633,7 +633,6 @@ and dot_stmt (string_of_info : 'a -> string) (stmt : 'a Choreo.stmt) :
     variant_node ^ typ1edge ^ constructor ^ typ2edge, node_name *)
   | ForeignDecl (VarId (id, _), typ, s, info) ->
       Printf.eprintf "DEBUG: matched ForeignDecl \n%!";
-      let node_name = generate_node_name () in
       Printf.eprintf "DEBUG: About to create decl_node\n%!";
       Printf.eprintf "DEBUG: id=%s, s=%s\n%!" id s;
       let decl_node =
@@ -652,6 +651,12 @@ and dot_stmt (string_of_info : 'a -> string) (stmt : 'a Choreo.stmt) :
           (string_of_info info)
       in
       (decl_node, node_name)
+  | ImportDecl (s, info) ->
+      let import_node =
+        spf "%s [label=\"ImportDecl %s %s\"];\n" node_name s
+          (string_of_info info)
+      in
+      (import_node, node_name)
 
 (** [dot_choreo_expr chor_expr] creates the dot code for choreo expressions
     [chor_expr]
