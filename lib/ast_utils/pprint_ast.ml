@@ -258,7 +258,8 @@ and pprint_choreo_stmt ppf (stmt : 'a Choreo.stmt) =
     it describes the foreign function's type in Pirouette terms*)
   | ForeignTypeDecl (TypId (id, _), _) ->
       fprintf ppf "@[<h>foreign type %s;@]" id
-(* ForeignTypeDecl prettyprints its type name *)
+  (* ForeignTypeDecl prettyprints its type name *)
+  | ImportDecl (s, _) -> fprintf ppf "@[<h>import \"%s\";@]" s
 
 (** [pp_choreo_expr] takes a formatter [ppf] and a choreo expression and prints
     the formatted code of the choreo expression

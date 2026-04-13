@@ -131,12 +131,15 @@ and emit_net_binding ~(self_id : string) (module Msg : Msg_intf)
       | f :: ps ->
           Builder.value_binding ~pat:(emit_local_ppat f)
             ~expr:(emit_net_fun_body ~self_id (module Msg) ps e))
-  | ForeignDecl (VarId (id, _), typ, external_name, _) ->
-      emit_foreign_decl id typ external_name
+  | ForeignDecl (VarId (id, _), _, external_name, _) ->
+      emit_foreign_decl id external_name
   | _ -> Builder.value_binding ~pat:[%pat? _unit] ~expr:Builder.eunit
 
-(* when i comment out this to make the emit_core_test test_basic_external_function run i have to do _typ because it is unused. *)
-and emit_foreign_decl id typ external_name =
+(*This function generates the function calls for foreign declarations
+  Currently we're not attaching type annotations, this is something that should be added down the line.
+  See "Emit Core Type Annotations" on the design doc section of the wiki for more  
+*)
+and emit_foreign_decl id external_name =
   let open Ast_builder.Default in
   let package_name, function_name, _ =
     Ast_utils.parse_external_name external_name
@@ -144,67 +147,10 @@ and emit_foreign_decl id typ external_name =
   let package_string =
     match package_name with Some pack -> pack ^ "." | None -> ""
   in
-  (* A function that takes in a Net type and pretty prints the type into Ocaml. Note, loc.types turn into just types*)
-  let rec find_type_sig : 'a Net.typ -> label = function
-    | TUnit _ -> "(unit)"
-    | TLoc (_, local_type, _) ->
-        let rec find_local_type_sig : 'a Local.typ -> label = function
-          | TUnit _ -> "(unit)"
-          | TInt _ -> "(int)"
-          | TString _ -> "(string)"
-          | TBool _ -> "(bool)"
-          | TVar (TypId (typ_id, _), _) -> "(" ^ typ_id ^ ")"
-          | TProd (typ1, typ2, _) ->
-              "(" ^ find_local_type_sig typ1 ^ " * " ^ find_local_type_sig typ2
-              ^ ")"
-          | TSum (typ1, typ2, _) ->
-              "(" ^ find_local_type_sig typ1 ^ " + " ^ find_local_type_sig typ2
-              ^ ")"
-          | TVariant (cl, _) ->
-              String.concat " | "
-                (List.map
-                   (fun { Local.name; args; _ } ->
-                     match args with
-                     | [] -> name
-                     | _ ->
-                         name ^ " of "
-                         ^ String.concat " * "
-                             (List.map find_local_type_sig args))
-                   cl)
-          | TForeign (TypId (typ_id, _), _) -> "(" ^ typ_id ^ ")"
-        in
-        find_local_type_sig local_type
-    | TFun (typ1, typ2, _) ->
-        "(" ^ find_type_sig typ1 ^ " -> " ^ find_type_sig typ2 ^ ")"
-    | TProd (typ1, typ2, _) ->
-        "(" ^ find_type_sig typ1 ^ " * " ^ find_type_sig typ2 ^ ")"
-    | TSum (typ1, typ2, _) ->
-        "(" ^ find_type_sig typ1 ^ " + " ^ find_type_sig typ2 ^ ")"
-    | TVariant (cl, _) ->
-        String.concat " | "
-          (List.map
-             (fun { Net.name; args; _ } ->
-               match args with
-               | [] -> name
-               | _ ->
-                   name ^ " of "
-                   ^ String.concat " * " (List.map find_type_sig args))
-             cl)
-    | TForeign (TypId (typ_id, _), _) -> "(" ^ typ_id ^ ")"
-  in
-  (* The full type signature of a function. We apply this type signature to the identifier, then we set the value of the identifier to be equal to 'fun arg ->[ffi]]'. This works because of currying. *)
-  let type_sig = find_type_sig typ in
-
   let fun_expr =
-    pexp_fun ~loc Nolabel None
-      (pvar ~loc (": " ^ type_sig))
-      (* jackie note : this needs to be fixed this is a broken identifier not a type annotation *)
-      (* above we are using the type_sig string as a pattern variable name in pvar
-      this is what is generating the wrong output for emit_core_test ffi test: test_basic_external_function *)
+    pexp_fun ~loc Nolabel None (pvar ~loc "arg")
       [%expr
-        [%e evar ~loc "fun arg ->"]
-          [%e evar ~loc (package_string ^ function_name)]
-          [%e evar ~loc "arg"]]
+        [%e evar ~loc (package_string ^ function_name)] [%e evar ~loc "arg"]]
   in
   value_binding ~loc ~pat:(pvar ~loc id) ~expr:fun_expr
 

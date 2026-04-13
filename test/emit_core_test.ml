@@ -702,27 +702,21 @@ let net_binding_other _ =
 (*----------------------------FFI test cases--------------------------------------*)
 
 let test_basic_external_function _ =
-  let binding =
-    emit_foreign_decl "my_func" (TUnit ()) "Simple_function.simple_function"
-  in
+  let binding = emit_foreign_decl "my_func" "Simple_function.simple_function" in
   let result = expr_to_string binding.pvb_expr in
-  print_endline (" ACTUAL OUTPUT: " ^ result);
-  (* JACKIE - added this line to show the result of the test *)
   assert_equal ~msg:"Basic external function should create a simple wrapper"
     "fun arg -> Simple_function.simple_function arg" (String.trim result)
 
 let test_package_external_function _ =
-  let binding = emit_foreign_decl "custom_fn" (TUnit ()) "Math:calculate" in
+  let binding = emit_foreign_decl "custom_fn" "Math:calculate" in
   let result = expr_to_string binding.pvb_expr in
-  print_endline (" ACTUAL OUTPUT: " ^ result);
   assert_equal
     ~msg:"Module path external function should create proper module access"
     "fun arg -> Math.calculate arg" (String.trim result)
 
 let test_package_submodule_external_function _ =
-  let binding = emit_foreign_decl "deep_fn" (TUnit ()) "Math:Deep.calculate" in
+  let binding = emit_foreign_decl "deep_fn" "Math:Deep.calculate" in
   let result = expr_to_string binding.pvb_expr in
-  print_endline (" ACTUAL OUTPUT: " ^ result);
   assert_equal
     ~msg:
       "Nested module path external function should create proper module access"
@@ -733,21 +727,21 @@ let test_search_path_only _ =
     (Failure
        "Invalid external function format. Expected \
         [Package:][Submodule.]function[@searchpath]") (fun () ->
-      emit_foreign_decl "bad_fn" (TUnit ()) "@search_path_only" |> ignore)
+      emit_foreign_decl "bad_fn" "@search_path_only" |> ignore)
 
 let test_empty_package_name _ =
   assert_raises
     (Failure
        "Invalid external function format. Expected \
         [Package:][Submodule.]function[@searchpath]") (fun () ->
-      emit_foreign_decl "bad_fn" (TUnit ()) ":function" |> ignore)
+      emit_foreign_decl "bad_fn" ":function" |> ignore)
 
 let test_empty_function_name _ =
   assert_raises
     (Failure
        "Invalid external function format. Expected \
         [Package:][Submodule.]function[@searchpath]") (fun () ->
-      emit_foreign_decl "bad_fn" (TUnit ()) "module:" |> ignore)
+      emit_foreign_decl "bad_fn" "module:" |> ignore)
 
 (*----------------------------- test suites ------------------------------------*)
 let local_expr_suite =

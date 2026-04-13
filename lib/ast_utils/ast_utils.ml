@@ -459,7 +459,8 @@ and ast_info_map :
           map metadata )
   | ForeignTypeDecl (TypId (type_name, type_metadata), metadata) ->
       ForeignTypeDecl (TypId (type_name, map type_metadata), map metadata)
-(* Map metadata over a ForeignTypeDecl*)
+  (* Map metadata over a ForeignTypeDecl*)
+  | ImportDecl (filename, metadata) -> ImportDecl (filename, map metadata)
 
 and ast_list_info_map :
     ('a -> 'b) ->

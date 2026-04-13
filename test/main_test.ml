@@ -24,6 +24,10 @@ let main_suite =
          Emit_core_test.all_suites;
          Parsing_test.suite;
          Ffi_test.main_suite;
+         Import_tests.import_test_suite;
+         Core_test_choreo.suite;
+         Core_test.loc_suite;
+         Core_test.choreo_suite;
        ]
 
 let () =

@@ -106,6 +106,7 @@
 %token MATCH WITH
 %token EOF
 %token FOREIGN
+%token IMPORT
 
 (** Operator Precedence and Associativity:
     - Defines the precedence and associativity rules for operators to resolve ambiguities in expressions.
@@ -177,6 +178,7 @@ stmt:
   // | TYPE t1=typ_id COLONEQ constructors=constructor_list_choreo SEMICOLON { Variant (t1, constructors, gen_pos $startpos $endpos) } // type X := constructor : X;
   | f=foreign_decl { f }
   | ft=foreign_type_decl { ft }
+  | IMPORT s=STRING SEMICOLON { ImportDecl (s, gen_pos $startpos $endpos) }
 
 foreign_type_decl:
   | FOREIGN TYPE id=typ_id SEMICOLON { ForeignTypeDecl (id, gen_pos $startpos $endpos) }

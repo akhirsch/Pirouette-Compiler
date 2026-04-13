@@ -280,10 +280,12 @@ let rec jsonify_choreo_stmt = function
         ]
   | Choreo.ForeignTypeDecl (TypId (id, _), _) ->
       `Assoc [ ("ForeignTypeDecl", `Assoc [ ("type_id", `String id) ]) ]
-(*  converts a choreo statement into a JSON representation. 
+  (*  converts a choreo statement into a JSON representation. 
   Each statement variant becomes a JSON object with the constructor name as the key.
   ForeignDecl it includes the variable name, type signature, and external string name
   ForeignTypeDecl it just includes the type name *)
+  | Choreo.ImportDecl (s, _) ->
+      `Assoc [ ("ImportDecl", `Assoc [ ("filename", `String s) ]) ]
 
 and jsonify_choreo_expr = function
   | Choreo.Unit _ -> `String "Unit"

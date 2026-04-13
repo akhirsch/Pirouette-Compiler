@@ -10,4 +10,5 @@
   typing
   lwt
   a_rname
-  stdlib_utils))
+  stdlib_utils
+  pirc.import_resolver))

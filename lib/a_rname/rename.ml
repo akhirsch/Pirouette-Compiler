@@ -281,6 +281,7 @@ and ast_alpha_rename : 'a Ast_core.Choreo.M.stmt -> 'a Ast_core.Choreo.M.stmt =
           metadata )
   | ForeignTypeDecl (TypId (type_name, type_metadata), metadata) ->
       ForeignTypeDecl (TypId (type_name ^ suffix, type_metadata), metadata)
+  | ImportDecl (s, metadata) -> ImportDecl (s, metadata)
 
 and ast_list_alpha_rename :
     'a Ast_core.Choreo.M.stmt_block -> 'a Ast_core.Choreo.M.stmt_block =

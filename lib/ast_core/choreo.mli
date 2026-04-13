@@ -732,6 +732,24 @@ module M : sig
               print_foreign
             ]}*)
     | ForeignTypeDecl of 'a Local.M.typ_id * 'a
+    | ImportDecl of string * 'a
+        (** Import declaration: includes all definitions from an external
+            Pirouette file.
+
+            {b Internal AST Structure:} [ImportDecl(filename, meta)]
+            - [filename]: path to the file to import
+            - [meta]: node metadata
+
+            {b Pirouette Syntax:}
+            {[
+              Import "helpers.pir"
+            ]}
+
+            {b OCaml:}
+            {[
+              let import_helpers = ImportDecl ("helpers.pir", ()) in
+              import_helpers
+            ]}*)
 
   and 'a stmt_block = 'a stmt list
 

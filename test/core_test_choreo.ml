@@ -546,5 +546,3 @@ let suite =
                   test_info_stmt_foreigndecl_CH 1 2 );
               ];
        ]
-
-let () = run_test_tt_main suite

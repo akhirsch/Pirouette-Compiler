@@ -91,6 +91,7 @@ rule read = parse
   | "true"             { TRUE }
   | "false"            { FALSE }
   | "foreign"          { FOREIGN }
+  | "import"           { IMPORT }
   | "if"               { IF }
   | "then"             { THEN }
   | "else"             { ELSE }
