@@ -28,7 +28,8 @@
   ffi_test
   import_tests
   core_test_choreo
-  core_test)
+  core_test
+  dotast_test)
  (libraries
   ounit2
   parsing
