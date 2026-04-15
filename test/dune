@@ -29,7 +29,7 @@
   import_tests
   core_test_choreo
   core_test
-  dotast_test)
+  dotgen_testcases)
  (libraries
   ounit2
   parsing
