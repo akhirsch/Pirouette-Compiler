@@ -69,7 +69,8 @@ let rec emit_local_pexp (expr : 'a Local.expr) =
       in
       Builder.pexp_match (emit_local_pexp e) cases
       (* ===================================================================================== *)
-  | Construct (name, arglist, _, _) -> (
+  | Construct (_, _, _, _) -> failwith "not done"
+    (* (
       let args = List.map emit_local_pexp arglist in
       let constructor_lid = { txt = Longident.Lident name; loc } in
       match args with
@@ -77,7 +78,7 @@ let rec emit_local_pexp (expr : 'a Local.expr) =
       | [ arg ] -> Builder.pexp_construct constructor_lid (Some arg)
       | _ ->
           Builder.pexp_construct constructor_lid
-            (Some (Builder.pexp_tuple args)))
+            (Some (Builder.pexp_tuple args))) *)
 (* not right*)
 
 (* let ty = emit_local_pexp typ *)
@@ -94,7 +95,8 @@ and emit_local_ppat (pat : 'a Local.pattern) =
   | Left (p, _) -> [%pat? Either.Left [%p emit_local_ppat p]]
   | Right (p, _) -> [%pat? Either.Right [%p emit_local_ppat p]]
   (* ===================================================================================== *)
-  | PConstruct (name, arglist, _, _) -> (
+  | PConstruct (_, _, _, _) -> failwith "not done"
+    (* (
       let args = List.map emit_local_ppat arglist in
       let constructor_lid = { txt = Longident.Lident name; loc } in
       match args with
@@ -102,7 +104,7 @@ and emit_local_ppat (pat : 'a Local.pattern) =
       | [ arg ] -> Builder.ppat_construct constructor_lid (Some arg)
       | _ ->
           Builder.ppat_construct constructor_lid
-            (Some (Builder.ppat_tuple args)))
+            (Some (Builder.ppat_tuple args))) *)
 (* ===================================================================================== *)
 
 let rec emit_net_fun_body ~(self_id : string) (module Msg : Msg_intf)
@@ -131,8 +133,8 @@ and emit_net_binding ~(self_id : string) (module Msg : Msg_intf)
       | f :: ps ->
           Builder.value_binding ~pat:(emit_local_ppat f)
             ~expr:(emit_net_fun_body ~self_id (module Msg) ps e))
-  | TypeDecl (TypId (id, _), typ, _) ->
-    "type" ^ id ^ find_type_sig typ (*shouldn't hard code printing type keyword, but temp fix for now*)
+  | TypeDecl (TypId (_, _), _, _) -> failwith "not done"
+    (* "type" ^ id ^ find_type_sig typ shouldn't hard code printing type keyword, but temp fix for now *)
   | ForeignDecl (VarId (id, _), typ, external_name, _) ->
       emit_foreign_decl id typ external_name
   | _ -> Builder.value_binding ~pat:[%pat? _unit] ~expr:Builder.eunit
@@ -161,8 +163,8 @@ and emit_foreign_decl id typ external_name =
           | TSum (typ1, typ2, _) ->
               "(" ^ find_local_type_sig typ1 ^ " + " ^ find_local_type_sig typ2
               ^ ")"
-          | TVariant (cl, _) ->
-              String.concat " | "
+          | TVariant (_, _) -> failwith "not done"
+              (* String.concat " | "
                 (List.map
                    (fun { Local.name; args; _ } ->
                      match args with
@@ -171,7 +173,7 @@ and emit_foreign_decl id typ external_name =
                          name ^ " of "
                          ^ String.concat " * "
                              (List.map find_local_type_sig args))
-                   cl)
+                   cl) *)
         in
         find_local_type_sig local_type
     | TMap (typ1, typ2, _) ->
@@ -180,8 +182,8 @@ and emit_foreign_decl id typ external_name =
         "(" ^ find_type_sig typ1 ^ " * " ^ find_type_sig typ2 ^ ")"
     | TSum (typ1, typ2, _) ->
         "(" ^ find_type_sig typ1 ^ " + " ^ find_type_sig typ2 ^ ")"
-    | TVariant (cl, _) ->
-        String.concat " | "
+    | TVariant (_, _) -> failwith "not done"
+        (* String.concat " | "
           (List.map
              (fun { Net.name; args; _ } ->
                match args with
@@ -189,7 +191,7 @@ and emit_foreign_decl id typ external_name =
                | _ ->
                    name ^ " of "
                    ^ String.concat " * " (List.map find_type_sig args))
-             cl)
+             cl) *)
   in
 
   (* The full type signature of a function. We apply this type signature to the identifier, then we set the value of the identifier to be equal to 'fun arg ->[ffi]]'. This works because of currying. *)
@@ -279,7 +281,8 @@ and emit_net_pexp ~(self_id : string) (module Msg : Msg_intf)
         (Msg.emit_net_recv ~src ~dst:self_id)
         (cases @ [ default_case ])
       (* ===================================================================================== *)
-  | Construct (name, arglist, _, _) -> (
+  | Construct (_, _, _, _) -> failwith "not done"
+    (* (
       let args = List.map (emit_net_pexp ~self_id (module Msg)) arglist in
       let constructor_lid = { txt = Longident.Lident name; loc } in
       match args with
@@ -287,5 +290,5 @@ and emit_net_pexp ~(self_id : string) (module Msg : Msg_intf)
       | [ arg ] -> Builder.pexp_construct constructor_lid (Some arg)
       | _ ->
           Builder.pexp_construct constructor_lid
-            (Some (Builder.pexp_tuple args)))
+            (Some (Builder.pexp_tuple args))) *)
 (* ===================================================================================== *)
