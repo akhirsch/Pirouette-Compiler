@@ -1,0 +1,1 @@
+import "import_transitive_b.pir";

@@ -10,6 +10,9 @@ let peq (s : string) =
     let pprint_s = Ast_utils.stringify_pprint_choreo_ast program in
     pprint_s_ref := pprint_s;
     (* Store potentially problematic pretty-printed string *)
+    let _program' =
+      Parsing.Parse.parse_with_error "unit_test" (Lexing.from_string pprint_s)
+    in
     let program' =
       Parsing.Parse.parse_with_error "unit_test" (Lexing.from_string pprint_s)
     in
@@ -64,8 +67,8 @@ let suite =
          "Examples"
          >::: [
                 ("testcase1" >:: fun _ -> peq Astutils_testcases.testcase_1);
-                ( "testcase2" >:: fun _ -> peq Astutils_testcases.testcase_2 )
-                (* ; ("testcase3" >:: fun _ -> peq Astutils_testcases.testcase_3) *);
+                ("testcase2" >:: fun _ -> peq Astutils_testcases.testcase_2);
+                ("testcase3" >:: fun _ -> peq Astutils_testcases.testcase_3);
                 ("testcase4" >:: fun _ -> peq Astutils_testcases.testcase_4);
               ];
          "Type Decls"
@@ -118,5 +121,3 @@ let suite =
               ; ("type_constructor_same" >:: fun _ -> assert_peq_fails Astutils_testcases.type_constructor_same )
               ];
        ]
-
-let () = run_test_tt_main suite

@@ -58,6 +58,8 @@ let rec ast_local_type_alpha_rename :
               })
             cl,
           metadata )
+  | TForeign (TypId (typ_name, type_metadata), metadata) ->
+      TForeign (TypId (typ_name ^ suffix, type_metadata), metadata)
 
 let rec alpha_rename_pattern_match :
     ('a Ast_core.Local.M.pattern * 'a Ast_core.Local.M.expr) list ->
@@ -143,6 +145,8 @@ let rec ast_choreo_type_alpha_rename :
               })
             cl,
           metadata )
+  | TForeign (Typ_Id (typ_name, type_metadata), metadata) ->
+      TForeign (Typ_Id (typ_name ^ suffix, type_metadata), metadata)
 
 let rec ast_choreo_pattern_alpha_rename :
     'a Ast_core.Choreo.M.pattern -> 'a Ast_core.Choreo.M.pattern = function
@@ -275,6 +279,9 @@ and ast_alpha_rename : 'a Ast_core.Choreo.M.stmt -> 'a Ast_core.Choreo.M.stmt =
           ast_choreo_type_alpha_rename stmt_type,
           stmt_foreign_str,
           metadata )
+  | ForeignTypeDecl (TypId (type_name, type_metadata), metadata) ->
+      ForeignTypeDecl (TypId (type_name ^ suffix, type_metadata), metadata)
+  | ImportDecl (s, metadata) -> ImportDecl (s, metadata)
 
 and ast_list_alpha_rename :
     'a Ast_core.Choreo.M.stmt_block -> 'a Ast_core.Choreo.M.stmt_block =

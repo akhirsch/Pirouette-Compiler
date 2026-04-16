@@ -28,6 +28,7 @@ module M = struct
     | TVar of 'a typ_id * 'a
     | TProd of 'a typ * 'a typ * 'a
     | TSum of 'a typ * 'a typ * 'a
+    | TForeign of 'a typ_id * 'a
     | TVariant of 'a constructor list * 'a
 
   and 'a constructor = {
@@ -110,6 +111,8 @@ struct
     | TVar (_, i) -> i
     | TProd (_, _, i) -> i
     | TSum (_, _, i) -> i
+    | TForeign (_, i) ->
+        i (* TForeign returns only its metadata, type name is ignored. *)
     | TVariant (_, i) -> i
 
   let get_info_pattern : pattern -> Info.t = function
@@ -181,7 +184,10 @@ struct
     | TVar (t, _) -> TVar (t, i)
     | TProd (t1, t2, _) -> TProd (t1, t2, i)
     | TSum (t1, t2, _) -> TSum (t1, t2, i)
+    | TForeign (t, _) -> TForeign (t, i)
     | TVariant (cs, _) -> TVariant (cs, i)
+
+  (* TForeign preserves its type name, only metadata is updated. *)
 
   let set_info_pattern : Info.t -> pattern -> pattern =
    fun i -> function

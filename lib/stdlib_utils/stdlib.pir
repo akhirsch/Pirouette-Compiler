@@ -244,8 +244,4 @@ foreign exit : PIRSTDLIBLOC.int -> unit := "exit";
 foreign exit_hook : (unit -> unit) -> unit := "at_exit";
 
 
-{- Standard library metavalues -}
-stdlib_version : PIRSTDLIBLOC.string;
-stdlib_version := PIRSTDLIBLOC."0.0.2";
 
-display_stdlib_info := fun _ -> (PIRSTDLIBLOC.print_endline (string_cat (string_cat PIRSTDLIBLOC."====================================\nPIROUETTE STANDARD LIBRARY INFO\n\nLibrary version: " stdlib_version) PIRSTDLIBLOC."\nLast modified: 10/31/2025\n\n====================================\n"));

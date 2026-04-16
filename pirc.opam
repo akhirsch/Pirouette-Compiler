@@ -4,16 +4,18 @@ synopsis: "Pirouette Compiler"
 description: "Higher-order typed functional choreographies"
 maintainer: ["Maintainer Name"]
 authors: ["Author Name"]
-license: "Apache-2.0"
+license: "LICENSE"
 homepage:
   "https://github.com/Foundations-of-Decentralization-Group/Pirouette-Compiler"
 doc: "https://dl.acm.org/doi/10.1145/3498684"
 bug-reports:
   "https://github.com/Foundations-of-Decentralization-Group/Pirouette-Compiler/issues"
 depends: [
+  "lwt" {build}
   "eio_main" {build}
   "cohttp-eio" {build}
   "cohttp-lwt-unix" {build}
+  "cohttp" {build}
   "dune" {>= "3.14" & build}
   "lwt" {build}
   "lwt_ppx" {build}

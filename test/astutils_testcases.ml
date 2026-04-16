@@ -103,11 +103,29 @@ let multiple_constructors1 =
 
 let multiple_constructors2 =
   "type Car := \n\
-   | Civic: Car;\n\n\n\
-   | Accord: Car;\n\n\n\
-   | Camry: Car;\n\n\n\
-   | Corolla: Car;\n\n\n\
-   | Altima: Car;\n\n"
+   | Civic: Honda;\n\n\n\
+   | Accord: Honda;\n\n\n\
+   | Camry: Toyota;\n\n\n\
+   | Corolla: Honda;\n\n\n\
+   | Altima: Nissan;\n\n"
+
+(* test feed into prettyprint_test.ml and are testing local TForeign in prettyprint 
+for the bisect report *)
+let foreign_type_decl = "foreign type Int32;\n"
+
+let foreign_decl_with_foreign_type =
+  "foreign type Int32;\n\
+   foreign myFunc : Alice.Int32 -> Bob.Int32 := \"Pet:feed\";\n"
+
+let foreign_decl_choreo_tforeign =
+  "foreign type Int32;\nforeign myFunc : Int32 := \"Pet:feed\";\n"
+
+(* Int32 is a bare choreo-level foreign type, not located at any participant *)
+
+let net_foreign_type_decl = "foreign type Int32;\n"
+
+let net_foreign_decl_with_foreign_type =
+  "foreign type Int32;\nforeign myFunc : Int32 := \"Pet:feed\";\n"
 
 (* These tests are to ensure that variants can also have constructors which take multiple arguments *)
 let simple_with_args = 

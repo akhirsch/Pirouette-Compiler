@@ -151,6 +151,24 @@ module M : sig
               let int_or_string = TSum (TInt (), TString (), ()) in
               int_or_string
             ]}*)
+    | TForeign of 'a typ_id * 'a
+        (** foreign type identified only by name.
+
+            two foreign types are equal only if they have the same name
+
+            {b Internal AST Structure:} [TForeign(type_id, meta)]
+
+            {b Pirouette Syntax:}
+            {[
+              foreign type Int32;     (* declaration *)
+              Int32                   (* usage in type signature *)
+            ]}
+
+            {b Ocaml:}
+            {[
+              let foreign_type = TForeign (Typ_Id ("Int32", ()), ()) in
+              foreign_type
+            ]}*)
     | TVariant of 'a constructor list * 'a
 
   (** {1 Choreographic Patterns}
@@ -713,6 +731,27 @@ module M : sig
               in
               print_foreign
             ]}*)
+    | ForeignTypeDecl of 'a Local.M.typ_id * 'a
+    | ImportDecl of string * 'a
+        (** Import declaration: includes all definitions from an external
+            Pirouette file.
+
+            {b Internal AST Structure:} [ImportDecl(filename, meta)]
+            - [filename]: path to the file to import
+            - [meta]: node metadata
+
+            {b Pirouette Syntax:}
+            {[
+              Import "helpers.pir"
+            ]}
+
+            {b OCaml:}
+            {[
+              let import_helpers = ImportDecl ("helpers.pir", ()) in
+              import_helpers
+            ]}*)
+
+  and 'a stmt_block = 'a stmt list
 
   (** {1 Choreographic Statement Block}
 
@@ -720,7 +759,6 @@ module M : sig
       Statements in a block are executed in order, with each statement
       potentially introducing bindings visible to subsequent statements. *)
 
-  and 'a stmt_block = 'a stmt list
   (** Block of Statements
 
       {b Internal AST Structure:} [stmt_block] is a list of ['a stmt]

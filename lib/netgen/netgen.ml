@@ -5,6 +5,7 @@ module Net = Ast_core.Net.M
 let _m = Obj.magic () (* dummy metainfo to make the types work *)
 
 (* Use this list to create a whitelist of locations/agents/domains that will NOT have type information for their variables erased when compiling for other locations/agents/domains*)
+let _whitelisted_locs = [ "PIRSTDLIBLOC" ]
 let whitelisted_locs = [ "PIRSTDLIBLOC" ]
 
 (* TODO: change Hashtbl to List *)
@@ -171,6 +172,11 @@ let rec epp_choreo_type (typ : 'a Choreo.typ) (loc : string) : 'a Net.typ =
           typ; 
           info = _m })
       constructors, _m)
+  | Choreo.TForeign (Choreo.Typ_Id (name, _), _) ->
+      Net.TForeign (Local.TypId (name, _m), _m)
+  (* TForeign has no location to project, but preserves the type name through to the net level.
+   Choreo uses Choreo.Typ_Id while Net uses Local.TypId, so we extract the name string
+   and rewrap it in the correct type id constructor *)
   | _ -> TUnit _m
 
 let rec epp_choreo_pattern (pat : 'a Choreo.pattern) (loc : string) :
@@ -197,6 +203,11 @@ let rec epp_choreo_stmt (stmt : 'a Choreo.stmt) (loc : string) : 'a Net.stmt =
       | _ -> Assign (epp_ps, epp_choreo_expr e loc, _m))
   | TypeDecl (id, t, _) -> TypeDecl (id, epp_choreo_type t loc, _m)
   | ForeignDecl (id, t, s, _) -> ForeignDecl (id, epp_choreo_type t loc, s, _m)
+  (*  ForeignDecl to net level, projecting its type signature for the given location. *)
+  | ForeignTypeDecl (id, _) -> ForeignTypeDecl (id, _m)
+  (* ForeignTypeDecl passes through unchanged no type to project name preserved*)
+  | ImportDecl (_, _) ->
+      failwith "ImportDecl should have been resolved before this pass to netgen"
 
 and epp_choreo_expr (expr : 'a Choreo.expr) (loc : string) : 'a Net.expr =
   match expr with

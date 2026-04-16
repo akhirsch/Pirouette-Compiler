@@ -106,6 +106,7 @@
 %token MATCH WITH
 %token EOF
 %token FOREIGN
+%token IMPORT
 
 (** Operator Precedence and Associativity:
     - Defines the precedence and associativity rules for operators to resolve ambiguities in expressions.
@@ -176,6 +177,12 @@ stmt:
   // | TYPE id=typ_id SEMICOLON { TypeDecl (id, gen_pos $startpos $endpos) }
   // | TYPE t1=typ_id COLONEQ constructors=constructor_list_choreo SEMICOLON { Variant (t1, constructors, gen_pos $startpos $endpos) } // type X := constructor : X;
   | f=foreign_decl { f }
+  | ft=foreign_type_decl { ft }
+  | IMPORT s=STRING SEMICOLON { ImportDecl (s, gen_pos $startpos $endpos) }
+
+foreign_type_decl:
+  | FOREIGN TYPE id=typ_id SEMICOLON { ForeignTypeDecl (id, gen_pos $startpos $endpos) }
+  (* constructs a ForeignTypeDecl AST node with the type id and position info. *)
 
 /* Associativity increases from expr to expr3, with each precedence level falling through to the next. */
 choreo_expr:
@@ -256,6 +263,7 @@ choreo_type:
   | t1=choreo_type TIMES t2=choreo_type { TProd (t1, t2, gen_pos $startpos $endpos) }
   | t1=choreo_type PLUS t2=choreo_type { TSum (t1, t2, gen_pos $startpos $endpos) }
   | LPAREN t=choreo_type RPAREN { Choreo.set_info_typ (gen_pos $startpos $endpos) t }
+  | id=ID { TForeign (Typ_Id (id, gen_pos $startpos $endpos), gen_pos $startpos $endpos) }
 (** [local_type] parses local types and constructs corresponding AST nodes.
 
     - Returns: An AST node representing the local type.
@@ -269,6 +277,7 @@ local_type:
   | t1=local_type PLUS t2=local_type { TSum (t1, t2, gen_pos $startpos $endpos) }
   | LPAREN t=local_type RPAREN { Local.set_info_typ (gen_pos $startpos $endpos) t }
   | constructors=nonempty_list(local_constructor_def) { Ast_core.Local.M.TVariant (constructors, gen_pos $startpos $endpos) }
+  | id=typ_id { Ast_core.Local.M.TForeign (id, gen_pos $startpos $endpos) } (* need to add this match if it is an id then it is a tforeign type *)
 
 loc_id:
   | id=ID { LocId (id, gen_pos $startpos $endpos) }

@@ -91,6 +91,7 @@ rule read = parse
   | "true"             { TRUE }
   | "false"            { FALSE }
   | "foreign"          { FOREIGN }
+  | "import"           { IMPORT }
   | "if"               { IF }
   | "then"             { THEN }
   | "else"             { ELSE }
@@ -151,61 +152,20 @@ and read_single_line_comment = parse
 *)
 
 
+
 and read_multi_line_comment = parse
   | "-}"    { read lexbuf }
   | newline { next_line lexbuf; read_multi_line_comment lexbuf }
   | _       { read_multi_line_comment lexbuf }
   | eof     { raise (SyntaxError "Comment is not terminated") }
-  (** [read_multi_line_comment] processes multi-line comments in the lexer.
+(** [read_multi_line_comment] processes multi-line comments in the lexer.
     
     - Skips all characters within the comment boundaries until the closing delimiter is found.
     - Handles newlines within the comment to maintain accurate line tracking.
     - {b Raises} a SyntaxError if EOF is reached without finding the closing delimiter.
 *)
 
+  
 
 
-{
-      let read = read
 
-  (** {2 {b read }}
-  [read] is the main lexer function that tokenizes the input based on the
-    defined rules and patterns.
-    
-    - This function reads characters from the input buffer and matches them against
-      predefined patterns to identify tokens such as identifiers, literals, operators,
-      and keywords.
-    - {b Returns:} It returns a token each time it is called, until it reaches the end
-      of the file, at which point it returns EOF.
-    - {b Note:} This function handles whitespace, comments, and newline characters
-      internally, often recursively calling itself to skip over non-token characters. 
-*)
-
-      let read_string = read_string
-
-  (** [read_string buf] processes string literals recursively in the lexer.
-    
-    - This function reads characters from the input buffer and constructs a string
-      literal token by concatenating the characters.
-    - It handles escape sequences such as \n, \t, \r, \b, \f, and \\.
-    - {b Raises} a SyntaxError if an illegal escape sequence is encountered or if the
-      string is not terminated.
-*)
-
-      let read_single_line_comment = read_single_line_comment
-
-    (** [read_single_line_comment] processes single-line comments in the lexer.
-    
-    - Continues to consume characters until a newline is encountered, then resumes normal lexing.
-    - If EOF is reached during a comment, it returns an EOF token with metadata. 
-*)
-      
-      let read_multi_line_comment = read_multi_line_comment
-
-    (** [read_multi_line_comment] processes multi-line comments in the lexer.
-    
-    - Skips all characters within the comment boundaries until the closing delimiter is found.
-    - Handles newlines within the comment to maintain accurate line tracking.
-    - {b Raises} a SyntaxError if EOF is reached without finding the closing delimiter.
-*)  
-}

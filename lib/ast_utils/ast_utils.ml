@@ -70,6 +70,10 @@ let parse_external_name name =
   (package_name, function_name, search_path)
 
 (* Extract all unique FFI information from a list of statements *)
+(* collect_ffi_info walks through a list of choreo statements, finds every ForeignDecl
+ parses its external name string using parse_external_name, and returns a sorted list of all the
+foreign function info. It's used during code generation to know which external functions
+need to be linked or imported into the generated OCaml code.*)
 let collect_ffi_info stmts =
   let rec collect acc = function
     | [] -> acc
@@ -203,6 +207,8 @@ let rec ast_local_type_info_map :
               })
             cl,
           map metadata )
+  | TForeign (TypId (typ_name, type_metadata), metadata) ->
+      TForeign (TypId (typ_name, map type_metadata), map metadata)
 
 let rec info_map_pattern_match :
     type a b.
@@ -310,6 +316,8 @@ let rec ast_choreo_type_info_map :
               })
             cl,
           map metadata )
+  | TForeign (Typ_Id (type_name, type_metadata), metadata) ->
+      TForeign (Typ_Id (type_name, map type_metadata), map metadata)
 
 let rec ast_choreo_pattern_info_map :
   type a b.
@@ -460,6 +468,10 @@ and ast_info_map :
           ast_choreo_type_info_map map stmt_type,
           stmt_foreign_str,
           map metadata )
+  | ForeignTypeDecl (TypId (type_name, type_metadata), metadata) ->
+      ForeignTypeDecl (TypId (type_name, map type_metadata), map metadata)
+  (* Map metadata over a ForeignTypeDecl*)
+  | ImportDecl (filename, metadata) -> ImportDecl (filename, map metadata)
 
 and ast_list_info_map :
 (* 

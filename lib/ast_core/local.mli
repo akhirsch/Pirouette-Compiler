@@ -335,6 +335,26 @@ module M : sig
               let sum_int_string = TSum (TInt (), TString (), ()) in
               sum_int_string
             ]}*)
+    | TForeign of 'a typ_id * 'a
+        (** Foreign type at the local level, identified only by name.
+
+            Foreign types are declared at the choreography level and referenced
+            at the local level inside located types. two foreign types are equal
+            only if they have the same name.
+
+            {b Internal AST Structure:} [TForeign(type_id, meta)]
+
+            {b Pirouette Syntax:}
+            {[
+              foreign type Int32;     (* declaration at choreo level *)
+              Alice.Int32             (* usage inside a located type *)
+            ]}
+
+            {b Ocaml:}
+            {[
+              let foreign_type = TForeign (TypId ("Int32", ()), ()) in
+              foreign_type
+            ]}*)
     | TVariant of 'a constructor list * 'a
 
   and 'a constructor = {
