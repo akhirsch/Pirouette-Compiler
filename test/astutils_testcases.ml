@@ -158,7 +158,7 @@ let multiple_constructors_with_args =
 ";;
 
 (* Variants should also allow for recursive constructors. This is a test for that functionality *)
-let recursive_variant = 
+let recursive_variant_simple = 
 "type increment := 
 | zero : increment ;\n\n
 | add1 : increment , increment;\n\n

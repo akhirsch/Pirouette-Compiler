@@ -1455,12 +1455,8 @@ let all_suites =
          correct_choreo_pattern_suite;
          incorrect_choreo_type_suite;
          choreo_stmt_suite;
-<<<<<<< HEAD
          variant_suite;
-         (*Unification test suite*)
-=======
          (* Unification test suite *)
->>>>>>> origin/dev
          unification_suite;
          (* Helper functions test suite *)
          helper_suite;
