@@ -314,11 +314,8 @@ net_type:
   | t1=net_type TIMES t2=net_type { TProd (t1, t2, gen_pos $startpos $endpos) }
   | t1=net_type PLUS t2=net_type { TSum (t1, t2, gen_pos $startpos $endpos) }
   | LPAREN t=net_type RPAREN { Net.set_info_typ (gen_pos $startpos $endpos) t }
-<<<<<<< HEAD
   | constructors=nonempty_list(net_constructor_def) { Ast_core.Net.M.TVariant (constructors, gen_pos $startpos $endpos) }
-=======
   | id=typ_id { Ast_core.Net.M.TForeign (id, gen_pos $startpos $endpos) }
->>>>>>> origin/dev
 
 local_type:
   | UNIT_T { TUnit (gen_pos $startpos $endpos) }
@@ -328,14 +325,9 @@ local_type:
   | t1=local_type TIMES t2=local_type { TProd (t1, t2, gen_pos $startpos $endpos) }
   | t1=local_type PLUS t2=local_type { TSum (t1, t2, gen_pos $startpos $endpos) }
   | LPAREN t=local_type RPAREN { Local.set_info_typ (gen_pos $startpos $endpos) t }
-<<<<<<< HEAD
   | constructors=nonempty_list(local_constructor_def) { Ast_core.Local.M.TVariant (constructors, gen_pos $startpos $endpos) }
- 
-
-=======
   | id=typ_id { Ast_core.Local.M.TForeign (id, gen_pos $startpos $endpos) }
   
->>>>>>> origin/dev
 loc_id:
   | id=ID { LocId (id, gen_pos $startpos $endpos) }
 
@@ -384,7 +376,6 @@ value:
 foreign_decl:
   | FOREIGN id=var_id COLON t=net_type COLONEQ s=STRING SEMICOLON 
     { ForeignDecl (id, t, s, gen_pos $startpos $endpos) }
-<<<<<<< HEAD
 
 
 constructor_list_net:
@@ -416,7 +407,6 @@ constructor_arg_list_local:
     { Ast_core.Local.M.{ name = name; args = [t]; typ = typ; info = gen_pos $startpos $endpos } }
   | BAR name=typ_id COLON args=constructor_arg_list_local COLON typ=typ_id SEMICOLON
     { Ast_core.Local.M.{ name = name; args = args; typ = typ; info = gen_pos $startpos $endpos } }
-=======
     (* foreign_decl declares a foreign function it has a variable name, a type signature, and an external symbol string. 
     It produces a ForeignDecl node.*)
 
@@ -425,4 +415,3 @@ foreign_type_decl:
   { ForeignTypeDecl (id, gen_pos $startpos $endpos) }
   (* foreign_type_decl declares a foreign type name  it just has TYPE keyword
    followed by a type identifier and no type signature or external symbol. It produces a ForeignTypeDecl node.*)
->>>>>>> origin/dev
