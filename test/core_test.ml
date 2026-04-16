@@ -335,7 +335,7 @@ let test_change_int_LOC (old_int : 'a) (new_int : 'a) =
   let test_change_tvariant_LOC (old_meta : 'a) (new_meta : 'a) =
     let old_info =
       Local.M.TVariant (
-        [ { Local.M.name = "MyConstructor"
+        [ { Local.M.name = TypId("MyConstructor", old_meta)
           ; args = [ Local.M.TInt old_meta ; Local.M.TString old_meta ]
           ; typ  = Local.M.TypId ("MyType", old_meta)
           ; info = old_meta
@@ -348,7 +348,7 @@ let test_change_int_LOC (old_int : 'a) (new_int : 'a) =
   (* Test set/get info on a constructor record directly *)
   let test_change_constructor_LOC (old_meta : 'a) (new_meta : 'a) =
     let old_info =
-      { Local.M.name = "MyConstructor"
+      { Local.M.name = TypId("MyConstructor", old_meta)
       ; args = [ Local.M.TInt old_meta ]
       ; typ  = Local.M.TypId ("MyType", old_meta)
       ; info = old_meta
@@ -361,7 +361,7 @@ let test_change_int_LOC (old_int : 'a) (new_int : 'a) =
   let test_change_pconstruct_pat_LOC (old_meta : 'a) (new_meta : 'a) =
     let old_info =
       Local.M.PConstruct (
-        "MyConstructor",
+        TypId("MyConstructor", old_meta),
         [ Local.M.Var (Local.M.VarId ("x", old_meta), old_meta) ],
         Local.M.TypId ("MyType", old_meta),
         old_meta)
@@ -373,7 +373,7 @@ let test_change_int_LOC (old_int : 'a) (new_int : 'a) =
   let test_change_construct_expr_LOC (old_meta : 'a) (new_meta : 'a) =
     let old_info =
       Local.M.Construct (
-        "MyConstructor",
+        TypId("MyConstructor", old_meta),
         [ Local.M.Val (Local.M.Int (42, old_meta), old_meta) ],
         Local.M.TypId ("MyType", old_meta),
         old_meta)
@@ -625,7 +625,7 @@ let test_get_info_tsum_CH (meta1 : int) (meta2 : int) =
 let test_change_tvariant_CHOREO (old_meta : 'a) (new_meta : 'a) =
   let old_info =
     Choreo.M.TVariant (
-      [ { Choreo.M.name = "MyConstructor"
+      [ { Choreo.M.name = TypId("MyConstructor", old_meta)
         ; args = [ Choreo.M.TUnit old_meta ]
         ; typ  = Local.M.TypId ("MyType", old_meta)
         ; info = old_meta
@@ -638,7 +638,7 @@ let test_change_tvariant_CHOREO (old_meta : 'a) (new_meta : 'a) =
 (* Test set/get info on a constructor record directly *)
 let test_change_constructor_CHOREO (old_meta : 'a) (new_meta : 'a) =
   let old_info =
-    { Choreo.M.name = "MyConstructor"
+    { Choreo.M.name = TypId("MyConstructor", old_meta)
     ; args = [ Choreo.M.TUnit old_meta ]
     ; typ  = Local.M.TypId ("MyType", old_meta)
     ; info = old_meta
@@ -651,7 +651,7 @@ let test_change_constructor_CHOREO (old_meta : 'a) (new_meta : 'a) =
 let test_change_pconstruct_pat_CHOREO (old_meta : 'a) (new_meta : 'a) =
   let old_info =
     Choreo.M.PConstruct (
-      "MyConstructor",
+      TypId("MyConstructor", old_meta),
       [ Choreo.M.Var (Local.M.VarId ("x", old_meta), old_meta) ],
       Local.M.TypId ("MyType", old_meta),
       old_meta)
@@ -663,7 +663,7 @@ let test_change_pconstruct_pat_CHOREO (old_meta : 'a) (new_meta : 'a) =
 let test_change_construct_expr_CHOREO (old_meta : 'a) (new_meta : 'a) =
   let old_info =
     Choreo.M.Construct (
-      "MyConstructor",
+      TypId("MyConstructor", old_meta),
       [ Choreo.M.Unit old_meta ],
       Local.M.TypId ("MyType", old_meta),
       old_meta)

@@ -107,7 +107,7 @@ let suite =
               ; ("simple_mixed_args" >:: fun _ -> peq Astutils_testcases.simple_mixed_args)
               ; ("nats" >:: fun _ -> peq Astutils_testcases.nats)
               ; ("multiple_constructors_with_args" >:: fun _ -> peq Astutils_testcases.multiple_constructors_with_args)
-              ; ("recursive_variant" >:: fun _ -> peq Astutils_testcases.recursive_variant)
+              ; ("recursive_variant" >:: fun _ -> peq Astutils_testcases.rec_variant_simple)
               (*tests for malformatted variants*)
               ; ("missing_constructor1" >:: fun _ -> assert_peq_fails Astutils_testcases.missing_constructor1 )
               ; ("missing_constructor2" >:: fun _ -> assert_peq_fails Astutils_testcases.missing_constructor2 )
