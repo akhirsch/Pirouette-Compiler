@@ -28,6 +28,7 @@ let main_suite =
          Core_test_choreo.suite;
          Core_test.loc_suite;
          Core_test.choreo_suite;
+         Netgen_test.suite;
        ]
 
 let () =

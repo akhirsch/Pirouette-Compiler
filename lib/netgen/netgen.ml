@@ -3,8 +3,7 @@ module Choreo = Ast_core.Choreo.M
 module Net = Ast_core.Net.M
 
 let _m = Obj.magic () (* dummy metainfo to make the types work *)
-
-let ( let* ) o f = match o with None -> None | Some x -> f x
+let ( let* ) = Option.bind
 
 (* Use this list to create a whitelist of locations/agents/domains that will NOT have type information for their variables erased when compiling for other locations/agents/domains*)
 let _whitelisted_locs = [ "PIRSTDLIBLOC" ]
@@ -231,9 +230,8 @@ and epp_choreo_expr (expr : 'a Choreo.expr) (loc : string) : 'a Net.expr =
         | (_, case_e) :: rest ->
             List.fold_left
               (fun acc (_, e) ->
-                match acc with
-                | Some e' -> merge_net_expr e' (epp_choreo_expr e loc)
-                | None -> None)
+                let* e' = acc in
+                merge_net_expr e' (epp_choreo_expr e loc))
               (Some (epp_choreo_expr case_e loc))
               rest
       in
