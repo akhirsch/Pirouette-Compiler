@@ -5,7 +5,8 @@ module Net = Ast_core.Net.M
 
 (*NOTE; testing here is limited only to changes made in sean/netgen-refactor.*)
 
-let _m = Obj.magic () (* dummy metainfo to make the types work; taken from netgen *)
+let _m =
+  Obj.magic () (* dummy metainfo to make the types work; taken from netgen *)
 
 (*
   These functions exists to help expose the behavior of "merge_net_stmt" 
