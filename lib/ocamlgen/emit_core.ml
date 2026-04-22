@@ -69,17 +69,17 @@ let rec emit_local_pexp (expr : 'a Local.expr) =
       in
       Builder.pexp_match (emit_local_pexp e) cases
       (* ===================================================================================== *)
-  | Construct (_, _, _, _) -> failwith "not done"
-    (* (
-      let args = List.map emit_local_pexp arglist in
+  | Construct (cnstr_id, args, _, _) -> 
+      let name = (fun (Local.TypId (s, _) ) -> s) cnstr_id in
       let constructor_lid = { txt = Longident.Lident name; loc } in
+      let args = List.map emit_local_pexp args in
       match args with
       | [] -> Builder.pexp_construct constructor_lid None
-      | [ arg ] -> Builder.pexp_construct constructor_lid (Some arg)
-      | _ ->
-          Builder.pexp_construct constructor_lid
-            (Some (Builder.pexp_tuple args))) *)
-(* not right*)
+      | arg :: [] -> Builder.pexp_construct constructor_lid (Some arg)
+      | args ->
+        Builder.pexp_construct constructor_lid
+          (Some (Builder.pexp_tuple args))
+
 
 (* let ty = emit_local_pexp typ *)
 (* ===================================================================================== *)
@@ -95,16 +95,16 @@ and emit_local_ppat (pat : 'a Local.pattern) =
   | Left (p, _) -> [%pat? Either.Left [%p emit_local_ppat p]]
   | Right (p, _) -> [%pat? Either.Right [%p emit_local_ppat p]]
   (* ===================================================================================== *)
-  | PConstruct (_, _, _, _) -> failwith "not done"
-    (* (
-      let args = List.map emit_local_ppat arglist in
+  | PConstruct (cnstr_id, args, _, _) -> 
+      let name = (fun (Local.TypId (s, _) ) -> s) cnstr_id in
       let constructor_lid = { txt = Longident.Lident name; loc } in
+      let args = List.map emit_local_ppat args in
       match args with
       | [] -> Builder.ppat_construct constructor_lid None
-      | [ arg ] -> Builder.ppat_construct constructor_lid (Some arg)
-      | _ ->
-          Builder.ppat_construct constructor_lid
-            (Some (Builder.ppat_tuple args))) *)
+      | arg :: [] -> Builder.ppat_construct constructor_lid (Some arg)
+      | args ->
+        Builder.ppat_construct constructor_lid
+          (Some (Builder.ppat_tuple args))
 (* ===================================================================================== *)
 
 let rec emit_net_fun_body ~(self_id : string) (module Msg : Msg_intf)
@@ -133,11 +133,27 @@ and emit_net_binding ~(self_id : string) (module Msg : Msg_intf)
       | f :: ps ->
           Builder.value_binding ~pat:(emit_local_ppat f)
             ~expr:(emit_net_fun_body ~self_id (module Msg) ps e))
-  | TypeDecl (TypId (_, _), _, _) -> failwith "not done"
-    (* "type" ^ id ^ find_type_sig typ shouldn't hard code printing type keyword, but temp fix for now *)
   | ForeignDecl (VarId (id, _), _, external_name, _) ->
       emit_foreign_decl id external_name
+  | TypeDecl (typ_id, typ, _) -> 
+    (match typ with
+    | TVariant (cs, _) -> failwith("not yet implemented")
+    | _ -> Builder.value_binding ~pat:[%pat? _unit] ~expr:Builder.eunit )
+    
   | _ -> Builder.value_binding ~pat:[%pat? _unit] ~expr:Builder.eunit
+
+(*
+    Builder.pexp_variant Recursive
+    (match typ with
+    | TVariant (cs, _) -> 
+      let somelist = List.map 
+      (f cons_list -> (match cons_list with
+      | [] -> failwith "bruh"
+      | (id, args, _, _) :: t -> 
+        let plist = List.map (emit_net_pexp ~self_id (module Msg)) cs in
+        ()
+      | _ -> failwith "idk") ) cs in ()
+    | _ -> Builder.value_binding ~pat:[%pat? _unit] ~expr:Builder.eunit ) *)
 
 (*This function generates the function calls for foreign declarations
   Currently we're not attaching type annotations, this is something that should be added down the line.
@@ -232,7 +248,16 @@ and emit_net_pexp ~(self_id : string) (module Msg : Msg_intf)
         (Msg.emit_net_recv ~src ~dst:self_id)
         (cases @ [ default_case ])
       (* ===================================================================================== *)
-  | Construct (_, _, _, _) -> failwith "not done"
+  | Construct (cnstr_id, args, _, _) -> 
+    let name = (fun (Local.TypId (s, _) ) -> s) cnstr_id in
+      let constructor_lid = { txt = Longident.Lident name; loc } in
+      let args = List.map (emit_net_pexp ~self_id (module Msg)) args in
+      match args with
+      | [] -> Builder.pexp_construct constructor_lid None
+      | arg :: [] -> Builder.pexp_construct constructor_lid (Some arg)
+      | args ->
+        Builder.pexp_construct constructor_lid
+          (Some (Builder.pexp_tuple args))
     (* (
       let args = List.map (emit_net_pexp ~self_id (module Msg)) arglist in
       let constructor_lid = { txt = Longident.Lident name; loc } in
