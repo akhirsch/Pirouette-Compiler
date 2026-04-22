@@ -1,4 +1,6 @@
 open OUnit2
+(* note: these tests were commented out because they were from an older commit before
+a lot of code change the test could be refactored *)
 
 (* let diff_dot_strings expected actual =
   (* First, try to see if they're identical *)
@@ -139,5 +141,3 @@ let suite =
          (* ; "testcase26"
          >::: [ ("testcase26" >:: test_26_dot) ] *);
        ]
-
-let () = run_test_tt_main suite
