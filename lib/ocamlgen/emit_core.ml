@@ -135,9 +135,9 @@ and emit_net_binding ~(self_id : string) (module Msg : Msg_intf)
             ~expr:(emit_net_fun_body ~self_id (module Msg) ps e))
   | ForeignDecl (VarId (id, _), _, external_name, _) ->
       emit_foreign_decl id external_name
-  | TypeDecl (typ_id, typ, _) -> 
+  | TypeDecl (_, typ, _) -> 
     (match typ with
-    | TVariant (cs, _) -> failwith("not yet implemented")
+    | TVariant (_, _) -> failwith("not yet implemented")
     | _ -> Builder.value_binding ~pat:[%pat? _unit] ~expr:Builder.eunit )
     
   | _ -> Builder.value_binding ~pat:[%pat? _unit] ~expr:Builder.eunit
