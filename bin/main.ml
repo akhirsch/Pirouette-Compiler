@@ -156,8 +156,8 @@ let () =
   let locs = Ast_utils.extract_locs user_program in
 
   (* Extract locations, ffi information, and generate network IR *)
-  let ffi_info = Ast_utils.collect_ffi_info user_program in
-  let package_names =
+let ffi_info = Ast_utils.collect_ffi_info user_program in
+let package_names =
     List.fold_left
       (fun package_names (package_name, _, _) ->
         match package_name with
@@ -233,6 +233,7 @@ let () =
             search_paths !ocamlopt_warn_flags out_file_exe packages !ml_files
             ml_file
         in
+        let _ = Printf.printf "CMD: %s\n%!" cmd in
         let _ = Sys.command cmd in
         ())
       gen_ml_files

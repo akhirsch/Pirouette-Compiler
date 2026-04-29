@@ -1,5 +1,5 @@
 (library
  (name display)
  (public_name pirc.display)
- (modules displaycolors)
+ (modules display)
  (libraries))
