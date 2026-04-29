@@ -1,3 +1,14 @@
+
+{- Display print for demo -}
+foreign print_idle : string -> unit = "display:print_idle"
+foreign print_waiting : string -> unit = "display:print_waiting"
+foreign print_sending : string -> unit = "display:print_sending"
+foreign print_done : string -> unit = "display:print_done"
+
+{- Display clear for console -}
+foreign clear_console : unit -> unit = "display:clear_console"
+
+
 {- Print to stdout functions -}
 foreign print_string : PIRSTDLIBLOC.string -> unit := "print_string";
 {-foreign print_char : unit -> unit := "print_char";-}
