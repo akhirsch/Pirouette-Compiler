@@ -292,6 +292,21 @@ let init_http_server current_location () =
 (*   let ret_val = Queue.pop mutable_queues in *)
 (*   ret_val *)
 (* ;; *)
+let send_message ~location ~data =
+  let marshaled_data = marshal_data data in
+  match get_location_config location with
+  | Error msg -> Lwt.return_error msg
+  | Ok loc_config ->
+    try
+      Eio_main.run @@ fun env ->
+      Eio.Switch.run @@ fun sw ->
+      let client = Cohttp_eio.Client.make ~https:None env#net in
+      let body = Cohttp_eio.Body.of_string marshaled_data in
+      let uri = Uri.of_string loc_config.Config_parser.http_address in
+      let _resp, resp_body = Cohttp_eio.Client.post client ~sw ~body uri in
+      ignore (Eio.Buf_read.(parse_exn take_all) ~max_size:max_int resp_body);
+      Lwt.return_ok ()
+    with e -> Lwt.return_error (Printexc.to_string e)
 
 (* ######################### THIS FUNCTION IS A BACKUP DO NOT DELETE ######################### *)
 let rec receive_message ~location =

@@ -222,7 +222,7 @@ let package_names =
           ^
           match !msg_backend with
           | "domain" -> "domainslib"
-          | "http" -> "http_pirc"
+          | "http" -> "pirc.http_pirc"
           | "mpi" -> "mpi"
           | _ -> invalid_arg "Invalid backend"
         in

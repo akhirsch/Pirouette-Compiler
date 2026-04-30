@@ -22,7 +22,7 @@ module Msg_http_intf : Msg_intf.M = struct
       | Ok () -> ()
       | Error msg -> failwith ("Send error: " ^ msg)]
 
-  let emit_net_recv ~src ~dst =
+ (* let emit_net_recv ~src ~dst =
     ignore src;
     [%expr
       match
@@ -31,7 +31,11 @@ module Msg_http_intf : Msg_intf.M = struct
              ~location:[%e Ast_builder.Default.estring ~loc dst])
       with
       | Ok msg -> msg
-      | Error msg -> failwith ("Receive error: " ^ msg)]
+      | Error msg -> failwith ("Receive error: " ^ msg)]*)
+  let emit_net_recv ~src ~dst =
+  ignore src;
+  [%expr Send_receive.receive_message
+    ~location:[%e Ast_builder.Default.estring ~loc dst]]
 end
 
 let emit_toplevel_init _loc_ids config_file_path =
@@ -76,7 +80,7 @@ let emit_toplevel_http out_chan (loc_ids : string list)
         Printf.printf "Starting process_%s...\n"
           [%e Ast_builder.Default.estring ~loc loc_id];
         (* Set the current location explicitly for this process *)
-        Send_receive.init_http_servers
+        Send_receive.init_http_server
           [%e Ast_builder.Default.estring ~loc loc_id]
           ();
         let [%p Ast_builder.Default.pvar ~loc (spf "process_%s" loc_id)] =
