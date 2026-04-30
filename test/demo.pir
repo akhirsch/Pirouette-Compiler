@@ -42,14 +42,88 @@ main :=
   let N.idle := N.print_idle N."[N] idle"; in
   let O.idle := O.print_idle O."[O] idle"; in
   let P.idle := P.print_idle P."[P] idle"; in
+  
   {- then the chain begins -}
   let A.inbox := A."hello there!"; in
+
   let A.sending := A.print_sending A."A sending to G..."; in
   let G.waiting := G.print_waiting G."G waiting on A..."; in
   let G.inbox := [A] A.inbox ~> G; in
   let A.done := A.print_done A."A send to G sucessful!"; in
+
   let G.sending := G.print_sending G."G sending to M..."; in
   let M.waiting := M.print_waiting M."M waiting on G..."; in
   let M.inbox := [G] G.inbox ~> M; in
   let G.done := G.print_done G."G send to M sucessful!"; in
-  M.();
+
+  let M.sending := M.print_sending M."M sending to D..."; in
+  let D.waiting := D.print_waiting D."D waiting on M..."; in
+  let D.inbox := [M] M.inbox ~> D; in
+  let M.done := M.print_done M."M send to D sucessful!"; in
+
+  let D.sending := D.print_sending D."D sending to J..."; in
+  let J.waiting := J.print_waiting J."J waiting on D..."; in
+  let J.inbox := [D] D.inbox ~> J; in
+  let D.done := D.print_done D."D send to J sucessful!"; in
+
+  let J.sending := J.print_sending J."J sending to B..."; in
+  let B.waiting := B.print_waiting B."B waiting on J..."; in
+  let B.inbox := [J] J.inbox ~> B; in
+  let J.done := J.print_done J."J send to B sucessful!"; in
+
+  let B.sending := B.print_sending B."B sending to O..."; in
+  let O.waiting := O.print_waiting O."O waiting on B..."; in
+  let O.inbox := [B] B.inbox ~> O; in
+  let B.done := B.print_done B."B send to O sucessful!"; in
+
+  let O.sending := O.print_sending O."O sending to F..."; in
+  let F.waiting := F.print_waiting F."F waiting on O..."; in
+  let F.inbox := [O] O.inbox ~> F; in
+  let O.done := O.print_done O."O send to F sucessful!"; in
+
+  let F.sending := F.print_sending F."F sending to K..."; in
+  let K.waiting := K.print_waiting K."K waiting on F..."; in
+  let K.inbox := [F] F.inbox ~> K; in
+  let F.done := F.print_done F."F send to K sucessful!"; in
+
+  let K.sending := K.print_sending K."K sending to C..."; in
+  let C.waiting := C.print_waiting C."C waiting on K..."; in
+  let C.inbox := [K] K.inbox ~> C; in
+  let K.done := K.print_done K."K send to C sucessful!"; in
+
+  let C.sending := C.print_sending C."C sending to P..."; in
+  let P.waiting := P.print_waiting P."P waiting on C..."; in
+  let P.inbox := [C] C.inbox ~> P; in
+  let C.done := C.print_done C."C send to P sucessful!"; in
+
+  let P.sending := P.print_sending P."P sending to I..."; in
+  let I.waiting := I.print_waiting I."I waiting on P..."; in
+  let I.inbox := [P] P.inbox ~> I; in
+  let P.done := P.print_done P."P send to I sucessful!"; in
+
+  let I.sending := I.print_sending I."I sending to N..."; in
+  let N.waiting := N.print_waiting N."N waiting on I..."; in
+  let N.inbox := [I] I.inbox ~> N; in
+  let I.done := I.print_done I."I send to N sucessful!"; in
+
+  let N.sending := N.print_sending N."N sending to E..."; in
+  let E.waiting := E.print_waiting E."E waiting on N..."; in
+  let E.inbox := [N] N.inbox ~> E; in
+  let N.done := N.print_done N."N send to E sucessful!"; in
+
+  let E.sending := E.print_sending E."E sending to L..."; in
+  let L.waiting := L.print_waiting L."L waiting on E..."; in
+  let L.inbox := [E] E.inbox ~> L; in
+  let E.done := E.print_done E."E send to L sucessful!"; in
+
+  let L.sending := L.print_sending L."L sending to H..."; in
+  let H.waiting := H.print_waiting H."H waiting on L..."; in
+  let H.inbox := [L] L.inbox ~> H; in
+  let L.done := L.print_done L."L send to H sucessful!"; in
+
+  let H.sending := H.print_sending H."H sending to A..."; in
+  let A.waiting := A.print_waiting A."A waiting on H..."; in
+  let A.inbox := [H] H.inbox ~> A; in
+  let H.done := H.print_done H."H send to A sucessful!"; in
+
+  A.();
