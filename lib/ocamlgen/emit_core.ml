@@ -148,15 +148,12 @@ and emit_foreign_decl id external_name =
     match package_name with Some pack -> pack ^ "." | None -> ""
   in
   let ocaml_expr =
-    if String.contains function_name '.' then
-      function_name
-    else
-      package_string ^ function_name
+    if String.contains function_name '.' then function_name
+    else package_string ^ function_name
   in
   let fun_expr =
     pexp_fun ~loc Nolabel None (pvar ~loc "arg")
-      [%expr
-        [%e evar ~loc ocaml_expr] [%e evar ~loc "arg"]]
+      [%expr [%e evar ~loc ocaml_expr] [%e evar ~loc "arg"]]
   in
   value_binding ~loc ~pat:(pvar ~loc id) ~expr:fun_expr
 

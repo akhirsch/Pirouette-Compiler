@@ -9,4 +9,3 @@ let print_waiting msg = Printf.printf "%s%s%s\n%!" yellow msg reset
 let print_sending msg = Printf.printf "%s%s%s\n%!" blue msg reset
 let print_done msg = Printf.printf "%s%s%s\n%!" green msg reset
 let clear_console () = Printf.printf "\027[2J\027[H%!"
-

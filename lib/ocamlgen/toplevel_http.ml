@@ -22,7 +22,7 @@ module Msg_http_intf : Msg_intf.M = struct
       | Ok () -> ()
       | Error msg -> failwith ("Send error: " ^ msg)]
 
- (* let emit_net_recv ~src ~dst =
+  (* let emit_net_recv ~src ~dst =
     ignore src;
     [%expr
       match
@@ -33,9 +33,10 @@ module Msg_http_intf : Msg_intf.M = struct
       | Ok msg -> msg
       | Error msg -> failwith ("Receive error: " ^ msg)]*)
   let emit_net_recv ~src ~dst =
-  ignore src;
-  [%expr Send_receive.receive_message
-    ~location:[%e Ast_builder.Default.estring ~loc dst]]
+    ignore src;
+    [%expr
+      Send_receive.receive_message
+        ~location:[%e Ast_builder.Default.estring ~loc dst]]
 end
 
 let emit_toplevel_init _loc_ids config_file_path =

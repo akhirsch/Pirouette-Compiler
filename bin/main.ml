@@ -156,8 +156,8 @@ let () =
   let locs = Ast_utils.extract_locs user_program in
 
   (* Extract locations, ffi information, and generate network IR *)
-let ffi_info = Ast_utils.collect_ffi_info user_program in
-let package_names =
+  let ffi_info = Ast_utils.collect_ffi_info user_program in
+  let package_names =
     List.fold_left
       (fun package_names (package_name, _, _) ->
         match package_name with
