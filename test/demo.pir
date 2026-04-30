@@ -20,6 +20,9 @@ END → OFF
 {- for the new http fix to work you on your machine you have to run these two commands:
 dune build @install
 dune install 
+
+command for running the demo:
+dune exec bin/main.exe -- test/demo.pir --msg-backend http   
 -}
 
 main :=
