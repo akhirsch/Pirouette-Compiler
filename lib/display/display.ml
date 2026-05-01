@@ -1,7 +1,7 @@
 (* ANSI color codes *)
 let gray = "\027[90m"
 let yellow = "\027[33m"
-let blue = "\027[34m"
+let blue = "\027[96m"
 let green = "\027[32m"
 let reset = "\027[0m"
 let print_idle msg = Printf.printf "%s%s%s\n%!" gray msg reset
