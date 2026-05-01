@@ -8,6 +8,9 @@ foreign print_done : PIRSTDLIBLOC.string -> unit := "pirc.display:Display.print_
 {- Display clear for console -}
 foreign clear_console : unit -> unit := "pirc.display:Display.clear_console";
 
+{- Sleep -}
+foreign sleep : PIRSTDLIBLOC.int -> unit := "Unix.sleep";
+
 
 {- Print to stdout functions -}
 foreign print_string : PIRSTDLIBLOC.string -> unit := "print_string";
