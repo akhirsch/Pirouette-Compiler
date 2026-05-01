@@ -97,6 +97,8 @@ let handler _socket _request body =
       Cohttp_eio.Server.respond_string ~status:`Precondition_failed
         ~body:"Error message - Sender location not found" ()
   | Some unwrapped_sender_location -> (
+      Printf.printf "Handler received message from %s\n%!"
+        unwrapped_sender_location;
       let indexed_queue =
         Hashtbl.find_opt message_queues unwrapped_sender_location
       in
@@ -266,7 +268,7 @@ let init_http_server current_location () =
             ("-p", Arg.Set_int port, " Listening port number(8080 by default)");
           ]
           ignore "An HTTP/1.1 server";
-        Eio_main.run @@ fun env ->
+        (*Eio_main.run @@ fun env ->
         (* print_endline "Inside the EIO main loop"; *)
         Eio.Switch.run @@ fun sw ->
         (* print_endline "Inside the EIO switch run"; *)
@@ -282,7 +284,26 @@ let init_http_server current_location () =
         Cohttp_eio.Server.run socket server
           ?additional_domains:
             (Some (dom_mgr, Domain.recommended_domain_count ()))
-          ?max_connections:(Some 30000) ~on_error:log_warning
+          ?max_connections:(Some 30000) ~on_error:log_warning*)
+        let _thread =
+          Thread.create
+            (fun () ->
+              Eio_main.run @@ fun env ->
+              Eio.Switch.run @@ fun sw ->
+              let socket =
+                Eio.Net.listen env#net ~sw ~backlog:30000 ~reuse_port:true
+                  ~reuse_addr:true
+                  (`Tcp (address_to_run_server, !port))
+              in
+              let server = Cohttp_eio.Server.make ~callback:handler () in
+              let dom_mgr = Eio.Stdenv.domain_mgr env in
+              Cohttp_eio.Server.run socket server
+                ?additional_domains:
+                  (Some (dom_mgr, Domain.recommended_domain_count ()))
+                ?max_connections:(Some 30000) ~on_error:log_warning)
+            ()
+        in
+        Unix.sleepf 5.0
       in
       (* print_endline "Finished"; *)
       ()
@@ -293,7 +314,10 @@ let init_http_server current_location () =
 (*   ret_val *)
 (* ;; *)
 let send_message ~location ~data =
-  let marshaled_data = marshal_data data in
+  let marshaled_data =
+    if Obj.tag (Obj.repr data) = Obj.string_tag then Obj.magic data
+    else marshal_data data
+  in
   match get_location_config location with
   | Error msg -> Lwt.return_error msg
   | Ok loc_config -> (
@@ -301,7 +325,12 @@ let send_message ~location ~data =
         Eio_main.run @@ fun env ->
         Eio.Switch.run @@ fun sw ->
         let client = Cohttp_eio.Client.make ~https:None env#net in
-        let body = Cohttp_eio.Body.of_string marshaled_data in
+        let body_content = get_body location marshaled_data in
+        let body =
+          match body_content with
+          | Some b -> b
+          | None -> Cohttp_eio.Body.of_string ""
+        in
         let uri = Uri.of_string loc_config.Config_parser.http_address in
         let _resp, resp_body = Cohttp_eio.Client.post client ~sw ~body uri in
         ignore (Eio.Buf_read.(parse_exn take_all) ~max_size:max_int resp_body);
@@ -344,11 +373,17 @@ let rec receive_message ~location =
           (* print_endline ("This is the value of the string : " ^ val_print); *)
           (* Eio.traceln "This is the value of the string %s\n" val_print; *)
           value_from_stream
-      | None ->
+      (*| None ->
           (* Eio.traceln "Did not grab any value from queue\n"; *)
           (* print_endline "The queue is empty for this particular key"; *)
           (* Eio.traceln "The queue is empty for this particular key"; *)
           receive_message ~location)
   | None ->
       (* Eio.traceln "Did not find the correct key\n"; *)
+      receive_message ~location*)
+      | None ->
+          Unix.sleepf 0.01;
+          receive_message ~location)
+  | None ->
+      Unix.sleepf 0.01;
       receive_message ~location
