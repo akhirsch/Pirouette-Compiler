@@ -130,11 +130,11 @@ let () =
        let rec nap_PIROUETTE_ID = sleep_PIROUETTE_ID 1 in
        let rec sending_PIROUETTE_ID =
          print_sending_PIROUETTE_ID "M sending to D..." in
-       let rec _unit_27 =
-         let val_26 = inbox_PIROUETTE_ID in
+       let rec _unit_26 =
+         let val_25 = inbox_PIROUETTE_ID in
          match Lwt_main.run
                  (Send_receive.send_message ~location:"D"
-                    ~data:(Marshal.to_string val_26 []))
+                    ~data:(Marshal.to_string val_25 []))
          with
          | Ok () -> ()
          | Error msg -> failwith ("Send error: " ^ msg) in

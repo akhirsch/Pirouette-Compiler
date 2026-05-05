@@ -124,17 +124,17 @@ let () =
          print_waiting_PIROUETTE_ID "I waiting on P..." in
        let rec inbox_PIROUETTE_ID =
          Marshal.from_string (Send_receive.receive_message ~location:"I") 0 in
-       let rec nap_PIROUETTE_ID = () in
+       let rec nap_PIROUETTE_ID = sleep_PIROUETTE_ID 1 in
        let rec received_PIROUETTE_ID =
          print_done_PIROUETTE_ID "I received from P!" in
        let rec nap_PIROUETTE_ID = sleep_PIROUETTE_ID 1 in
        let rec sending_PIROUETTE_ID =
          print_sending_PIROUETTE_ID "I sending to N..." in
-       let rec _unit_19 =
-         let val_18 = inbox_PIROUETTE_ID in
+       let rec _unit_18 =
+         let val_17 = inbox_PIROUETTE_ID in
          match Lwt_main.run
                  (Send_receive.send_message ~location:"N"
-                    ~data:(Marshal.to_string val_18 []))
+                    ~data:(Marshal.to_string val_17 []))
          with
          | Ok () -> ()
          | Error msg -> failwith ("Send error: " ^ msg) in

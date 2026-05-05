@@ -124,7 +124,7 @@ let () =
          print_waiting_PIROUETTE_ID "D waiting on M..." in
        let rec inbox_PIROUETTE_ID =
          Marshal.from_string (Send_receive.receive_message ~location:"D") 0 in
-       let rec nap_PIROUETTE_ID = sleep_PIROUETTE_ID () in
+       let rec nap_PIROUETTE_ID = sleep_PIROUETTE_ID 1 in
        let rec received_PIROUETTE_ID =
          print_done_PIROUETTE_ID "D received from M!" in
        let rec nap_PIROUETTE_ID = sleep_PIROUETTE_ID 1 in

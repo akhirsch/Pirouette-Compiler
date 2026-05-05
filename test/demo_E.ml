@@ -119,7 +119,6 @@ let () =
      let rec exit_hook_PIROUETTE_ID arg = at_exit arg in
      let rec main_PIROUETTE_ID =
        let rec idle_PIROUETTE_ID = print_idle_PIROUETTE_ID "[E] idle" in
-       let rec _unit_11 = sleep_PIROUETTE_ID () in
        let rec nap_PIROUETTE_ID = sleep_PIROUETTE_ID 1 in
        let rec waiting_PIROUETTE_ID =
          print_waiting_PIROUETTE_ID "E waiting on N..." in
