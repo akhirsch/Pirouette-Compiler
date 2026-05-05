@@ -97,8 +97,8 @@ let handler _socket _request body =
       Cohttp_eio.Server.respond_string ~status:`Precondition_failed
         ~body:"Error message - Sender location not found" ()
   | Some unwrapped_sender_location -> (
-      Printf.printf "Handler received message from %s\n%!"
-        unwrapped_sender_location;
+      (* Printf.printf "Handler received message from %s\n%!"
+        unwrapped_sender_location; *)
       let indexed_queue =
         Hashtbl.find_opt message_queues unwrapped_sender_location
       in
