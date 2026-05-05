@@ -25,4 +25,10 @@ main :=
   let A.final := [M] M.inbox ~> A; in
   let M.done := M.print_done M."[M] done"; in
   let A.done2 := A.print_done A."[A] received! done"; in
+  
+  let A.final := A.print_done A."[A] Complete! Message passed through all nodes."; in
+  let G.fin := [A] A.final ~> G; in
+  let G.done2 := G.print_done G."[G] Complete!"; in
+  let M.fin := [A] A.final ~> M; in
+  let M.done2 := M.print_done M."[M] Complete!"; in
   A.();
