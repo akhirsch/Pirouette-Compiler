@@ -118,8 +118,8 @@ let rec ast_choreo_type_alpha_rename :
           metadata )
   | TVar (Typ_Id (type_name, type_metadata), metadata) ->
       TVar (Typ_Id (type_name ^ suffix, type_metadata), metadata)
-  | TMap (typ1, typ2, metadata) ->
-      TMap
+  | TFun (typ1, typ2, metadata) ->
+      TFun
         ( ast_choreo_type_alpha_rename typ1,
           ast_choreo_type_alpha_rename typ2,
           metadata )

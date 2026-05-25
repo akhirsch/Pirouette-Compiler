@@ -29,7 +29,8 @@
   import_tests
   core_test_choreo
   core_test
-  dotgen_testcases)
+  dotgen_testcases
+  netgen_test)
  (libraries
   ounit2
   parsing
@@ -42,7 +43,8 @@
   ocamlgen
   cohttp-lwt-unix
   logs
-  import_resolver)
+  import_resolver
+  netgen)
  (preprocess
   (pps bisect_ppx ppxlib.metaquot))
  (deps

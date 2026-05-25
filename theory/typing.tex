@@ -264,7 +264,7 @@
 
               The functionality of \highlighttexttt{unify\_choreo} is the same as the local version,
               the only difference is that the \highlighttexttt{unify\_choreo} can handle the choreographic
-              \highlighttexttt{TMaps} type which is used to represent the type of the function.
+              \highlighttexttt{TFuns} type which is used to represent the type of the function.
         \item \textbf{apply\_subst\_typ\_local \& apply\_subst\_typ\_choreo}\\
               \texttt{: local\_subst -> Local.typ -> Local.typ \&\\ choreo\_subst -> Choreo.typ -> Choreo.typ}\\
               \highlighttexttt{apply\_subst\_typ\_local subst typ} apply the substitution \highlighttexttt{subst} to the type \highlighttexttt{typ},
@@ -274,7 +274,7 @@
               it solve the constraints on the types of expressions by traversing the substitution and apply all occurence of the type variable to the type.
 
               The functionality of \highlighttexttt{apply\_subst\_typ\_choreo} is the same as the local version,
-              the only difference is that the \highlighttexttt{apply\_subst\_typ\_choreo} can handle the choreographic \highlighttexttt{TMaps} type.
+              the only difference is that the \highlighttexttt{apply\_subst\_typ\_choreo} can handle the choreographic \highlighttexttt{TFuns} type.
 
         \item \textbf{apply\_subst\_ctx\_local \& apply\_subst\_ctx\_choreo}\\
               \texttt{: local\_subst -> local\_ctx -> local\_ctx \&\\ choreo\_subst -> choreo\_ctx -> choreo\_ctx}\\
@@ -383,13 +383,13 @@
                   The reason we use \href{https://ocaml.org/manual/5.2/api/List.html#VALfold_right}{\highlighttexttt[orange]{List.fold\_right}} is that the
                   function type in functional programming is right-associative, so we need to combine the type of the input arguments with the return type of the function body from right to left.
                   For example, the function type of \texttt{int -> bool -> string -> int} is \texttt{int -> (bool -> (string -> int))}.
-                  And we use the \texttt{Choreo.TMaps} type to represent the function type, so \texttt{int -> (bool -> (string -> int))}
-                  would be represented as \texttt{TMaps (int, TMaps (bool, TMaps (string, int)))}.
+                  And we use the \texttt{Choreo.TFuns} type to represent the function type, so \texttt{int -> (bool -> (string -> int))}
+                  would be represented as \texttt{TFuns (int, TFuns (bool, TFuns (string, int)))}.
             \item \textbf{Function Application} \texttt{Choreo.FunApp (func, param)}\\
                   The type of the function application is the return type of the function.
                   We first infer the type of the function and parameter by \highlighttexttt{infer\_choreo\_expr}.
                   After we rewrite the type of the function by applying the combined substitution to the function type,
-                  we need to check if the type of the function is a \texttt{TMaps} type, if not we raise an expected function type exception.
+                  we need to check if the type of the function is a \texttt{TFuns} type, if not we raise an expected function type exception.
                   We then unify the type of the parameter with the input type of the function by \highlighttexttt{unify\_choreo},
                   and return the return type of the function as the type of the function application with the combination of all substitutions.
         \end{itemize}

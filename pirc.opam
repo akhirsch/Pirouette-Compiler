@@ -11,7 +11,6 @@ doc: "https://dl.acm.org/doi/10.1145/3498684"
 bug-reports:
   "https://github.com/Foundations-of-Decentralization-Group/Pirouette-Compiler/issues"
 depends: [
-  "lwt" {build}
   "eio_main" {build}
   "cohttp-eio" {build}
   "cohttp-lwt-unix" {build}

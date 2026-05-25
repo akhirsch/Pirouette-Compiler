@@ -4,7 +4,7 @@ module M = struct
   type 'a typ =
     | TUnit of 'a
     | TLoc of 'a Local.loc_id * 'a Local.typ * 'a
-    | TMap of 'a typ * 'a typ * 'a
+    | TFun of 'a typ * 'a typ * 'a
     | TProd of 'a typ * 'a typ * 'a
     | TSum of 'a typ * 'a typ * 'a
     | TForeign of 'a Local.typ_id * 'a
@@ -59,7 +59,7 @@ struct
   let get_info_typ : typ -> Info.t = function
     | TUnit i -> i
     | TLoc (_, _, i) -> i
-    | TMap (_, _, i) -> i
+    | TFun (_, _, i) -> i
     | TProd (_, _, i) -> i
     | TSum (_, _, i) -> i
     | TForeign (_, i) -> i
@@ -96,7 +96,7 @@ struct
    fun i -> function
     | TUnit _ -> TUnit i
     | TLoc (loc, t, _) -> TLoc (loc, t, i)
-    | TMap (t1, t2, _) -> TMap (t1, t2, i)
+    | TFun (t1, t2, _) -> TFun (t1, t2, i)
     | TProd (t1, t2, _) -> TProd (t1, t2, i)
     | TSum (t1, t2, _) -> TSum (t1, t2, i)
     | TForeign (t, _) -> TForeign (t, i)

@@ -259,7 +259,7 @@ choreo_type:
   | UNIT_T { TUnit (gen_pos $startpos $endpos) }
   | id=loc_id DOT t=local_type { TLoc (id, t, gen_pos $startpos $endpos) }
   | constructors=nonempty_list(choreo_constructor_def) { Ast_core.Choreo.M.TVariant (constructors, gen_pos $startpos $endpos) }
-  | t1=choreo_type ARROW t2=choreo_type { TMap (t1, t2, gen_pos $startpos $endpos) }
+  | t1=choreo_type ARROW t2=choreo_type { TFun (t1, t2, gen_pos $startpos $endpos) }
   | t1=choreo_type TIMES t2=choreo_type { TProd (t1, t2, gen_pos $startpos $endpos) }
   | t1=choreo_type PLUS t2=choreo_type { TSum (t1, t2, gen_pos $startpos $endpos) }
   | LPAREN t=choreo_type RPAREN { Choreo.set_info_typ (gen_pos $startpos $endpos) t }

@@ -29,6 +29,7 @@ let main_suite =
          Core_test.loc_suite;
          Core_test.choreo_suite;
          Dotast_test.suite;
+         Netgen_test.suite;
        ]
 
 let () =

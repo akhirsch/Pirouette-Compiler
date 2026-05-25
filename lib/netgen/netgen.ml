@@ -3,6 +3,7 @@ module Choreo = Ast_core.Choreo.M
 module Net = Ast_core.Net.M
 
 let _m = Obj.magic () (* dummy metainfo to make the types work *)
+let ( let* ) = Option.bind
 
 (* Use this list to create a whitelist of locations/agents/domains that will NOT have type information for their variables erased when compiling for other locations/agents/domains*)
 let _whitelisted_locs = [ "PIRSTDLIBLOC" ]
@@ -16,10 +17,9 @@ let rec merge_net_stmt (stmt : 'a Net.stmt) (stmt' : 'a Net.stmt) :
       Some (Decl (p, t, _m))
   | TypeDecl (id, t, _), TypeDecl (id', t', _) when id = id' && t = t' ->
       Some (TypeDecl (id, t, _m))
-  | Assign (p, e, _), Assign (p', e', _) when p = p' -> (
-      match merge_net_expr e e' with
-      | Some e -> Some (Assign (p, e, _m))
-      | None -> None)
+  | Assign (p, e, _), Assign (p', e', _) when p = p' ->
+      let* e = merge_net_expr e e' in
+      Some (Net.Assign (p, e, _m))
   | _ -> None
 
 and merge_net_expr (expr : 'a Net.expr) (expr' : 'a Net.expr) :
@@ -32,27 +32,22 @@ and merge_net_expr (expr : 'a Net.expr) (expr' : 'a Net.expr) :
       match (merge_net_expr e1 e1', merge_net_expr e2 e2') with
       | Some e1, Some e2 -> Some (Pair (e1, e2, _m))
       | _ -> None)
-  | Fst (e, _), Fst (e', _) -> (
-      match merge_net_expr e e' with
-      | Some e -> Some (Fst (e, _m))
-      | None -> None)
-  | Snd (e, _), Snd (e', _) -> (
-      match merge_net_expr e e' with
-      | Some e -> Some (Snd (e, _m))
-      | None -> None)
-  | Left (e, _), Left (e', _) -> (
-      match merge_net_expr e e' with
-      | Some e -> Some (Left (e, _m))
-      | None -> None)
-  | Right (e, _), Right (e', _) -> (
-      match merge_net_expr e e' with
-      | Some e -> Some (Right (e, _m))
-      | None -> None)
+  | Fst (e, _), Fst (e', _) ->
+      let* e = merge_net_expr e e' in
+      Some (Net.Fst (e, _m))
+  | Snd (e, _), Snd (e', _) ->
+      let* e = merge_net_expr e e' in
+      Some (Net.Snd (e, _m))
+  | Left (e, _), Left (e', _) ->
+      let* e = merge_net_expr e e' in
+      Some (Net.Left (e, _m))
+  | Right (e, _), Right (e', _) ->
+      let* e = merge_net_expr e e' in
+      Some (Net.Right (e, _m))
   | Send (e1, LocId (loc, _), _), Send (e2, LocId (loc', _), _) when loc = loc'
-    -> (
-      match merge_net_expr e1 e2 with
-      | Some e -> Some (Send (e, LocId (loc, _m), _m))
-      | None -> None)
+    ->
+      let* e = merge_net_expr e1 e2 in
+      Some (Net.Send (e, LocId (loc, _m), _m))
   | Recv (LocId (loc, _), _), Recv (LocId (loc', _), _) when loc = loc' ->
       Some (Recv (LocId (loc, _m), _m))
   | FunDef (p, e, _), FunDef (p', e', _) when p = p' && e = e' ->
@@ -65,7 +60,7 @@ and merge_net_expr (expr : 'a Net.expr) (expr' : 'a Net.expr) :
       match (merge_net_expr e2 e2', merge_net_expr e3 e3') with
       | Some e2, Some e3 -> Some (If (e1, e2, e3, _m))
       | _ -> None)
-  | Let (stmts, e, _), Let (stmts', e', _) -> (
+  | Let (stmts, e, _), Let (stmts', e', _) ->
       if List.length stmts <> List.length stmts' then None
       else
         let merged_stmts =
@@ -82,12 +77,9 @@ and merge_net_expr (expr : 'a Net.expr) (expr' : 'a Net.expr) :
               (Some []) stmts stmts'
           with Not_matched -> None
         in
-        match merged_stmts with
-        | Some stmts -> (
-            match merge_net_expr e e' with
-            | Some e -> Some (Let (List.rev stmts, e, _m))
-            | None -> None)
-        | None -> None)
+        let* stmts = merged_stmts in
+        let* e = merge_net_expr e e' in
+        Some (Net.Let (List.rev stmts, e, _m))
   | Match (e, cases, _), Match (e', cases', _) when e = e' -> (
       let cases1_tbl = Hashtbl.create (List.length cases) in
       List.iter (fun (p, e) -> Hashtbl.add cases1_tbl p e) cases;
@@ -107,10 +99,9 @@ and merge_net_expr (expr : 'a Net.expr) (expr' : 'a Net.expr) :
              (e, Hashtbl.fold (fun p e acc -> (p, e) :: acc) cases1_tbl [], _m))
       with Not_matched -> None)
   | ChooseFor (l, LocId (loc, _), e, _), ChooseFor (l', LocId (loc', _), e', _)
-    when l = l' && loc = loc' -> (
-      match merge_net_expr e e' with
-      | Some e -> Some (ChooseFor (l, LocId (loc, _m), e, _m))
-      | None -> None)
+    when l = l' && loc = loc' ->
+      let* e = merge_net_expr e e' in
+      Some (Net.ChooseFor (l, LocId (loc, _m), e, _m))
   | ( AllowChoice (LocId (loc, _), choices, _),
       AllowChoice (LocId (loc', _), choices', _) )
     when loc = loc' ->
@@ -139,7 +130,7 @@ let rec epp_choreo_type (typ : 'a Choreo.typ) (loc : string) : 'a Net.typ =
       (* If the location of the type is the location of the domain, or the location of the type is whitelisted e.g. in the case of the stdlib providing functions where type info should be shown to all other domains, keep type info*)
       if List.mem loc1 whitelisted_locs || loc1 = loc then TLoc (locid, t1, _m)
       else TUnit _m
-  | TMap (t1, t2, _) -> TMap (epp_choreo_type t1 loc, epp_choreo_type t2 loc, _m)
+  | TFun (t1, t2, _) -> TFun (epp_choreo_type t1 loc, epp_choreo_type t2 loc, _m)
   | TProd (t1, t2, _) ->
       TProd (epp_choreo_type t1 loc, epp_choreo_type t2 loc, _m)
   | TSum (t1, t2, _) -> TSum (epp_choreo_type t1 loc, epp_choreo_type t2 loc, _m)
@@ -190,11 +181,6 @@ and epp_choreo_expr (expr : 'a Choreo.expr) (loc : string) : 'a Net.expr =
       | Default _m :: _ -> FunDef ([ Default _m ], epp_choreo_expr e loc, _m)
       | _ -> FunDef (epp_ps, epp_choreo_expr e loc, _m))
   | FunApp (e1, e2, _) -> (
-      (* let e1' = epp_choreo_expr e1 loc in *)
-      (* let e2' = epp_choreo_expr e2 loc in *)
-      (* (match e1', e2' with *)
-      (*  | Unit _, _ | _, Unit _ -> Unit _m *)
-      (*  | _ -> FunApp (e1', e2', _m)) *)
       let epp_e1 = epp_choreo_expr e1 loc in
       match epp_e1 with
       | Unit _m -> Unit _m
@@ -244,9 +230,8 @@ and epp_choreo_expr (expr : 'a Choreo.expr) (loc : string) : 'a Net.expr =
         | (_, case_e) :: rest ->
             List.fold_left
               (fun acc (_, e) ->
-                match acc with
-                | Some e' -> merge_net_expr e' (epp_choreo_expr e loc)
-                | None -> None)
+                let* e' = acc in
+                merge_net_expr e' (epp_choreo_expr e loc))
               (Some (epp_choreo_expr case_e loc))
               rest
       in

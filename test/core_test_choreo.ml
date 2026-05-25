@@ -93,12 +93,12 @@ let test_get_info_tvar_CH (meta : int) =
   let typ_var = Choreo.M.TVar (val_id, meta) in
   assert_equal meta (ChoreoAst.get_info_typ typ_var)
 
-let test_get_info_tmap_CH (meta1 : int) (meta2 : int) =
+let test_get_info_tfun_CH (meta1 : int) (meta2 : int) =
   let m1 = Choreo.M.Typ_Id ("m1", meta1) in
   let val1 = Choreo.M.TVar (m1, meta1) in
   let m2 = Choreo.M.Typ_Id ("m2", meta2) in
   let val2 = Choreo.M.TVar (m2, meta2) in
-  let typ_var = Choreo.M.TMap (val1, val2, meta1) in
+  let typ_var = Choreo.M.TFun (val1, val2, meta1) in
   assert_equal (ChoreoAst.get_info_typ typ_var) meta1
 
 let test_get_info_tprod_CH (meta1 : int) (meta2 : int) =
@@ -252,12 +252,12 @@ let test_set_info_tvar_CH (old_meta : int) (new_meta : int) =
   let new_typ_var = ChoreoAst.set_info_typ new_meta old_typ_var in
   assert_equal new_meta (ChoreoAst.get_info_typ new_typ_var)
 
-let test_set_info_tmap_CH (old_meta1 : int) (old_meta2 : int) (new_meta : int) =
+let test_set_info_tfun_CH (old_meta1 : int) (old_meta2 : int) (new_meta : int) =
   let m1 = Choreo.M.Typ_Id ("m1", old_meta1) in
   let val1 = Choreo.M.TVar (m1, old_meta1) in
   let m2 = Choreo.M.Typ_Id ("m2", old_meta2) in
   let val2 = Choreo.M.TVar (m2, old_meta2) in
-  let old_typ_var = Choreo.M.TMap (val1, val2, old_meta1) in
+  let old_typ_var = Choreo.M.TFun (val1, val2, old_meta1) in
   let new_typ_var = ChoreoAst.set_info_typ new_meta old_typ_var in
   assert_equal (ChoreoAst.get_info_typ new_typ_var) new_meta
 
@@ -462,7 +462,7 @@ let suite =
                 ("test_get_info_tunit_CH" >:: fun _ -> test_get_info_tunit_CH 1);
                 ("test_get_info_tloc_CH" >:: fun _ -> test_get_info_tloc_CH 1);
                 ("test_get_info_tvar_CH" >:: fun _ -> test_get_info_tvar_CH 1);
-                ("test_get_info_tmap_CH" >:: fun _ -> test_get_info_tmap_CH 1 2);
+                ("test_get_info_tfun_CH" >:: fun _ -> test_get_info_tfun_CH 1 2);
                 ( "test_get_info_tprod_CH" >:: fun _ ->
                   test_get_info_tprod_CH 1 2 );
                 ("test_get_info_tsum_CH" >:: fun _ -> test_get_info_tsum_CH 1 2);
@@ -499,8 +499,8 @@ let suite =
                   test_set_info_tunit_CH 3 4 );
                 ("test_set_info_tloc_CH" >:: fun _ -> test_set_info_tloc_CH 3 4);
                 ("test_set_info_tvar_CH" >:: fun _ -> test_set_info_tvar_CH 3 4);
-                ( "test_set_info_tmap_CH" >:: fun _ ->
-                  test_set_info_tmap_CH 3 4 5 );
+                ( "test_set_info_tfun_CH" >:: fun _ ->
+                  test_set_info_tfun_CH 3 4 5 );
                 ( "test_set_info_tprod_CH" >:: fun _ ->
                   test_set_info_tprod_CH 3 4 5 );
                 ( "test_set_info_tsum_CH" >:: fun _ ->
