@@ -175,9 +175,9 @@ let rec jsonify_choreo_type = function
               [ ("loc", `String loc); ("local_type", jsonify_local_type t) ] );
         ]
   | Choreo.TVar (Typ_Id (id, _), _) -> `String id
-  | Choreo.TMap (t1, t2, _) ->
+  | Choreo.TFun (t1, t2, _) ->
       `Assoc
-        [ ("TMap", `List [ jsonify_choreo_type t1; jsonify_choreo_type t2 ]) ]
+        [ ("TFun", `List [ jsonify_choreo_type t1; jsonify_choreo_type t2 ]) ]
   | Choreo.TProd (t1, t2, _) ->
       `Assoc
         [ ("TProd", `List [ jsonify_choreo_type t1; jsonify_choreo_type t2 ]) ]
@@ -410,8 +410,8 @@ let rec jsonify_net_type = function
             `Assoc
               [ ("loc", `String loc); ("local_type", jsonify_local_type t) ] );
         ]
-  | Net.TMap (t1, t2, _) ->
-      `Assoc [ ("TMap", `List [ jsonify_net_type t1; jsonify_net_type t2 ]) ]
+  | Net.TFun (t1, t2, _) ->
+      `Assoc [ ("TFun", `List [ jsonify_net_type t1; jsonify_net_type t2 ]) ]
   | Net.TProd (t1, t2, _) ->
       `Assoc [ ("TProd", `List [ jsonify_net_type t1; jsonify_net_type t2 ]) ]
   | Net.TSum (t1, t2, _) ->

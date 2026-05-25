@@ -78,7 +78,7 @@ and unify_choreo t1 t2 : choreo_subst =
       if t = Choreo.TVar (Choreo.Typ_Id (var_name, m), m) then []
       else if occurs_in_choreo var_name t then failwith "Occurs check failed"
       else [ (var_name, t) ]
-  | Choreo.TMap (t1a, t1b, _), Choreo.TMap (t2a, t2b, _)
+  | Choreo.TFun (t1a, t1b, _), Choreo.TFun (t2a, t2b, _)
   | Choreo.TProd (t1a, t1b, _), Choreo.TProd (t2a, t2b, _)
   | Choreo.TSum (t1a, t1b, _), Choreo.TSum (t2a, t2b, _) ->
       let s1 = unify_choreo t1a t2a in
@@ -138,7 +138,7 @@ and occurs_in_choreo var_name t2 =
   | Choreo.TUnit _ -> false
   | Choreo.TLoc (_, t, _) -> occurs_in_local var_name t
   | Choreo.TVar (Choreo.Typ_Id (var_name', _), _) -> var_name = var_name'
-  | Choreo.TMap (t1, t2, _) | Choreo.TProd (t1, t2, _) | Choreo.TSum (t1, t2, _)
+  | Choreo.TFun (t1, t2, _) | Choreo.TProd (t1, t2, _) | Choreo.TSum (t1, t2, _)
     ->
       occurs_in_choreo var_name t1 || occurs_in_choreo var_name t2
   | Choreo.TVariant (_, _) -> failwith "Type of patterns are not sum types"
@@ -174,8 +174,8 @@ and apply_subst_typ_choreo s t =
       Choreo.TLoc (loc, apply_subst_typ_local (get_local_subst s loc) t, m)
   | Choreo.TVar (Choreo.Typ_Id (var_name, _), _) -> (
       match List.assoc_opt var_name s with Some t' -> t' | None -> t)
-  | Choreo.TMap (t1, t2, _) ->
-      Choreo.TMap (apply_subst_typ_choreo s t1, apply_subst_typ_choreo s t2, m)
+  | Choreo.TFun (t1, t2, _) ->
+      Choreo.TFun (apply_subst_typ_choreo s t1, apply_subst_typ_choreo s t2, m)
   | Choreo.TProd (t1, t2, _) ->
       Choreo.TProd (apply_subst_typ_choreo s t1, apply_subst_typ_choreo s t2, m)
   | Choreo.TSum (t1, t2, _) ->
@@ -592,7 +592,7 @@ and infer_choreo_expr choreo_ctx (global_ctx : global_ctx) = function
       let t_body' = apply_subst_typ_choreo s_comp t_body in
       ( compose_subst_choreo s1 s2,
         List.fold_right
-          (fun t_in t_out -> Choreo.TMap (t_in, t_out, m))
+          (fun t_in t_out -> Choreo.TFun (t_in, t_out, m))
           t_args t_body' )
   | Choreo.FunApp (func, param, _) -> (
       let s1, func_typ = infer_choreo_expr choreo_ctx global_ctx func in
@@ -604,7 +604,7 @@ and infer_choreo_expr choreo_ctx (global_ctx : global_ctx) = function
       let s_comp = compose_subst_choreo s1 s2 in
       let func_typ' = apply_subst_typ_choreo s_comp func_typ in
       match func_typ' with
-      | Choreo.TMap (func_in, func_out, _) ->
+      | Choreo.TFun (func_in, func_out, _) ->
           (*if function type is correct and param type is correct, then everything is correct*)
           let s3 = unify_choreo func_in param_typ in
           let final_s = compose_subst_choreo s_comp s3 in

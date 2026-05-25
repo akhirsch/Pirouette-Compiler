@@ -171,7 +171,7 @@ let test_foreigndecl_with_locs () =
   let bob = Local.M.LocId ("Bob", 1) in
   let t_in = Choreo.M.TLoc (alice, Local.M.TInt 1, 1) in
   let t_out = Choreo.M.TLoc (bob, Local.M.TString 1, 1) in
-  let typ = Choreo.M.TMap (t_in, t_out, 1) in
+  let typ = Choreo.M.TFun (t_in, t_out, 1) in
   let stmt = Choreo.M.ForeignDecl (var_id, typ, "f", 1) in
   let result = Ast_utils.extract_locs [ stmt ] in
   assert_equal [ "Alice"; "Bob" ] (List.sort String.compare result)

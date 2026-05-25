@@ -59,10 +59,10 @@ module M : sig
               in
               alice_int
             ]} *)
-    | TMap of 'a typ * 'a typ * 'a
+    | TFun of 'a typ * 'a typ * 'a
         (** Function type
 
-            {b Internal AST Structure:} [TMap(domain, codomain, metadata)]
+            {b Internal AST Structure:} [TFun(domain, codomain, metadata)]
 
             {b Pirouette Syntax:}
             {[
@@ -71,7 +71,7 @@ module M : sig
 
             {b OCaml AST Construction:}
             {[
-              let int_to_string = TMap (TInt (), TString (), ()) in
+              let int_to_string = TFun (TInt (), TString (), ()) in
               int_to_string
             ]} *)
     | TProd of 'a typ * 'a typ * 'a

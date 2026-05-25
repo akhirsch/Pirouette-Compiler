@@ -414,7 +414,7 @@ let rec dot_choreo_type (string_of_info : 'a -> string) (typ : 'a Choreo.typ) :
   | TVar (Typ_Id (id, _), info) ->
       ( spf "%s [label=\"TVar %s %s\"];\n" node_name id (string_of_info info),
         node_name )
-  | TMap (typ1, typ2, info) ->
+  | TFun (typ1, typ2, info) ->
       let c1, n1 = dot_choreo_type string_of_info typ1 in
       let c2, n2 = dot_choreo_type string_of_info typ2 in
       let send_node =

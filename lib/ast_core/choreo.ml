@@ -7,7 +7,7 @@ module M = struct
     | TUnit of 'a
     | TLoc of 'a Local.loc_id * 'a Local.typ * 'a
     | TVar of 'a typ_id * 'a
-    | TMap of 'a typ * 'a typ * 'a
+    | TFun of 'a typ * 'a typ * 'a
     | TProd of 'a typ * 'a typ * 'a
     | TSum of 'a typ * 'a typ * 'a
     | TForeign of 'a typ_id * 'a
@@ -88,7 +88,7 @@ struct
     | TUnit i -> i
     | TLoc (_, _, i) -> i
     | TVar (_, i) -> i
-    | TMap (_, _, i) -> i
+    | TFun (_, _, i) -> i
     | TProd (_, _, i) -> i
     | TSum (_, _, i) -> i
     | TForeign (_, i) ->
@@ -144,7 +144,7 @@ struct
     | TUnit _ -> TUnit i
     | TLoc (loc, typ, _) -> TLoc (loc, typ, i)
     | TVar (t, _) -> TVar (t, i)
-    | TMap (t1, t2, _) -> TMap (t1, t2, i)
+    | TFun (t1, t2, _) -> TFun (t1, t2, i)
     | TProd (t1, t2, _) -> TProd (t1, t2, i)
     | TSum (t1, t2, _) -> TSum (t1, t2, i)
     | TForeign (t, _) -> TForeign (t, i)

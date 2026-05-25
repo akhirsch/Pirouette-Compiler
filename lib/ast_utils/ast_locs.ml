@@ -15,7 +15,7 @@ let rec extract_type : 'a Choreo.typ -> LocSet.t = function
   | TUnit _ -> LocSet.empty
   | TLoc (LocId (id, _), _, _) -> LocSet.singleton id
   | TVar (Typ_Id (id, _), _) -> LocSet.singleton id
-  | TMap (t1, t2, _) | TProd (t1, t2, _) | TSum (t1, t2, _) ->
+  | TFun (t1, t2, _) | TProd (t1, t2, _) | TSum (t1, t2, _) ->
       LocSet.union (extract_type t1) (extract_type t2)
   | TForeign (_, _) -> LocSet.empty
   | TVariant (constructors, _) ->
@@ -30,7 +30,7 @@ let rec extract_type : 'a Choreo.typ -> LocSet.t = function
 
 (* foreign types have no associated location*)
 (* extract_type is traversing a Choreo.typ to collect all the location identifiers (LocSet) 
-  ex: TLoc contributes a location, TMap/TProd/TSum recurse into their subtypes to find locations within them. 
+  ex: TLoc contributes a location, TFun/TProd/TSum recurse into their subtypes to find locations within them. 
   TForeign contributes nothing because a foreign type name is not a location and contains no locations *)
 
 let[@specialise] rec extract_stmt_block (stmts : 'a Choreo.stmt_block) =
