@@ -331,6 +331,56 @@ let test_change_int_LOC (old_int : 'a) (new_int : 'a) =
   let new_info = LocalAst.set_info_value new_int old_info in
   assert_equal new_int (LocalAst.get_info_value new_info)
 
+  (* Test set/get info on a TVariant type *)
+  let test_change_tvariant_LOC (old_meta : 'a) (new_meta : 'a) =
+    let old_info =
+      Local.M.TVariant (
+        [ { Local.M.name = TypId("MyConstructor", old_meta)
+          ; args = [ Local.M.TInt old_meta ; Local.M.TString old_meta ]
+          ; typ  = Local.M.TypId ("MyType", old_meta)
+          ; info = old_meta
+          } ],
+        old_meta)
+    in
+    let new_info = LocalAst.set_info_typ new_meta old_info in
+    assert_equal new_meta (LocalAst.get_info_typ new_info)
+  
+  (* Test set/get info on a constructor record directly *)
+  let test_change_constructor_LOC (old_meta : 'a) (new_meta : 'a) =
+    let old_info =
+      { Local.M.name = TypId("MyConstructor", old_meta)
+      ; args = [ Local.M.TInt old_meta ]
+      ; typ  = Local.M.TypId ("MyType", old_meta)
+      ; info = old_meta
+      }
+    in
+    let new_info = LocalAst.set_info_constructor new_meta old_info in
+    assert_equal new_meta (LocalAst.get_info_constructor new_info)
+  
+  (* Test set/get info on a PConstruct pattern *)
+  let test_change_pconstruct_pat_LOC (old_meta : 'a) (new_meta : 'a) =
+    let old_info =
+      Local.M.PConstruct (
+        TypId("MyConstructor", old_meta),
+        [ Local.M.Var (Local.M.VarId ("x", old_meta), old_meta) ],
+        Local.M.TypId ("MyType", old_meta),
+        old_meta)
+    in
+    let new_info = LocalAst.set_info_pattern new_meta old_info in
+    assert_equal new_meta (LocalAst.get_info_pattern new_info)
+  
+  (* Test set/get info on a Construct expression *)
+  let test_change_construct_expr_LOC (old_meta : 'a) (new_meta : 'a) =
+    let old_info =
+      Local.M.Construct (
+        TypId("MyConstructor", old_meta),
+        [ Local.M.Val (Local.M.Int (42, old_meta), old_meta) ],
+        Local.M.TypId ("MyType", old_meta),
+        old_meta)
+    in
+    let new_info = LocalAst.set_info_expr new_meta old_info in
+    assert_equal new_meta (LocalAst.get_info_expr new_info)
+
 (*-----------------------------------------------------------*)
 (* LOC Test Suite *)
 (*-----------------------------------------------------------*)
@@ -406,6 +456,14 @@ let loc_suite =
                 ("test_type_id 1 2" >:: fun _ -> test_type_id_LOC 1 2);
                 ("test_var_id 1 2" >:: fun _ -> test_var_id_LOC 1 2);
                 ("test_loc_id 1 2" >:: fun _ -> test_loc_id_LOC 1 2);
+                ( "test_change_tvariant 1 2" >:: fun _ ->
+                  test_change_tvariant_LOC 1 2 );
+                ( "test_change_tvariant 10 20" >:: fun _ ->
+                  test_change_tvariant_LOC 10 20 );
+                ( "test_change_constructor 1 2" >:: fun _ ->
+                  test_change_constructor_LOC 1 2 );
+                ( "test_change_constructor 10 20" >:: fun _ ->
+                  test_change_constructor_LOC 10 20 );
               ];
          "Pattern Tests"
          >::: [
@@ -419,6 +477,10 @@ let loc_suite =
                 ( "test_pattern_right 1 2" >:: fun _ ->
                   test_pattern_right_LOC 1 2 );
                 ("test_pattern_pair 1 2" >:: fun _ -> test_pattern_pair_LOC 1 2);
+                ( "test_pattern_pconstruct 1 2" >:: fun _ ->
+                  test_change_pconstruct_pat_LOC 1 2 );
+                ( "test_pattern_pconstruct 10 20" >:: fun _ ->
+                  test_change_pconstruct_pat_LOC 10 20 );
               ];
          "Expression Tests"
          >::: [
@@ -446,6 +508,10 @@ let loc_suite =
                   test_expression_match_LOC 1 2 );
                 ( "test_expression_pair 1 2" >:: fun _ ->
                   test_expression_pair_LOC 1 2 );
+                ( "test_expression_construct 1 2" >:: fun _ ->
+                  test_change_construct_expr_LOC 1 2 );
+                ( "test_expression_construct 10 20" >:: fun _ ->
+                  test_change_construct_expr_LOC 10 20 );
               ];
        ]
 
@@ -554,6 +620,58 @@ let test_get_info_tsum_CH (meta1 : int) (meta2 : int) =
 (*-----------------------------------------------------------*)
 (* CH Get Info Exp Tests *)
 (*-----------------------------------------------------------*)
+
+(* Test set/get info on a TVariant type *)
+let test_change_tvariant_CHOREO (old_meta : 'a) (new_meta : 'a) =
+  let old_info =
+    Choreo.M.TVariant (
+      [ { Choreo.M.name = TypId("MyConstructor", old_meta)
+        ; args = [ Choreo.M.TUnit old_meta ]
+        ; typ  = Local.M.TypId ("MyType", old_meta)
+        ; info = old_meta
+        } ],
+      old_meta)
+  in
+  let new_info = ChoreoAst.set_info_typ new_meta old_info in
+  assert_equal new_meta (ChoreoAst.get_info_typ new_info)
+
+(* Test set/get info on a constructor record directly *)
+let test_change_constructor_CHOREO (old_meta : 'a) (new_meta : 'a) =
+  let old_info =
+    { Choreo.M.name = TypId("MyConstructor", old_meta)
+    ; args = [ Choreo.M.TUnit old_meta ]
+    ; typ  = Local.M.TypId ("MyType", old_meta)
+    ; info = old_meta
+    }
+  in
+  let new_info = ChoreoAst.set_info_constructor new_meta old_info in
+  assert_equal new_meta (ChoreoAst.get_info_constructor new_info)
+
+(* Test set/get info on a PConstruct pattern *)
+let test_change_pconstruct_pat_CHOREO (old_meta : 'a) (new_meta : 'a) =
+  let old_info =
+    Choreo.M.PConstruct (
+      TypId("MyConstructor", old_meta),
+      [ Choreo.M.Var (Local.M.VarId ("x", old_meta), old_meta) ],
+      Local.M.TypId ("MyType", old_meta),
+      old_meta)
+  in
+  let new_info = ChoreoAst.set_info_pattern new_meta old_info in
+  assert_equal new_meta (ChoreoAst.get_info_pattern new_info)
+
+(* Test set/get info on a Construct expression *)
+let test_change_construct_expr_CHOREO (old_meta : 'a) (new_meta : 'a) =
+  let old_info =
+    Choreo.M.Construct (
+      TypId("MyConstructor", old_meta),
+      [ Choreo.M.Unit old_meta ],
+      Local.M.TypId ("MyType", old_meta),
+      old_meta)
+  in
+  let new_info = ChoreoAst.set_info_expr new_meta old_info in
+  assert_equal new_meta (ChoreoAst.get_info_expr new_info)
+
+
 let test_get_info_unit_CH (meta : int) =
   let typ_var = Choreo.M.Unit meta in
   assert_equal meta (ChoreoAst.get_info_expr typ_var)
@@ -889,6 +1007,10 @@ let choreo_suite =
                   test_pattern_locpat_CH 1 2 );
                 ("test_pattern_right_CH" >:: fun _ -> test_pattern_right_CH 1 2);
                 ("test_pattern_left_CH" >:: fun _ -> test_pattern_left_CH 1 2);
+                ( "test_pattern_pconstruct_CH 1 2" >:: fun _ ->
+                  test_change_pconstruct_pat_CHOREO 1 2 );
+                ( "test_pattern_pconstruct_CH 10 20" >:: fun _ ->
+                  test_change_pconstruct_pat_CHOREO 10 20 );
               ];
          "CH Get Info Typ Tests"
          >::: [
@@ -900,6 +1022,10 @@ let choreo_suite =
                 ( "test_get_info_tprod_CH" >:: fun _ ->
                   test_get_info_tprod_CH 1 2 );
                 ("test_get_info_tsum_CH" >:: fun _ -> test_get_info_tsum_CH 1 2);
+                ( "test_get_info_tvariant_CH 1 2" >:: fun _ ->
+                  test_change_tvariant_CHOREO 1 2 );
+                ( "test_get_info_tvariant_CH 10 20" >:: fun _ ->
+                  test_change_tvariant_CHOREO 10 20 );
               ];
          "CH Get Info Exp Tests"
          >::: [
@@ -924,6 +1050,10 @@ let choreo_suite =
                 ("test_get_info_right_CH" >:: fun _ -> test_get_info_right_CH 1);
                 ( "test_get_info_match_CH" >:: fun _ ->
                   test_get_info_match_CH 1 2 );
+                ( "test_get_info_construct_CH 1 2" >:: fun _ ->
+                  test_change_construct_expr_CHOREO 1 2 );
+                ( "test_get_info_construct_CH 10 20" >:: fun _ ->
+                  test_change_construct_expr_CHOREO 10 20 );
               ];
          "CH Set Info Typ Tests"
          >::: [
@@ -939,6 +1069,10 @@ let choreo_suite =
                   test_set_info_tprod_CH 3 4 5 );
                 ( "test_set_info_tsum_CH" >:: fun _ ->
                   test_set_info_tsum_CH 3 4 5 );
+                ( "test_set_info_tvariant_CH 3 4" >:: fun _ ->
+                  test_change_tvariant_CHOREO 3 4 );
+                ( "test_set_info_constructor_CH 3 4" >:: fun _ ->
+                  test_change_constructor_CHOREO 3 4 );
               ];
          "CH Set Info Exp Tests"
          >::: [
@@ -967,6 +1101,8 @@ let choreo_suite =
                   test_set_info_right_CH 3 4 );
                 ( "test_set_info_match_CH" >:: fun _ ->
                   test_set_info_match_CH 3 4 5 );
+                ( "test_set_info_construct_CH 3 4" >:: fun _ ->
+                  test_change_construct_expr_CHOREO 3 4 );
               ];
          "CH Get + Set Info Stmt Tests"
          >::: [

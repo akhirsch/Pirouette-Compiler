@@ -176,7 +176,7 @@ module M : sig
       ['a]. Patterns can match values distributed across multiple locations.*)
 
   and 'a constructor = {
-    name : string;
+    name : 'a Local.M.typ_id;
     args : 'a typ list;
     typ : 'a Local.M.typ_id;
     info : 'a;
@@ -293,7 +293,7 @@ module M : sig
               let right_x = Right (Var (var_id_x, ()), ()) in
               right_x
             ]}*)
-    | PConstruct of string * 'a pattern list * 'a Local.M.typ_id * 'a
+    | PConstruct of 'a Local.M.typ_id * 'a pattern list * 'a Local.M.typ_id * 'a
 
   (** {1 Choreographic Expressions}
 
@@ -630,7 +630,7 @@ module M : sig
               in
               match_expr
             ]} *)
-    | Construct of string * 'a expr list * 'a Local.M.typ_id * 'a
+    | Construct of 'a Local.M.typ_id * 'a expr list * 'a Local.M.typ_id * 'a
 
   (** {1 Choreographic Statements}
 
@@ -886,4 +886,6 @@ module With : functor
       [info].*)
 
   val set_info_constructor : Info.t -> constructor -> constructor
+
+  val get_info_constructor : constructor -> Info.t
 end

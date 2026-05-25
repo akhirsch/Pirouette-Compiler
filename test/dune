@@ -154,3 +154,10 @@
 ;  (libraries ounit2 ppxlib ast_core ocamlgen)
 ;  (preprocess
 ;   (pps ppxlib.metaquot)))
+
+
+;(test
+; (name prettyprint_test)
+; (modules prettyprint_test astutils_testcases)
+; (libraries ounit2 parsing ast_utils))
+

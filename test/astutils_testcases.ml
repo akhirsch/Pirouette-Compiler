@@ -127,28 +127,53 @@ let net_foreign_type_decl = "foreign type Int32;\n"
 let net_foreign_decl_with_foreign_type =
   "foreign type Int32;\nforeign myFunc : Int32 := \"Pet:feed\";\n"
 
+(* These tests are to ensure that variants can also have constructors which take multiple arguments *)
+let simple_with_args = 
+"type Operation := 
+| op : Operation , Operation;\n\n
+";;
+
+let simple_many_args = 
+"type Op := 
+| plus : Op , Op , Op , Op , Op;\n\n
+";;
+
+let simple_mixed_args = 
+"type operation := 
+| plus : Int , Int , String , Bool , operation;\n\n
+";;
+
+let nats = 
+"type nat := 
+| zero : nat;\n\n
+| suc : nat , nat;\n\n
+";;
+
+let multiple_constructors_with_args = 
+"type IntOp := 
+| plus : Int , Int , IntOp;\n\n
+| minus : Int , Int , IntOp;\n\n
+| multiply : Int , Int , IntOp;\n\n
+| negative : Int , IntOp;\n\n
+";;
+
+(* Variants should also allow for recursive constructors. This is a test for that functionality *)
+let recursive_variant_simple = 
+"type increment := 
+| zero : increment ;\n\n
+| add1 : increment , increment;\n\n
+";;
+
 (* Below are some poorly formatted variants. These should fail. *)
 
 let missing_constructor1 = "type X := ;"
 let missing_constructor2 = "type X := : X;"
 let missing_constructor_name = "type X := | : X;"
 let missing_type = "type X := | constructor;"
-
-(* let wrong_constructor_type = "type A := | constructor: B;";;
-let wrong_constructor_type = "type A := | constructor: B;";; *)
-(* let multiple_wrong_type1 = 
-  "type A := 
-  | constructor1: B;\n\n
-  | constructor2: A;\n\n
-  ";; *)
-
 let multiple_wrong_type1 =
   "type A := \n  | constructor1: A;\n\n\n  | constructor2: B;\n\n\n  "
-
-(*These tests below are edge cases that should not pass *)
 let duplicate_constructors =
   (* constructors can't have the same name *)
   "type Coin := \n| heads: Coin;\n\n\n| heads: Coin;\n\n\n"
-
 let type_constructor_same = "type Person := | Person : Person;"
 (* constructors and types can't have the same name *)

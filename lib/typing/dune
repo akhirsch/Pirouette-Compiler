@@ -1,4 +1,6 @@
 (library
  (name typing)
  (public_name pirc.typing)
- (libraries ast_core))
+ (libraries ast_core)
+ (instrumentation
+  (backend bisect_ppx)))

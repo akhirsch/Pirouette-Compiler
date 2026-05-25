@@ -122,6 +122,27 @@ and merge_net_expr (expr : 'a Net.expr) (expr' : 'a Net.expr) :
               Hashtbl.fold (fun l e acc -> (l, e) :: acc) tbl []),
              _m ))
       (* use list *)
+    | Construct (name, arglist, typ, _), Construct (name', arglist', typ', _)
+    when name = name' && typ = typ' ->
+    if List.length arglist <> List.length arglist' then None
+    else
+      let merged_args =
+        let exception Not_matched in
+        try
+          List.fold_left2
+            (fun acc e e' ->
+              match acc with
+              | Some acc -> (
+                  match merge_net_expr e e' with
+                  | Some e -> Some (e :: acc)
+                  | None -> raise Not_matched)
+              | None -> raise Not_matched)
+            (Some []) arglist arglist'
+        with Not_matched -> None
+      in
+      (match merged_args with
+      | Some args -> Some (Construct (name, List.rev args, typ, _m))
+      | None -> None)
   | _ -> None
 
 let rec epp_choreo_type (typ : 'a Choreo.typ) (loc : string) : 'a Net.typ =
@@ -134,6 +155,14 @@ let rec epp_choreo_type (typ : 'a Choreo.typ) (loc : string) : 'a Net.typ =
   | TProd (t1, t2, _) ->
       TProd (epp_choreo_type t1 loc, epp_choreo_type t2 loc, _m)
   | TSum (t1, t2, _) -> TSum (epp_choreo_type t1 loc, epp_choreo_type t2 loc, _m)
+  | TVariant (constructors, _) ->
+    TVariant (
+      List.map (fun { Choreo.name; args; typ; info = _ } ->
+        { Net.name; 
+          args = List.map (fun t -> epp_choreo_type t loc) args; 
+          typ; 
+          info = _m })
+      constructors, _m)
   | Choreo.TForeign (Choreo.Typ_Id (name, _), _) ->
       Net.TForeign (Local.TypId (name, _m), _m)
   (* TForeign has no location to project, but preserves the type name through to the net level.
@@ -245,7 +274,7 @@ and epp_choreo_expr (expr : 'a Choreo.expr) (loc : string) : 'a Net.expr =
                   (epp_choreo_pattern p loc, epp_choreo_expr e loc))
                 cases,
               _m ))
-  | _ -> Unit _m
+  | _ -> Unit _m (*PLACEHOLDER*)
 
 let epp_choreo_to_net stmt_block loc =
   List.map (fun stmt -> epp_choreo_stmt stmt loc) stmt_block
