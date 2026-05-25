@@ -1,4 +1,7 @@
 (library
  (name a_rname)
+ (public_name pirc.a_rname)
  (modules rename)
- (libraries ast_utils parsing netgen ocamlgen http_pirc lwt))
+ (libraries ast_utils parsing netgen ocamlgen http_pirc lwt)
+ (instrumentation
+  (backend bisect_ppx)))

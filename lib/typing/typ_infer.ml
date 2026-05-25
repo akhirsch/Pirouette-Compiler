@@ -38,6 +38,33 @@ let rec unify_local t1 t2 : local_subst =
           (apply_subst_typ_local s1 t2b)
       in
       s1 @ s2
+  | Local.TVariant (cla, _), Local.TVariant (clb, _) ->
+      if List.length cla <> List.length clb then
+        failwith "Variant constructor count mismatch"
+      else
+        List.fold_left2
+          (fun s_acc ca cb ->
+            if ca.Local.name <> cb.Local.name then
+              failwith "Variant constructor name mismatch"
+            else if List.length ca.Local.args <> List.length cb.Local.args then
+              failwith "Variant constructor arg count mismatch"
+            else
+              let s_args =
+                List.fold_left2
+                  (fun s a b ->
+                    compose_subst_local s
+                      (unify_local
+                         (apply_subst_typ_local s a)
+                         (apply_subst_typ_local s b)))
+                  s_acc ca.Local.args cb.Local.args
+              in
+              s_args)
+          [] cla clb
+        (* need to unravel constructor list, name, arg list, typ *)
+        (* unify the arg types, unify the variant type decl and the typ at the end *)
+  | ( Local.TForeign (Local.TypId (ft1, _), _),
+      Local.TForeign (Local.TypId (ft2, _), _) ) ->
+      if ft1 = ft2 then [] else failwith "Foreign type mismatch"
   | _ -> failwith "Unification failed"
 
 and unify_choreo t1 t2 : choreo_subst =
@@ -51,7 +78,7 @@ and unify_choreo t1 t2 : choreo_subst =
       if t = Choreo.TVar (Choreo.Typ_Id (var_name, m), m) then []
       else if occurs_in_choreo var_name t then failwith "Occurs check failed"
       else [ (var_name, t) ]
-  | Choreo.TMap (t1a, t1b, _), Choreo.TMap (t2a, t2b, _)
+  | Choreo.TFun (t1a, t1b, _), Choreo.TFun (t2a, t2b, _)
   | Choreo.TProd (t1a, t1b, _), Choreo.TProd (t2a, t2b, _)
   | Choreo.TSum (t1a, t1b, _), Choreo.TSum (t2a, t2b, _) ->
       let s1 = unify_choreo t1a t2a in
@@ -61,6 +88,32 @@ and unify_choreo t1 t2 : choreo_subst =
           (apply_subst_typ_choreo s1 t2b)
       in
       s1 @ s2
+  | Choreo.TVariant (cla, _), Choreo.TVariant (clb, _) ->
+      if List.length cla <> List.length clb then
+        failwith "Choreo variant constructor count mismatch"
+      else
+        List.fold_left2
+          (fun s_acc ca cb ->
+            if ca.Choreo.name <> cb.Choreo.name then
+              failwith "Choreo variant constructor name mismatch"
+            else if List.length ca.Choreo.args <> List.length cb.Choreo.args
+            then failwith "Choreo variant constructor arg count mismatch"
+            else
+              List.fold_left2
+                (fun s a b ->
+                  compose_subst_choreo s
+                    (unify_choreo
+                       (apply_subst_typ_choreo s a)
+                       (apply_subst_typ_choreo s b)))
+                s_acc ca.Choreo.args cb.Choreo.args)
+          [] cla clb
+  (* if id1 = id2 from typid*)
+  (* something *)
+  | ( Choreo.TForeign (Choreo.Typ_Id (ft1, _), _),
+      Choreo.TForeign (Choreo.Typ_Id (ft2, _), _) ) ->
+      if ft1 = ft2 then []
+      else failwith "Foreign type mismatch"
+        (* two foreign types unify only if they have the same name*)
   | _ -> failwith "Unification failed"
 
 (*occurs check: ensure t1 does not occur in t2*)
@@ -70,6 +123,14 @@ and occurs_in_local var_name t2 =
   | Local.TVar (Local.TypId (var_name', _), _) -> var_name = var_name'
   | Local.TProd (t2a, t2b, _) | Local.TSum (t2a, t2b, _) ->
       occurs_in_local var_name t2a || occurs_in_local var_name t2b
+  | Local.TVariant (cl, _) ->
+      List.exists
+        (fun c -> List.exists (occurs_in_local var_name) c.Local.args)
+        cl
+  (* someting *)
+  | Local.TForeign (_, _) -> false
+(* Foreign typescontain no type variables,
+   so a type variable can never occur inside one. *)
 
 (*occurs check for choreo*)
 and occurs_in_choreo var_name t2 =
@@ -77,9 +138,11 @@ and occurs_in_choreo var_name t2 =
   | Choreo.TUnit _ -> false
   | Choreo.TLoc (_, t, _) -> occurs_in_local var_name t
   | Choreo.TVar (Choreo.Typ_Id (var_name', _), _) -> var_name = var_name'
-  | Choreo.TMap (t1, t2, _) | Choreo.TProd (t1, t2, _) | Choreo.TSum (t1, t2, _)
+  | Choreo.TFun (t1, t2, _) | Choreo.TProd (t1, t2, _) | Choreo.TSum (t1, t2, _)
     ->
       occurs_in_choreo var_name t1 || occurs_in_choreo var_name t2
+  | Choreo.TVariant (_, _) -> failwith "Type of patterns are not sum types"
+  | Choreo.TForeign (_, _) -> false
 
 (*traverse the substitution list `s`, apply all occurences of subst to `t`*)
 and apply_subst_typ_local s t =
@@ -91,6 +154,17 @@ and apply_subst_typ_local s t =
       Local.TProd (apply_subst_typ_local s t1, apply_subst_typ_local s t2, m)
   | Local.TSum (t1, t2, _) ->
       Local.TSum (apply_subst_typ_local s t1, apply_subst_typ_local s t2, m)
+  | Local.TVariant (cl, _) ->
+      Local.TVariant
+        ( List.map
+            (fun c ->
+              {
+                c with
+                Local.args = List.map (apply_subst_typ_local s) c.Local.args;
+              })
+            cl,
+          m )
+  | Local.TForeign (typ_id, _) -> Local.TForeign (typ_id, m)
 
 (*apply substitution to a Choreo.typ*)
 and apply_subst_typ_choreo s t =
@@ -100,12 +174,23 @@ and apply_subst_typ_choreo s t =
       Choreo.TLoc (loc, apply_subst_typ_local (get_local_subst s loc) t, m)
   | Choreo.TVar (Choreo.Typ_Id (var_name, _), _) -> (
       match List.assoc_opt var_name s with Some t' -> t' | None -> t)
-  | Choreo.TMap (t1, t2, _) ->
-      Choreo.TMap (apply_subst_typ_choreo s t1, apply_subst_typ_choreo s t2, m)
+  | Choreo.TFun (t1, t2, _) ->
+      Choreo.TFun (apply_subst_typ_choreo s t1, apply_subst_typ_choreo s t2, m)
   | Choreo.TProd (t1, t2, _) ->
       Choreo.TProd (apply_subst_typ_choreo s t1, apply_subst_typ_choreo s t2, m)
   | Choreo.TSum (t1, t2, _) ->
       Choreo.TSum (apply_subst_typ_choreo s t1, apply_subst_typ_choreo s t2, m)
+  | Choreo.TVariant (cl, _) ->
+      Choreo.TVariant
+        ( List.map
+            (fun c ->
+              {
+                c with
+                Choreo.args = List.map (apply_subst_typ_choreo s) c.Choreo.args;
+              })
+            cl,
+          m )
+  | Choreo.TForeign (typ_id, _) -> Choreo.TForeign (typ_id, m)
 
 (*apply substitution to context*)
 and apply_subst_ctx_local subst ctx =
@@ -310,7 +395,29 @@ let rec infer_local_expr local_ctx = function
               [] typ_ls'
           in
           (compose_subst_local s_comp s3, List.hd typ_ls')
+          (* | _ -> failwith "not implemented" *)
       | _ -> failwith "Type of patterns are not sum types")
+  | _ -> failwith "Type of patterns are not sum types"
+(* | Local.Construct (name, args, Local.TypId (typ_name, _), _) ->
+    (* Look up the variant type declaration to find this constructor's expected arg types *)
+      let arg_types_inferred =
+        List.map (fun e ->
+          let s, t = infer_local_expr local_ctx e in
+          (s, t)
+        ) args
+      in
+      let s_combined =
+        List.fold_left
+          (fun s_acc (s, _) -> compose_subst_local s_acc s)
+          [] arg_types_inferred
+      in
+      let result_typ =
+        match List.assoc_opt typ_name local_ctx with
+        | Some t -> t
+        | None -> failwith ("Unknown variant type: " ^ typ_name)
+      in
+      (s_combined, apply_subst_typ_local s_combined result_typ)
+      | _ -> failwith "Type of patterns are not sum types") *)
 
 and typeof_Val = function
   | Int _ -> TInt m
@@ -341,6 +448,21 @@ and infer_local_pattern local_ctx = function
   | Local.Right (p, _) ->
       let s, t, ctx = infer_local_pattern local_ctx p in
       (s, Local.TSum (Local.TVar (Local.TypId (gen_ftv (), m), m), t, m), ctx)
+  (* | Local.PConstruct (name, pats, Local.TypId (typ_name, _), _) ->
+    let ls = List.map (infer_local_pattern local_ctx) pats in
+    let s_combined, t_list, ctx_combined =
+      List.fold_right
+        (fun (s, t, ctx) (s_acc, t_acc, ctx_acc) ->
+          (compose_subst_local s s_acc, t :: t_acc, ctx @ ctx_acc))
+        ls ([], [], [])
+    in
+    let result_typ =
+      match List.assoc_opt typ_name local_ctx with
+      | Some t -> apply_subst_typ_local s_combined t
+      | None -> failwith ("Unknown variant type in pattern: " ^ typ_name)
+    in
+    (s_combined, result_typ, ctx_combined) *)
+  | _ -> failwith "Type of patterns are not sum types"
 
 (* ============================== Choreo ============================== *)
 
@@ -372,8 +494,14 @@ let rec infer_choreo_stmt choreo_ctx global_ctx stmt :
           (List.map (apply_subst_typ_choreo s_comp) t_list')
       in
       (compose_subst_choreo s_comp s3, t1, ctx_list @ choreo_ctx)
-  | Choreo.TypeDecl (_typ_id, _choreo_typ, _) -> failwith "Not implemented"
-  | Choreo.ForeignDecl (_, _, _, _) -> failwith "Not implemented"
+  | Choreo.TypeDecl (Local.TypId (typ_name, _), typ, _) ->
+      ([], typ, (typ_name, typ) :: choreo_ctx)
+  | Choreo.ForeignDecl
+      (Local.VarId (var_name, _), choreo_typ, _foreign_symbol, _) ->
+      ([], choreo_typ, (var_name, choreo_typ) :: choreo_ctx)
+  | Choreo.ForeignTypeDecl (_, _) -> ([], Choreo.TUnit m, choreo_ctx)
+  | ImportDecl (_, _) ->
+      failwith "ImportDecl should have been resolved before this pass"
 
 and infer_choreo_stmt_block choreo_ctx global_ctx stmts :
     choreo_subst * ftv Choreo.typ * choreo_ctx =
@@ -464,7 +592,7 @@ and infer_choreo_expr choreo_ctx (global_ctx : global_ctx) = function
       let t_body' = apply_subst_typ_choreo s_comp t_body in
       ( compose_subst_choreo s1 s2,
         List.fold_right
-          (fun t_in t_out -> Choreo.TMap (t_in, t_out, m))
+          (fun t_in t_out -> Choreo.TFun (t_in, t_out, m))
           t_args t_body' )
   | Choreo.FunApp (func, param, _) -> (
       let s1, func_typ = infer_choreo_expr choreo_ctx global_ctx func in
@@ -476,7 +604,7 @@ and infer_choreo_expr choreo_ctx (global_ctx : global_ctx) = function
       let s_comp = compose_subst_choreo s1 s2 in
       let func_typ' = apply_subst_typ_choreo s_comp func_typ in
       match func_typ' with
-      | Choreo.TMap (func_in, func_out, _) ->
+      | Choreo.TFun (func_in, func_out, _) ->
           (*if function type is correct and param type is correct, then everything is correct*)
           let s3 = unify_choreo func_in param_typ in
           let final_s = compose_subst_choreo s_comp s3 in
@@ -594,6 +722,7 @@ and infer_choreo_expr choreo_ctx (global_ctx : global_ctx) = function
           in
           (compose_subst_choreo s_comp s3, List.hd typ_ls')
       | _ -> failwith "Type of patterns are not sum types")
+  | _ -> failwith "Type of patterns are not sum types"
 
 and infer_choreo_pattern choreo_ctx global_ctx = function
   | Choreo.Default _ -> ([], Choreo.TUnit m, [])
@@ -651,3 +780,18 @@ and infer_choreo_pattern choreo_ctx global_ctx = function
         Choreo.TSum
           (Choreo.TVar (Choreo.Typ_Id (gen_ftv (), m), m), t_wrapped, m),
         ctx )
+  (* | Choreo.PConstruct (name, pats, Local.TypId (typ_name, _), _) ->
+    let ls = List.map (infer_choreo_pattern choreo_ctx global_ctx) pats in
+    let s_combined, t_list, ctx_combined =
+      List.fold_right
+        (fun (s, t, ctx) (s_acc, t_acc, ctx_acc) ->
+          (compose_subst_choreo s s_acc, t :: t_acc, ctx @ ctx_acc))
+        ls ([], [], [])
+    in
+    let result_typ =
+      match List.assoc_opt typ_name choreo_ctx with
+      | Some t -> apply_subst_typ_choreo s_combined t
+      | None -> failwith ("Unknown variant type in choreo pattern: " ^ typ_name)
+    in
+    (s_combined, result_typ, ctx_combined) *)
+  | _ -> failwith "Type of patterns are not sum types"

@@ -42,7 +42,6 @@ module LocSet : sig
   type t = Set.Make(String).t
   (** The type of location sets. *)
 
-  val empty : t
   (** [empty] is the empty location set.
 
       {b Category:} Construction
@@ -53,7 +52,6 @@ module LocSet : sig
         (* s = {} *)
       ]} *)
 
-  val is_empty : t -> bool
   (** [is_empty] returns [true] if [s] contains no locations.
 
       {b Category:} Queries
@@ -64,7 +62,6 @@ module LocSet : sig
         LocSet.is_empty (LocSet.singleton "Alice") = false
       ]} *)
 
-  val mem : elt -> t -> bool
   (** [mem] returns [true] if [loc] is in [s].
 
       {b Category:} Queries
@@ -76,7 +73,6 @@ module LocSet : sig
         LocSet.mem "Carol" s = false
       ]} *)
 
-  val add : elt -> t -> t
   (** [add] returns a set containing all elements of [s] plus [loc].
 
       {b Category:} Construction
@@ -101,12 +97,10 @@ module LocSet : sig
         (* s = {"Alice"} *)
       ]} *)
 
-  val remove : elt -> t -> t
   (** [remove] returns a set containing all elements of [s] except [loc].
 
       {b Category:} Set Operations *)
 
-  val union : t -> t -> t
   (** [union] returns the union of [s1] and [s2].
 
       {b Category:} Set Operations
@@ -118,7 +112,6 @@ module LocSet : sig
         LocSet.union s1 s2 = {"Alice", "Bob", "Carol"}
       ]} *)
 
-  val inter : t -> t -> t
   (** [inter s1 s2] returns the intersection of [s1] and [s2].
 
       {b Category:} Set Operations
@@ -130,12 +123,10 @@ module LocSet : sig
         LocSet.inter s1 s2 = {"Bob"}
       ]} *)
 
-  val disjoint : t -> t -> bool
   (** [disjoint] returns [true] if [s1] and [s2] have no common elements.
 
       {b Category:} Queries *)
 
-  val diff : t -> t -> t
   (** [diff] returns the set difference [s1 \ s2].
 
       {b Category:} Set Operations
@@ -162,7 +153,6 @@ module LocSet : sig
 
       {b Category:} Comparison *)
 
-  val iter : (elt -> unit) -> t -> unit
   (** [iter f s] applies [f] to each location in [s] in ascending order.
 
       {b Category:} Iteration
@@ -176,12 +166,10 @@ module LocSet : sig
             Location: Bob *)
       ]} *)
 
-  val map : (elt -> elt) -> t -> t
   (** [map f s] returns the set of locations [f loc] for each [loc] in [s].
 
       {b Category:} Iteration *)
 
-  val fold : (elt -> 'a -> 'a) -> t -> 'a -> 'a
   (** [fold] computes [(f locN ... (f loc2 (f loc1 init))...)].
 
       {b Category:} Iteration
@@ -193,33 +181,27 @@ module LocSet : sig
         (* Returns: ["Carol"; "Bob"; "Alice"] (reverse order) *)
       ]} *)
 
-  val for_all : (elt -> bool) -> t -> bool
   (** [for_all] returns [true] if [p loc] is true for all [loc] in [s].
 
       {b Category:} Queries *)
 
-  val exists : (elt -> bool) -> t -> bool
   (** [exists] returns [true] if [p loc] is true for at least one [loc] in [s].
 
       {b Category:} Queries *)
 
-  val filter : (elt -> bool) -> t -> t
   (** [filter] returns the set of locations in [s] satisfying predicate [p].
 
       {b Category:} Set Operations *)
 
-  val filter_map : (elt -> elt option) -> t -> t
   (** [filter_map] applies [f] to each location and keeps only [Some] results.
 
       {b Category:} Iteration *)
 
-  val partition : (elt -> bool) -> t -> t * t
   (** [partition] returns a pair [(s1, s2)] where [s1] contains locations
       satisfying [p] and [s2] contains the rest.
 
       {b Category:} Set Operations *)
 
-  val cardinal : t -> int
   (** [cardinal] returns the number of locations in [s].
 
       {b Category:} Queries
@@ -241,20 +223,17 @@ module LocSet : sig
         LocSet.elements s = [ "Alice"; "Bob"; "Carol" ]
       ]} *)
 
-  val min_elt : t -> elt
   (** [min_elt s] returns the smallest location in [s].
 
       {b Category:} Selection
 
       {b Raises:} [Not_found] if [s] is empty. *)
 
-  val min_elt_opt : t -> elt option
   (** [min_elt_opt s] returns [Some loc] where [loc] is the smallest location,
       or [None] if [s] is empty.
 
       {b Category:} Selection *)
 
-  val max_elt : t -> elt
   (** [max_elt] returns the largest location in [s].
 
       {b Category:} Selection
@@ -267,7 +246,6 @@ module LocSet : sig
 
       {b Category:} Selection *)
 
-  val choose : t -> elt
   (** [choose] returns an arbitrary location from [s].
 
       {b Category:} Selection
@@ -287,19 +265,16 @@ module LocSet : sig
 
       {b Category:} Set Operations *)
 
-  val find : elt -> t -> elt
   (** [find] returns [loc] if it is in [s].
 
       {b Category:} Search
 
       {b Raises:} [Not_found] if [loc] is not in [s]. *)
 
-  val find_opt : elt -> t -> elt option
   (** [find_opt] returns [Some loc] if [loc] is in [s], [None] otherwise.
 
       {b Category:} Search *)
 
-  val find_first : (elt -> bool) -> t -> elt
   (** [find_first] returns the smallest location satisfying predicate [p].
 
       {b Category:} Search
@@ -312,7 +287,6 @@ module LocSet : sig
 
       {b Category:} Search *)
 
-  val find_last : (elt -> bool) -> t -> elt
   (** [find_last] returns the largest location satisfying predicate [p].
 
       {b Category:} Search
@@ -325,7 +299,6 @@ module LocSet : sig
 
       {b Category:} Search *)
 
-  val of_list : elt list -> t
   (** [of_list] creates a set from a list of locations.
 
       {b Category:} Construction
@@ -342,22 +315,18 @@ module LocSet : sig
 
       {b Category:} Sequences *)
 
-  val to_seq : t -> elt Seq.t
   (** [to_seq] returns a sequence of locations in ascending order.
 
       {b Category:} Sequences *)
 
-  val to_rev_seq : t -> elt Seq.t
   (** [to_rev_seq] returns a sequence of locations in descending order.
 
       {b Category:} Sequences *)
 
-  val add_seq : elt Seq.t -> t -> t
   (** [add_seq] adds all locations from [seq] to [s].
 
       {b Category:} Construction *)
 
-  val of_seq : elt Seq.t -> t
   (** [of_seq] creates a set from a sequence of locations.
 
       {b Category:} Construction *)

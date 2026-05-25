@@ -70,6 +70,10 @@ let parse_external_name name =
   (package_name, function_name, search_path)
 
 (* Extract all unique FFI information from a list of statements *)
+(* collect_ffi_info walks through a list of choreo statements, finds every ForeignDecl
+ parses its external name string using parse_external_name, and returns a sorted list of all the
+foreign function info. It's used during code generation to know which external functions
+need to be linked or imported into the generated OCaml code.*)
 let collect_ffi_info stmts =
   let rec collect acc = function
     | [] -> acc
@@ -101,21 +105,21 @@ let collect_ffi_info stmts =
       | None, None -> 0)
     (collect [] stmts)
 
-let ast_local_value_info_map :
-    ('a -> 'b) -> 'a Ast_core.Local.M.value -> 'b Ast_core.Local.M.value =
+let ast_local_value_info_map : type a b.
+    (a -> b) -> a Ast_core.Local.M.value -> b Ast_core.Local.M.value =
  fun map -> function
   | Int (i, metadata) -> Int (i, map metadata)
   | String (str, metadata) -> String (str, map metadata)
   | Bool (b, metadata) -> Bool (b, map metadata)
 
-let ast_local_unop_info_map :
-    ('a -> 'b) -> 'a Ast_core.Local.M.un_op -> 'b Ast_core.Local.M.un_op =
+let ast_local_unop_info_map : type a b.
+    (a -> b) -> a Ast_core.Local.M.un_op -> b Ast_core.Local.M.un_op =
  fun map -> function
   | Not metadata -> Not (map metadata)
   | Neg metadata -> Neg (map metadata)
 
-let ast_local_binop_info_map :
-    ('a -> 'b) -> 'a Ast_core.Local.M.bin_op -> 'b Ast_core.Local.M.bin_op =
+let ast_local_binop_info_map : type a b.
+    (a -> b) -> a Ast_core.Local.M.bin_op -> b Ast_core.Local.M.bin_op =
  fun map -> function
   | Plus metadata -> Plus (map metadata)
   | Minus metadata -> Minus (map metadata)
@@ -130,8 +134,8 @@ let ast_local_binop_info_map :
   | Gt metadata -> Gt (map metadata)
   | Geq metadata -> Geq (map metadata)
 
-let rec ast_local_pattern_info_map :
-    ('a -> 'b) -> 'a Ast_core.Local.M.pattern -> 'b Ast_core.Local.M.pattern =
+let rec ast_local_pattern_info_map : type a b.
+    (a -> b) -> a Ast_core.Local.M.pattern -> b Ast_core.Local.M.pattern =
  fun map -> function
   | Default metadata -> Default (map metadata)
   | Val (value, metadata) ->
@@ -147,15 +151,24 @@ let rec ast_local_pattern_info_map :
       Left (ast_local_pattern_info_map map pattern, map metadata)
   | Right (pattern, metadata) ->
       Right (ast_local_pattern_info_map map pattern, map metadata)
+  | PConstruct
+      (TypId (name_id, var_metadata), patternlist, TypId (typ, info), metadata)
+    ->
+      PConstruct
+        ( TypId (name_id, map var_metadata),
+          List.map (ast_local_pattern_info_map map) patternlist,
+          TypId (typ, map info),
+          map metadata )
+(*PLACEHOLDER*)
 
-let ast_local_loc_id :
-    ('a -> 'b) -> 'a Ast_core.Local.M.loc_id -> 'b Ast_core.Local.M.loc_id =
+let ast_local_loc_id : type a b.
+    (a -> b) -> a Ast_core.Local.M.loc_id -> b Ast_core.Local.M.loc_id =
  fun map -> function
   | LocId (local_id_name, local_id_metadata) ->
       LocId (local_id_name, map local_id_metadata)
 
-let rec ast_local_type_info_map :
-    ('a -> 'b) -> 'a Ast_core.Local.M.typ -> 'b Ast_core.Local.M.typ =
+let rec ast_local_type_info_map : type a b.
+    (a -> b) -> a Ast_core.Local.M.typ -> b Ast_core.Local.M.typ =
  fun map -> function
   | TUnit metadata -> TUnit (map metadata)
   | TInt metadata -> TInt (map metadata)
@@ -173,19 +186,38 @@ let rec ast_local_type_info_map :
         ( ast_local_type_info_map map typ1,
           ast_local_type_info_map map typ2,
           map metadata )
+  | TVariant (cl, metadata) ->
+      TVariant
+        ( List.map
+            (fun {
+                   Ast_core.Local.M.name = TypId (name_id, var_metadata);
+                   args;
+                   typ = TypId (typid, type_metadata);
+                   info;
+                 } ->
+              {
+                Ast_core.Local.M.name = TypId (name_id, map var_metadata);
+                args = List.map (ast_local_type_info_map map) args;
+                typ = TypId (typid, map type_metadata);
+                info = map info;
+              })
+            cl,
+          map metadata )
+  | TForeign (TypId (typ_name, type_metadata), metadata) ->
+      TForeign (TypId (typ_name, map type_metadata), map metadata)
 
-let rec info_map_pattern_match :
-    ('a -> 'b) ->
-    ('a Ast_core.Local.M.pattern * 'a Ast_core.Local.M.expr) list ->
-    ('b Ast_core.Local.M.pattern * 'b Ast_core.Local.M.expr) list =
+let rec info_map_pattern_match : type a b.
+    (a -> b) ->
+    (a Ast_core.Local.M.pattern * a Ast_core.Local.M.expr) list ->
+    (b Ast_core.Local.M.pattern * b Ast_core.Local.M.expr) list =
  fun map -> function
   | [] -> []
   | (pattern, expr) :: d ->
       (ast_local_pattern_info_map map pattern, ast_local_expr_info_map map expr)
       :: info_map_pattern_match map d
 
-and ast_local_expr_info_map :
-    ('a -> 'b) -> 'a Ast_core.Local.M.expr -> 'b Ast_core.Local.M.expr =
+and ast_local_expr_info_map : type a b.
+    (a -> b) -> a Ast_core.Local.M.expr -> b Ast_core.Local.M.expr =
  fun map -> function
   | Unit metadata -> Unit (map metadata)
   | Val (value, metadata) ->
@@ -226,9 +258,17 @@ and ast_local_expr_info_map :
         ( ast_local_expr_info_map map expr,
           info_map_pattern_match map patterns,
           map metadata )
+  | Construct
+      (TypId (var_name, var_metadata), patternlist, TypId (typ, info), metadata)
+    ->
+      Construct
+        ( TypId (var_name, map var_metadata),
+          List.map (ast_local_expr_info_map map) patternlist,
+          TypId (typ, map info),
+          map metadata )
 
-let rec ast_choreo_type_info_map :
-    ('a -> 'b) -> 'a Ast_core.Choreo.M.typ -> 'b Ast_core.Choreo.M.typ =
+let rec ast_choreo_type_info_map : type a b.
+    (a -> b) -> a Ast_core.Choreo.M.typ -> b Ast_core.Choreo.M.typ =
  fun map -> function
   | TUnit metadata -> TUnit (map metadata)
   | TLoc (loc_id, local_typ, metadata) ->
@@ -238,8 +278,8 @@ let rec ast_choreo_type_info_map :
           map metadata )
   | TVar (Typ_Id (type_name, type_metadata), metadata) ->
       TVar (Typ_Id (type_name, map type_metadata), map metadata)
-  | TMap (typ1, typ2, metadata) ->
-      TMap
+  | TFun (typ1, typ2, metadata) ->
+      TFun
         ( ast_choreo_type_info_map map typ1,
           ast_choreo_type_info_map map typ2,
           map metadata )
@@ -253,9 +293,28 @@ let rec ast_choreo_type_info_map :
         ( ast_choreo_type_info_map map typ1,
           ast_choreo_type_info_map map typ2,
           map metadata )
+  | TVariant (cl, metadata) ->
+      TVariant
+        ( List.map
+            (fun {
+                   Ast_core.Choreo.M.name = TypId (name_id, var_metadata);
+                   args;
+                   typ = TypId (typid, type_metadata);
+                   info;
+                 } ->
+              {
+                Ast_core.Choreo.M.name = TypId (name_id, map var_metadata);
+                args = List.map (ast_choreo_type_info_map map) args;
+                typ = TypId (typid, map type_metadata);
+                info = map info;
+              })
+            cl,
+          map metadata )
+  | TForeign (Typ_Id (type_name, type_metadata), metadata) ->
+      TForeign (Typ_Id (type_name, map type_metadata), map metadata)
 
-let rec ast_choreo_pattern_info_map :
-    ('a -> 'b) -> 'a Ast_core.Choreo.M.pattern -> 'b Ast_core.Choreo.M.pattern =
+let rec ast_choreo_pattern_info_map : type a b.
+    (a -> b) -> a Ast_core.Choreo.M.pattern -> b Ast_core.Choreo.M.pattern =
  fun map -> function
   | Default metadata -> Default (map metadata)
   | Var (VarId (name, var_metadata), metadata) ->
@@ -274,21 +333,30 @@ let rec ast_choreo_pattern_info_map :
       Left (ast_choreo_pattern_info_map map choreo_pattern, map metadata)
   | Right (choreo_pattern, metadata) ->
       Right (ast_choreo_pattern_info_map map choreo_pattern, map metadata)
+  | PConstruct
+      (TypId (var_name, var_metadata), patternlist, TypId (typ, info), metadata)
+    ->
+      PConstruct
+        ( TypId (var_name, map var_metadata),
+          List.map (ast_choreo_pattern_info_map map) patternlist,
+          TypId (typ, map info),
+          map metadata )
 
-let rec ast_choreo_pattern_list_info_map :
-    ('a -> 'b) ->
-    'a Ast_core.Choreo.M.pattern list ->
-    'b Ast_core.Choreo.M.pattern list =
+(* making above and below function mutually recursive *)
+and ast_choreo_pattern_list_info_map : type a b.
+    (a -> b) ->
+    a Ast_core.Choreo.M.pattern list ->
+    b Ast_core.Choreo.M.pattern list =
  fun map -> function
   | [] -> []
   | h :: d ->
       ast_choreo_pattern_info_map map h
       :: ast_choreo_pattern_list_info_map map d
 
-let rec info_map_pattern_match :
-    ('a -> 'b) ->
-    ('a Ast_core.Choreo.M.pattern * 'a Ast_core.Choreo.M.expr) list ->
-    ('b Ast_core.Choreo.M.pattern * 'b Ast_core.Choreo.M.expr) list =
+let rec info_map_pattern_match : type a b.
+    (a -> b) ->
+    (a Ast_core.Choreo.M.pattern * a Ast_core.Choreo.M.expr) list ->
+    (b Ast_core.Choreo.M.pattern * b Ast_core.Choreo.M.expr) list =
  fun map -> function
   | [] -> []
   | (pattern, expr) :: d ->
@@ -296,9 +364,9 @@ let rec info_map_pattern_match :
         ast_choreo_expr_info_map map expr )
       :: info_map_pattern_match map d
 
-and ast_choreo_expr_info_map :
-    ('a -> 'b) -> 'a Ast_core.Choreo.M.expr -> 'b Ast_core.Choreo.M.expr =
- fun (map : 'a -> 'b) -> function
+and ast_choreo_expr_info_map : type a b.
+    (a -> b) -> a Ast_core.Choreo.M.expr -> b Ast_core.Choreo.M.expr =
+ fun (map : a -> b) -> function
   | Unit metadata -> Unit (map metadata)
   | Var (VarId (name, var_metadata), metadata) ->
       Var (VarId (name, map var_metadata), map metadata)
@@ -359,9 +427,17 @@ and ast_choreo_expr_info_map :
         ( ast_choreo_expr_info_map map expr,
           info_map_pattern_match map patterns,
           map metadata )
+  | Construct
+      (TypId (name_id, var_metadata), patternlist, TypId (typ, info), metadata)
+    ->
+      Construct
+        ( TypId (name_id, map var_metadata),
+          List.map (ast_choreo_expr_info_map map) patternlist,
+          TypId (typ, map info),
+          map metadata )
 
-and ast_info_map :
-    ('a -> 'b) -> 'a Ast_core.Choreo.M.stmt -> 'b Ast_core.Choreo.M.stmt =
+and ast_info_map : type a b.
+    (a -> b) -> a Ast_core.Choreo.M.stmt -> b Ast_core.Choreo.M.stmt =
  fun map -> function
   | Decl (stm_pattern, stmt_type, metadata) ->
       Decl
@@ -384,11 +460,20 @@ and ast_info_map :
           ast_choreo_type_info_map map stmt_type,
           stmt_foreign_str,
           map metadata )
+  | ForeignTypeDecl (TypId (type_name, type_metadata), metadata) ->
+      ForeignTypeDecl (TypId (type_name, map type_metadata), map metadata)
+  (* Map metadata over a ForeignTypeDecl*)
+  | ImportDecl (filename, metadata) -> ImportDecl (filename, map metadata)
 
 and ast_list_info_map :
-    ('a -> 'b) ->
-    'a Ast_core.Choreo.M.stmt_block ->
-    'b Ast_core.Choreo.M.stmt_block =
+    type (* 
+We declare type a and b explicitly to force the map function to be of type f: 'a -> 'b 
+If we just say ('a -> 'b), this doesn't actually guarantee that the type wont collapse to ('a -> 'a)
+Trust me, we had this error before.
+*)
+    a b.
+    (a -> b) -> a Ast_core.Choreo.M.stmt_block -> b Ast_core.Choreo.M.stmt_block
+    =
  fun map -> function
   | [] -> []
   | h :: d -> ast_info_map map h :: ast_list_info_map map d

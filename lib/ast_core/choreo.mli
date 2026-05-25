@@ -99,10 +99,10 @@ module M : sig
               let type_var_a = TVar (Typ_Id ("a", ()), ()) in
               type_var_a
             ]}*)
-    | TMap of 'a typ * 'a typ * 'a
+    | TFun of 'a typ * 'a typ * 'a
         (** Function type (domain -> codomain)
 
-            {b Internal AST Structure:} [TMap(domain, codomain, meta)]
+            {b Internal AST Structure:} [TFun(domain, codomain, meta)]
 
             {b Pirouette Syntax:}
             {[
@@ -111,7 +111,7 @@ module M : sig
 
             {b Ocaml:}
             {[
-              let int_to_string = TMap (TInt (), TString (), ()) in
+              let int_to_string = TFun (TInt (), TString (), ()) in
               int_to_string
             ]}*)
     | TProd of 'a typ * 'a typ * 'a
@@ -151,6 +151,36 @@ module M : sig
               let int_or_string = TSum (TInt (), TString (), ()) in
               int_or_string
             ]}*)
+    | TForeign of 'a typ_id * 'a
+        (** foreign type identified only by name.
+
+            two foreign types are equal only if they have the same name
+
+            {b Internal AST Structure:} [TForeign(type_id, meta)]
+
+            {b Pirouette Syntax:}
+            {[
+              foreign type Int32;     (* declaration *)
+              Int32                   (* usage in type signature *)
+            ]}
+
+            {b Ocaml:}
+            {[
+              let foreign_type = TForeign (Typ_Id ("Int32", ()), ()) in
+              foreign_type
+            ]}*)
+    | TVariant of 'a constructor list * 'a
+
+  (** {1 Choreographic Patterns}
+      ['a pattern] for destructuring values, annotated with metadata of type
+      ['a]. Patterns can match values distributed across multiple locations.*)
+
+  and 'a constructor = {
+    name : 'a Local.M.typ_id;
+    args : 'a typ list;
+    typ : 'a Local.M.typ_id;
+    info : 'a;
+  }
 
   (** {1 Choreographic Patterns}
 
@@ -263,6 +293,7 @@ module M : sig
               let right_x = Right (Var (var_id_x, ()), ()) in
               right_x
             ]}*)
+    | PConstruct of 'a Local.M.typ_id * 'a pattern list * 'a Local.M.typ_id * 'a
 
   (** {1 Choreographic Expressions}
 
@@ -599,6 +630,7 @@ module M : sig
               in
               match_expr
             ]} *)
+    | Construct of 'a Local.M.typ_id * 'a expr list * 'a Local.M.typ_id * 'a
 
   (** {1 Choreographic Statements}
 
@@ -671,6 +703,7 @@ module M : sig
               in
               result_type_decl
             ]} *)
+    (* | Variant of 'a Local.M.typ_id * 'a list * 'a *)
     | ForeignDecl of 'a Local.M.var_id * 'a typ * string * 'a
         (** Foreign function declaration: declares an external function with its
             type and external name.
@@ -692,12 +725,33 @@ module M : sig
               let print_foreign =
                 ForeignDecl
                   ( Local.M.VarId ("print", ()),
-                    TMap (TString (), TUnit (), ()),
+                    TFun (TString (), TUnit (), ()),
                     "print",
                     () )
               in
               print_foreign
             ]}*)
+    | ForeignTypeDecl of 'a Local.M.typ_id * 'a
+    | ImportDecl of string * 'a
+        (** Import declaration: includes all definitions from an external
+            Pirouette file.
+
+            {b Internal AST Structure:} [ImportDecl(filename, meta)]
+            - [filename]: path to the file to import
+            - [meta]: node metadata
+
+            {b Pirouette Syntax:}
+            {[
+              Import "helpers.pir"
+            ]}
+
+            {b OCaml:}
+            {[
+              let import_helpers = ImportDecl ("helpers.pir", ()) in
+              import_helpers
+            ]}*)
+
+  and 'a stmt_block = 'a stmt list
 
   (** {1 Choreographic Statement Block}
 
@@ -705,7 +759,6 @@ module M : sig
       Statements in a block are executed in order, with each statement
       potentially introducing bindings visible to subsequent statements. *)
 
-  and 'a stmt_block = 'a stmt list
   (** Block of Statements
 
       {b Internal AST Structure:} [stmt_block] is a list of ['a stmt]
@@ -764,11 +817,30 @@ module With : functor
    end)
   -> sig
   type nonrec typ_id = Info.t M.typ_id
+  (** [typ_id] (Type ID) is a type alias for {!Choreo.M.typ_id}, representing
+      names for types in choreographic declarations and references*)
+
   type nonrec typ = Info.t M.typ
+  (** [typ] (Type) is a type alias for {!Choreo.M.typ}, representing the types
+      of values and communications in a choreography*)
+
   type nonrec pattern = Info.t M.pattern
+  (** [pattern] is a type alias for {!Choreo.M.pattern}, representing names for
+      types in Choreographic declarations and references*)
+
   type nonrec expr = Info.t M.expr
+  (** [expr] (Expression) is a type alias for {!Choreo.M.expr}, representing
+      computations and communications in a choreography*)
+
   type nonrec stmt = Info.t M.stmt
+  (** [stmt] (Statement) is a type alias for {!Choreo.M.stmt}, declaring that a
+      pattern has a certain type*)
+
   type nonrec stmt_block = stmt list
+  (** [stmt_block] (Statement Block) is a type alias representing a list of
+      statements*)
+
+  type nonrec constructor = Info.t M.constructor
 
   (** {1 Metadata Accessors}
 
@@ -812,4 +884,7 @@ module With : functor
   val set_info_stmt : Info.t -> stmt -> stmt
   (** [set_info_stmt info s] is statement [s] with its metadata replaced by
       [info].*)
+
+  val set_info_constructor : Info.t -> constructor -> constructor
+  val get_info_constructor : constructor -> Info.t
 end

@@ -26,17 +26,12 @@
     it produces a Parsetree. We use Ppxlib to construct these same Parsetree
     nodes directly from Pirouette IR.
 
-    The compilation flow: {b What we do in Pirouette (skip the parser):}
-    {v
-  Pirouette source  →  Pirouette Parser  →  Pirouette AST  →  emit_* functions  
-   "x := [Alice] 5"                       (Choreo/Net/Local)    (This module)  
-                                                                   ↓         
-                                                                Parsetree
-                                                                   ↓    
-                                                               Type Checker 
-                                                                   ↓ 
-                                                                Executable
-    v}
+    {b Compilation Flow:}
+
+    See
+    {{:https://github.com/akhirsch/Pirouette-Compiler/wiki/Compiler-Pipeline-Diagram}the
+     Pirouette Wiki} for a Compiler Pipeline Diagram depicting the process of
+    generating OCaml code from Pirouette code
 
     Using Ppxlib ensures:
     - Type-safe code generation (syntax errors caught at generation time)
@@ -341,16 +336,14 @@ val emit_net_pexp :
     [Ppxlib.expression] is an OCaml data structure (records, variants, lists)
     that represents code, not a string.*)
 
-val emit_foreign_decl :
-  string -> 'a Ast_core.Net.M.typ -> string -> Ppxlib.value_binding
-(** [emit_foreign_decl var_name typ external_name] generates an OCaml external
+val emit_foreign_decl : string -> string -> Ppxlib.value_binding
+(** [emit_foreign_decl var_name external_name] generates an OCaml external
     declaration for a foreign function.
 
     Parameters:
     - [var_name]: local name for the function
-    - [typ]: type of the foreign function
     - [external_name]: external name to link against
 
-    Creates OCaml [external] declarations that bind foreign functions from other
-    languages (typically C) or libraries. Does not require a message module
-    since FFI is independent of communication backend.*)
+    Creates OCaml [external] declarations that bind foreign functions from
+    OCaml. Does not require a message module since FFI is independent of
+    communication backend.*)

@@ -126,28 +126,14 @@ let () =
     exit 1);
   (* Lex the input file *)
   let lexbuf = Lexing.from_channel (Option.get !file_ic) in
-
   (* Fetch the standard libary (recompile if needed through use of optional flag), 
     perform alpha renaming to ensure IDs are non-conflicting with OCaml, 
     then swap out all info attributes (Hardcoded to be unit when specifically Stdlib is compiled) with Obj.magic 
     so that the types can be compatible with the program AST when we concat the ASTs *)
   (* Parse the input file, rename IDs, and concatenate it to the stdlib AST *)
-  let user_program =
-    A_rname.Rename.ast_list_alpha_rename
-      (Parsing.Parse.parse_with_error !input_filename lexbuf)
-  in
-  (* BECAREFUL ABOUT LOCS. Since it takes in the user_program, it does NOT consider locations within the stdlib_ast *)
-  let locs = Ast_utils.extract_locs user_program in
-  let stdlib_ast =
-    Ast_utils.ast_list_info_map
-      (fun _ -> Obj.magic ())
-      (Stdlib_utils.Stdlib_linker.get_stdlib_ast ~recompile:false ())
-  in
-  let program = stdlib_ast @ user_program in
-
-  (* Dump the choreography AST *)
+  let user_program = Parsing.Parse.parse_with_error !input_filename lexbuf in
+  (* Dump the choreography AST before the resolver so it is just raw ast no stdlib prepended *)
   (match !ast_dump_format with
-  | None -> ()
   | Some format ->
       dump_choreo_ast format
         (change_extension !input_filename
@@ -156,9 +142,21 @@ let () =
            | "pprint" -> ".ast"
            | "dot" -> ".dot"
            | _ -> invalid_arg "Invalid ast-dump format"))
-        program);
+        user_program
+  | None -> ());
+
+  let user_program =
+    Import_resolver.resolve_imports
+      (Filename.dirname !input_filename)
+      user_program
+  in
+  (* alpha rename after resolution so stdlib identifiers get renamed too *)
+  let user_program = A_rname.Rename.ast_list_alpha_rename user_program in
+  (* stdlib is now implicitly injected by the import resolver *)
+  let locs = Ast_utils.extract_locs user_program in
+
   (* Extract locations, ffi information, and generate network IR *)
-  let ffi_info = Ast_utils.collect_ffi_info program in
+  let ffi_info = Ast_utils.collect_ffi_info user_program in
   let package_names =
     List.fold_left
       (fun package_names (package_name, _, _) ->
@@ -176,7 +174,7 @@ let () =
       "" ffi_info
   in
   let netir_l =
-    List.map (fun loc -> Netgen.epp_choreo_to_net program loc) locs
+    List.map (fun loc -> Netgen.epp_choreo_to_net user_program loc) locs
   in
   (* Dump network ASTs *)
   (match !ast_dump_format with

@@ -1,6 +1,6 @@
-(** Code generation for HTTP-based communication backend.
+(** Code generation for HTTP-based communication backend. *)
 
-    This module provides code generation for distributed programs using HTTP for
+(** This module provides code generation for distributed programs using HTTP for
     communication. It implements a message-passing backend where endpoints
     communicate via HTTP requests, running as separate processes that can be
     deployed on different machines.
@@ -33,7 +33,10 @@
 
 (**{2 Message http Interface Module}*)
 
+(**{2 Message http Interface Module}*)
+
 module Msg_http_intf : Msg_intf.M
+open Ppxlib
 
 val emit_toplevel_http :
   out_channel ->
@@ -64,3 +67,84 @@ val emit_toplevel_http :
     {b Effect:} Writes a complete OCaml program for [target_endpoint] to [oc].
     The generated program is a standalone executable that runs an HTTP server
     and communicates with other endpoints via HTTP requests.*)
+
+val emit_toplevel_init : 'a -> label -> structure_item list
+(** [emit_toplevel_init] is utilized by [emit_toplevel_http], attempting to load
+    the [target_endpoint]
+
+    Parameters:
+    - [_loc_ids]: An endpoint name (e,g,, ["Alice"])
+    - [config_file_path]: The name of the location of a YAML file containing a
+      location (endpoint) name and an http address
+
+    {b Effect:} [config_file_path] is parsed as a YAML file. If successful, it
+    is added to [config], a record containing all successfully parsed locations.
+    Otherwise, the program will fail
+
+    See {{!Http_pirc.Config_parser} the config parser documentation} for further
+    reading*)
+
+(** [emit_domain_stri] is utilized by [emit_toplevel_http], separating each
+    endpoint name with statement block, and generating a structure item for each
+    pair.
+
+    Parameters:
+    - [loc_id]: An endpoint name (e,g,, ["Alice"])
+    - [net_stmts]: A network IR statement block for an endpoint
+
+    {b Effect:} This function is called to create the [process_bindings]
+    binding, which contains a list of structure items. This list is then written
+    to [oc] from [emit_toplevel_http]*)
+
+(** {2 About Ppxlib}*)
+
+(** See {{!ocamlgen.Emit_core}the emit_core documentation} for an overview of
+    Ppxlib.
+
+    {b Metaquot:} Throughout toplevel_http.ml there are expressions of the form:
+    {[
+      let e = [%expr (*Some expression...*)]
+    ]}
+
+    This is a Ppxlib metaquot. The expression inside of the metaquot will not be
+    evaluated to a value, but rather as a Parsetree Expression. This is used to
+    generate OCaml code that will be transmitted as OCaml code, not as a value.
+
+    Another type of metaquot used is:
+    {[
+      let stri = [%stri let a = (*Some value...*)]
+    ]}
+
+    This has the same effect as %expr, but for Structure Items, which could be
+    values, exceptions, types, modules, etc.
+
+    {b Anti-Quotation:} Throughout toplevel_http.ml there are expressions of the
+    form:
+    {[
+      let f = [%expr [%e (*Some expression...*)]]
+    ]}
+
+    This is a PPxlib anti-quotation. The expression inside of the anti-quotation
+    will be seen as OCaml code and will be evaluated to a value. This is used
+    within Metaquotations to dynamically generate values for Parsetree
+    Expressions
+
+    Another type of anti-quotation used is:
+    {[
+      let [%p (*Some expression...*)]
+    ]}
+
+    This has the same effect as %expr, but for Patterns, which includes any
+    pattern that you would use for pattern matching
+
+    {b For further reading,} see
+    {{:https://ocaml-ppx.github.io/ppxlib/ppxlib/generating-code.html} the
+     PPxlib documentation on generating code}*)
+
+(** {2 About Lwt}*)
+
+(** Lwt is a concurrent programming library. The function:
+    {[
+      Lwt.main.run (*arg*)
+    ]}
+    runs the scheduler for asynchronous computations *)

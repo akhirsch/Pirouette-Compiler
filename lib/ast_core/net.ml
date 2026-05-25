@@ -4,9 +4,18 @@ module M = struct
   type 'a typ =
     | TUnit of 'a
     | TLoc of 'a Local.loc_id * 'a Local.typ * 'a
-    | TMap of 'a typ * 'a typ * 'a
+    | TFun of 'a typ * 'a typ * 'a
     | TProd of 'a typ * 'a typ * 'a
     | TSum of 'a typ * 'a typ * 'a
+    | TForeign of 'a Local.typ_id * 'a
+    | TVariant of 'a constructor list * 'a
+
+  and 'a constructor = {
+    name : 'a Local.typ_id;
+    args : 'a typ list;
+    typ : 'a Local.typ_id;
+    info : 'a;
+  }
 
   type 'a expr =
     | Unit of 'a
@@ -26,12 +35,14 @@ module M = struct
     | Left of 'a expr * 'a
     | Right of 'a expr * 'a
     | Match of 'a expr * ('a Local.pattern * 'a expr) list * 'a
+    | Construct of 'a Local.typ_id * 'a expr list * 'a Local.typ_id * 'a
 
   and 'a stmt =
     | Decl of 'a Local.pattern * 'a typ * 'a
     | Assign of 'a Local.pattern list * 'a expr * 'a
     | TypeDecl of 'a Local.typ_id * 'a typ * 'a
     | ForeignDecl of 'a Local.var_id * 'a typ * string * 'a
+    | ForeignTypeDecl of 'a Local.typ_id * 'a
 
   and 'a stmt_block = 'a stmt list
 end
@@ -48,9 +59,11 @@ struct
   let get_info_typ : typ -> Info.t = function
     | TUnit i -> i
     | TLoc (_, _, i) -> i
-    | TMap (_, _, i) -> i
+    | TFun (_, _, i) -> i
     | TProd (_, _, i) -> i
     | TSum (_, _, i) -> i
+    | TForeign (_, i) -> i
+    | TVariant (_, i) -> i
 
   let get_info_expr : expr -> Info.t = function
     | Unit i -> i
@@ -70,20 +83,26 @@ struct
     | Left (_, i) -> i
     | Right (_, i) -> i
     | Match (_, _, i) -> i
+    | Construct (_, _, _, i) -> i
 
   let get_info_stmt : stmt -> Info.t = function
     | Decl (_, _, i) -> i
     | Assign (_, _, i) -> i
     | TypeDecl (_, _, i) -> i
     | ForeignDecl (_, _, _, i) -> i
+    | ForeignTypeDecl (_, i) -> i
 
   let set_info_typ : Info.t -> typ -> typ =
    fun i -> function
     | TUnit _ -> TUnit i
     | TLoc (loc, t, _) -> TLoc (loc, t, i)
-    | TMap (t1, t2, _) -> TMap (t1, t2, i)
+    | TFun (t1, t2, _) -> TFun (t1, t2, i)
     | TProd (t1, t2, _) -> TProd (t1, t2, i)
     | TSum (t1, t2, _) -> TSum (t1, t2, i)
+    | TForeign (t, _) -> TForeign (t, i)
+    | TVariant (cs, _) -> TVariant (cs, i)
+
+  (* TForeign preserves its type name, only metadata is updated. *)
 
   let set_info_expr : Info.t -> expr -> expr =
    fun i -> function
@@ -104,11 +123,16 @@ struct
     | Left (e, _) -> Left (e, i)
     | Right (e, _) -> Right (e, i)
     | Match (e, cases, _) -> Match (e, cases, i)
+    | Construct (s, es, typ, _) -> Construct (s, es, typ, i)
 
   let set_info_stmt : Info.t -> stmt -> stmt =
    fun i -> function
     | Decl (p, t, _) -> Decl (p, t, i)
     | Assign (ps, e, _) -> Assign (ps, e, i)
     | TypeDecl (id, t, _) -> TypeDecl (id, t, i)
-    | ForeignDecl (id, t, s, _) -> ForeignDecl (id, t, s, i)
+    | ForeignDecl (id, t, s, _) ->
+        ForeignDecl (id, t, s, i)
+        (* preserves variable name, type, and external symbol. *)
+    | ForeignTypeDecl (id, _) -> ForeignTypeDecl (id, i)
+  (* preserves type name *)
 end

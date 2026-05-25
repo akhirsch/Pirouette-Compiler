@@ -33,6 +33,29 @@ let rec jsonify_local_type = function
   | Local.TSum (t1, t2, _) ->
       `Assoc
         [ ("TSum", `List [ jsonify_local_type t1; jsonify_local_type t2 ]) ]
+  | Local.TForeign (TypId (id, _), _) -> `String id
+  | Local.TVariant (constructors, _) ->
+      `Assoc
+        [
+          ( "TVariant",
+            `List
+              (List.map
+                 (fun {
+                        Local.name = TypId (ntyp_id, _);
+                        args;
+                        typ = TypId (typ_id, _);
+                        info = _;
+                      } ->
+                   `Assoc
+                     [
+                       ("name", `String ntyp_id);
+                       ("args", `List (List.map jsonify_local_type args));
+                       ("typ", `String typ_id);
+                     ])
+                 constructors) );
+        ]
+
+(* returns the type name as a plain JSON string, consistent with TVar both named types *)
 
 let rec jsonify_local_pattern = function
   | Local.Default _ -> `String "Default"
@@ -52,6 +75,17 @@ let rec jsonify_local_pattern = function
       `Assoc
         [
           ("Pair", `List [ jsonify_local_pattern p1; jsonify_local_pattern p2 ]);
+        ]
+  | Local.PConstruct (TypId (ntyp_id, _), patterns, TypId (typ_id, _), _) ->
+      `Assoc
+        [
+          ( "PConstruct",
+            `Assoc
+              [
+                ("name", `String ntyp_id);
+                ("patterns", `List (List.map jsonify_local_pattern patterns));
+                ("typ", `String typ_id);
+              ] );
         ]
 
 let rec jsonify_local_expr = function
@@ -123,6 +157,17 @@ let rec jsonify_local_expr = function
                        cases) );
               ] );
         ]
+  | Local.Construct (TypId (ntyp_id, _), exprs, TypId (typ_id, _), _) ->
+      `Assoc
+        [
+          ( "Construct",
+            `Assoc
+              [
+                ("name", `String ntyp_id);
+                ("exprs", `List (List.map jsonify_local_expr exprs));
+                ("typ", `String typ_id);
+              ] );
+        ]
 
 (* ============================== Choreo ============================== *)
 let rec jsonify_choreo_type = function
@@ -135,15 +180,38 @@ let rec jsonify_choreo_type = function
               [ ("loc", `String loc); ("local_type", jsonify_local_type t) ] );
         ]
   | Choreo.TVar (Typ_Id (id, _), _) -> `String id
-  | Choreo.TMap (t1, t2, _) ->
+  | Choreo.TFun (t1, t2, _) ->
       `Assoc
-        [ ("TMap", `List [ jsonify_choreo_type t1; jsonify_choreo_type t2 ]) ]
+        [ ("TFun", `List [ jsonify_choreo_type t1; jsonify_choreo_type t2 ]) ]
   | Choreo.TProd (t1, t2, _) ->
       `Assoc
         [ ("TProd", `List [ jsonify_choreo_type t1; jsonify_choreo_type t2 ]) ]
   | Choreo.TSum (t1, t2, _) ->
       `Assoc
         [ ("TSum", `List [ jsonify_choreo_type t1; jsonify_choreo_type t2 ]) ]
+  | Choreo.TForeign (Typ_Id (id, _), _) -> `String id
+  | Choreo.TVariant (constructors, _) ->
+      `Assoc
+        [
+          ( "TVariant",
+            `List
+              (List.map
+                 (fun {
+                        Choreo.name = Local.TypId (ntyp_id, _);
+                        args;
+                        typ = Local.TypId (typ_id, _);
+                        info = _;
+                      } ->
+                   `Assoc
+                     [
+                       ("name", `String ntyp_id);
+                       ("args", `List (List.map jsonify_choreo_type args));
+                       ("typ", `String typ_id);
+                     ])
+                 constructors) );
+        ]
+
+(* returns the type name as a plain JSON string, consistent with TVar both named types *)
 
 let rec jsonify_choreo_pattern = function
   | Choreo.Default _ -> `String "Default"
@@ -163,6 +231,18 @@ let rec jsonify_choreo_pattern = function
             `Assoc
               [ ("loc", `String loc); ("local_patt", jsonify_local_pattern p) ]
           );
+        ]
+  | Choreo.PConstruct
+      (Local.TypId (ntyp_id, _), patterns, Local.TypId (typ_id, _), _) ->
+      `Assoc
+        [
+          ( "PConstruct",
+            `Assoc
+              [
+                ("name", `String ntyp_id);
+                ("patterns", `List (List.map jsonify_choreo_pattern patterns));
+                ("typ", `String typ_id);
+              ] );
         ]
 
 let rec jsonify_choreo_stmt = function
@@ -204,6 +284,14 @@ let rec jsonify_choreo_stmt = function
                 ("foreign_name", `String s);
               ] );
         ]
+  | Choreo.ForeignTypeDecl (TypId (id, _), _) ->
+      `Assoc [ ("ForeignTypeDecl", `Assoc [ ("type_id", `String id) ]) ]
+  (*  converts a choreo statement into a JSON representation. 
+  Each statement variant becomes a JSON object with the constructor name as the key.
+  ForeignDecl it includes the variable name, type signature, and external string name
+  ForeignTypeDecl it just includes the type name *)
+  | Choreo.ImportDecl (s, _) ->
+      `Assoc [ ("ImportDecl", `Assoc [ ("filename", `String s) ]) ]
 
 and jsonify_choreo_expr = function
   | Choreo.Unit _ -> `String "Unit"
@@ -302,6 +390,18 @@ and jsonify_choreo_expr = function
                 ("cases", `List (List.map jsonify_choreo_case cases));
               ] );
         ]
+  | Choreo.Construct
+      (Local.TypId (ntyp_id, _), exprs, Local.TypId (typ_id, _), _) ->
+      `Assoc
+        [
+          ( "Construct",
+            `Assoc
+              [
+                ("name", `String ntyp_id);
+                ("exprs", `List (List.map jsonify_choreo_expr exprs));
+                ("typ", `String typ_id);
+              ] );
+        ]
 
 let[@inline] jsonify_choreo_stmt_block (stmts : 'a Choreo.stmt_block) =
   `List (List.map jsonify_choreo_stmt stmts)
@@ -317,12 +417,28 @@ let rec jsonify_net_type = function
             `Assoc
               [ ("loc", `String loc); ("local_type", jsonify_local_type t) ] );
         ]
-  | Net.TMap (t1, t2, _) ->
-      `Assoc [ ("TMap", `List [ jsonify_net_type t1; jsonify_net_type t2 ]) ]
+  | Net.TFun (t1, t2, _) ->
+      `Assoc [ ("TFun", `List [ jsonify_net_type t1; jsonify_net_type t2 ]) ]
   | Net.TProd (t1, t2, _) ->
       `Assoc [ ("TProd", `List [ jsonify_net_type t1; jsonify_net_type t2 ]) ]
   | Net.TSum (t1, t2, _) ->
       `Assoc [ ("TSum", `List [ jsonify_net_type t1; jsonify_net_type t2 ]) ]
+  | Net.TForeign (Local.TypId (id, _), _) -> `String id
+  | Net.TVariant (constructors, _) ->
+      `Assoc
+        [
+          ( "TVariant",
+            `List
+              (List.map
+                 (fun { Net.name = TypId (id, _); args; typ = _; info = _ } ->
+                   (* had to add typ but it shouldn't... fix laterrrrrrr*)
+                   `Assoc
+                     [
+                       ("name", `String id);
+                       ("args", `List (List.map jsonify_net_type args));
+                     ])
+                 constructors) );
+        ]
 
 let rec jsonify_net_stmt = function
   | Net.Decl (p, t, _) ->
@@ -362,6 +478,8 @@ let rec jsonify_net_stmt = function
                 ("foreign_name", `String s);
               ] );
         ]
+  | Net.ForeignTypeDecl (TypId (id, _), _) ->
+      `Assoc [ ("ForeignTypeDecl", `Assoc [ ("id", `String id) ]) ]
 
 and jsonify_net_expr = function
   | Net.Unit _ -> `String "Unit"
@@ -463,6 +581,17 @@ and jsonify_net_expr = function
               [
                 ("net_expr", jsonify_net_expr e);
                 ("cases", `List (List.map jsonify_net_case cases));
+              ] );
+        ]
+  | Net.Construct (Local.TypId (id, _), args, Local.TypId (typ_id, _), _) ->
+      `Assoc
+        [
+          ( "Construct",
+            `Assoc
+              [
+                ("name", `String id);
+                ("args", `List (List.map jsonify_net_expr args));
+                ("typ", `String typ_id);
               ] );
         ]
 

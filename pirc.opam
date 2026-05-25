@@ -14,6 +14,7 @@ depends: [
   "eio_main" {build}
   "cohttp-eio" {build}
   "cohttp-lwt-unix" {build}
+  "cohttp" {build}
   "dune" {>= "3.14" & build}
   "lwt" {build}
   "lwt_ppx" {build}

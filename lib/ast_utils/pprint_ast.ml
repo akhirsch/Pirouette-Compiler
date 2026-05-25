@@ -38,6 +38,30 @@ let rec pprint_local_type ppf (typ : 'a Local.typ) =
       fprintf ppf "@[<h>%a * %a@]" pprint_local_type t1 pprint_local_type t2
   | TSum (t1, t2, _) ->
       fprintf ppf "@[<h>%a + %a@]" pprint_local_type t1 pprint_local_type t2
+  | TForeign (TypId (id, _), _) ->
+      fprintf ppf "@[<h>%s@]"
+        id (*  TForeign is a leaf node, just print the name *)
+  | Local.TVariant (constructors, _) ->
+      fprintf ppf "@[type<v 0>%a@]"
+        (pp_print_list
+           ~pp_sep:(fun ppf () -> fprintf ppf "@ | ")
+           (fun ppf
+                {
+                  Local.name = TypId (ntyp_id, _);
+                  args;
+                  typ = TypId (typ_id, _);
+                  info = _;
+                }
+              ->
+             match args with
+             | [] -> fprintf ppf "@[<h>%s : %s@]" ntyp_id typ_id
+             | _ ->
+                 fprintf ppf "@[<h>%s : %a -> %s@]" ntyp_id
+                   (pp_print_list
+                      ~pp_sep:(fun ppf () -> fprintf ppf ",@ ")
+                      pprint_local_type)
+                   args typ_id))
+        constructors
 
 (** [pprint_local_pattern] takes a formatter [ppf] and a local pattern, and
     prints the formatted code of the local pattern
@@ -62,6 +86,15 @@ let rec pprint_local_pattern ppf (pat : 'a Local.pattern) =
         pprint_local_pattern p2
   | Left (p, _) -> fprintf ppf "@[<hv2>left@ %a@]" pprint_local_pattern p
   | Right (p, _) -> fprintf ppf "@[<hv2>right@ %a@]" pprint_local_pattern p
+  | Local.PConstruct (TypId (ntyp_id, _), patterns, TypId (typ_id, _), _) -> (
+      match patterns with
+      | [] -> fprintf ppf "@[<h>%s : %s@]" ntyp_id typ_id
+      | _ ->
+          fprintf ppf "@[<h>%s : %a : %s@]" ntyp_id
+            (pp_print_list
+               ~pp_sep:(fun ppf () -> fprintf ppf ",@ ")
+               pprint_local_pattern)
+            patterns typ_id)
 
 (** [pprint_local_expr] takes a formatter [ppf] and a local expression, and
     prints the formatted code of the local expression
@@ -123,6 +156,15 @@ let rec pprint_local_expr ppf (expr : 'a Local.expr) =
            ~pp_sep:(fun ppf () -> fprintf ppf "@ | ")
            pprint_local_case)
         cases
+  | Construct (TypId (name, _), args, TypId (typ_id, _), _) -> (
+      match args with
+      | [] -> fprintf ppf "@[<h>%s : %s@]" name typ_id
+      | _ ->
+          fprintf ppf "@[<h>%s : %a : %s@]" name
+            (pp_print_list
+               ~pp_sep:(fun ppf () -> fprintf ppf ",@ ")
+               pprint_local_expr)
+            args typ_id)
 
 (* ============================== Choreo ============================== *)
 
@@ -131,7 +173,7 @@ let rec pprint_local_expr ppf (expr : 'a Local.expr) =
 
     - For variant [TLoc], it calls helper function [pprint_local_type] to pretty
       print the local type
-    - For variants [TSend], [TProd], [TMap] and [TSum], it calls helper function
+    - For variants [TSend], [TProd], [TFun] and [TSum], it calls helper function
       [pprint_choreo_type] to pretty print the choreo type *)
 let rec pprint_choreo_type ppf (typ : 'a Choreo.typ) =
   match typ with
@@ -139,13 +181,35 @@ let rec pprint_choreo_type ppf (typ : 'a Choreo.typ) =
   | TLoc (LocId (loc, _), t, _) ->
       fprintf ppf "@[<h>%s.(%a)@]" loc pprint_local_type t
   | TVar (Typ_Id (id, _), _) -> fprintf ppf "@[<h>%s@]" id
-  | TMap (t1, t2, _) ->
+  | TFun (t1, t2, _) ->
       fprintf ppf "@[<h>%a ->@ %a@]" pprint_choreo_type t1 pprint_choreo_type t2
   | TProd (t1, t2, _) ->
       fprintf ppf "@[<h>%a *@ %a@]" pprint_choreo_type t1 pprint_choreo_type t2
   | TSum (t1, t2, _) ->
       fprintf ppf "@[<h>(%a) + (%a)@]" pprint_choreo_type t1 pprint_choreo_type
         t2
+  | TVariant (constructors, _) ->
+      fprintf ppf "@[<v 0>%a@]"
+        (pp_print_list
+           ~pp_sep:(fun ppf () -> fprintf ppf "@ | ")
+           (fun ppf
+                {
+                  Choreo.name = Local.TypId (name, _);
+                  args;
+                  typ = Local.TypId (typ_id, _);
+                  info = _;
+                }
+              ->
+             match args with
+             | [] -> fprintf ppf "@[<h>%s : %s@]" name typ_id
+             | _ ->
+                 fprintf ppf "@[<h>%s : %a : %s@]" name
+                   (pp_print_list
+                      ~pp_sep:(fun ppf () -> fprintf ppf ",@ ")
+                      pprint_choreo_type)
+                   args typ_id))
+        constructors
+  | TForeign (Typ_Id (id, _), _) -> fprintf ppf "@[<h>%s@]" id
 
 (** [pp_choreo_pattern] takes a formatter [fmt] and a choreo pattern, and prints
     the formatted code of the choreo pattern
@@ -165,6 +229,15 @@ let rec pprint_choreo_pattern ppf (pat : 'a Choreo.pattern) =
         pprint_choreo_pattern p2
   | Left (p, _) -> fprintf ppf "@[<hv2>left@ %a@]" pprint_choreo_pattern p
   | Right (p, _) -> fprintf ppf "@[<hv2>right@ %a@]" pprint_choreo_pattern p
+  | PConstruct (Local.TypId (name, _), args, Local.TypId (typ_id, _), _) -> (
+      match args with
+      | [] -> fprintf ppf "@[<h>%s : %s@]" name typ_id
+      | _ ->
+          fprintf ppf "@[<h>%s : %a : %s@]" name
+            (pp_print_list
+               ~pp_sep:(fun ppf () -> fprintf ppf ",@ ")
+               pprint_choreo_pattern)
+            args typ_id)
 
 (** [pprint_choreo_stmt_block] takes a formatter [ppf] and a choreo statement
     block, and prints the formatted code of the choreo statement block
@@ -193,6 +266,12 @@ and pprint_choreo_stmt ppf (stmt : 'a Choreo.stmt) =
       fprintf ppf "@[<h>type %s := %a;@]" id pprint_choreo_type t
   | ForeignDecl (VarId (id, _), t, s, _) ->
       fprintf ppf "@[<h>foreign %s : %a := \"%s\";@]" id pprint_choreo_type t s
+      (* ForeignDecl carries a type signature t which is a Choreo.typ 
+    it describes the foreign function's type in Pirouette terms*)
+  | ForeignTypeDecl (TypId (id, _), _) ->
+      fprintf ppf "@[<h>foreign type %s;@]" id
+  (* ForeignTypeDecl prettyprints its type name *)
+  | ImportDecl (s, _) -> fprintf ppf "@[<h>import \"%s\";@]" s
 
 (** [pp_choreo_expr] takes a formatter [ppf] and a choreo expression and prints
     the formatted code of the choreo expression
@@ -243,6 +322,15 @@ and pprint_choreo_expr ppf (expr : 'a Choreo.expr) =
            ~pp_sep:(fun ppf () -> fprintf ppf "@ | ")
            pprint_choreo_case)
         cases
+  | Construct (Local.TypId (name, _), args, Local.TypId (typ_id, _), _) -> (
+      match args with
+      | [] -> fprintf ppf "@[<h>%s : %s@]" name typ_id
+      | _ ->
+          fprintf ppf "@[<h>%s : %a : %s@]" name
+            (pp_print_list
+               ~pp_sep:(fun ppf () -> fprintf ppf ",@ ")
+               pprint_choreo_expr)
+            args typ_id)
 
 (* ============================== Net ============================== *)
 
@@ -251,12 +339,38 @@ let rec pprint_net_type ppf (typ : 'a Net.typ) =
   | TUnit _ -> fprintf ppf "@[<h>unit@]"
   | TLoc (Local.LocId (loc, _), t, _) ->
       fprintf ppf "@[<h>%s.%a@]" loc pprint_local_type t
-  | TMap (t1, t2, _) ->
+  | TFun (t1, t2, _) ->
       fprintf ppf "@[<h>(%a) -> (%a)@]" pprint_net_type t1 pprint_net_type t2
   | TProd (t1, t2, _) ->
       fprintf ppf "@[<h>(%a) * (%a)@]" pprint_net_type t1 pprint_net_type t2
   | TSum (t1, t2, _) ->
       fprintf ppf "@[<h>(%a) + (%a)@]" pprint_net_type t1 pprint_net_type t2
+  | TForeign (Local.TypId (id, _), _) -> fprintf ppf "@[<h>%s@]" id
+  | TVariant (constructors, _) ->
+      fprintf ppf "@[<v 0>%a@]"
+        (pp_print_list
+           ~pp_sep:(fun ppf () -> fprintf ppf "@ | ")
+           (fun ppf
+                {
+                  Net.name = TypId (ntyp, _);
+                  args;
+                  typ = TypId (typid, _);
+                  info = _;
+                }
+              ->
+             match args with
+             | [] -> fprintf ppf "@[<h>%s : %s@]" ntyp typid
+             | _ ->
+                 fprintf ppf "@[<h>%s : (%a,@ %s)@]" ntyp
+                   (pp_print_list
+                      ~pp_sep:(fun ppf () -> fprintf ppf ",@ ")
+                      pprint_net_type)
+                   args typid))
+        constructors
+
+(* TForeign is a leaf node it has no inner type to recurse into, just a name. 
+  There's nothing to pretty print recursively, you just print the name directly, 
+  same as TUnit just prints "unit" and doesn't recurse *)
 
 let[@specialise] rec pprint_net_stmt_block ppf (stmts : 'a Net.stmt_block) =
   fprintf ppf "@[<v>%a@]" (pp_print_list pprint_net_stmt) stmts
@@ -272,7 +386,11 @@ and pprint_net_stmt ppf (stmt : 'a Net.stmt) =
   | TypeDecl (TypId (id, _), t, _) ->
       fprintf ppf "@[<h>%s : %a;@]" id pprint_net_type t
   | ForeignDecl (VarId (id, _), t, s, _) ->
+      (* pprint the name, type signature, and external string name *)
       fprintf ppf "@[<h>foreign %s : %a := \"%s\";@]" id pprint_net_type t s
+  | ForeignTypeDecl (TypId (id, _), _) ->
+      fprintf ppf "@[<h>foreign type %s;@]"
+        id (* pp just the foreign type name *)
 
 and pprint_net_expr ppf (expr : 'a Net.expr) =
   match expr with
@@ -320,3 +438,12 @@ and pprint_net_expr ppf (expr : 'a Net.expr) =
            ~pp_sep:(fun ppf () -> fprintf ppf "@ | ")
            pprint_net_choice)
         choices
+  | Construct (Local.TypId (name, _), args, Local.TypId (typ_id, _), _) -> (
+      match args with
+      | [] -> fprintf ppf "@[<h>%s : %s@]" name typ_id
+      | _ ->
+          fprintf ppf "@[<h>%s %a : %s@]" name
+            (pp_print_list
+               ~pp_sep:(fun ppf () -> fprintf ppf ",@ ")
+               pprint_net_expr)
+            args typ_id)

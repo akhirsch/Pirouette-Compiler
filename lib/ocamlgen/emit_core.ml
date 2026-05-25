@@ -68,6 +68,20 @@ let rec emit_local_pexp (expr : 'a Local.expr) =
           cases
       in
       Builder.pexp_match (emit_local_pexp e) cases
+      (* ===================================================================================== *)
+  | Construct (cnstr_id, args, _, _) -> (
+      let name = (fun (Local.TypId (s, _)) -> s) cnstr_id in
+      let constructor_lid = { txt = Longident.Lident name; loc } in
+      let args = List.map emit_local_pexp args in
+      match args with
+      | [] -> Builder.pexp_construct constructor_lid None
+      | arg :: [] -> Builder.pexp_construct constructor_lid (Some arg)
+      | args ->
+          Builder.pexp_construct constructor_lid
+            (Some (Builder.pexp_tuple args)))
+
+(* let ty = emit_local_pexp typ *)
+(* ===================================================================================== *)
 
 and emit_local_ppat (pat : 'a Local.pattern) =
   match pat with
@@ -79,6 +93,18 @@ and emit_local_ppat (pat : 'a Local.pattern) =
   | Pair (p1, p2, _) -> [%pat? [%p emit_local_ppat p1], [%p emit_local_ppat p2]]
   | Left (p, _) -> [%pat? Either.Left [%p emit_local_ppat p]]
   | Right (p, _) -> [%pat? Either.Right [%p emit_local_ppat p]]
+  (* ===================================================================================== *)
+  | PConstruct (cnstr_id, args, _, _) -> (
+      let name = (fun (Local.TypId (s, _)) -> s) cnstr_id in
+      let constructor_lid = { txt = Longident.Lident name; loc } in
+      let args = List.map emit_local_ppat args in
+      match args with
+      | [] -> Builder.ppat_construct constructor_lid None
+      | arg :: [] -> Builder.ppat_construct constructor_lid (Some arg)
+      | args ->
+          Builder.ppat_construct constructor_lid
+            (Some (Builder.ppat_tuple args)))
+(* ===================================================================================== *)
 
 let rec emit_net_fun_body ~(self_id : string) (module Msg : Msg_intf)
     (pats : 'a Local.pattern list) (exp : 'a Net.expr) =
@@ -106,11 +132,32 @@ and emit_net_binding ~(self_id : string) (module Msg : Msg_intf)
       | f :: ps ->
           Builder.value_binding ~pat:(emit_local_ppat f)
             ~expr:(emit_net_fun_body ~self_id (module Msg) ps e))
-  | ForeignDecl (VarId (id, _), typ, external_name, _) ->
-      emit_foreign_decl id typ external_name
+  | ForeignDecl (VarId (id, _), _, external_name, _) ->
+      emit_foreign_decl id external_name
+  | TypeDecl (_, typ, _) -> (
+      match typ with
+      | TVariant (_, _) -> failwith "not yet implemented"
+      | _ -> Builder.value_binding ~pat:[%pat? _unit] ~expr:Builder.eunit)
   | _ -> Builder.value_binding ~pat:[%pat? _unit] ~expr:Builder.eunit
 
-and emit_foreign_decl id typ external_name =
+(*
+    Builder.pexp_variant Recursive
+    (match typ with
+    | TVariant (cs, _) -> 
+      let somelist = List.map 
+      (f cons_list -> (match cons_list with
+      | [] -> failwith "bruh"
+      | (id, args, _, _) :: t -> 
+        let plist = List.map (emit_net_pexp ~self_id (module Msg)) cs in
+        ()
+      | _ -> failwith "idk") ) cs in ()
+    | _ -> Builder.value_binding ~pat:[%pat? _unit] ~expr:Builder.eunit ) *)
+
+(*This function generates the function calls for foreign declarations
+  Currently we're not attaching type annotations, this is something that should be added down the line.
+  See "Emit Core Type Annotations" on the design doc section of the wiki for more  
+*)
+and emit_foreign_decl id external_name =
   let open Ast_builder.Default in
   let package_name, function_name, _ =
     Ast_utils.parse_external_name external_name
@@ -118,42 +165,10 @@ and emit_foreign_decl id typ external_name =
   let package_string =
     match package_name with Some pack -> pack ^ "." | None -> ""
   in
-  (* A function that takes in a Net type and pretty prints the type into Ocaml. Note, loc.types turn into just types*)
-  let rec find_type_sig : 'a Net.typ -> label = function
-    | TUnit _ -> "(unit)"
-    | TLoc (_, local_type, _) ->
-        let rec find_local_type_sig : 'a Local.typ -> label = function
-          | TUnit _ -> "(unit)"
-          | TInt _ -> "(int)"
-          | TString _ -> "(string)"
-          | TBool _ -> "(bool)"
-          | TVar (TypId (typ_id, _), _) -> "(" ^ typ_id ^ ")"
-          | TProd (typ1, typ2, _) ->
-              "(" ^ find_local_type_sig typ1 ^ " * " ^ find_local_type_sig typ2
-              ^ ")"
-          | TSum (typ1, typ2, _) ->
-              "(" ^ find_local_type_sig typ1 ^ " + " ^ find_local_type_sig typ2
-              ^ ")"
-        in
-        find_local_type_sig local_type
-    | TMap (typ1, typ2, _) ->
-        "(" ^ find_type_sig typ1 ^ " -> " ^ find_type_sig typ2 ^ ")"
-    | TProd (typ1, typ2, _) ->
-        "(" ^ find_type_sig typ1 ^ " * " ^ find_type_sig typ2 ^ ")"
-    | TSum (typ1, typ2, _) ->
-        "(" ^ find_type_sig typ1 ^ " + " ^ find_type_sig typ2 ^ ")"
-  in
-
-  (* The full type signature of a function. We apply this type signature to the identifier, then we set the value of the identifier to be equal to 'fun arg ->[ffi]]'. This works because of currying. *)
-  let type_sig = find_type_sig typ in
-
   let fun_expr =
-    pexp_fun ~loc Nolabel None
-      (pvar ~loc (": " ^ type_sig))
+    pexp_fun ~loc Nolabel None (pvar ~loc "arg")
       [%expr
-        [%e evar ~loc "fun arg ->"]
-          [%e evar ~loc (package_string ^ function_name)]
-          [%e evar ~loc "arg"]]
+        [%e evar ~loc (package_string ^ function_name)] [%e evar ~loc "arg"]]
   in
   value_binding ~loc ~pat:(pvar ~loc id) ~expr:fun_expr
 
@@ -170,7 +185,7 @@ and emit_net_pexp ~(self_id : string) (module Msg : Msg_intf)
         (Some (emit_net_pexp ~self_id (module Msg) e3))
   | Let (stmts, e, _) ->
       Builder.pexp_let Recursive (*FIXME: how to handle tuples?*)
-        (* -From Audvy: We could create a function that taktes in stmts and outputs their Net Type, and then match on that, and only apply the Recursive flag on TMaps
+        (* -From Audvy: We could create a function that taktes in stmts and outputs their Net Type, and then match on that, and only apply the Recursive flag on TFuns
       OR
       We create a function that takes in stmts and outputs the amount of identifiers on the left hand side. It anything more than 1 (exluding args), than it cannot be a func, so use the Nonrecursive flag*)
         (List.map (emit_net_binding ~self_id (module Msg)) stmts)
@@ -230,3 +245,24 @@ and emit_net_pexp ~(self_id : string) (module Msg : Msg_intf)
       Builder.pexp_match
         (Msg.emit_net_recv ~src ~dst:self_id)
         (cases @ [ default_case ])
+      (* ===================================================================================== *)
+  | Construct (cnstr_id, args, _, _) -> (
+      let name = (fun (Local.TypId (s, _)) -> s) cnstr_id in
+      let constructor_lid = { txt = Longident.Lident name; loc } in
+      let args = List.map (emit_net_pexp ~self_id (module Msg)) args in
+      match args with
+      | [] -> Builder.pexp_construct constructor_lid None
+      | arg :: [] -> Builder.pexp_construct constructor_lid (Some arg)
+      | args ->
+          Builder.pexp_construct constructor_lid
+            (Some (Builder.pexp_tuple args)))
+(* (
+      let args = List.map (emit_net_pexp ~self_id (module Msg)) arglist in
+      let constructor_lid = { txt = Longident.Lident name; loc } in
+      match args with
+      | [] -> Builder.pexp_construct constructor_lid None
+      | [ arg ] -> Builder.pexp_construct constructor_lid (Some arg)
+      | _ ->
+          Builder.pexp_construct constructor_lid
+            (Some (Builder.pexp_tuple args))) *)
+(* ===================================================================================== *)

@@ -10,6 +10,9 @@ let peq (s : string) =
     let pprint_s = Ast_utils.stringify_pprint_choreo_ast program in
     pprint_s_ref := pprint_s;
     (* Store potentially problematic pretty-printed string *)
+    let _program' =
+      Parsing.Parse.parse_with_error "unit_test" (Lexing.from_string pprint_s)
+    in
     let program' =
       Parsing.Parse.parse_with_error "unit_test" (Lexing.from_string pprint_s)
     in
@@ -52,6 +55,12 @@ let net_peq (s : string) =
     print_endline ("Failure message: " ^ msg);
     raise (Failure ("Pretty printing failed: " ^ msg))
 
+let assert_peq_fails testcase =
+  try
+    let _ = peq testcase in
+    assert_failure "Expected failure but function succeeded"
+  with Failure _ -> ()
+
 let suite =
   "Pretty print Tests"
   >::: [
@@ -90,6 +99,44 @@ let suite =
                 ("simple_net" >:: fun _ -> net_peq Astutils_testcases.simple_net);
                 ("ex3_netir" >:: fun _ -> net_peq Astutils_testcases.netir_ex3);
               ];
+         "Variants"
+         >::: [
+                ( "simple_variant" >:: fun _ ->
+                  peq Astutils_testcases.simple_variant );
+                ( "simple_different_name" >:: fun _ ->
+                  peq Astutils_testcases.simple_different_name );
+                ( "two_constructors" >:: fun _ ->
+                  peq Astutils_testcases.two_constructors );
+                ( "multiple_constructors1" >:: fun _ ->
+                  peq Astutils_testcases.multiple_constructors1 );
+                ( "multiple_constructors2" >:: fun _ ->
+                  peq Astutils_testcases.multiple_constructors2 );
+                ( "simple_with_args" >:: fun _ ->
+                  peq Astutils_testcases.simple_with_args );
+                ( "simple_many_args" >:: fun _ ->
+                  peq Astutils_testcases.simple_many_args );
+                ( "simple_mixed_args" >:: fun _ ->
+                  peq Astutils_testcases.simple_mixed_args );
+                ("nats" >:: fun _ -> peq Astutils_testcases.nats);
+                ( "multiple_constructors_with_args" >:: fun _ ->
+                  peq Astutils_testcases.multiple_constructors_with_args );
+                ( "recursive_variant" >:: fun _ ->
+                  peq Astutils_testcases.recursive_variant_simple )
+                (*tests for malformatted variants*);
+                ( "missing_constructor1" >:: fun _ ->
+                  assert_peq_fails Astutils_testcases.missing_constructor1 );
+                ( "missing_constructor2" >:: fun _ ->
+                  assert_peq_fails Astutils_testcases.missing_constructor2 );
+                ( "missing_constructor_name" >:: fun _ ->
+                  assert_peq_fails Astutils_testcases.missing_constructor_name
+                );
+                ( "missing_type" >:: fun _ ->
+                  assert_peq_fails Astutils_testcases.missing_type );
+                ( "multiple_wrong_type1" >:: fun _ ->
+                  assert_peq_fails Astutils_testcases.multiple_wrong_type1 );
+                ( "duplicate_constructors" >:: fun _ ->
+                  assert_peq_fails Astutils_testcases.duplicate_constructors );
+                ( "type_constructor_same" >:: fun _ ->
+                  assert_peq_fails Astutils_testcases.type_constructor_same );
+              ];
        ]
-
-let () = run_test_tt_main suite

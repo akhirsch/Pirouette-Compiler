@@ -335,6 +335,34 @@ module M : sig
               let sum_int_string = TSum (TInt (), TString (), ()) in
               sum_int_string
             ]}*)
+    | TForeign of 'a typ_id * 'a
+        (** Foreign type at the local level, identified only by name.
+
+            Foreign types are declared at the choreography level and referenced
+            at the local level inside located types. two foreign types are equal
+            only if they have the same name.
+
+            {b Internal AST Structure:} [TForeign(type_id, meta)]
+
+            {b Pirouette Syntax:}
+            {[
+              foreign type Int32;     (* declaration at choreo level *)
+              Alice.Int32             (* usage inside a located type *)
+            ]}
+
+            {b Ocaml:}
+            {[
+              let foreign_type = TForeign (TypId ("Int32", ()), ()) in
+              foreign_type
+            ]}*)
+    | TVariant of 'a constructor list * 'a
+
+  and 'a constructor = {
+    name : 'a typ_id;
+    args : 'a typ list;
+    typ : 'a typ_id;
+    info : 'a;
+  }
 
   (** {1 Local Patterns}
 
@@ -450,6 +478,7 @@ module M : sig
               in
               right_y
             ]}*)
+    | PConstruct of 'a typ_id * 'a pattern list * 'a typ_id * 'a
 
   (** {1 Local Expressions}
 
@@ -683,6 +712,7 @@ module M : sig
               in
               match_expr
             ]}*)
+    | Construct of 'a typ_id * 'a expr list * 'a typ_id * 'a
 end
 
 (** {b With:} Module that uses a Functor for creating local AST types with
@@ -699,15 +729,46 @@ module With : functor
   (** {1 Type Aliases}*)
 
   type nonrec value = Info.t M.value
+  (** [value] is a type alias for {!Local.M.value}, representing literal values
+      in a local computation at a single endpoint *)
+
   type nonrec loc_id = Info.t M.loc_id
+  (**[loc_id] (Location ID) is a type alias for {!Local.M.loc_id}, representing
+     internal representations of names defined in Pirouette source code *)
+
   type nonrec var_id = Info.t M.var_id
+  (**[var_id] (Variable ID) is a type alias for {!Local.M.var_id}, representing
+     variable names defined in Pirouette source code*)
+
   type nonrec typ_id = Info.t M.typ_id
+  (**[typ_id] (Type ID) is a type alias for {!Local.M.typ_id}, representing type
+     names*)
+
   type nonrec sync_label = Info.t M.sync_label
+  (**[sync_label] (Synchronization Label) is a type alias for
+     {!Local.M.sync_label}, representing labels for Synchronization choices*)
+
   type nonrec un_op = Info.t M.un_op
+  (**[un_op] (Unary Operator) is a type alias for {!Local.M.un_op}, representing
+     operations performed on a single value*)
+
   type nonrec bin_op = Info.t M.bin_op
+  (**[bin_op] (Binary Operator) is a type alias for {!Local.M.bin_op},
+     representing operations performed on two values*)
+
   type nonrec typ = Info.t M.typ
+  (**[typ] (Type) is a type alias for {!Local.M.typ}, representing the type of
+     values at a single endpoint*)
+
   type nonrec pattern = Info.t M.pattern
+  (**[pattern] is a type alias for {!Local.M.pattern}, representing patterns for
+     pattern matching and destructuring values*)
+
   type nonrec expr = Info.t M.expr
+  (**[expr] (Expression) is a type alias for {!Local.M.expr}, representing pure
+     computations at a single endpoint*)
+
+  type nonrec constructor = Info.t M.constructor
 
   (** {1 Metadata Accessors}
 
@@ -744,6 +805,8 @@ module With : functor
 
       Functions to set metadata at AST nodes *)
 
+  val get_info_constructor : constructor -> Info.t
+
   val set_info_value : Info.t -> value -> value
   (** [set_info_value info v] is value [v] with metadata replaced by [info]. *)
 
@@ -777,4 +840,6 @@ module With : functor
   val set_info_expr : Info.t -> expr -> expr
   (** [set_info_expr info e] is expression [e] with metadata replaced by [info].
   *)
+
+  val set_info_constructor : Info.t -> constructor -> constructor
 end

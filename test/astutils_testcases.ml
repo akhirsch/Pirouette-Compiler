@@ -30,7 +30,6 @@ let testcase_3 =
    then P1[L] ~> P2;\n\n\
    P2.5\n\n\
    else P1[R] ~> P2;\n\n\
-   ()\n\n\
    P2.3\n\n\
    ;"
 
@@ -88,3 +87,81 @@ let netir_ex3 =
    y2 := allow choice from P1 with\n\
   \      | L -> ret (5)\n\
   \      | R -> ret (9);\n"
+
+(* Below are some well-formatted tests for variants. These should pass. *)
+let simple_variant = "type X := | constructor: X;"
+let simple_different_name = "type Person := | Sam: Person;"
+let two_constructors = "type Coin := \n| heads: Coin;\n\n\n| tails: Coin;\n\n\n"
+
+let multiple_constructors1 =
+  "type SchoolEmployee := \n\
+   | Principal: SchoolEmployee;\n\n\n\
+   | Teacher: SchoolEmployee;\n\n\n\
+   | Janitor: SchoolEmployee;\n\n\n\
+   | Security: SchoolEmployee;\n\n\n\
+   | IT: SchoolEmployee;\n\n"
+
+let multiple_constructors2 =
+  "type Car := \n\
+   | Civic: Honda;\n\n\n\
+   | Accord: Honda;\n\n\n\
+   | Camry: Toyota;\n\n\n\
+   | Corolla: Honda;\n\n\n\
+   | Altima: Nissan;\n\n"
+
+(* test feed into prettyprint_test.ml and are testing local TForeign in prettyprint 
+for the bisect report *)
+let foreign_type_decl = "foreign type Int32;\n"
+
+let foreign_decl_with_foreign_type =
+  "foreign type Int32;\n\
+   foreign myFunc : Alice.Int32 -> Bob.Int32 := \"Pet:feed\";\n"
+
+let foreign_decl_choreo_tforeign =
+  "foreign type Int32;\nforeign myFunc : Int32 := \"Pet:feed\";\n"
+
+(* Int32 is a bare choreo-level foreign type, not located at any participant *)
+
+let net_foreign_type_decl = "foreign type Int32;\n"
+
+let net_foreign_decl_with_foreign_type =
+  "foreign type Int32;\nforeign myFunc : Int32 := \"Pet:feed\";\n"
+
+(* These tests are to ensure that variants can also have constructors which take multiple arguments *)
+let simple_with_args = "type Operation := \n| op : Operation , Operation;\n\n\n"
+let simple_many_args = "type Op := \n| plus : Op , Op , Op , Op , Op;\n\n\n"
+
+let simple_mixed_args =
+  "type operation := \n| plus : Int , Int , String , Bool , operation;\n\n\n"
+
+let nats = "type nat := \n| zero : nat;\n\n\n| suc : nat , nat;\n\n\n"
+
+let multiple_constructors_with_args =
+  "type IntOp := \n\
+   | plus : Int , Int , IntOp;\n\n\n\
+   | minus : Int , Int , IntOp;\n\n\n\
+   | multiply : Int , Int , IntOp;\n\n\n\
+   | negative : Int , IntOp;\n\n\n"
+
+(* Variants should also allow for recursive constructors. This is a test for that functionality *)
+let recursive_variant_simple =
+  "type increment := \n\
+   | zero : increment ;\n\n\n\
+   | add1 : increment , increment;\n\n\n"
+
+(* Below are some poorly formatted variants. These should fail. *)
+
+let missing_constructor1 = "type X := ;"
+let missing_constructor2 = "type X := : X;"
+let missing_constructor_name = "type X := | : X;"
+let missing_type = "type X := | constructor;"
+
+let multiple_wrong_type1 =
+  "type A := \n  | constructor1: A;\n\n\n  | constructor2: B;\n\n\n  "
+
+let duplicate_constructors =
+  (* constructors can't have the same name *)
+  "type Coin := \n| heads: Coin;\n\n\n| heads: Coin;\n\n\n"
+
+let type_constructor_same = "type Person := | Person : Person;"
+(* constructors and types can't have the same name *)

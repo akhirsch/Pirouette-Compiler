@@ -59,10 +59,10 @@ module M : sig
               in
               alice_int
             ]} *)
-    | TMap of 'a typ * 'a typ * 'a
+    | TFun of 'a typ * 'a typ * 'a
         (** Function type
 
-            {b Internal AST Structure:} [TMap(domain, codomain, metadata)]
+            {b Internal AST Structure:} [TFun(domain, codomain, metadata)]
 
             {b Pirouette Syntax:}
             {[
@@ -71,7 +71,7 @@ module M : sig
 
             {b OCaml AST Construction:}
             {[
-              let int_to_string = TMap (TInt (), TString (), ()) in
+              let int_to_string = TFun (TInt (), TString (), ()) in
               int_to_string
             ]} *)
     | TProd of 'a typ * 'a typ * 'a
@@ -104,6 +104,22 @@ module M : sig
               let int_or_string = TSum (TInt (), TString (), ()) in
               int_or_string
             ]} *)
+    | TForeign of 'a Local.M.typ_id * 'a
+        (** Foreign Type
+
+            {b Internal AST Structure:} [TForeign(type_id, metadata)]
+
+            {b Pirouette Syntax:}
+            {[
+              foreign type Int32;
+            ]}
+
+            {b OCaml AST Construction:}
+            {[
+              let foreign_type = TForeign (Local.M.TypId ("Int32", ()), ()) in
+              foreign_type
+            ]} *)
+    | TVariant of 'a constructor list * 'a
 
   (** {1 Network Expressions}
 
@@ -113,6 +129,13 @@ module M : sig
       communication and [ChooseFor]/[AllowChoice] for synchronization. Each
       expression carries metadata of type ['a], allowing compiler passes to
       attach annotations. *)
+
+  and 'a constructor = {
+    name : 'a Local.M.typ_id;
+    args : 'a typ list;
+    typ : 'a Local.M.typ_id;
+    info : 'a;
+  }
 
   type 'a expr =
     | Unit of 'a
@@ -519,14 +542,14 @@ module M : sig
               in
               match_expr
             ]} *)
+    | Construct of 'a Local.M.typ_id * 'a expr list * 'a Local.M.typ_id * 'a
+        (** {1 Network Statements}
 
-  (** {1 Network Statements}
-
-      ['a stmt] represent statements in projected endpoint programs after
-      choreographic projection. These include variable declarations,
-      assignments, type aliases, and foreign function declarations. Each
-      statement carries metadata of type ['a], allowing compiler passes to
-      attach annotations.*)
+            ['a stmt] represent statements in projected endpoint programs after
+            choreographic projection. These include variable declarations,
+            assignments, type aliases, and foreign function declarations. Each
+            statement carries metadata of type ['a], allowing compiler passes to
+            attach annotations.*)
 
   and 'a stmt =
     | Decl of 'a Local.M.pattern * 'a typ * 'a
@@ -590,10 +613,12 @@ module M : sig
               result_decl
             ]} *)
     | ForeignDecl of 'a Local.M.var_id * 'a typ * string * 'a
+    | ForeignTypeDecl of 'a Local.M.typ_id * 'a
+
+  and 'a stmt_block = 'a stmt list
 
   (** {1 Net Statement Block}*)
 
-  and 'a stmt_block = 'a stmt list
   (** Statement Block: a sequence of statements executed in order.
 
       {b Internal AST Structure:} [stmt_block] is a list of ['a stmt]
@@ -647,9 +672,20 @@ module With : functor
    end)
   -> sig
   type nonrec typ = Info.t M.typ
+  (** [typ] (Type) is a type alias for {!Net.M.typ}, representing a type at the
+      network level, bridging choreographic types and backend code generation*)
+
   type nonrec expr = Info.t M.expr
+  (** [expr] (Expression) is a type alias for {!Net.M.expr}, representing
+      computations in projected endpoint programs after choregraphic projection*)
+
   type nonrec stmt = Info.t M.stmt
+  (** [stmt] (Statement) is a type alias for {!Net.M.stmt}, representing
+      expressions in projected endpoint programs after choregraphic projection*)
+
   type nonrec stmt_block = Info.t M.stmt_block
+  (** [stmt_block] (Statement Block) is a type alias for {!Net.M.stmt_block},
+      representing a list of statements*)
 
   (** {1 Metadata Acessors}
 
