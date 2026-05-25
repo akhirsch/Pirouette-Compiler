@@ -136,9 +136,8 @@ struct
   (* ForeignDecl has 4 fields: variable name, type, external symbol, and metadata.
    ForeignTypeDecl has 2 fields: type name and metadata. *)
 
-    
   let get_info_constructor : constructor -> Info.t = function
-  | { name = _; args = _; typ = _; info = i } -> i
+    | { name = _; args = _; typ = _; info = i } -> i
 
   let set_info_typid : Info.t -> typ_id -> typ_id =
    fun i -> function Typ_Id (s, _) -> Typ_Id (s, i)

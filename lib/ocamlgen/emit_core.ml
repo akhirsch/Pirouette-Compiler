@@ -69,17 +69,16 @@ let rec emit_local_pexp (expr : 'a Local.expr) =
       in
       Builder.pexp_match (emit_local_pexp e) cases
       (* ===================================================================================== *)
-  | Construct (cnstr_id, args, _, _) -> 
-      let name = (fun (Local.TypId (s, _) ) -> s) cnstr_id in
+  | Construct (cnstr_id, args, _, _) -> (
+      let name = (fun (Local.TypId (s, _)) -> s) cnstr_id in
       let constructor_lid = { txt = Longident.Lident name; loc } in
       let args = List.map emit_local_pexp args in
       match args with
       | [] -> Builder.pexp_construct constructor_lid None
       | arg :: [] -> Builder.pexp_construct constructor_lid (Some arg)
       | args ->
-        Builder.pexp_construct constructor_lid
-          (Some (Builder.pexp_tuple args))
-
+          Builder.pexp_construct constructor_lid
+            (Some (Builder.pexp_tuple args)))
 
 (* let ty = emit_local_pexp typ *)
 (* ===================================================================================== *)
@@ -95,16 +94,16 @@ and emit_local_ppat (pat : 'a Local.pattern) =
   | Left (p, _) -> [%pat? Either.Left [%p emit_local_ppat p]]
   | Right (p, _) -> [%pat? Either.Right [%p emit_local_ppat p]]
   (* ===================================================================================== *)
-  | PConstruct (cnstr_id, args, _, _) -> 
-      let name = (fun (Local.TypId (s, _) ) -> s) cnstr_id in
+  | PConstruct (cnstr_id, args, _, _) -> (
+      let name = (fun (Local.TypId (s, _)) -> s) cnstr_id in
       let constructor_lid = { txt = Longident.Lident name; loc } in
       let args = List.map emit_local_ppat args in
       match args with
       | [] -> Builder.ppat_construct constructor_lid None
       | arg :: [] -> Builder.ppat_construct constructor_lid (Some arg)
       | args ->
-        Builder.ppat_construct constructor_lid
-          (Some (Builder.ppat_tuple args))
+          Builder.ppat_construct constructor_lid
+            (Some (Builder.ppat_tuple args)))
 (* ===================================================================================== *)
 
 let rec emit_net_fun_body ~(self_id : string) (module Msg : Msg_intf)
@@ -135,11 +134,10 @@ and emit_net_binding ~(self_id : string) (module Msg : Msg_intf)
             ~expr:(emit_net_fun_body ~self_id (module Msg) ps e))
   | ForeignDecl (VarId (id, _), _, external_name, _) ->
       emit_foreign_decl id external_name
-  | TypeDecl (_, typ, _) -> 
-    (match typ with
-    | TVariant (_, _) -> failwith("not yet implemented")
-    | _ -> Builder.value_binding ~pat:[%pat? _unit] ~expr:Builder.eunit )
-    
+  | TypeDecl (_, typ, _) -> (
+      match typ with
+      | TVariant (_, _) -> failwith "not yet implemented"
+      | _ -> Builder.value_binding ~pat:[%pat? _unit] ~expr:Builder.eunit)
   | _ -> Builder.value_binding ~pat:[%pat? _unit] ~expr:Builder.eunit
 
 (*
@@ -248,17 +246,17 @@ and emit_net_pexp ~(self_id : string) (module Msg : Msg_intf)
         (Msg.emit_net_recv ~src ~dst:self_id)
         (cases @ [ default_case ])
       (* ===================================================================================== *)
-  | Construct (cnstr_id, args, _, _) -> 
-    let name = (fun (Local.TypId (s, _) ) -> s) cnstr_id in
+  | Construct (cnstr_id, args, _, _) -> (
+      let name = (fun (Local.TypId (s, _)) -> s) cnstr_id in
       let constructor_lid = { txt = Longident.Lident name; loc } in
       let args = List.map (emit_net_pexp ~self_id (module Msg)) args in
       match args with
       | [] -> Builder.pexp_construct constructor_lid None
       | arg :: [] -> Builder.pexp_construct constructor_lid (Some arg)
       | args ->
-        Builder.pexp_construct constructor_lid
-          (Some (Builder.pexp_tuple args))
-    (* (
+          Builder.pexp_construct constructor_lid
+            (Some (Builder.pexp_tuple args)))
+(* (
       let args = List.map (emit_net_pexp ~self_id (module Msg)) arglist in
       let constructor_lid = { txt = Longident.Lident name; loc } in
       match args with

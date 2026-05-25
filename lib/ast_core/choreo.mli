@@ -886,6 +886,5 @@ module With : functor
       [info].*)
 
   val set_info_constructor : Info.t -> constructor -> constructor
-
   val get_info_constructor : constructor -> Info.t
 end

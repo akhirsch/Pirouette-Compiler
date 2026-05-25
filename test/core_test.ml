@@ -331,55 +331,59 @@ let test_change_int_LOC (old_int : 'a) (new_int : 'a) =
   let new_info = LocalAst.set_info_value new_int old_info in
   assert_equal new_int (LocalAst.get_info_value new_info)
 
-  (* Test set/get info on a TVariant type *)
-  let test_change_tvariant_LOC (old_meta : 'a) (new_meta : 'a) =
-    let old_info =
-      Local.M.TVariant (
-        [ { Local.M.name = TypId("MyConstructor", old_meta)
-          ; args = [ Local.M.TInt old_meta ; Local.M.TString old_meta ]
-          ; typ  = Local.M.TypId ("MyType", old_meta)
-          ; info = old_meta
-          } ],
-        old_meta)
-    in
-    let new_info = LocalAst.set_info_typ new_meta old_info in
-    assert_equal new_meta (LocalAst.get_info_typ new_info)
-  
-  (* Test set/get info on a constructor record directly *)
-  let test_change_constructor_LOC (old_meta : 'a) (new_meta : 'a) =
-    let old_info =
-      { Local.M.name = TypId("MyConstructor", old_meta)
-      ; args = [ Local.M.TInt old_meta ]
-      ; typ  = Local.M.TypId ("MyType", old_meta)
-      ; info = old_meta
-      }
-    in
-    let new_info = LocalAst.set_info_constructor new_meta old_info in
-    assert_equal new_meta (LocalAst.get_info_constructor new_info)
-  
-  (* Test set/get info on a PConstruct pattern *)
-  let test_change_pconstruct_pat_LOC (old_meta : 'a) (new_meta : 'a) =
-    let old_info =
-      Local.M.PConstruct (
-        TypId("MyConstructor", old_meta),
+(* Test set/get info on a TVariant type *)
+let test_change_tvariant_LOC (old_meta : 'a) (new_meta : 'a) =
+  let old_info =
+    Local.M.TVariant
+      ( [
+          {
+            Local.M.name = TypId ("MyConstructor", old_meta);
+            args = [ Local.M.TInt old_meta; Local.M.TString old_meta ];
+            typ = Local.M.TypId ("MyType", old_meta);
+            info = old_meta;
+          };
+        ],
+        old_meta )
+  in
+  let new_info = LocalAst.set_info_typ new_meta old_info in
+  assert_equal new_meta (LocalAst.get_info_typ new_info)
+
+(* Test set/get info on a constructor record directly *)
+let test_change_constructor_LOC (old_meta : 'a) (new_meta : 'a) =
+  let old_info =
+    {
+      Local.M.name = TypId ("MyConstructor", old_meta);
+      args = [ Local.M.TInt old_meta ];
+      typ = Local.M.TypId ("MyType", old_meta);
+      info = old_meta;
+    }
+  in
+  let new_info = LocalAst.set_info_constructor new_meta old_info in
+  assert_equal new_meta (LocalAst.get_info_constructor new_info)
+
+(* Test set/get info on a PConstruct pattern *)
+let test_change_pconstruct_pat_LOC (old_meta : 'a) (new_meta : 'a) =
+  let old_info =
+    Local.M.PConstruct
+      ( TypId ("MyConstructor", old_meta),
         [ Local.M.Var (Local.M.VarId ("x", old_meta), old_meta) ],
         Local.M.TypId ("MyType", old_meta),
-        old_meta)
-    in
-    let new_info = LocalAst.set_info_pattern new_meta old_info in
-    assert_equal new_meta (LocalAst.get_info_pattern new_info)
-  
-  (* Test set/get info on a Construct expression *)
-  let test_change_construct_expr_LOC (old_meta : 'a) (new_meta : 'a) =
-    let old_info =
-      Local.M.Construct (
-        TypId("MyConstructor", old_meta),
+        old_meta )
+  in
+  let new_info = LocalAst.set_info_pattern new_meta old_info in
+  assert_equal new_meta (LocalAst.get_info_pattern new_info)
+
+(* Test set/get info on a Construct expression *)
+let test_change_construct_expr_LOC (old_meta : 'a) (new_meta : 'a) =
+  let old_info =
+    Local.M.Construct
+      ( TypId ("MyConstructor", old_meta),
         [ Local.M.Val (Local.M.Int (42, old_meta), old_meta) ],
         Local.M.TypId ("MyType", old_meta),
-        old_meta)
-    in
-    let new_info = LocalAst.set_info_expr new_meta old_info in
-    assert_equal new_meta (LocalAst.get_info_expr new_info)
+        old_meta )
+  in
+  let new_info = LocalAst.set_info_expr new_meta old_info in
+  assert_equal new_meta (LocalAst.get_info_expr new_info)
 
 (*-----------------------------------------------------------*)
 (* LOC Test Suite *)
@@ -624,13 +628,16 @@ let test_get_info_tsum_CH (meta1 : int) (meta2 : int) =
 (* Test set/get info on a TVariant type *)
 let test_change_tvariant_CHOREO (old_meta : 'a) (new_meta : 'a) =
   let old_info =
-    Choreo.M.TVariant (
-      [ { Choreo.M.name = TypId("MyConstructor", old_meta)
-        ; args = [ Choreo.M.TUnit old_meta ]
-        ; typ  = Local.M.TypId ("MyType", old_meta)
-        ; info = old_meta
-        } ],
-      old_meta)
+    Choreo.M.TVariant
+      ( [
+          {
+            Choreo.M.name = TypId ("MyConstructor", old_meta);
+            args = [ Choreo.M.TUnit old_meta ];
+            typ = Local.M.TypId ("MyType", old_meta);
+            info = old_meta;
+          };
+        ],
+        old_meta )
   in
   let new_info = ChoreoAst.set_info_typ new_meta old_info in
   assert_equal new_meta (ChoreoAst.get_info_typ new_info)
@@ -638,10 +645,11 @@ let test_change_tvariant_CHOREO (old_meta : 'a) (new_meta : 'a) =
 (* Test set/get info on a constructor record directly *)
 let test_change_constructor_CHOREO (old_meta : 'a) (new_meta : 'a) =
   let old_info =
-    { Choreo.M.name = TypId("MyConstructor", old_meta)
-    ; args = [ Choreo.M.TUnit old_meta ]
-    ; typ  = Local.M.TypId ("MyType", old_meta)
-    ; info = old_meta
+    {
+      Choreo.M.name = TypId ("MyConstructor", old_meta);
+      args = [ Choreo.M.TUnit old_meta ];
+      typ = Local.M.TypId ("MyType", old_meta);
+      info = old_meta;
     }
   in
   let new_info = ChoreoAst.set_info_constructor new_meta old_info in
@@ -650,11 +658,11 @@ let test_change_constructor_CHOREO (old_meta : 'a) (new_meta : 'a) =
 (* Test set/get info on a PConstruct pattern *)
 let test_change_pconstruct_pat_CHOREO (old_meta : 'a) (new_meta : 'a) =
   let old_info =
-    Choreo.M.PConstruct (
-      TypId("MyConstructor", old_meta),
-      [ Choreo.M.Var (Local.M.VarId ("x", old_meta), old_meta) ],
-      Local.M.TypId ("MyType", old_meta),
-      old_meta)
+    Choreo.M.PConstruct
+      ( TypId ("MyConstructor", old_meta),
+        [ Choreo.M.Var (Local.M.VarId ("x", old_meta), old_meta) ],
+        Local.M.TypId ("MyType", old_meta),
+        old_meta )
   in
   let new_info = ChoreoAst.set_info_pattern new_meta old_info in
   assert_equal new_meta (ChoreoAst.get_info_pattern new_info)
@@ -662,15 +670,14 @@ let test_change_pconstruct_pat_CHOREO (old_meta : 'a) (new_meta : 'a) =
 (* Test set/get info on a Construct expression *)
 let test_change_construct_expr_CHOREO (old_meta : 'a) (new_meta : 'a) =
   let old_info =
-    Choreo.M.Construct (
-      TypId("MyConstructor", old_meta),
-      [ Choreo.M.Unit old_meta ],
-      Local.M.TypId ("MyType", old_meta),
-      old_meta)
+    Choreo.M.Construct
+      ( TypId ("MyConstructor", old_meta),
+        [ Choreo.M.Unit old_meta ],
+        Local.M.TypId ("MyType", old_meta),
+        old_meta )
   in
   let new_info = ChoreoAst.set_info_expr new_meta old_info in
   assert_equal new_meta (ChoreoAst.get_info_expr new_info)
-
 
 let test_get_info_unit_CH (meta : int) =
   let typ_var = Choreo.M.Unit meta in
