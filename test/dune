@@ -29,6 +29,7 @@
   import_tests
   core_test_choreo
   core_test
+  dotgen_testcases
   netgen_test)
  (libraries
   ounit2

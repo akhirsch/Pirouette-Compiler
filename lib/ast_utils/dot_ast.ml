@@ -588,7 +588,7 @@ let rec dot_stmts (string_of_info : 'a -> string) (stmts : 'a Choreo.stmt_block)
 and dot_stmt (string_of_info : 'a -> string) (stmt : 'a Choreo.stmt) :
     string * string =
   let node_name = generate_node_name () in
-  Printf.eprintf "DEBUG: node_name generated: %s\n%!" node_name;
+  (*Printf.eprintf "DEBUG: node_name generated: %s\n%!" node_name;*)
   match stmt with
   | Decl (pat, typ, info) ->
       let c1, n1 = dot_choreo_pattern string_of_info pat in
@@ -632,20 +632,20 @@ and dot_stmt (string_of_info : 'a -> string) (stmt : 'a Choreo.stmt) :
     let constructor = spf "%s -> %s;\n" node_name s in
     variant_node ^ typ1edge ^ constructor ^ typ2edge, node_name *)
   | ForeignDecl (VarId (id, _), typ, s, info) ->
-      Printf.eprintf "DEBUG: matched ForeignDecl \n%!";
+      (* Printf.eprintf "DEBUG: matched ForeignDecl \n%!";
       Printf.eprintf "DEBUG: About to create decl_node\n%!";
-      Printf.eprintf "DEBUG: id=%s, s=%s\n%!" id s;
+      Printf.eprintf "DEBUG: id=%s, s=%s\n%!" id s;*)
       let decl_node =
         spf "%s [label=\"ForeignDecl: %s -> %s %s\"];\n" node_name id s
           (string_of_info info)
       in
-      Printf.eprintf "DEBUG: About to call dot_choreo_type\n%!";
+      (*Printf.eprintf "DEBUG: About to call dot_choreo_type\n%!";*)
       let c, n = dot_choreo_type string_of_info typ in
-      Printf.eprintf "DEBUG: dot_choreo_type returned\n%!";
+      (*Printf.eprintf "DEBUG: dot_choreo_type returned\n%!";*)
       let edge = spf "%s -> %s;\n" node_name n in
       (decl_node ^ edge ^ c, node_name)
   | ForeignTypeDecl (TypId (id, _), info) ->
-      Printf.eprintf "DEBUG: matched ForeignTypeDecl \n%!";
+      (*Printf.eprintf "DEBUG: matched ForeignTypeDecl \n%!";*)
       let decl_node =
         spf "%s [label=\"ForeignTypeDecl %s %s\"];\n" node_name id
           (string_of_info info)
@@ -858,7 +858,7 @@ and dot_choreo_expr (string_of_info : 'a -> string) (expr : 'a Choreo.expr) :
 let generate_dot_code (string_of_info : 'a -> string)
     (stmt_block : 'a Choreo.stmt_block) =
   let code, _ = dot_stmts string_of_info stmt_block in
-  Printf.eprintf "DEBUG: dot_stmts completed, resetting node counter\n%!";
+  (*Printf.eprintf "DEBUG: dot_stmts completed, resetting node counter\n%!";*)
   node_counter := 0;
-  Printf.eprintf "DEBUG: returning dot code\n%!";
+  (*Printf.eprintf "DEBUG: returning dot code\n%!";*)
   spf "digraph G {\n%s\n}\n" code
