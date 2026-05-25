@@ -120,7 +120,7 @@ rule read = parse
       string is not terminated.*)
 and read_string buf = parse
   | '"'       { STRING (Buffer.contents buf) }
-  | '\\' ('/' | '\\' | 'b' | 'f' | 'n' | 'r' | 't' as esc)
+  | '\\' ('/' | '\\' | 'b' | 'f' | 'n' | 'r' | 't' | '"' as esc)
     { let c = match esc with
         | '/'  -> '/'
         | '\\' -> '\\'
@@ -129,6 +129,7 @@ and read_string buf = parse
         | 'n'  -> '\n'
         | 'r'  -> '\r'
         | 't'  -> '\t'
+        | '"'  -> '"'
         | _    -> assert false
       in Buffer.add_char buf c;
       read_string buf lexbuf

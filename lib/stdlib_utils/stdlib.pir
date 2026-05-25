@@ -1,3 +1,17 @@
+
+{- Display print for demo -}
+foreign print_idle : PIRSTDLIBLOC.string -> unit := "pirc.display:Display.print_idle";
+foreign print_waiting : PIRSTDLIBLOC.string -> unit := "pirc.display:Display.print_waiting";
+foreign print_sending : PIRSTDLIBLOC.string -> unit := "pirc.display:Display.print_sending";
+foreign print_done : PIRSTDLIBLOC.string -> unit := "pirc.display:Display.print_done";
+
+{- Display clear for console -}
+foreign clear_console : unit -> unit := "pirc.display:Display.clear_console";
+
+{- Sleep -}
+foreign sleep : PIRSTDLIBLOC.int -> unit := "Unix.sleep";
+
+
 {- Print to stdout functions -}
 foreign print_string : PIRSTDLIBLOC.string -> unit := "print_string";
 {-foreign print_char : unit -> unit := "print_char";-}

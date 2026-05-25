@@ -1,6 +1,6 @@
 (library
  (name http_pirc)
- (public_name pirc)
+ (public_name pirc.http_pirc)
  (modules send_receive config_parser)
  (libraries
   cohttp-lwt-unix

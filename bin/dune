@@ -11,4 +11,5 @@
   lwt
   a_rname
   stdlib_utils
+  display
   pirc.import_resolver))

@@ -222,7 +222,7 @@ let () =
           ^
           match !msg_backend with
           | "domain" -> "domainslib"
-          | "http" -> "http_pirc"
+          | "http" -> "pirc.http_pirc"
           | "mpi" -> "mpi"
           | _ -> invalid_arg "Invalid backend"
         in
@@ -233,6 +233,7 @@ let () =
             search_paths !ocamlopt_warn_flags out_file_exe packages !ml_files
             ml_file
         in
+        let _ = Printf.printf "CMD: %s\n%!" cmd in
         let _ = Sys.command cmd in
         ())
       gen_ml_files
