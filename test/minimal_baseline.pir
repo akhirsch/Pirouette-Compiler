@@ -1,1 +1,0 @@
-main := Alice.5;

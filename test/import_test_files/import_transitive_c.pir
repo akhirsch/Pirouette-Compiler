@@ -1,1 +1,0 @@
-foreign type Animal;

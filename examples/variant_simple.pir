@@ -1,1 +1,0 @@
-type Person := | Sam: Person;
