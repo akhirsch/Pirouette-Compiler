@@ -58,10 +58,10 @@ jobs:
           ocaml-compiler: 5.2.1
       
       - name: Install Dune
-        run: opam install dune; eval $(opam env)
+        run: opam install dune
 
       - name: Generate Opam
-        run: dune build @opam
+        run: opam exec -- dune build @opam
 
       - name: Install dependencies
         run: opam install . --deps-only --with-test --with-doc
