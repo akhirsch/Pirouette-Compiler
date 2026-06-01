@@ -1,42 +1,161 @@
-type 'a name = 'a * string
+module type AST = sig
+  type m
+  type name = m * string
 
-type 'a typ =
-  | UnitTy of 'a
-  | IntTy of 'a
-  | FloatTy of 'a
-  | CharTy of 'a
-  | StringTy of 'a
-  | BoolTy of 'a
-  | FunTy of 'a * 'a typ * 'a typ
-  | VariantTy of 'a * ('a name * 'a typ) list
+  type typ =
+    | VarTy of m * name
+    | UnitTy of m
+    | IntTy of m
+    | FloatTy of m
+    | CharTy of m
+    | StringTy of m
+    | BoolTy of m
+    | FunTy of m * typ * typ
 
-type 'a pattern =
-  | WildcardPat of 'a
-  | VarPat of 'a * 'a name
-  | UnitLitPat of 'a
-  | IntLitPat of 'a * int
-  | FloatLitPat of 'a * float
-  | CharLitPat of 'a * char
-  | StringLitPat of 'a * string
-  | TrueLitPat of 'a
-  | FalseLitPat of 'a
-  | ConstructorPat of 'a * 'a name * 'a pattern list
+  type pattern =
+    | WildcardPat of m
+    | VarPat of m * name
+    | UnitLitPat of m
+    | IntLitPat of m * int
+    | FloatLitPat of m * float
+    | CharLitPat of m * char
+    | StringLitPat of m * string
+    | TrueLitPat of m
+    | FalseLitPat of m
+    | ConstructorPat of m * name * pattern list
 
-type 'a expr =
-  | Var of 'a * 'a name
-  | UnitLit of 'a
-  | IntLit of 'a * int
-  | FloatList of 'a * float
-  | CharLit of 'a * char
-  | StringLit of 'a * string
-  | TrueLit of 'a
-  | FalseList of 'a
-  | RecAbs of 'a * 'a name * ('a pattern * 'a expr) list
-  | FunApp of 'a * 'a expr * 'a expr
+  type unop = Neg of m | Not of m
 
-type 'a decl =
-  | TypeDecl of 'a * 'a name * 'a typ
-  | DefnDecl of 'a * 'a name * 'a pattern * 'a expr
-  | ImportDecl of 'a * 'a name
-  | TypeAliasDecl of 'a * 'a name * 'a typ
-  | VariantDecl of 'a * 'a name * ('a name * 'a typ) list
+  type binop =
+    | Plus of m
+    | Minus of m
+    | Times of m
+    | Div of m
+    | And of m
+    | Or of m
+    | Eq of m
+    | Neq of m
+    | Lt of m
+    | Leq of m
+    | Gt of m
+    | Geq of m
+
+  type expr =
+    | Var of m * name
+    | UnitLit of m
+    | IntLit of m * int
+    | FloatList of m * float
+    | CharLit of m * char
+    | StringLit of m * string
+    | TrueLit of m
+    | FalseList of m
+    | RecAbs of m * name * (pattern * expr) list
+    | FunApp of m * expr * expr
+    | Foreign of m * name
+    | TypeConstr of m * expr * typ
+    | Unop of m * unop * expr
+    | Binol of m * binop * expr * expr
+
+  type decl =
+    | TypeDecl of m * name * typ
+    | DefnDecl of m * name * pattern * expr
+    | ImportDecl of m * name
+    | TypeAliasDecl of m * name * typ
+    | VariantDecl of m * name * (name * typ) list
+
+  type program = decl list
+
+  val prettify_typ : typ -> string
+  val prettify_pattern : pattern -> string
+  val prettify_unop : unop -> string
+  val prettify_binop : binop -> string
+  val prettify_expr : expr -> string
+  val prettify_decl : decl -> string
+  val prettify_prog : program -> string
+end
+
+module MkAST (M : Metainfo.Meta.Metainfo) = struct
+  type m = M.t
+  type name = M.t * string
+
+  type typ =
+    | VarTy of M.t * name
+    | UnitTy of M.t
+    | IntTy of M.t
+    | FloatTy of M.t
+    | CharTy of M.t
+    | StringTy of M.t
+    | BoolTy of M.t
+    | FunTy of M.t * typ * typ
+
+  type pattern =
+    | WildcardPat of M.t
+    | VarPat of M.t * name
+    | UnitLitPat of M.t
+    | IntLitPat of M.t * int
+    | FloatLitPat of M.t * float
+    | CharLitPat of M.t * char
+    | StringLitPat of M.t * string
+    | TrueLitPat of M.t
+    | FalseLitPat of M.t
+    | ConstructorPat of M.t * name * pattern list
+
+  type unop = Neg of M.t | Not of M.t
+
+  type binop =
+    | Plus of M.t
+    | Minus of M.t
+    | Times of M.t
+    | Div of M.t
+    | And of M.t
+    | Or of M.t
+    | Eq of M.t
+    | Neq of M.t
+    | Lt of M.t
+    | Leq of M.t
+    | Gt of M.t
+    | Geq of M.t
+
+  type expr =
+    | Var of M.t * name
+    | UnitLit of M.t
+    | IntLit of M.t * int
+    | FloatList of M.t * float
+    | CharLit of M.t * char
+    | StringLit of M.t * string
+    | TrueLit of M.t
+    | FalseList of M.t
+    | RecAbs of M.t * name * (pattern * expr) list
+    | FunApp of M.t * expr * expr
+    | Foreign of M.t * name
+    | TypeConstr of M.t * expr * typ
+    | Unop of M.t * unop * expr
+    | Binol of M.t * binop * expr * expr
+
+  type decl =
+    | TypeDecl of M.t * name * typ
+    | DefnDecl of M.t * name * pattern * expr
+    | ImportDecl of M.t * name
+    | TypeAliasDecl of M.t * name * typ
+    | VariantDecl of M.t * name * (name * typ) list
+
+  type program = decl list
+
+  let rec prettify_typ = function
+    | VarTy (_, (_, n)) -> n
+    | UnitTy _ -> "unit"
+    | IntTy _ -> "int"
+    | FloatTy _ -> "float"
+    | CharTy _ -> "char"
+    | StringTy _ -> "string"
+    | BoolTy _ -> "bool"
+    | FunTy (_, t1, t2) ->
+        Printf.sprintf "%s -> %s" (prettify_typ t1) (prettify_typ t2)
+
+  let prettify_pattern _ = failwith "implement me"
+  let prettify_unop = function Neg _ -> "-" | Not _ -> "~"
+  let prettify_binop _ = failwith "implement me"
+  let prettify_expr _ = failwith "implement me"
+  let prettify_decl _ = failwith "implement me"
+  let prettify_prog _ = failwith "implement me"
+end

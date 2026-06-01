@@ -1,0 +1,5 @@
+(library
+ (name metainfo)
+ (public_name pirc.metainfo)
+ (instrumentation
+  (backend bisect_ppx)))

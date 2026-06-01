@@ -1,0 +1,6 @@
+(library
+ (name netir)
+ (public_name pirc.netir)
+ (libraries metainfo)
+ (instrumentation
+  (backend bisect_ppx)))
