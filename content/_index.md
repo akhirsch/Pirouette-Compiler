@@ -5,11 +5,3 @@ sort_by = "weight"
 template = "section.html"
 +++
 
-# Test
-
-I'm testing to see how this looks.
-
-
-# Tutorial
-
-For a tutorial, check out [this page](@/tutorial/_index.md).
