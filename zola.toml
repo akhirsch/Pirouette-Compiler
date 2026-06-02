@@ -1,0 +1,26 @@
+# The URL the site will be built for
+base_url = "https://akhirsch.science/Pirouette-Compiler"
+title = "Pirouette: A Functional Choreographic Language"
+theme = "tanuki"
+
+# Whether to automatically compile all Sass files in the sass directory
+compile_sass = true
+
+# Whether to build a search index to be used later on by a JavaScript library
+build_search_index = true
+
+[markdown]
+
+[markdown.highlighting]
+theme = "catppuccin-latte"
+
+[extra]
+# Put all your custom variables here
+mode = "docs"
+github="https://github.com/akhirsch/Pirouette-Compiler"
+
+[extra.versions]
+current="1.0.0"
+list = [
+     { version = "1.0.0", url = "/", label = "latest" },
+]

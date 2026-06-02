@@ -1,1 +1,0 @@
-import "diamond_cycle_c.pir";

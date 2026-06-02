@@ -1,4 +1,0 @@
-(library
- (name import_resolver)
- (public_name pirc.import_resolver)
- (libraries ast_core parsing pirc.stdlib_utils))

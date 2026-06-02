@@ -1,3 +1,0 @@
-(documentation
- (package pirc)
- (mld_files Net_parser))
