@@ -44,17 +44,16 @@ module type AST = sig
     | Var of m * name
     | UnitLit of m
     | IntLit of m * int
-    | FloatList of m * float
+    | FloatLit of m * float
     | CharLit of m * char
     | StringLit of m * string
     | TrueLit of m
-    | FalseList of m
+    | FalseLit of m
     | RecAbs of m * name * (pattern * expr) list
     | FunApp of m * expr * expr
-    | Foreign of m * name
     | TypeConstr of m * expr * typ
     | Unop of m * unop * expr
-    | Binol of m * binop * expr * expr
+    | Binop of m * binop * expr * expr
 
   type decl =
     | TypeDecl of m * name * typ
@@ -120,17 +119,16 @@ module MkAST (M : Metainfo.Meta.Metainfo) = struct
     | Var of M.t * name
     | UnitLit of M.t
     | IntLit of M.t * int
-    | FloatList of M.t * float
+    | FloatLit of M.t * float
     | CharLit of M.t * char
     | StringLit of M.t * string
     | TrueLit of M.t
-    | FalseList of M.t
+    | FalseLit of M.t
     | RecAbs of M.t * name * (pattern * expr) list
     | FunApp of M.t * expr * expr
-    | Foreign of M.t * name
     | TypeConstr of M.t * expr * typ
     | Unop of M.t * unop * expr
-    | Binol of M.t * binop * expr * expr
+    | Binop of M.t * binop * expr * expr
 
   type decl =
     | TypeDecl of M.t * name * typ
@@ -141,21 +139,4 @@ module MkAST (M : Metainfo.Meta.Metainfo) = struct
 
   type program = decl list
 
-  let rec prettify_typ = function
-    | VarTy (_, (_, n)) -> n
-    | UnitTy _ -> "unit"
-    | IntTy _ -> "int"
-    | FloatTy _ -> "float"
-    | CharTy _ -> "char"
-    | StringTy _ -> "string"
-    | BoolTy _ -> "bool"
-    | FunTy (_, t1, t2) ->
-        Printf.sprintf "%s -> %s" (prettify_typ t1) (prettify_typ t2)
-
-  let prettify_pattern _ = failwith "implement me"
-  let prettify_unop = function Neg _ -> "-" | Not _ -> "~"
-  let prettify_binop _ = failwith "implement me"
-  let prettify_expr _ = failwith "implement me"
-  let prettify_decl _ = failwith "implement me"
-  let prettify_prog _ = failwith "implement me"
 end

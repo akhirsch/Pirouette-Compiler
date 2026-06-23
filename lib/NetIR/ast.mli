@@ -44,17 +44,16 @@ module type AST = sig
     | Var of m * name
     | UnitLit of m
     | IntLit of m * int
-    | FloatList of m * float
+    | FloatLit of m * float
     | CharLit of m * char
     | StringLit of m * string
     | TrueLit of m
-    | FalseList of m
+    | FalseLit of m
     | RecAbs of m * name * (pattern * expr) list
     | FunApp of m * expr * expr
-    | Foreign of m * name
     | TypeConstr of m * expr * typ
     | Unop of m * unop * expr
-    | Binol of m * binop * expr * expr
+    | Binop of m * binop * expr * expr
 
   type decl =
     | TypeDecl of m * name * typ

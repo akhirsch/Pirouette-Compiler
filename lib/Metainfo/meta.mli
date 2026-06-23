@@ -5,3 +5,5 @@ module type Metainfo = sig
 end
 
 module PosInfo : Metainfo
+
+module TrivInfo : Metainfo

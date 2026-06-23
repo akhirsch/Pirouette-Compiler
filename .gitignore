@@ -13,6 +13,7 @@ pirc.opam
 _build
 testing/pingpong/dist-newstyle
 *~
+\#*\#
 
 # bisect_ppx coverage files
 _coverage
