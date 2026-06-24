@@ -55,11 +55,13 @@ module ASTMapper (A1 : AST) (A2 : AST) = struct
     | A1.StringLit (m, s) -> A2.StringLit (f m, s)
     | A1.TrueLit m -> A2.TrueLit (f m)
     | A1.FalseLit m -> A2.FalseLit (f m)
-    | A1.RecAbs (m, n, pes) ->
-        A2.RecAbs
+    | A1.Match (m, e, pes) ->
+        A2.Match
           ( f m,
-            name_map f n,
+            expr_map f e,
             List.map (fun (p, e) -> (pattern_map f p, expr_map f e)) pes )
+    | A1.RecAbs (m, g, x, e) ->
+        A2.RecAbs (f m, name_map f g, name_map f x, expr_map f e)
     | A1.FunApp (m, fn, arg) -> A2.FunApp (f m, expr_map f fn, expr_map f arg)
     | A1.TypeConstr (m, e, t) -> A2.TypeConstr (f m, expr_map f e, typ_map f t)
     | A1.Unop (m, o, e) -> A2.Unop (f m, unop_map f o, expr_map f e)
@@ -77,7 +79,8 @@ module ASTMapper (A1 : AST) (A2 : AST) = struct
         A2.VariantDecl
           ( f m,
             name_map f n,
-            List.map (fun (n, t) -> (name_map f n, typ_map f t)) cs )
+            List.map (fun (n, t) -> (name_map f n, List.map (typ_map f) t)) cs
+          )
 
   let program_map (f : A1.m -> A2.m) = List.map (decl_map f)
 end

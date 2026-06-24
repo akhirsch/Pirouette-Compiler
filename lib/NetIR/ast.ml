@@ -49,7 +49,8 @@ module type AST = sig
     | StringLit of m * string
     | TrueLit of m
     | FalseLit of m
-    | RecAbs of m * name * (pattern * expr) list
+    | Match of m * expr * (pattern * expr) list
+    | RecAbs of m * name * name * expr
     | FunApp of m * expr * expr
     | TypeConstr of m * expr * typ
     | Unop of m * unop * expr
@@ -60,17 +61,9 @@ module type AST = sig
     | DefnDecl of m * name * pattern * expr
     | ImportDecl of m * name
     | TypeAliasDecl of m * name * typ
-    | VariantDecl of m * name * (name * typ) list
+    | VariantDecl of m * name * (name * typ list) list
 
   type program = decl list
-
-  val prettify_typ : typ -> string
-  val prettify_pattern : pattern -> string
-  val prettify_unop : unop -> string
-  val prettify_binop : binop -> string
-  val prettify_expr : expr -> string
-  val prettify_decl : decl -> string
-  val prettify_prog : program -> string
 end
 
 module MkAST (M : Metainfo.Meta.Metainfo) = struct
@@ -124,7 +117,8 @@ module MkAST (M : Metainfo.Meta.Metainfo) = struct
     | StringLit of M.t * string
     | TrueLit of M.t
     | FalseLit of M.t
-    | RecAbs of M.t * name * (pattern * expr) list
+    | Match of M.t * expr * (pattern * expr) list
+    | RecAbs of M.t * name * name * expr
     | FunApp of M.t * expr * expr
     | TypeConstr of M.t * expr * typ
     | Unop of M.t * unop * expr
@@ -135,8 +129,7 @@ module MkAST (M : Metainfo.Meta.Metainfo) = struct
     | DefnDecl of M.t * name * pattern * expr
     | ImportDecl of M.t * name
     | TypeAliasDecl of M.t * name * typ
-    | VariantDecl of M.t * name * (name * typ) list
+    | VariantDecl of M.t * name * (name * typ list) list
 
   type program = decl list
-
 end

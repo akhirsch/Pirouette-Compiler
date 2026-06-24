@@ -8,8 +8,7 @@ module TrivInfo = struct
   type t = unit
 
   let string_of_mi _ = ""
-
-end 
+end
 
 module PosInfo = struct
   type t = {
@@ -20,4 +19,16 @@ module PosInfo = struct
 
   let string_of_mi { filename; start = l1, c1; stop = l2, c2 } =
     Printf.sprintf "[%s: %d:%d--%d:%d]" filename l1 c1 l2 c2
+end
+
+module type ToTrivial = sig
+  type m
+
+  val totrivial : m -> TrivInfo.t
+end
+
+module ToTrivialInfo (M : Metainfo) : ToTrivial with type m = M.t = struct
+  type m = M.t
+
+  let totrivial _ = ()
 end
