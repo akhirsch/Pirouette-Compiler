@@ -1,0 +1,59 @@
+// Sentinel configuration for serving Tanuki theme examples
+// Usage: sentinel -c sentinel.kdl
+
+system {
+    worker-threads 1
+    max-connections 100
+    graceful-shutdown-timeout-secs 5
+    daemon #false
+}
+
+listeners {
+    listener "http" {
+        address "127.0.0.1:8080"
+        protocol "http"
+        request-timeout-secs 30
+        keepalive-timeout-secs 60
+        default-route "tanuki"
+    }
+}
+
+routes {
+    route "tanuki" {
+        priority "normal"
+        service_type "static"
+
+        matches {
+            path-prefix "/"
+        }
+
+        upstream #null
+
+        static-files {
+            root "./public"
+            index "index.html"
+            directory-listing #false
+            cache-control "no-cache"
+            compress #true
+            fallback "index.html"
+
+            mime-types {
+                "avif" "image/avif"
+                "woff2" "font/woff2"
+            }
+        }
+    }
+}
+
+limits {
+    max-header-size-bytes 8192
+    max-header-count 50
+    max-body-size-bytes 1048576
+}
+
+observability {
+    logging {
+        level "info"
+        format "pretty"
+    }
+}

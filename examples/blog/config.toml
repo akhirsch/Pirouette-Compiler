@@ -1,0 +1,58 @@
+# Tanuki Theme - Blog/Personal Site Example
+base_url = "/tanuki/blog"
+title = "Alex Chen"
+description = "Software developer writing about web technologies, design, and the craft of building things."
+theme = "tanuki"
+compile_sass = true
+build_search_index = true
+generate_feeds = true
+feed_filenames = ["rss.xml"]
+
+taxonomies = [
+    { name = "tags", feed = true },
+]
+
+[markdown]
+highlight_code = true
+highlight_theme = "base16-ocean-dark"
+
+[extra]
+mode = "blog"
+show_theme_toggle = true
+show_about_section = true
+
+# Author info
+[extra.author]
+name = "Alex Chen"
+bio = "Software developer and open source enthusiast."
+# avatar = "images/avatar.jpg"
+
+# Hero section
+[extra.hero]
+title = "Hey, I'm Alex"
+subtitle = "I build things for the web and write about what I learn along the way."
+[extra.hero.cta]
+text = "Read the blog"
+url = "/tanuki/blog/blog/"
+
+# About preview on homepage
+[extra.about]
+summary = "I'm a software developer passionate about web technologies, developer experience, and building tools that make other developers' lives easier."
+
+# Social links
+[extra.social]
+github = "https://github.com/username"
+twitter = "https://twitter.com/username"
+
+# Navigation
+[[extra.nav]]
+name = "Blog"
+url = "/tanuki/blog/blog/"
+
+[[extra.nav]]
+name = "Projects"
+url = "/tanuki/blog/projects/"
+
+[[extra.nav]]
+name = "About"
+url = "/tanuki/blog/about/"

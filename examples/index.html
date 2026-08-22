@@ -1,0 +1,2104 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark" prefix="og: https://ogp.me/ns#">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark light">
+
+    <!-- Primary Meta Tags -->
+    <title>Tanuki - An Opinionated Zola Theme for Documentation, Books, and Blogs</title>
+    <meta name="title" content="Tanuki - An Opinionated Zola Theme for Documentation, Books, and Blogs">
+    <meta name="description" content="A beautiful, accessible Zola theme with four modes: documentation sites, distraction-free books, card-based blogs, and product landing pages. Features Catppuccin colors, Geist typography, dark/light themes, and built-in search.">
+    <meta name="keywords" content="Zola theme, static site generator, documentation theme, book theme, blog theme, Catppuccin, Geist font, dark mode, light mode, responsive design, accessible, open source">
+    <meta name="author" content="raskell.io">
+    <meta name="robots" content="index, follow">
+    <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+    <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://tanuki.raskell.io/">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://tanuki.raskell.io/">
+    <meta property="og:title" content="Tanuki - An Opinionated Zola Theme">
+    <meta property="og:description" content="Beautiful, accessible Zola theme with four modes: documentation, books, blogs, and product landing pages. Features Catppuccin colors, Geist typography, and built-in search.">
+    <meta property="og:image" content="https://tanuki.raskell.io/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Tanuki theme preview showing documentation, book, and blog modes">
+    <meta property="og:site_name" content="Tanuki">
+    <meta property="og:locale" content="en_US">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://tanuki.raskell.io/">
+    <meta name="twitter:title" content="Tanuki - An Opinionated Zola Theme">
+    <meta name="twitter:description" content="Beautiful, accessible Zola theme with four modes: documentation, books, blogs, and product landing pages. Features Catppuccin colors, Geist typography, and built-in search.">
+    <meta name="twitter:image" content="https://tanuki.raskell.io/og-image.png">
+    <meta name="twitter:image:alt" content="Tanuki theme preview showing documentation, book, and blog modes">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/avif" href="./docs/img/tanuki-icon.avif">
+    <link rel="apple-touch-icon" href="./docs/img/tanuki-icon.avif">
+
+    <!-- JSON-LD Structured Data for SEO and AEO -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@graph": [
+            {
+                "@type": "WebSite",
+                "@id": "https://tanuki.raskell.io/#website",
+                "url": "https://tanuki.raskell.io/",
+                "name": "Tanuki",
+                "description": "An opinionated Zola theme for documentation, books, and blogs",
+                "publisher": {
+                    "@id": "https://raskell.io/#organization"
+                },
+                "inLanguage": "en-US"
+            },
+            {
+                "@type": "WebPage",
+                "@id": "https://tanuki.raskell.io/#webpage",
+                "url": "https://tanuki.raskell.io/",
+                "name": "Tanuki - An Opinionated Zola Theme for Documentation, Books, and Blogs",
+                "isPartOf": {
+                    "@id": "https://tanuki.raskell.io/#website"
+                },
+                "about": {
+                    "@id": "https://tanuki.raskell.io/#software"
+                },
+                "description": "A beautiful, accessible Zola theme with four modes: documentation sites, distraction-free books, card-based blogs, and product landing pages.",
+                "inLanguage": "en-US",
+                "potentialAction": [
+                    {
+                        "@type": "ReadAction",
+                        "target": ["https://tanuki.raskell.io/docs/"]
+                    }
+                ]
+            },
+            {
+                "@type": "SoftwareApplication",
+                "@id": "https://tanuki.raskell.io/#software",
+                "name": "Tanuki",
+                "description": "An opinionated Zola theme designed for documentation sites, technical books, developer blogs, and product landing pages. Features four distinct modes, Catppuccin color palette, Geist typography, resizable sidebar, dark/light themes, and built-in search.",
+                "applicationCategory": "DeveloperApplication",
+                "applicationSubCategory": "Static Site Theme",
+                "operatingSystem": "Any",
+                "offers": {
+                    "@type": "Offer",
+                    "price": "0",
+                    "priceCurrency": "USD"
+                },
+                "license": "https://opensource.org/licenses/MIT",
+                "isAccessibleForFree": true,
+                "creator": {
+                    "@type": "Organization",
+                    "name": "raskell.io",
+                    "url": "https://raskell.io"
+                },
+                "codeRepository": "https://github.com/raskell-io/tanuki",
+                "programmingLanguage": ["HTML", "CSS", "JavaScript", "Tera"],
+                "runtimePlatform": "Zola Static Site Generator",
+                "featureList": [
+                    "Four layout modes: Documentation, Book, Blog, and Product",
+                    "Catppuccin color palette with soothing pastel colors",
+                    "Geist variable font for clean typography",
+                    "Dark and light theme with system preference detection",
+                    "Resizable sidebar with localStorage persistence",
+                    "Built-in full-text search",
+                    "Fully responsive and mobile-first design",
+                    "Keyboard navigation support",
+                    "Copy-to-clipboard anchor links",
+                    "Version picker for documentation",
+                    "RSS feed generation",
+                    "Syntax highlighting for code blocks"
+                ],
+                "screenshot": "https://tanuki.raskell.io/og-image.png",
+                "softwareVersion": "1.0.0",
+                "datePublished": "2024-01-01",
+                "keywords": ["Zola", "theme", "documentation", "book", "blog", "static site", "Catppuccin", "Geist", "dark mode"]
+            },
+            {
+                "@type": "ItemList",
+                "@id": "https://tanuki.raskell.io/#modes",
+                "name": "Tanuki Theme Modes",
+                "description": "Four distinct layout modes available in the Tanuki theme",
+                "numberOfItems": 4,
+                "itemListElement": [
+                    {
+                        "@type": "ListItem",
+                        "position": 1,
+                        "name": "Documentation Mode",
+                        "description": "A resizable sidebar with hierarchical navigation, integrated search, and version picker. Designed for reference material that users need to navigate quickly. Best for API docs, guides, references, wikis, and knowledge bases.",
+                        "url": "https://tanuki.raskell.io/docs/"
+                    },
+                    {
+                        "@type": "ListItem",
+                        "position": 2,
+                        "name": "Book Mode",
+                        "description": "A distraction-free reading experience with full-screen chapter overlay and keyboard navigation. Maximizes content width for comfortable long-form reading. Best for tutorials, e-books, courses, technical books, and manuals.",
+                        "url": "https://tanuki.raskell.io/book/"
+                    },
+                    {
+                        "@type": "ListItem",
+                        "position": 3,
+                        "name": "Blog Mode",
+                        "description": "Card-based listing with tags, dates, and reading time estimates. Individual posts with clean typography optimized for articles. Best for personal blogs, dev logs, newsletters, and announcements.",
+                        "url": "https://tanuki.raskell.io/blog/"
+                    },
+                    {
+                        "@type": "ListItem",
+                        "position": 4,
+                        "name": "Product Mode",
+                        "description": "Full-width landing pages with hero sections, feature grids, install commands, and custom footers. Designed to showcase CLI tools, libraries, SaaS products, and open source projects.",
+                        "url": "https://sango.raskell.io/"
+                    }
+                ]
+            },
+            {
+                "@type": "FAQPage",
+                "@id": "https://tanuki.raskell.io/#faq",
+                "mainEntity": [
+                    {
+                        "@type": "Question",
+                        "name": "What is Tanuki?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Tanuki is an opinionated Zola theme designed for documentation sites, technical books, developer blogs, and product landing pages. It features four distinct layout modes, Catppuccin colors, Geist typography, and is fully accessible and responsive."
+                        }
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "What are the four modes in Tanuki?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Tanuki offers four modes: (1) Documentation mode with a resizable sidebar and hierarchical navigation for API docs and guides, (2) Book mode with distraction-free reading and keyboard navigation for tutorials and e-books, (3) Blog mode with card-based listings for personal blogs and newsletters, and (4) Product mode with full-width landing pages for CLI tools, libraries, and open source projects."
+                        }
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "What color scheme does Tanuki use?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Tanuki uses the Catppuccin color palette, featuring soothing pastel colors with perfect contrast ratios for accessibility. It supports both dark (Mocha) and light (Latte) themes with automatic system preference detection."
+                        }
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "Is Tanuki free to use?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Yes, Tanuki is completely free and open source. It is licensed under the MIT license and available on GitHub at github.com/raskell-io/tanuki."
+                        }
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "What static site generator does Tanuki work with?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Tanuki is built specifically for Zola, a fast static site generator written in Rust. Zola compiles your content into static HTML files for fast, secure hosting anywhere."
+                        }
+                    }
+                ]
+            },
+            {
+                "@type": "Organization",
+                "@id": "https://raskell.io/#organization",
+                "name": "raskell.io",
+                "url": "https://raskell.io",
+                "logo": "https://raskell.io/logo.png"
+            }
+        ]
+    }
+    </script>
+
+    <!-- Additional SEO: Preconnect and DNS Prefetch -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+    <style>
+        :root {
+            --ctp-mocha-base: #1e1e2e;
+            --ctp-mocha-mantle: #181825;
+            --ctp-mocha-crust: #11111b;
+            --ctp-mocha-text: #cdd6f4;
+            --ctp-mocha-subtext1: #bac2de;
+            --ctp-mocha-subtext0: #a6adc8;
+            --ctp-mocha-overlay2: #9399b2;
+            --ctp-mocha-overlay1: #7f849c;
+            --ctp-mocha-overlay0: #6c7086;
+            --ctp-mocha-surface2: #585b70;
+            --ctp-mocha-surface1: #45475a;
+            --ctp-mocha-surface0: #313244;
+            --ctp-mocha-mauve: #cba6f7;
+            --ctp-mocha-pink: #f5c2e7;
+            --ctp-mocha-teal: #94e2d5;
+            --ctp-mocha-green: #a6e3a1;
+            --ctp-mocha-peach: #fab387;
+            --ctp-mocha-blue: #89b4fa;
+            --ctp-mocha-lavender: #b4befe;
+            --ctp-mocha-yellow: #f9e2af;
+
+            --ctp-latte-base: #eff1f5;
+            --ctp-latte-mantle: #e6e9ef;
+            --ctp-latte-crust: #dce0e8;
+            --ctp-latte-text: #4c4f69;
+            --ctp-latte-subtext1: #5c5f77;
+            --ctp-latte-subtext0: #6c6f85;
+            --ctp-latte-overlay2: #7c7f93;
+            --ctp-latte-surface0: #ccd0da;
+            --ctp-latte-mauve: #8839ef;
+            --ctp-latte-pink: #ea76cb;
+            --ctp-latte-teal: #179299;
+            --ctp-latte-green: #40a02b;
+            --ctp-latte-peach: #fe640b;
+            --ctp-latte-blue: #1e66f5;
+            --ctp-latte-lavender: #7287fd;
+            --ctp-latte-yellow: #df8e1d;
+        }
+
+        [data-theme="dark"] {
+            --bg: var(--ctp-mocha-base);
+            --bg-alt: var(--ctp-mocha-mantle);
+            --bg-surface: var(--ctp-mocha-surface0);
+            --bg-subtle: var(--ctp-mocha-mantle);
+            --text: var(--ctp-mocha-text);
+            --text-muted: var(--ctp-mocha-subtext0);
+            --text-subtle: var(--ctp-mocha-overlay1);
+            --border: var(--ctp-mocha-surface0);
+            --border-strong: var(--ctp-mocha-surface1);
+            --accent: var(--ctp-mocha-mauve);
+            --accent-hover: var(--ctp-mocha-pink);
+            --card-bg: var(--ctp-mocha-surface0);
+            --card-hover: var(--ctp-mocha-surface1);
+            --docs-color: var(--ctp-mocha-blue);
+            --book-color: var(--ctp-mocha-green);
+            --blog-color: var(--ctp-mocha-peach);
+            --product-color: var(--ctp-mocha-mauve);
+        }
+
+        [data-theme="light"] {
+            --bg: var(--ctp-latte-base);
+            --bg-alt: var(--ctp-latte-mantle);
+            --bg-surface: var(--ctp-latte-surface0);
+            --bg-subtle: var(--ctp-latte-crust);
+            --text: var(--ctp-latte-text);
+            --text-muted: var(--ctp-latte-subtext0);
+            --text-subtle: var(--ctp-latte-overlay2);
+            --border: var(--ctp-latte-crust);
+            --border-strong: var(--ctp-latte-surface1);
+            --accent: var(--ctp-latte-mauve);
+            --accent-hover: var(--ctp-latte-pink);
+            --card-bg: var(--ctp-latte-mantle);
+            --card-hover: var(--ctp-latte-crust);
+            --docs-color: var(--ctp-latte-blue);
+            --book-color: var(--ctp-latte-green);
+            --blog-color: var(--ctp-latte-peach);
+            --product-color: var(--ctp-latte-mauve);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @font-face {
+            font-family: 'Geist';
+            src: url('./docs/fonts/Geist-Variable.woff2') format('woff2');
+            font-weight: 100 900;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        @font-face {
+            font-family: 'Geist Mono';
+            src: url('./docs/fonts/GeistMono-Variable.woff2') format('woff2');
+            font-weight: 100 900;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        body {
+            font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        /* Skip Link for Accessibility */
+        .skip-link {
+            position: absolute;
+            top: -100%;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 9999;
+            padding: 0.75rem 1.5rem;
+            background: var(--accent);
+            color: var(--bg);
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: 0 0 8px 8px;
+            transition: top 0.2s ease;
+        }
+
+        .skip-link:focus {
+            top: 0;
+            outline: 2px solid var(--text);
+            outline-offset: 2px;
+        }
+
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 4rem 0 3rem;
+            text-align: center;
+        }
+
+        .hero__logo {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+        }
+
+        .hero__logo img {
+            width: 48px;
+            height: 48px;
+            object-fit: contain;
+        }
+
+        .hero__logo rt {
+            font-size: 0.4em;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        .hero__title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero__subtitle {
+            color: var(--text-muted);
+            font-size: 1.25rem;
+            max-width: 600px;
+            margin: 0 auto 1.5rem;
+        }
+
+        .hero__tagline {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+
+        .hero__tagline strong {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        /* Install Widget - Sentinel-inspired */
+        .install-widget {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 2rem;
+        }
+
+        .install-selector {
+            position: relative;
+            z-index: 100;
+        }
+
+        .install-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.75rem 1rem;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-strong);
+            border-radius: 0.5rem;
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .install-toggle:hover {
+            border-color: var(--accent);
+        }
+
+        .install-toggle:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+        }
+
+        .install-toggle-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .install-toggle-chevron {
+            color: var(--text-muted);
+            transition: transform 0.15s ease;
+        }
+
+        .install-dropdown.open + .install-toggle .install-toggle-chevron,
+        .install-selector:has(.install-dropdown.open) .install-toggle-chevron {
+            transform: rotate(180deg);
+        }
+
+        .install-dropdown {
+            position: absolute;
+            top: calc(100% + 0.375rem);
+            left: 0;
+            min-width: 140px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-strong);
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-8px);
+            transition: all 0.15s ease;
+            z-index: 9999;
+        }
+
+        .install-dropdown.open {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .install-option {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            width: 100%;
+            padding: 0.625rem 1rem;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-family: var(--font-sans);
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            white-space: nowrap;
+            border-radius: 0.5rem;
+        }
+
+        .install-option:hover {
+            background: var(--bg-alt);
+            color: var(--text);
+        }
+
+        .install-option.active {
+            color: var(--accent);
+            background: color-mix(in srgb, var(--accent) 10%, transparent);
+        }
+
+        .install-option svg {
+            flex-shrink: 0;
+        }
+
+        .install-cmd-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            background: var(--bg-subtle);
+            border: 1px solid var(--border-strong);
+            border-radius: 0.5rem;
+            transition: border-color 0.15s ease;
+        }
+
+        .install-cmd-wrapper:hover {
+            border-color: var(--accent);
+        }
+
+        .install-cmd {
+            font-family: 'Geist Mono', ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+            font-size: 0.875rem;
+            color: var(--text);
+            white-space: nowrap;
+            user-select: all;
+        }
+
+        .copy-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.375rem;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-radius: 0.25rem;
+            transition: all 0.15s ease;
+            flex-shrink: 0;
+        }
+
+        .copy-btn:hover {
+            color: var(--text);
+            background: var(--bg-surface);
+        }
+
+        .copy-btn:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+        }
+
+        .copy-btn.copied {
+            color: var(--accent);
+        }
+
+        @keyframes confetti-burst {
+            0% { transform: translate(-50%, -50%) translate(0, 0) scale(1); opacity: 1; }
+            100% { transform: translate(-50%, -50%) translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
+        }
+
+        /* Section */
+        .section {
+            padding: 4rem 0;
+        }
+
+        .section--alt {
+            background: var(--bg-alt);
+        }
+
+        .section__header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section__title {
+            font-size: clamp(1.5rem, 3vw, 2rem);
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .section__description {
+            color: var(--text-muted);
+            font-size: 1.125rem;
+        }
+
+        /* Mode Cards - Sentinel-inspired */
+        .modes {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            list-style: none;
+        }
+
+        .mode-card {
+            height: 100%;
+        }
+
+        .mode-card a {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            padding: 2rem;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            text-decoration: none;
+            color: var(--text);
+            transition: all 0.25s ease;
+        }
+
+        .mode-card a:hover,
+        .mode-card a:focus {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            outline: none;
+        }
+
+        .mode-card a:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+        }
+
+        .mode-card--docs a:hover,
+        .mode-card--docs a:focus { border-color: var(--docs-color); }
+        .mode-card--book a:hover,
+        .mode-card--book a:focus { border-color: var(--book-color); }
+        .mode-card--blog a:hover,
+        .mode-card--blog a:focus { border-color: var(--blog-color); }
+        .mode-card--product a:hover,
+        .mode-card--product a:focus { border-color: var(--product-color); }
+
+        .mode-card__header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .mode-card__icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            background: var(--bg-alt);
+            border-radius: 8px;
+            transition: all 0.25s ease;
+        }
+
+        .mode-card--docs .mode-card__icon {
+            color: var(--docs-color);
+        }
+
+        .mode-card--book .mode-card__icon {
+            color: var(--book-color);
+        }
+
+        .mode-card--blog .mode-card__icon {
+            color: var(--blog-color);
+        }
+
+        .mode-card--product .mode-card__icon {
+            color: var(--product-color);
+        }
+
+        .mode-card--docs a:hover .mode-card__icon,
+        .mode-card--docs a:focus .mode-card__icon {
+            background: var(--docs-color);
+            color: var(--bg);
+        }
+
+        .mode-card--book a:hover .mode-card__icon,
+        .mode-card--book a:focus .mode-card__icon {
+            background: var(--book-color);
+            color: var(--bg);
+        }
+
+        .mode-card--blog a:hover .mode-card__icon,
+        .mode-card--blog a:focus .mode-card__icon {
+            background: var(--blog-color);
+            color: var(--bg);
+        }
+
+        .mode-card--product a:hover .mode-card__icon,
+        .mode-card--product a:focus .mode-card__icon {
+            background: var(--product-color);
+            color: var(--bg);
+        }
+
+        .mode-card__icon svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .mode-card__title {
+            font-size: 1.125rem;
+            font-weight: 600;
+        }
+
+        .mode-card__description {
+            color: var(--text-muted);
+            font-size: 0.9375rem;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            flex: 1;
+        }
+
+        .mode-card__use-cases {
+            font-size: 0.8125rem;
+            color: var(--text-subtle);
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .mode-card__use-cases strong {
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        /* Configuration Section */
+        .config-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .config-tab {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.25rem;
+            background: var(--bg-surface);
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-muted);
+            font-family: inherit;
+            font-size: 0.9375rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .config-tab:hover {
+            border-color: var(--text-muted);
+            color: var(--text);
+        }
+
+        .config-tab.active {
+            border-color: var(--accent);
+            color: var(--text);
+            background: color-mix(in srgb, var(--accent) 10%, var(--bg-surface));
+        }
+
+        .config-tab--docs.active { border-color: var(--docs-color); }
+        .config-tab--book.active { border-color: var(--book-color); }
+        .config-tab--blog.active { border-color: var(--blog-color); }
+        .config-tab--product.active { border-color: var(--product-color); }
+
+        .config-tab svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .config-tab--docs svg { color: var(--docs-color); }
+        .config-tab--book svg { color: var(--book-color); }
+        .config-tab--blog svg { color: var(--blog-color); }
+        .config-tab--product svg { color: var(--product-color); }
+
+        .config-panel {
+            display: none;
+            position: relative;
+        }
+
+        .config-panel.active {
+            display: block;
+        }
+
+        .config-code {
+            position: relative;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .config-code__header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 1rem;
+            background: var(--bg-alt);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .config-code__filename {
+            font-family: 'Geist Mono', ui-monospace, monospace;
+            font-size: 0.8125rem;
+            color: var(--text-muted);
+        }
+
+        .config-code__copy {
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.375rem 0.75rem;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-muted);
+            font-family: inherit;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .config-code__copy:hover {
+            border-color: var(--accent);
+            color: var(--text);
+        }
+
+        .config-code__copy.copied {
+            border-color: var(--ctp-mocha-green);
+            color: var(--ctp-mocha-green);
+        }
+
+        [data-theme="light"] .config-code__copy.copied {
+            border-color: var(--ctp-latte-green);
+            color: var(--ctp-latte-green);
+        }
+
+        .config-code__copy svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .config-code pre {
+            margin: 0;
+            padding: 1.25rem;
+            overflow-x: auto;
+            font-family: 'Geist Mono', ui-monospace, monospace;
+            font-size: 0.8125rem;
+            line-height: 1.6;
+        }
+
+        .config-code code {
+            font-family: inherit;
+            color: var(--text);
+        }
+
+        /* TOML syntax highlighting */
+        .toml-comment { color: var(--text-subtle); font-style: italic; }
+        .toml-key { color: var(--ctp-mocha-blue); }
+        .toml-string { color: var(--ctp-mocha-green); }
+        .toml-bool, .toml-number { color: var(--ctp-mocha-peach); }
+        .toml-table { color: var(--ctp-mocha-mauve); font-weight: 600; }
+        .toml-array-table { color: var(--ctp-mocha-pink); font-weight: 600; }
+
+        [data-theme="light"] .toml-key { color: var(--ctp-latte-blue); }
+        [data-theme="light"] .toml-string { color: var(--ctp-latte-green); }
+        [data-theme="light"] .toml-bool, [data-theme="light"] .toml-number { color: var(--ctp-latte-peach); }
+        [data-theme="light"] .toml-table { color: var(--ctp-latte-mauve); }
+        [data-theme="light"] .toml-array-table { color: var(--ctp-latte-pink); }
+
+        /* Features - Sentinel feature-card style */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .feature {
+            padding: 2rem;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            transition: all 0.25s ease;
+        }
+
+        .feature:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .feature__icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            margin-bottom: 1rem;
+            background: var(--bg-surface);
+            border-radius: 8px;
+            color: var(--accent);
+        }
+
+        .feature__icon svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .feature__content {
+            flex: 1;
+        }
+
+        .feature__title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature__description {
+            font-size: 0.9375rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        /* Footer - Sentinel style */
+        .footer {
+            position: relative;
+            padding: 4rem 0 2rem;
+            background: var(--bg-alt);
+            border-top: 1px solid var(--border);
+        }
+
+        .footer__content {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 4rem;
+            margin-bottom: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .footer__content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+        }
+
+        .footer__brand {
+            display: flex;
+            align-items: flex-start;
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .footer__brand {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+        }
+
+        .footer__logo-wrapper {
+            position: relative;
+            width: 64px;
+            height: 64px;
+            flex-shrink: 0;
+        }
+
+        .footer__logo-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+            filter: blur(12px);
+            opacity: 0.4;
+            border-radius: 50%;
+            animation: footer-pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes footer-pulse {
+            0%, 100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0.4;
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.1);
+                opacity: 0.55;
+            }
+        }
+
+        .footer__logo {
+            position: relative;
+            width: 64px;
+            height: 64px;
+            object-fit: contain;
+            z-index: 1;
+            animation: footer-float 5s ease-in-out infinite;
+        }
+
+        @keyframes footer-float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
+        }
+
+        .footer__tagline {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            max-width: 400px;
+        }
+
+        .footer__title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--text);
+            line-height: 1.4;
+        }
+
+        .footer__description {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        .footer__links {
+            display: flex;
+            gap: 4rem;
+        }
+
+        @media (max-width: 768px) {
+            .footer__links {
+                gap: 2rem;
+                justify-content: center;
+            }
+        }
+
+        .footer__col {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .footer__col h4 {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 0.25rem;
+        }
+
+        .footer__col a {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.15s ease;
+        }
+
+        .footer__col a:hover {
+            color: var(--text);
+        }
+
+        .footer__bottom {
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .footer__bottom p {
+            font-size: 0.875rem;
+            color: var(--text-subtle);
+        }
+
+        .footer__bottom a {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.15s ease;
+        }
+
+        .footer__bottom a:hover {
+            color: var(--text);
+        }
+
+        /* Theme Toggle - Nintendo-inspired */
+        .theme-toggle {
+            --toggle-size: 44px;
+            --icon-size: 20px;
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            width: var(--toggle-size);
+            height: var(--toggle-size);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-surface);
+            border: 2px solid var(--border);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            overflow: hidden;
+            color: var(--text);
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            border-color: var(--accent);
+            box-shadow: 0 0 20px rgba(203, 166, 247, 0.3);
+        }
+
+        .theme-toggle:active {
+            transform: scale(0.95);
+        }
+
+        .theme-toggle__icons {
+            position: relative;
+            width: var(--icon-size);
+            height: var(--icon-size);
+        }
+
+        .theme-toggle__sun,
+        .theme-toggle__moon,
+        .theme-toggle__auto {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            opacity: 0;
+            transform: rotate(-90deg) scale(0.5);
+        }
+
+        .theme-toggle__sun svg,
+        .theme-toggle__moon svg,
+        .theme-toggle__auto svg {
+            width: var(--icon-size);
+            height: var(--icon-size);
+        }
+
+        .theme-toggle__sun { color: #f9e2af; }
+        .theme-toggle__moon { color: #89b4fa; }
+        .theme-toggle__auto { color: #b4befe; }
+
+        /* Default: show moon */
+        .theme-toggle__moon {
+            opacity: 1;
+            transform: rotate(0deg) scale(1);
+        }
+
+        [data-theme-setting="light"] .theme-toggle__moon {
+            opacity: 0;
+            transform: rotate(-90deg) scale(0.5);
+        }
+        [data-theme-setting="light"] .theme-toggle__sun {
+            opacity: 1;
+            transform: rotate(0deg) scale(1);
+        }
+
+        [data-theme-setting="dark"] .theme-toggle__moon {
+            opacity: 1;
+            transform: rotate(0deg) scale(1);
+        }
+
+        [data-theme-setting="auto"] .theme-toggle__moon {
+            opacity: 0;
+            transform: rotate(-90deg) scale(0.5);
+        }
+        [data-theme-setting="auto"] .theme-toggle__auto {
+            opacity: 1;
+            transform: rotate(0deg) scale(1);
+        }
+
+        .theme-toggle.animating {
+            animation: bounce 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }
+            25% { transform: scale(1.15); }
+            50% { transform: scale(0.9); }
+            75% { transform: scale(1.05); }
+        }
+
+        @keyframes sparkle-fly {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(0) translateY(-20px); opacity: 0; }
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        @media (max-width: 640px) {
+            .hero__title { font-size: 2rem; }
+            .hero__subtitle { font-size: 1.125rem; }
+            .modes { grid-template-columns: 1fr; }
+            .install-widget {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .install-cmd-wrapper {
+                max-width: 100%;
+                overflow-x: auto;
+            }
+            .install-cmd {
+                font-size: 0.75rem;
+            }
+        }
+    </style>
+    <script>
+        (function() {
+            try {
+                var stored = localStorage.getItem('tanuki-theme') || 'auto';
+                var effective = stored === 'auto'
+                    ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+                    : stored;
+                document.documentElement.setAttribute('data-theme', effective);
+                document.documentElement.setAttribute('data-theme-setting', stored);
+            } catch(e) {}
+        })();
+    </script>
+</head>
+<body>
+    <!-- Skip Link for Accessibility -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Theme Toggle - Fixed Position -->
+    <button class="theme-toggle" type="button" aria-label="Toggle color theme: Click to cycle through light, dark, and auto modes" aria-live="polite">
+        <span class="theme-toggle__icons">
+            <span class="theme-toggle__sun" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="4"/>
+                    <path d="M12 2v2"/>
+                    <path d="M12 20v2"/>
+                    <path d="m4.93 4.93 1.41 1.41"/>
+                    <path d="m17.66 17.66 1.41 1.41"/>
+                    <path d="M2 12h2"/>
+                    <path d="M20 12h2"/>
+                    <path d="m6.34 17.66-1.41 1.41"/>
+                    <path d="m19.07 4.93-1.41 1.41"/>
+                </svg>
+            </span>
+            <span class="theme-toggle__moon" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
+                </svg>
+            </span>
+            <span class="theme-toggle__auto" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="M12 2a7 7 0 1 0 7 7"/>
+                </svg>
+            </span>
+        </span>
+    </button>
+
+    <!-- Main Content -->
+    <main id="main-content" role="main">
+        <!-- Hero Section -->
+        <header class="hero" role="banner" aria-labelledby="hero-title">
+            <div class="container">
+                <div class="hero__logo">
+                    <img src="./docs/img/tanuki-icon.avif" alt="Tanuki mascot" width="48" height="48">
+                    <span><ruby>Tanuki<rp>(</rp><rt lang="ja">タヌキ</rt><rp>)</rp></ruby></span>
+                </div>
+                <h1 id="hero-title" class="hero__title">An Opinionated Zola Theme</h1>
+                <p class="hero__subtitle">
+                    Beautiful, accessible, and thoughtfully designed. Tanuki makes decisions so you can focus on content.
+                </p>
+                <p class="hero__tagline">
+                    Soothing <strong>Catppuccin</strong> pastels meet crisp <strong>Geist</strong> typography
+                </p>
+
+                <div class="install-widget">
+                    <div class="install-selector">
+                        <button class="install-toggle" type="button" onclick="toggleInstallDropdown()" aria-label="Select install method" aria-expanded="false" aria-haspopup="listbox">
+                            <span class="install-toggle-icon" id="install-icon" aria-hidden="true">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect width="18" height="18" x="3" y="3" rx="2"/>
+                                    <path d="m10 8 4 4-4 4"/>
+                                </svg>
+                            </span>
+                            <svg class="install-toggle-chevron" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <polyline points="6 9 12 15 18 9"/>
+                            </svg>
+                        </button>
+                        <div class="install-dropdown" id="install-dropdown" role="listbox" aria-label="Install methods">
+                            <button class="install-option active" type="button" onclick="selectInstall('shell')" data-method="shell" role="option" aria-selected="true">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <rect width="18" height="18" x="3" y="3" rx="2"/>
+                                    <path d="m10 8 4 4-4 4"/>
+                                </svg>
+                                Shell
+                            </button>
+                        </div>
+                    </div>
+                    <div class="install-cmd-wrapper">
+                        <code class="install-cmd" id="install-cmd">git clone https://github.com/raskell-io/tanuki themes/tanuki</code>
+                        <button class="copy-btn" id="copy-btn" type="button" aria-label="Copy install command" title="Copy to clipboard">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
+                                <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Theme Modes Section -->
+        <section class="section" aria-labelledby="modes-title" itemscope itemtype="https://schema.org/ItemList">
+            <div class="container">
+                <header class="section__header">
+                    <h2 id="modes-title" class="section__title" itemprop="name">Four Modes, One Theme</h2>
+                    <p class="section__description" itemprop="description">Choose the layout that fits your content</p>
+                </header>
+
+                <div class="modes" role="list" aria-label="Available theme modes">
+                    <article class="mode-card mode-card--docs" role="listitem" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                        <a href="docs/" aria-labelledby="mode-docs-title" itemprop="url">
+                            <meta itemprop="position" content="1">
+                            <div class="mode-card__header">
+                                <div class="mode-card__icon" aria-hidden="true">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-hidden="true">
+                                        <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5a1 1 0 0 1 0-5H20"/>
+                                        <path d="M8 11h8"/>
+                                        <path d="M8 7h6"/>
+                                    </svg>
+                                </div>
+                                <h3 id="mode-docs-title" class="mode-card__title" itemprop="name">Documentation</h3>
+                            </div>
+                            <p class="mode-card__description" itemprop="description">
+                                A resizable sidebar with hierarchical navigation, integrated search, and version picker.
+                                Designed for reference material that users need to navigate quickly.
+                            </p>
+                            <p class="mode-card__use-cases">
+                                <strong>Best for:</strong> <span itemprop="keywords">API docs, guides, references, wikis, knowledge bases</span>
+                            </p>
+                        </a>
+                    </article>
+
+                    <article class="mode-card mode-card--book" role="listitem" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                        <a href="book/" aria-labelledby="mode-book-title" itemprop="url">
+                            <meta itemprop="position" content="2">
+                            <div class="mode-card__header">
+                                <div class="mode-card__icon" aria-hidden="true">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-hidden="true">
+                                        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+                                        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+                                    </svg>
+                                </div>
+                                <h3 id="mode-book-title" class="mode-card__title" itemprop="name">Book</h3>
+                            </div>
+                            <p class="mode-card__description" itemprop="description">
+                                A distraction-free reading experience with full-screen chapter overlay and keyboard navigation.
+                                Maximizes content width for comfortable long-form reading.
+                            </p>
+                            <p class="mode-card__use-cases">
+                                <strong>Best for:</strong> <span itemprop="keywords">Tutorials, e-books, courses, technical books, manuals</span>
+                            </p>
+                        </a>
+                    </article>
+
+                    <article class="mode-card mode-card--blog" role="listitem" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                        <a href="blog/" aria-labelledby="mode-blog-title" itemprop="url">
+                            <meta itemprop="position" content="3">
+                            <div class="mode-card__header">
+                                <div class="mode-card__icon" aria-hidden="true">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-hidden="true">
+                                        <path d="M12 20h9"/>
+                                        <path d="M16.376 3.622a1 1 0 0 1 3.002 3.002L7.368 18.635a2 2 0 0 1-.855.506l-2.872.838a.5.5 0 0 1-.62-.62l.838-2.872a2 2 0 0 1 .506-.854z"/>
+                                    </svg>
+                                </div>
+                                <h3 id="mode-blog-title" class="mode-card__title" itemprop="name">Blog</h3>
+                            </div>
+                            <p class="mode-card__description" itemprop="description">
+                                Card-based listing with tags, dates, and reading time estimates.
+                                Individual posts with clean typography optimized for articles.
+                            </p>
+                            <p class="mode-card__use-cases">
+                                <strong>Best for:</strong> <span itemprop="keywords">Personal blogs, dev logs, newsletters, announcements</span>
+                            </p>
+                        </a>
+                    </article>
+
+                    <article class="mode-card mode-card--product" role="listitem" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                        <a href="https://sango.raskell.io" aria-labelledby="mode-product-title" itemprop="url" target="_blank" rel="noopener">
+                            <meta itemprop="position" content="4">
+                            <div class="mode-card__header">
+                                <div class="mode-card__icon" aria-hidden="true">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-hidden="true">
+                                        <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/>
+                                        <circle cx="12" cy="12" r="4"/>
+                                    </svg>
+                                </div>
+                                <h3 id="mode-product-title" class="mode-card__title" itemprop="name">Product</h3>
+                            </div>
+                            <p class="mode-card__description" itemprop="description">
+                                Full-width landing pages with hero sections, feature grids, install commands, and custom footers.
+                                Designed to showcase tools, libraries, and applications.
+                            </p>
+                            <p class="mode-card__use-cases">
+                                <strong>Best for:</strong> <span itemprop="keywords">CLI tools, libraries, SaaS products, open source projects</span>
+                            </p>
+                        </a>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="section section--alt" aria-labelledby="features-title">
+            <div class="container">
+                <header class="section__header">
+                    <h2 id="features-title" class="section__title">Opinionated by Design</h2>
+                    <p class="section__description">Less configuration, more consistency</p>
+                </header>
+
+                <ul class="features" role="list" aria-label="Design philosophy">
+                    <li class="feature" role="listitem">
+                        <div class="feature__icon" aria-hidden="true">
+                            <!-- Users icon - community -->
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                                <circle cx="9" cy="7" r="4"/>
+                                <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                            </svg>
+                        </div>
+                        <div class="feature__content">
+                            <h3 class="feature__title">Standing on Giants</h3>
+                            <p class="feature__description">Built with battle-tested community favorites: Geist's elegant typography, Lucide's crisp icons, Catppuccin's soothing palette, and elasticlunr's lightning search. Why reinvent what the community has perfected?</p>
+                        </div>
+                    </li>
+
+                    <li class="feature" role="listitem">
+                        <div class="feature__icon" aria-hidden="true">
+                            <!-- Armchair icon - cozy/Nintendo -->
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M19 9V6a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v3"/>
+                                <path d="M3 16a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5a2 2 0 0 0-4 0v1.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V11a2 2 0 0 0-4 0z"/>
+                                <path d="M5 18v2"/>
+                                <path d="M19 18v2"/>
+                            </svg>
+                        </div>
+                        <div class="feature__content">
+                            <h3 class="feature__title">Homey Comfort</h3>
+                            <p class="feature__description">Inspired by Nintendo's gift for making complex things feel obvious. Like Animal Crossing's gentle onboarding or Kirby's intuitive controls, everything should feel familiar and welcoming from the first moment.</p>
+                        </div>
+                    </li>
+
+                    <li class="feature" role="listitem">
+                        <div class="feature__icon" aria-hidden="true">
+                            <!-- Layers icon - minimalism -->
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"/>
+                                <path d="m6.08 9.5-3.5 1.6a1 1 0 0 0 0 1.81l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9a1 1 0 0 0 0-1.83l-3.5-1.59"/>
+                                <path d="m6.08 14.5-3.5 1.6a1 1 0 0 0 0 1.81l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9a1 1 0 0 0 0-1.83l-3.5-1.59"/>
+                            </svg>
+                        </div>
+                        <div class="feature__content">
+                            <h3 class="feature__title">Graceful Degradation</h3>
+                            <p class="feature__description">JavaScript enhances, never gates. Every page works with scripts disabled. Progressive enhancement means content-first: load what matters, enhance when possible. Less is more, even when it's aesthetically delightful.</p>
+                        </div>
+                    </li>
+
+                    <li class="feature" role="listitem">
+                        <div class="feature__icon" aria-hidden="true">
+                            <!-- Heart icon - human-first -->
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7z"/>
+                            </svg>
+                        </div>
+                        <div class="feature__content">
+                            <h3 class="feature__title">Humans First</h3>
+                            <p class="feature__description">As Matz said when creating Ruby: "I hope to see Ruby help every programmer to be productive, enjoy programming, and be happy." Computers serve humans, not the reverse. Every design decision asks: does this respect the person using it?</p>
+                        </div>
+                    </li>
+
+                    <li class="feature" role="listitem">
+                        <div class="feature__icon" aria-hidden="true">
+                            <!-- Bot icon - AI/AEO -->
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 8V4H8"/>
+                                <rect width="16" height="12" x="4" y="8" rx="2"/>
+                                <path d="M2 14h2"/>
+                                <path d="M20 14h2"/>
+                                <path d="M15 13v2"/>
+                                <path d="M9 13v2"/>
+                            </svg>
+                        </div>
+                        <div class="feature__content">
+                            <h3 class="feature__title">Post-AI Ready</h3>
+                            <p class="feature__description">SEO, AEO, and ARIA aren't afterthoughts—they're foundations. JSON-LD structured data, semantic HTML, and accessible markup ensure your content speaks fluently to humans, screen readers, search engines, and AI agents alike.</p>
+                        </div>
+                    </li>
+
+                    <li class="feature" role="listitem">
+                        <div class="feature__icon" aria-hidden="true">
+                            <!-- Sparkles icon - joy/whimsy -->
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/>
+                                <path d="M20 3v4"/>
+                                <path d="M22 5h-4"/>
+                                <path d="M4 17v2"/>
+                                <path d="M5 18H3"/>
+                            </svg>
+                        </div>
+                        <div class="feature__content">
+                            <h3 class="feature__title">Whimsical on Purpose</h3>
+                            <p class="feature__description">Technology should spark joy, not just function. Serious systems deserve playful interfaces. We refuse to lose the wonder that drew us to building things in the first place. Delight is a feature, not frivolity.</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Configuration Section -->
+        <section class="section" aria-labelledby="config-title">
+            <div class="container">
+                <header class="section__header">
+                    <h2 id="config-title" class="section__title">Quick Start</h2>
+                    <p class="section__description">Copy a config.toml and start building</p>
+                </header>
+
+                <div class="config-tabs" role="tablist" aria-label="Configuration examples">
+                    <button class="config-tab config-tab--docs active" role="tab" aria-selected="true" aria-controls="config-docs" id="tab-docs" onclick="switchConfigTab('docs')">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5a1 1 0 0 1 0-5H20"/>
+                            <path d="M8 11h8"/><path d="M8 7h6"/>
+                        </svg>
+                        Documentation
+                    </button>
+                    <button class="config-tab config-tab--book" role="tab" aria-selected="false" aria-controls="config-book" id="tab-book" onclick="switchConfigTab('book')">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+                            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+                        </svg>
+                        Book
+                    </button>
+                    <button class="config-tab config-tab--blog" role="tab" aria-selected="false" aria-controls="config-blog" id="tab-blog" onclick="switchConfigTab('blog')">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M12 20h9"/>
+                            <path d="M16.376 3.622a1 1 0 0 1 3.002 3.002L7.368 18.635a2 2 0 0 1-.855.506l-2.872.838a.5.5 0 0 1-.62-.62l.838-2.872a2 2 0 0 1 .506-.854z"/>
+                        </svg>
+                        Blog
+                    </button>
+                    <button class="config-tab config-tab--product" role="tab" aria-selected="false" aria-controls="config-product" id="tab-product" onclick="switchConfigTab('product')">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/>
+                            <circle cx="12" cy="12" r="4"/>
+                        </svg>
+                        Product
+                    </button>
+                </div>
+
+                <div class="config-panel active" id="config-docs" role="tabpanel" aria-labelledby="tab-docs">
+                    <div class="config-code">
+                        <div class="config-code__header">
+                            <span class="config-code__filename">config.toml</span>
+                            <button class="config-code__copy" onclick="copyConfig('docs')" aria-label="Copy configuration">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
+                                    <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+                                </svg>
+                                <span>Copy</span>
+                            </button>
+                        </div>
+                        <pre><code id="config-docs-code"><span class="toml-comment"># Documentation site with sidebar and version picker</span>
+<span class="toml-key">base_url</span> = <span class="toml-string">"https://docs.example.com"</span>
+<span class="toml-key">title</span> = <span class="toml-string">"My Project Docs"</span>
+<span class="toml-key">theme</span> = <span class="toml-string">"tanuki"</span>
+<span class="toml-key">build_search_index</span> = <span class="toml-bool">true</span>
+
+<span class="toml-table">[markdown]</span>
+<span class="toml-key">highlight_code</span> = <span class="toml-bool">true</span>
+<span class="toml-key">highlight_theme</span> = <span class="toml-string">"css"</span>
+
+<span class="toml-table">[extra]</span>
+<span class="toml-key">mode</span> = <span class="toml-string">"docs"</span>
+<span class="toml-key">github</span> = <span class="toml-string">"https://github.com/you/project"</span>
+
+<span class="toml-comment"># Optional: version picker</span>
+<span class="toml-table">[extra.versions]</span>
+<span class="toml-key">current</span> = <span class="toml-string">"2.0.0"</span>
+<span class="toml-key">list</span> = [
+    { <span class="toml-key">version</span> = <span class="toml-string">"2.0.0"</span>, <span class="toml-key">url</span> = <span class="toml-string">"/"</span>, <span class="toml-key">label</span> = <span class="toml-string">"latest"</span> },
+    { <span class="toml-key">version</span> = <span class="toml-string">"1.0.0"</span>, <span class="toml-key">url</span> = <span class="toml-string">"/v1/"</span> },
+]</code></pre>
+                    </div>
+                </div>
+
+                <div class="config-panel" id="config-book" role="tabpanel" aria-labelledby="tab-book">
+                    <div class="config-code">
+                        <div class="config-code__header">
+                            <span class="config-code__filename">config.toml</span>
+                            <button class="config-code__copy" onclick="copyConfig('book')" aria-label="Copy configuration">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
+                                    <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+                                </svg>
+                                <span>Copy</span>
+                            </button>
+                        </div>
+                        <pre><code id="config-book-code"><span class="toml-comment"># E-book or tutorial with chapter navigation</span>
+<span class="toml-key">base_url</span> = <span class="toml-string">"https://book.example.com"</span>
+<span class="toml-key">title</span> = <span class="toml-string">"The Complete Guide"</span>
+<span class="toml-key">theme</span> = <span class="toml-string">"tanuki"</span>
+<span class="toml-key">build_search_index</span> = <span class="toml-bool">true</span>
+
+<span class="toml-table">[markdown]</span>
+<span class="toml-key">highlight_code</span> = <span class="toml-bool">true</span>
+<span class="toml-key">highlight_theme</span> = <span class="toml-string">"css"</span>
+
+<span class="toml-table">[extra]</span>
+<span class="toml-key">mode</span> = <span class="toml-string">"book"</span>
+<span class="toml-key">github</span> = <span class="toml-string">"https://github.com/you/book"</span></code></pre>
+                    </div>
+                </div>
+
+                <div class="config-panel" id="config-blog" role="tabpanel" aria-labelledby="tab-blog">
+                    <div class="config-code">
+                        <div class="config-code__header">
+                            <span class="config-code__filename">config.toml</span>
+                            <button class="config-code__copy" onclick="copyConfig('blog')" aria-label="Copy configuration">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
+                                    <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+                                </svg>
+                                <span>Copy</span>
+                            </button>
+                        </div>
+                        <pre><code id="config-blog-code"><span class="toml-comment"># Personal blog with RSS feed and tags</span>
+<span class="toml-key">base_url</span> = <span class="toml-string">"https://blog.example.com"</span>
+<span class="toml-key">title</span> = <span class="toml-string">"My Blog"</span>
+<span class="toml-key">theme</span> = <span class="toml-string">"tanuki"</span>
+<span class="toml-key">generate_feeds</span> = <span class="toml-bool">true</span>
+
+<span class="toml-key">taxonomies</span> = [
+    { <span class="toml-key">name</span> = <span class="toml-string">"tags"</span>, <span class="toml-key">feed</span> = <span class="toml-bool">true</span> },
+]
+
+<span class="toml-table">[markdown]</span>
+<span class="toml-key">highlight_code</span> = <span class="toml-bool">true</span>
+<span class="toml-key">highlight_theme</span> = <span class="toml-string">"css"</span>
+
+<span class="toml-table">[extra]</span>
+<span class="toml-key">mode</span> = <span class="toml-string">"blog"</span>
+
+<span class="toml-comment"># Optional: hero section</span>
+<span class="toml-table">[extra.hero]</span>
+<span class="toml-key">title</span> = <span class="toml-string">"Welcome to my blog"</span>
+<span class="toml-key">subtitle</span> = <span class="toml-string">"Thoughts on code and craft"</span>
+
+<span class="toml-comment"># Optional: navigation</span>
+<span class="toml-array-table">[[extra.nav]]</span>
+<span class="toml-key">name</span> = <span class="toml-string">"Blog"</span>
+<span class="toml-key">url</span> = <span class="toml-string">"/blog/"</span>
+
+<span class="toml-array-table">[[extra.nav]]</span>
+<span class="toml-key">name</span> = <span class="toml-string">"About"</span>
+<span class="toml-key">url</span> = <span class="toml-string">"/about/"</span></code></pre>
+                    </div>
+                </div>
+
+                <div class="config-panel" id="config-product" role="tabpanel" aria-labelledby="tab-product">
+                    <div class="config-code">
+                        <div class="config-code__header">
+                            <span class="config-code__filename">config.toml</span>
+                            <button class="config-code__copy" onclick="copyConfig('product')" aria-label="Copy configuration">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
+                                    <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+                                </svg>
+                                <span>Copy</span>
+                            </button>
+                        </div>
+                        <pre><code id="config-product-code"><span class="toml-comment"># Product landing page with features and install</span>
+<span class="toml-key">base_url</span> = <span class="toml-string">"https://myproduct.example.com"</span>
+<span class="toml-key">title</span> = <span class="toml-string">"My Product"</span>
+<span class="toml-key">description</span> = <span class="toml-string">"A powerful tool for developers"</span>
+<span class="toml-key">theme</span> = <span class="toml-string">"tanuki"</span>
+
+<span class="toml-table">[markdown]</span>
+<span class="toml-key">highlight_code</span> = <span class="toml-bool">true</span>
+<span class="toml-key">highlight_theme</span> = <span class="toml-string">"css"</span>
+
+<span class="toml-table">[extra]</span>
+<span class="toml-key">mode</span> = <span class="toml-string">"product"</span>
+<span class="toml-key">github</span> = <span class="toml-string">"https://github.com/you/project"</span>
+
+<span class="toml-comment"># Product-specific settings</span>
+<span class="toml-table">[extra.product]</span>
+<span class="toml-key">icon</span> = <span class="toml-string">"assets/product-icon.png"</span>
+<span class="toml-key">tagline</span> = <span class="toml-string">"Built for modern developers"</span>
+<span class="toml-key">install_command</span> = <span class="toml-string">"curl -fsSL get.example.com | sh"</span>
+
+<span class="toml-comment"># Navigation</span>
+<span class="toml-array-table">[[extra.nav]]</span>
+<span class="toml-key">name</span> = <span class="toml-string">"Features"</span>
+<span class="toml-key">url</span> = <span class="toml-string">"#features"</span>
+
+<span class="toml-array-table">[[extra.nav]]</span>
+<span class="toml-key">name</span> = <span class="toml-string">"Install"</span>
+<span class="toml-key">url</span> = <span class="toml-string">"#install"</span></code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer" role="contentinfo" itemscope itemtype="https://schema.org/WPFooter">
+        <div class="container">
+            <div class="footer__content">
+                <div class="footer__brand" itemscope itemtype="https://schema.org/Organization">
+                    <div class="footer__logo-wrapper" aria-hidden="true">
+                        <div class="footer__logo-glow"></div>
+                        <img class="footer__logo" src="./docs/img/tanuki-icon.avif" alt="Tanuki logo" width="64" height="64">
+                    </div>
+                    <div class="footer__tagline">
+                        <p class="footer__title" itemprop="name">An opinionated Zola theme<br>for docs, books, blogs, and products</p>
+                        <p class="footer__description" itemprop="description">Beautiful, accessible, and thoughtfully designed. Tanuki makes decisions so you can focus on content.</p>
+                    </div>
+                </div>
+                <nav class="footer__links" aria-label="Footer navigation">
+                    <div class="footer__col" role="navigation" aria-labelledby="footer-resources">
+                        <h4 id="footer-resources">Resources</h4>
+                        <a href="https://github.com/raskell-io/tanuki" target="_blank" rel="noopener noreferrer" aria-label="View Tanuki on GitHub (opens in new tab)">GitHub</a>
+                        <a href="https://www.getzola.org/" target="_blank" rel="noopener noreferrer" aria-label="Visit Zola static site generator (opens in new tab)">Zola</a>
+                        <a href="docs/" aria-label="Read the Tanuki documentation">Documentation</a>
+                        <a href="https://github.com/raskell-io/tanuki/blob/main/LICENSE" target="_blank" rel="noopener noreferrer" aria-label="View MIT License (opens in new tab)">MIT License</a>
+                    </div>
+                    <div class="footer__col" role="navigation" aria-labelledby="footer-inspiration">
+                        <h4 id="footer-inspiration">Inspiration</h4>
+                        <a href="https://catppuccin.com/" target="_blank" rel="noopener noreferrer" aria-label="Visit Catppuccin color palette (opens in new tab)">Catppuccin</a>
+                        <a href="https://vercel.com/font" target="_blank" rel="noopener noreferrer" aria-label="Visit Geist Font by Vercel (opens in new tab)">Geist Font</a>
+                        <a href="https://lucide.dev/" target="_blank" rel="noopener noreferrer" aria-label="Visit Lucide Icons (opens in new tab)">Lucide Icons</a>
+                    </div>
+                </nav>
+            </div>
+            <div class="footer__bottom">
+                <p>Made with care for readers and writers alike. <a href="https://raskell.io" target="_blank" rel="noopener noreferrer" aria-label="Visit raskell.io (opens in new tab)">raskell.io</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        (function() {
+            const THEMES = ['light', 'dark', 'auto'];
+            const button = document.querySelector('.theme-toggle');
+
+            function getStoredTheme() {
+                try { return localStorage.getItem('tanuki-theme') || 'auto'; }
+                catch(e) { return 'auto'; }
+            }
+
+            function getEffectiveTheme(stored) {
+                if (stored === 'auto') {
+                    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+                }
+                return stored;
+            }
+
+            function applyTheme(theme) {
+                const effective = getEffectiveTheme(theme);
+                document.documentElement.setAttribute('data-theme', effective);
+                document.documentElement.setAttribute('data-theme-setting', theme);
+            }
+
+            function cycleTheme() {
+                const current = getStoredTheme();
+                const nextIndex = (THEMES.indexOf(current) + 1) % THEMES.length;
+                return THEMES[nextIndex];
+            }
+
+            function createSparkles() {
+                const rect = button.getBoundingClientRect();
+                const centerX = rect.left + rect.width / 2;
+                const centerY = rect.top + rect.height / 2;
+
+                for (let i = 0; i < 6; i++) {
+                    const sparkle = document.createElement('div');
+                    const angle = (i / 6) * Math.PI * 2;
+                    const distance = 30 + Math.random() * 20;
+                    const x = centerX + Math.cos(angle) * distance;
+                    const y = centerY + Math.sin(angle) * distance;
+
+                    sparkle.style.cssText = `
+                        position: fixed;
+                        left: ${x}px;
+                        top: ${y}px;
+                        width: 6px;
+                        height: 6px;
+                        background: #f9e2af;
+                        border-radius: 50%;
+                        pointer-events: none;
+                        z-index: 10000;
+                        animation: sparkle-fly 0.6s ease-out forwards;
+                    `;
+
+                    document.body.appendChild(sparkle);
+                    setTimeout(() => sparkle.remove(), 600);
+                }
+            }
+
+            button.addEventListener('click', () => {
+                const newTheme = cycleTheme();
+                localStorage.setItem('tanuki-theme', newTheme);
+                applyTheme(newTheme);
+
+                button.classList.add('animating');
+                setTimeout(() => button.classList.remove('animating'), 500);
+
+                createSparkles();
+            });
+
+            // Listen for system theme changes
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+                if (getStoredTheme() === 'auto') {
+                    applyTheme('auto');
+                }
+            });
+        })();
+
+        // Install widget functionality
+        (function() {
+            const installCommands = {
+                shell: 'git clone https://github.com/raskell-io/tanuki themes/tanuki'
+            };
+
+            const installIcons = {
+                shell: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="m10 8 4 4-4 4"/></svg>'
+            };
+
+            let currentMethod = 'shell';
+            const copyBtn = document.getElementById('copy-btn');
+            const installCmdEl = document.getElementById('install-cmd');
+            const installIconEl = document.getElementById('install-icon');
+            const installDropdown = document.getElementById('install-dropdown');
+            const installToggle = document.querySelector('.install-toggle');
+
+            const copyIconHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>';
+            const checkIconHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+            let copyTimeout = null;
+
+            // Dropdown toggle
+            window.toggleInstallDropdown = function() {
+                const isOpen = installDropdown.classList.toggle('open');
+                installToggle.setAttribute('aria-expanded', isOpen);
+            };
+
+            // Select install method
+            window.selectInstall = function(method) {
+                currentMethod = method;
+
+                // Reset copy button
+                if (copyTimeout) {
+                    clearTimeout(copyTimeout);
+                    copyTimeout = null;
+                }
+                copyBtn.innerHTML = copyIconHTML;
+                copyBtn.classList.remove('copied');
+
+                // Update command
+                installCmdEl.textContent = installCommands[method];
+
+                // Update toggle icon
+                installIconEl.innerHTML = installIcons[method];
+
+                // Update active state
+                document.querySelectorAll('.install-option').forEach(opt => {
+                    const isActive = opt.dataset.method === method;
+                    opt.classList.toggle('active', isActive);
+                    opt.setAttribute('aria-selected', isActive);
+                });
+
+                // Close dropdown
+                installDropdown.classList.remove('open');
+                installToggle.setAttribute('aria-expanded', 'false');
+            };
+
+            // Confetti effect
+            function createConfetti(originX, originY) {
+                const colors = ['#cba6f7', '#fab387', '#b4befe', '#f5c2e7', '#94e2d5'];
+
+                for (let i = 0; i < 10; i++) {
+                    const particle = document.createElement('div');
+                    const angle = (Math.PI * 2 * i) / 10;
+                    const dist = 35 + Math.random() * 25;
+
+                    particle.style.cssText = `
+                        position: fixed;
+                        left: ${originX}px;
+                        top: ${originY}px;
+                        width: 5px;
+                        height: 5px;
+                        background: ${colors[i % colors.length]};
+                        border-radius: 50%;
+                        pointer-events: none;
+                        z-index: 9999;
+                        --tx: ${Math.cos(angle) * dist}px;
+                        --ty: ${Math.sin(angle) * dist + 15}px;
+                        animation: confetti-burst 0.45s ease-out forwards;
+                    `;
+
+                    document.body.appendChild(particle);
+                    setTimeout(() => particle.remove(), 450);
+                }
+            }
+
+            // Copy button click
+            if (copyBtn) {
+                copyBtn.addEventListener('click', function() {
+                    const rect = copyBtn.getBoundingClientRect();
+                    const x = rect.left + rect.width / 2;
+                    const y = rect.top + rect.height / 2;
+
+                    navigator.clipboard.writeText(installCommands[currentMethod]).then(() => {
+                        copyBtn.innerHTML = checkIconHTML;
+                        copyBtn.classList.add('copied');
+                        createConfetti(x, y);
+
+                        if (copyTimeout) clearTimeout(copyTimeout);
+                        copyTimeout = setTimeout(() => {
+                            copyBtn.innerHTML = copyIconHTML;
+                            copyBtn.classList.remove('copied');
+                            copyTimeout = null;
+                        }, 2000);
+                    });
+                });
+            }
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!installDropdown.contains(e.target) && !installToggle.contains(e.target)) {
+                    installDropdown.classList.remove('open');
+                    installToggle.setAttribute('aria-expanded', 'false');
+                }
+            });
+        })();
+
+        // Config tab switching
+        (function() {
+            const configs = {
+                docs: `# Documentation site with sidebar and version picker
+base_url = "https://docs.example.com"
+title = "My Project Docs"
+theme = "tanuki"
+build_search_index = true
+
+[markdown]
+highlight_code = true
+highlight_theme = "css"
+
+[extra]
+mode = "docs"
+github = "https://github.com/you/project"
+
+# Optional: version picker
+[extra.versions]
+current = "2.0.0"
+list = [
+    { version = "2.0.0", url = "/", label = "latest" },
+    { version = "1.0.0", url = "/v1/" },
+]`,
+                book: `# E-book or tutorial with chapter navigation
+base_url = "https://book.example.com"
+title = "The Complete Guide"
+theme = "tanuki"
+build_search_index = true
+
+[markdown]
+highlight_code = true
+highlight_theme = "css"
+
+[extra]
+mode = "book"
+github = "https://github.com/you/book"`,
+                blog: `# Personal blog with RSS feed and tags
+base_url = "https://blog.example.com"
+title = "My Blog"
+theme = "tanuki"
+generate_feeds = true
+
+taxonomies = [
+    { name = "tags", feed = true },
+]
+
+[markdown]
+highlight_code = true
+highlight_theme = "css"
+
+[extra]
+mode = "blog"
+
+# Optional: hero section
+[extra.hero]
+title = "Welcome to my blog"
+subtitle = "Thoughts on code and craft"
+
+# Optional: navigation
+[[extra.nav]]
+name = "Blog"
+url = "/blog/"
+
+[[extra.nav]]
+name = "About"
+url = "/about/"`
+            };
+
+            window.switchConfigTab = function(mode) {
+                // Update tabs
+                document.querySelectorAll('.config-tab').forEach(tab => {
+                    const isActive = tab.id === `tab-${mode}`;
+                    tab.classList.toggle('active', isActive);
+                    tab.setAttribute('aria-selected', isActive);
+                });
+
+                // Update panels
+                document.querySelectorAll('.config-panel').forEach(panel => {
+                    panel.classList.toggle('active', panel.id === `config-${mode}`);
+                });
+            };
+
+            window.copyConfig = function(mode) {
+                const btn = document.querySelector(`#config-${mode} .config-code__copy`);
+                const text = configs[mode];
+
+                navigator.clipboard.writeText(text).then(() => {
+                    btn.classList.add('copied');
+                    btn.querySelector('span').textContent = 'Copied!';
+
+                    // Confetti
+                    const rect = btn.getBoundingClientRect();
+                    const x = rect.left + rect.width / 2;
+                    const y = rect.top + rect.height / 2;
+                    const colors = ['#cba6f7', '#fab387', '#b4befe', '#f5c2e7', '#94e2d5'];
+
+                    for (let i = 0; i < 8; i++) {
+                        const particle = document.createElement('div');
+                        const angle = (Math.PI * 2 * i) / 8;
+                        const dist = 30 + Math.random() * 20;
+
+                        particle.style.cssText = `
+                            position: fixed;
+                            left: ${x}px;
+                            top: ${y}px;
+                            width: 5px;
+                            height: 5px;
+                            background: ${colors[i % colors.length]};
+                            border-radius: 50%;
+                            pointer-events: none;
+                            z-index: 9999;
+                            --tx: ${Math.cos(angle) * dist}px;
+                            --ty: ${Math.sin(angle) * dist + 15}px;
+                            animation: confetti-burst 0.45s ease-out forwards;
+                        `;
+
+                        document.body.appendChild(particle);
+                        setTimeout(() => particle.remove(), 450);
+                    }
+
+                    setTimeout(() => {
+                        btn.classList.remove('copied');
+                        btn.querySelector('span').textContent = 'Copy';
+                    }, 2000);
+                });
+            };
+        })();
+    </script>
+</body>
+</html>

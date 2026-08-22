@@ -1,0 +1,108 @@
+[tools]
+zola = "0.19.2"
+
+# Sentinel for static file serving (serve:all task)
+# Install: curl -fsSL https://getsentinel.raskell.io | sh
+
+[tasks.build]
+description = "Build all example sites"
+run = """
+#!/usr/bin/env bash
+set -e
+
+echo "Building example sites..."
+
+# Clean and create output directory
+rm -rf public
+mkdir -p public
+
+# Build docs example
+echo "Building docs example..."
+cd examples/docs
+zola build --output-dir ../../public/docs
+cd ../..
+
+# Build book example
+echo "Building book example..."
+cd examples/book
+zola build --output-dir ../../public/book
+cd ../..
+
+# Build blog example
+echo "Building blog example..."
+cd examples/blog
+zola build --output-dir ../../public/blog
+cd ../..
+
+# Copy the combined index.html
+echo "Copying index.html..."
+cp examples/index.html public/index.html
+
+# Create symlinks for local testing (base_url has /tanuki/ prefix for GitHub Pages)
+mkdir -p public/tanuki
+ln -sf ../docs public/tanuki/docs
+ln -sf ../book public/tanuki/book
+ln -sf ../blog public/tanuki/blog
+ln -sf ../index.html public/tanuki/index.html
+
+echo "Build complete! Output in public/"
+echo "Serve with: mise run serve:all"
+echo "Then visit: http://127.0.0.1:8080/tanuki/"
+"""
+
+[tasks.serve]
+description = "Serve a specific example (usage: mise run serve docs|book|blog)"
+run = """
+#!/usr/bin/env bash
+set -e
+
+MODE="${1:-docs}"
+PORT="${2:-1111}"
+
+if [[ ! -d "examples/$MODE" ]]; then
+    echo "Error: Unknown mode '$MODE'. Use: docs, book, or blog"
+    exit 1
+fi
+
+echo "Serving $MODE example on http://127.0.0.1:$PORT"
+cd "examples/$MODE"
+zola serve --port "$PORT"
+"""
+
+[tasks."serve:docs"]
+description = "Serve the docs example on port 1111"
+run = "cd examples/docs && zola serve --port 1111"
+
+[tasks."serve:book"]
+description = "Serve the book example on port 1112"
+run = "cd examples/book && zola serve --port 1112"
+
+[tasks."serve:blog"]
+description = "Serve the blog example on port 1113"
+run = "cd examples/blog && zola serve --port 1113"
+
+[tasks.clean]
+description = "Clean build artifacts"
+run = "rm -rf public"
+
+[tasks."serve:all"]
+description = "Serve all built examples with Sentinel"
+depends = ["build"]
+run = """
+#!/usr/bin/env bash
+echo "Starting Sentinel on http://127.0.0.1:8080/tanuki/"
+echo "Press Ctrl+C to stop"
+
+# Find sentinel in common locations
+if command -v sentinel &> /dev/null; then
+    sentinel -c sentinel.kdl
+elif [ -x "$HOME/.local/bin/sentinel" ]; then
+    "$HOME/.local/bin/sentinel" -c sentinel.kdl
+elif [ -x "$HOME/.cargo/bin/sentinel" ]; then
+    "$HOME/.cargo/bin/sentinel" -c sentinel.kdl
+else
+    echo "Error: Sentinel not found. Install with:"
+    echo "  curl -fsSL https://getsentinel.raskell.io | sh"
+    exit 1
+fi
+"""
