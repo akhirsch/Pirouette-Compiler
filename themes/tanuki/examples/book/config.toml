@@ -1,0 +1,17 @@
+# Tanuki Theme - Book Mode Example
+base_url = "/tanuki/book"
+title = "The Tanuki Guide"
+description = "E-book example for the Tanuki theme"
+theme = "tanuki"
+compile_sass = true
+build_search_index = true
+generate_feeds = false
+
+[markdown]
+highlight_code = true
+highlight_theme = "base16-ocean-dark"
+
+[extra]
+mode = "book"
+github = "https://github.com/raskell-io/tanuki"
+show_theme_toggle = true
