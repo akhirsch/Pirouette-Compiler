@@ -11,6 +11,7 @@ module type AST = sig
     | StringTy of m
     | BoolTy of m
     | FunTy of m * typ * typ
+    | LocTy of m * name list (* [LocTy l] is the type of locations named in l *)
 
   type pattern =
     | WildcardPat of m
@@ -23,6 +24,7 @@ module type AST = sig
     | TrueLitPat of m
     | FalseLitPat of m
     | ConstructorPat of m * name * pattern list
+    | LocNamePat of m * name
 
   type unop = Neg of m | Not of m
 
@@ -40,6 +42,8 @@ module type AST = sig
     | Gt of m
     | Geq of m
 
+  type lab = Label of name
+
   type expr =
     | Var of m * name
     | UnitLit of m
@@ -55,13 +59,19 @@ module type AST = sig
     | TypeConstr of m * expr * typ
     | Unop of m * unop * expr
     | Binop of m * binop * expr * expr
+    (* Communication Primitives *)
+    | Send of m * expr * name (* Send e to n *)
+    | Recv of m * typ * name (* Recv t from n *)
+    | ChooseFor of m * name * lab
+    | AllowChoice of m * name * (lab * expr) list
 
   type decl =
-    | TypeDecl of m * name * typ
-    | DefnDecl of m * name * pattern * expr
-    | ImportDecl of m * name
+    | EmulatedLocDecl of m * name
+    | TypeDecl of m * name * typ (* Declares the type of a program binding *)
     | TypeAliasDecl of m * name * typ
-    | VariantDecl of m * name * (name * typ list) list
+    | DefnDecl of m * name * pattern list * expr
+    | ImportDecl of m * name
+    | VariantDecl of m * name * (name * typ list * typ) list
 
   type program = decl list
 end
@@ -79,6 +89,7 @@ module MkAST (M : Metainfo.Meta.Metainfo) = struct
     | StringTy of M.t
     | BoolTy of M.t
     | FunTy of M.t * typ * typ
+    | LocTy of m * name list (* [LocTy l] is the type of locations named in l *)
 
   type pattern =
     | WildcardPat of M.t
@@ -91,6 +102,7 @@ module MkAST (M : Metainfo.Meta.Metainfo) = struct
     | TrueLitPat of M.t
     | FalseLitPat of M.t
     | ConstructorPat of M.t * name * pattern list
+    | LocNamePat of m * name
 
   type unop = Neg of M.t | Not of M.t
 
@@ -108,6 +120,8 @@ module MkAST (M : Metainfo.Meta.Metainfo) = struct
     | Gt of M.t
     | Geq of M.t
 
+  type lab = Label of name
+
   type expr =
     | Var of M.t * name
     | UnitLit of M.t
@@ -123,13 +137,19 @@ module MkAST (M : Metainfo.Meta.Metainfo) = struct
     | TypeConstr of M.t * expr * typ
     | Unop of M.t * unop * expr
     | Binop of M.t * binop * expr * expr
+    (* Communication Primitives *)
+    | Send of m * expr * name (* Send e to n *)
+    | Recv of m * typ * name (* Recv t from n *)
+    | ChooseFor of m * name * lab
+    | AllowChoice of m * name * (lab * expr) list
 
   type decl =
+    | EmulatedLocDecl of m * name
     | TypeDecl of M.t * name * typ
-    | DefnDecl of M.t * name * pattern * expr
-    | ImportDecl of M.t * name
     | TypeAliasDecl of M.t * name * typ
-    | VariantDecl of M.t * name * (name * typ list) list
+    | DefnDecl of M.t * name * pattern list * expr
+    | ImportDecl of M.t * name
+    | VariantDecl of M.t * name * (name * typ list * typ) list
 
   type program = decl list
 end

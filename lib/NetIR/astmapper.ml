@@ -14,6 +14,7 @@ module ASTMapper (A1 : AST) (A2 : AST) = struct
     | A1.StringTy m -> A2.StringTy (f m)
     | A1.BoolTy m -> A2.BoolTy (f m)
     | A1.FunTy (m, t1, t2) -> A2.FunTy (f m, typ_map f t1, typ_map f t2)
+    | A1.LocTy (m, ns) -> A2.LocTy (f m, List.map (name_map f) ns)
 
   let rec pattern_map (f : A1.m -> A2.m) = function
     | A1.WildcardPat m -> A2.WildcardPat (f m)
@@ -27,6 +28,7 @@ module ASTMapper (A1 : AST) (A2 : AST) = struct
     | A1.FalseLitPat m -> A2.FalseLitPat (f m)
     | A1.ConstructorPat (m, n, ps) ->
         A2.ConstructorPat (f m, name_map f n, List.map (pattern_map f) ps)
+    | A1.LocNamePat (m, n) -> A2.LocNamePat (f m, name_map f n)
 
   let unop_map (f : A1.m -> A2.m) = function
     | A1.Neg m -> A2.Neg (f m)
@@ -45,6 +47,8 @@ module ASTMapper (A1 : AST) (A2 : AST) = struct
     | A1.Leq m -> A2.Leq (f m)
     | A1.Gt m -> A2.Gt (f m)
     | A1.Geq m -> A2.Geq (f m)
+
+  let lab_map f (A1.Label n) = A2.Label (name_map f n)
 
   let rec expr_map (f : A1.m -> A2.m) = function
     | A1.Var (m, n) -> A2.Var (f m, name_map f n)
@@ -67,20 +71,32 @@ module ASTMapper (A1 : AST) (A2 : AST) = struct
     | A1.Unop (m, o, e) -> A2.Unop (f m, unop_map f o, expr_map f e)
     | A1.Binop (m, o, e1, e2) ->
         A2.Binop (f m, binop_map f o, expr_map f e1, expr_map f e2)
+    | A1.Send (m, e, n) -> A2.Send (f m, expr_map f e, name_map f n)
+    | A1.Recv (m, t, n) -> A2.Recv (f m, typ_map f t, name_map f n)
+    | A1.ChooseFor (m, n, l) -> A2.ChooseFor (f m, name_map f n, lab_map f l)
+    | A1.AllowChoice (m, n, bs) ->
+        A2.AllowChoice
+          ( f m,
+            name_map f n,
+            List.map (fun (l, e) -> (lab_map f l, expr_map f e)) bs )
 
   let decl_map (f : A1.m -> A2.m) = function
+    | A1.EmulatedLocDecl (m, n) -> A2.EmulatedLocDecl (f m, name_map f n)
     | A1.TypeDecl (m, n, t) -> A2.TypeDecl (f m, name_map f n, typ_map f t)
-    | A1.DefnDecl (m, n, p, e) ->
-        A2.DefnDecl (f m, name_map f n, pattern_map f p, expr_map f e)
-    | A1.ImportDecl (m, n) -> A2.ImportDecl (f m, name_map f n)
     | A1.TypeAliasDecl (m, n, t) ->
         A2.TypeAliasDecl (f m, name_map f n, typ_map f t)
+    | A1.DefnDecl (m, n, ps, e) ->
+        A2.DefnDecl
+          (f m, name_map f n, List.map (pattern_map f) ps, expr_map f e)
+    | A1.ImportDecl (m, n) -> A2.ImportDecl (f m, name_map f n)
     | A1.VariantDecl (m, n, cs) ->
         A2.VariantDecl
           ( f m,
             name_map f n,
-            List.map (fun (n, t) -> (name_map f n, List.map (typ_map f) t)) cs
-          )
+            List.map
+              (fun (n, ts, t) ->
+                (name_map f n, List.map (typ_map f) ts, typ_map f t))
+              cs )
 
   let program_map (f : A1.m -> A2.m) = List.map (decl_map f)
 end

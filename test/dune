@@ -1,0 +1,9 @@
+(test
+ (name testpretty)
+ (modules
+   testpretty)
+ (libraries
+   ounit2
+   netir
+   metainfo)
+)

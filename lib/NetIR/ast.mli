@@ -11,6 +11,7 @@ module type AST = sig
     | StringTy of m
     | BoolTy of m
     | FunTy of m * typ * typ
+    | LocTy of m * name list (* [LocTy l] is the type of locations named in l *)
 
   type pattern =
     | WildcardPat of m
@@ -23,6 +24,7 @@ module type AST = sig
     | TrueLitPat of m
     | FalseLitPat of m
     | ConstructorPat of m * name * pattern list
+    | LocNamePat of m * name
 
   type unop = Neg of m | Not of m
 
@@ -40,6 +42,8 @@ module type AST = sig
     | Gt of m
     | Geq of m
 
+  type lab = Label of name
+
   type expr =
     | Var of m * name
     | UnitLit of m
@@ -55,13 +59,21 @@ module type AST = sig
     | TypeConstr of m * expr * typ
     | Unop of m * unop * expr
     | Binop of m * binop * expr * expr
+    (* Communication Primitives *)
+    | Send of m * expr * name (* Send e to n *)
+    | Recv of m * typ * name (* Recv t from n *)
+    | ChooseFor of m * name * lab
+    | AllowChoice of m * name * (lab * expr) list
 
   type decl =
-    | TypeDecl of m * name * typ
-    | DefnDecl of m * name * pattern * expr
+    | EmulatedLocDecl of m * name
+    | TypeDecl of
+        m * name * typ (* Declares the type of a binding: `foo : int` *)
+    | TypeAliasDecl of
+        m * name * typ (* Declares a type alias: `student = string * float` *)
+    | DefnDecl of m * name * pattern list * expr
     | ImportDecl of m * name
-    | TypeAliasDecl of m * name * typ
-    | VariantDecl of m * name * (name * typ list) list
+    | VariantDecl of m * name * (name * typ list * typ) list
 
   type program = decl list
 end
