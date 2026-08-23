@@ -122,6 +122,7 @@ let suite =
                (prettify_expr
                   (allowchoice "A"
                      [ (mklab "L", intlit 3); (mklab "R", intlit 4) ]));
+         "ami" >:: test_eq_string "AmI A" (prettify_expr (ami (loclit "A")));
          (* Declaration Tests *)
          "emulated location"
          >:: test_eq_string "emulated location A"

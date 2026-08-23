@@ -27,6 +27,7 @@ module MkPrettify (A : Ast.AST) = struct
     | StringLitPat (_, s) -> "\"" ^ s ^ "\""
     | TrueLitPat _ -> "true"
     | FalseLitPat _ -> "false"
+    | LocLitPat (_, (_, n)) -> n
     | ConstructorPat (_, (_, n), ps) ->
         let s =
           List.fold_left (fun s' p -> s' ^ " " ^ prettify_pattern p) "" ps
@@ -64,6 +65,7 @@ module MkPrettify (A : Ast.AST) = struct
       | StringLit (_, s) -> "\"" ^ s ^ "\""
       | TrueLit _ -> "true"
       | FalseLit _ -> "false"
+      | LocLit (_, (_, n)) -> n
       | Match (_, e, pes) ->
           let prettify_arm p e =
             "| " ^ prettify_pattern p ^ " := " ^ prettify_int_expr false e
@@ -104,6 +106,7 @@ module MkPrettify (A : Ast.AST) = struct
             List.fold_left (fun s (p, e) -> s ^ "\n" ^ prettify_arm p e) "" bs
           in
           mkparens is_int ("allow " ^ n ^ " choice " ^ parms ^ "\nend")
+      | AmI (_, e) -> "AmI " ^ prettify_int_expr true e
     in
     prettify_int_expr false e
 

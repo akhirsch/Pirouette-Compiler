@@ -23,6 +23,7 @@ module type AST = sig
     | StringLitPat of m * string
     | TrueLitPat of m
     | FalseLitPat of m
+    | LocLitPat of m * name
     | ConstructorPat of m * name * pattern list
     | LocNamePat of m * name
 
@@ -53,6 +54,7 @@ module type AST = sig
     | StringLit of m * string
     | TrueLit of m
     | FalseLit of m
+    | LocLit of m * name
     | Match of m * expr * (pattern * expr) list
     | RecAbs of m * name * name * expr
     | FunApp of m * expr * expr
@@ -64,6 +66,8 @@ module type AST = sig
     | Recv of m * typ * name (* Recv t from n *)
     | ChooseFor of m * name * lab
     | AllowChoice of m * name * (lab * expr) list
+    (* Location-Checking Primitive *)
+    | AmI of m * expr
 
   type decl =
     | EmulatedLocDecl of m * name

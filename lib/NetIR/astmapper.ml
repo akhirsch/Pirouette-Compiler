@@ -26,6 +26,7 @@ module ASTMapper (A1 : AST) (A2 : AST) = struct
     | A1.StringLitPat (m, s) -> A2.StringLitPat (f m, s)
     | A1.TrueLitPat m -> A2.TrueLitPat (f m)
     | A1.FalseLitPat m -> A2.FalseLitPat (f m)
+    | A1.LocLitPat (m, n) -> A2.LocLitPat (f m, name_map f n)
     | A1.ConstructorPat (m, n, ps) ->
         A2.ConstructorPat (f m, name_map f n, List.map (pattern_map f) ps)
     | A1.LocNamePat (m, n) -> A2.LocNamePat (f m, name_map f n)
@@ -59,6 +60,7 @@ module ASTMapper (A1 : AST) (A2 : AST) = struct
     | A1.StringLit (m, s) -> A2.StringLit (f m, s)
     | A1.TrueLit m -> A2.TrueLit (f m)
     | A1.FalseLit m -> A2.FalseLit (f m)
+    | A1.LocLit (m, n) -> A2.LocLit (f m, name_map f n)
     | A1.Match (m, e, pes) ->
         A2.Match
           ( f m,
@@ -79,6 +81,7 @@ module ASTMapper (A1 : AST) (A2 : AST) = struct
           ( f m,
             name_map f n,
             List.map (fun (l, e) -> (lab_map f l, expr_map f e)) bs )
+    | A1.AmI (m, e) -> A2.AmI (f m, expr_map f e)
 
   let decl_map (f : A1.m -> A2.m) = function
     | A1.EmulatedLocDecl (m, n) -> A2.EmulatedLocDecl (f m, name_map f n)
