@@ -1,6 +1,5 @@
 +++
 title = "Functional Programming"
-description = "Functional programming in NetIR"
 weight = 1
 +++
 

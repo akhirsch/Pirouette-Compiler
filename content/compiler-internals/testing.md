@@ -1,6 +1,5 @@
 +++
 title = "Testing"
-description = "Testing the Pirouette Compiler"
 weight = 1
 +++
 

@@ -1,6 +1,5 @@
 +++
 title = "Communication"
-description = "Communication in NetIR"
 weight = 1
 +++
 

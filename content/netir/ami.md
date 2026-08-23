@@ -1,6 +1,5 @@
 +++
 title = "Am I?"
-description = "Probing the current process"
 weight = 1
 +++
 

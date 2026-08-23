@@ -1,6 +1,5 @@
 +++
 title = "Lesson 2"
-description = "Your First NetIR Program"
 weight = 1
 +++
 
