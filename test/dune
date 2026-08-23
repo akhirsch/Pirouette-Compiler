@@ -1,7 +1,8 @@
 (test
- (name testpretty)
+ (name test)
  (modules
-   testpretty)
+   testpretty
+   test)
  (libraries
    ounit2
    netir
