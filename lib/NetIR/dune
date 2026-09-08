@@ -4,3 +4,5 @@
  (libraries metainfo)
  (instrumentation
   (backend bisect_ppx)))
+
+(ocamllex lexer)
