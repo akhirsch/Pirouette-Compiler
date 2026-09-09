@@ -37,7 +37,8 @@ let rec pattern_gen (p : Net.pattern) : pattern =
     | Net.FalseLitPat _ -> [%pat? false]
     | Net.LocLitPat (_, (_, l)) -> pstring ~loc l
     | Net.ConstructorPat (_, (_, n), ps) ->  ppat_any ~loc n 
-    (*from prettyprinter
+    (*
+      TODO 09/09: this is from prettyprinter need to look how todo this 
     let s =
           List.fold_left (fun s' p -> s' ^ " " ^ prettify_pattern p) "" ps
         in
@@ -69,16 +70,18 @@ let rec pattern_gen (p : Net.pattern) : pattern =
   let label_gen (l : Net.lab) : string = (*(Label (_, n)) = "[" ^ n ^ "]"*)
     match l with 
     | Label _ -> pstring ~loc l 
-(* *)
+(*TODO 09/09: a label has is a name whcih i thought was a string but idk if i have to declare type
+  because label isnt a known ppxlib type idt 
+- look at location name pattern above -*)
   
   let expr_gen (e : Net.expr) : expression = 
     match e with 
-      | Var (_, (_, n)) -> [%expr n]
-      | UnitLit _ -> [%expr ()]
-      | IntLit (_, x) -> [%expr x]
-      | FloatLit (_, f) -> efloat ~loc (string_of_float f)
+      | Net.Var (_, (_, n)) -> [%expr n]
+      | Net.UnitLit _ -> [%expr ()]
+      | Net.IntLit (_, x) -> [%expr x]
+      | Net.FloatLit (_, f) -> efloat ~loc (string_of_float f)
   (*TODO: THIS IS WHERE YOU LEFT OFF 09/09 *)
-      | CharLit (_, c) -> "'" ^ String.make 1 c ^ "'"
+      | Net.CharLit (_, c) -> "'" ^ String.make 1 c ^ "'"
       | StringLit (_, s) -> "\"" ^ s ^ "\""
       | TrueLit _ -> "true"
       | FalseLit _ -> "false"
