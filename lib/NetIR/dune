@@ -5,4 +5,5 @@
  (instrumentation
   (backend bisect_ppx)))
 
-(ocamllex lexer)
+(ocamllex (modules lexer))
+(menhir (modules parser))

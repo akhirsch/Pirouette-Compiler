@@ -10,15 +10,14 @@ rule read =
   parse
   | white { read lexbuf }
   (* Types *)
-  | "unit" { UNIT }
-  | "int" { INT }
-  | "float" { FLOAT }
-  | "char" { CHAR }
-  | "string" { STRING }
-  | "bool" { BOOL }
-  | "location" { LOCATION }
+  | "unit" { UNITTY }
+  | "int" { INTTY }
+  | "float" { FLOATTY }
+  | "char" { CHARTY }
+  | "string" { STRINGTY }
+  | "bool" { BOOLTY }
+  | "location" { LOCTY }
   (* Unops *)
-  | "-" { NEG }
   | "!" { NOT }
   (* Binops *)
   | "+" { PLUS }
@@ -34,10 +33,10 @@ rule read =
   | ">" { GT }
   | ">=" { GEQ }
   (* Patterns and Expressions *)
-  | "true" { TRUE }
-  | "false" { FALSE }
-  | "->" { } (* TODO *)
-  | "=>" { } (* TODO *)
+  | "true" { TRUELIT }
+  | "false" { FALSELIT }
+  | "->" { ARROW }
+  | "=>" { DOUBLEARROW } (* TODO Discuss/approve token name*)
   | "_" { WILDCARD }
   | "(" { LPAREN }
   | "[" { LBRACK }
@@ -46,7 +45,7 @@ rule read =
   | "|" { BAR }
   | "'" { APO }
   | "\"" { QUOTE }
-  | ":=" { } (* TODO *)
+  | ":=" { WALRUS } (* TODO Discuss/approve token name*)
   | ":" { COLON }
   | "match" { MATCH }
   | "with" { WITH }
@@ -63,8 +62,8 @@ rule read =
   | "AmI" { AMI }
   (* Declarations *)
   | "emulated location" { EMULATEDLOC }
-  | "type" { TYPE }
+  | "type" { TYPEDECL }
   | "import" { IMPORT }
   | "data" { DATA }
-  | int { INT (int_of_string (Lexing.lexeme lexbuf)) }
+  | int { INTLIT (int_of_string (Lexing.lexeme lexbuf)) }
   | eof { EOF }
