@@ -1,0 +1,8 @@
+(library
+ (name backend)
+ (public_name pirc.backend)
+ (libraries netir ppxlib)
+ (instrumentation
+  (backend bisect_ppx))
+  (preprocess
+  (pps ppxlib.metaquot)))
