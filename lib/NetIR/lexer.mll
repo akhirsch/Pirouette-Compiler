@@ -5,6 +5,9 @@ open Parser
 let white = [' ' '\t']+
 let digit = ['0'-'9']
 let int = '-'? digit+
+let alpha = ['a'-'z' 'A'-'Z']
+
+let identifier = (alpha | '_') (alpha | digit | '_')*
 
 rule read =
   parse
@@ -66,4 +69,5 @@ rule read =
   | "import" { IMPORT }
   | "data" { DATA }
   | int { INTLIT (int_of_string (Lexing.lexeme lexbuf)) }
+  | identifier as s {ID s}
   | eof { EOF }
