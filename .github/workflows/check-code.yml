@@ -23,6 +23,7 @@ on:
       - 'newcompiler'
       - '7-continuous-integration'
       #Triggering this branch for testing
+      #Second test
     paths-ignore:
       - '.githooks/**'
       - '**/LICENSE'
