@@ -160,6 +160,6 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./_coverage
-          publish_branch: 7-continuous-integration-doc
+          publish_branch: zola-site
           destination_dir: ./content/compiler-documentation/coverage
           
