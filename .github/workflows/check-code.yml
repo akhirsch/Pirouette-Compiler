@@ -110,3 +110,52 @@ jobs:
           else echo $TEST_OUTPUT 
             exit 1
           fi
+
+  Run-Bisect-Report:
+    strategy:
+      fail-fast: false
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set-up OCaml
+        uses: ocaml/setup-ocaml@v3
+        with:
+          ocaml-compiler: 5.2.1
+
+      - name: Install Dune
+        run: opam install dune
+
+      - name: Generate Opam
+        run: opam exec -- dune build @opam
+
+      - name: Install dependencies
+        run: opam install . --deps-only --with-test
+
+      - name: Build
+        run: opam exec -- dune build  
+      
+      - name: Run Bisect
+        run: |
+            opam exec -- dune runtest --instrument-with bisect_ppx
+            opam exec -- bisect-ppx-report html
+            cat << 'EOF' > _coverage/index.md
+            +++
+            title = "Bisect Report"
+            weight = 1
+            +++
+
+            EOF
+            cat _coverage/index.html >> _coverage/index.md
+            rm _coverage/index.html
+
+      - name: Deploy to zola-site
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./_coverage
+          publish_branch: 7-continuous-integration-doc
+          destination_dir: ./content/compiler-documentation
