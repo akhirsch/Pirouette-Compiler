@@ -114,6 +114,9 @@ jobs:
   Run-Bisect-Report:
     strategy:
       fail-fast: false
+    
+    permissions:
+      contents: write
 
     runs-on: ubuntu-latest
 
