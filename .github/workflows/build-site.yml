@@ -23,7 +23,7 @@ jobs:
           submodules: true
 
       - name: Zola Deploy to Pages
-        uses: shalzz/zola-deploy-action@v0.23.4
+        uses: shalzz/zola-deploy-action@v0.19.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           BUILD_ONLY: ${{ github.event_name == 'pull_request' }} #this prevents pull requests from triggering an update to the live site
