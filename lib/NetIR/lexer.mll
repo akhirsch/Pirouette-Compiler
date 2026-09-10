@@ -43,8 +43,10 @@ rule read =
   | "_" { WILDCARD }
   | "(" { LPAREN }
   | "[" { LBRACK }
+  | "{" { LBRACE }
   | ")" { RPAREN }
   | "]" { RBRACK}
+  | "}"  {RBRACE }
   | "|" { BAR }
   | "'" { APO }
   | "\"" { QUOTE }
