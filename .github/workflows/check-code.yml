@@ -10,6 +10,8 @@ on:
       - 'main'
       - 'dev'
       - 'newcompiler'
+      - '7-continuous-integration'
+      #Triggering this branch for testing
     paths-ignore:
       - '.githooks/**'
       - '**/LICENSE'
@@ -94,11 +96,9 @@ jobs:
 
       - name: Run Tests
         run: |
-          TEST_OUTPUT=$(opam exec -- dune test)
-          if [[ -n TEST_OUTPUT ]] ; # Ounit2 produces no output when all tests pass.
-          then
-            echo $TEST_OUTPUT
+          opam exec -- dune test
+          if [[ $? == 0 ]]; 
+          then echo "All tests were passed" 
+          else echo $TEST_OUTPUT 
             exit 1
-          else
-            echo "All tests were passed."
           fi
