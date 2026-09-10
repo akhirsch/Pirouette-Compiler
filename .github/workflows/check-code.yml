@@ -162,3 +162,4 @@ jobs:
           publish_dir: ./_coverage
           publish_branch: 7-continuous-integration-doc
           destination_dir: ./content/compiler-documentation/coverage
+          
