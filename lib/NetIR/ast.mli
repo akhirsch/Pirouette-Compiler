@@ -83,3 +83,5 @@ module type AST = sig
 end
 
 module MkAST : functor (M : Metainfo.Meta.Metainfo) -> AST with type m = M.t
+
+module PosInfo_AST : AST with type m = Metainfo.Meta.PosInfo.t

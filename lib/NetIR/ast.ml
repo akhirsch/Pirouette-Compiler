@@ -161,3 +161,5 @@ module MkAST (M : Metainfo.Meta.Metainfo) = struct
 
   type program = decl list
 end
+
+module PosInfo_AST = MkAST(Metainfo.Meta.PosInfo)

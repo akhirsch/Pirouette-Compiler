@@ -1,5 +1,5 @@
 %{
-    open Posinfo_ast.M
+    open Ast.PosInfo_AST
     let mkpos (s : Lexing.position) (e : Lexing.position) : Metainfo.Meta.PosInfo.t =
         {
         filename = s.pos_fname;
@@ -30,7 +30,7 @@
 %token WILDCARD LPAREN RPAREN LBRACK RBRACK LBRACE RBRACE APO QUOTE FUN ALLOW TYPE DATA COMMA
 %token EOF
 
-%start <Posinfo_ast.M.program> program
+%start <Ast.PosInfo_AST.program> program
 %%
 
     program:

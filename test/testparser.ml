@@ -1,6 +1,5 @@
 open OUnit2
-module A = Netir.Ast.MkAST (Metainfo.Meta.PosInfo)
-open A
+open Netir.Ast.PosInfo_AST
 
 let parse_type program_text =
   let full_program_text = "test : " ^ program_text in
@@ -39,7 +38,7 @@ let multi_fun_test _ =
     | _ -> assert_failure "Multi-fun type did not parse"
 
 let loc_type_test _ =
-  match parse_type "location l" with | LocTy (_, [(_, "l")]) -> () | _ -> assert_failure "Location type did not parse"
+  match parse_type "location {l}" with | LocTy (_, [(_, "l")]) -> () | _ -> assert_failure "Location type did not parse"
 
 let suite =
   [
@@ -53,6 +52,5 @@ let suite =
     "bool type" >:: bool_type_test;
     "simple fun type" >:: simple_fun_test;
     "multi fun type" >:: multi_fun_test;
-    "location type" >:: loc_type_test
-
+    "location type" >:: loc_type_test;
   ]
