@@ -161,4 +161,4 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./_coverage
           publish_branch: 7-continuous-integration-doc
-          destination_dir: ./content/compiler-documentation
+          destination_dir: ./content/compiler-documentation/coverage
