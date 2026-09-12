@@ -43,6 +43,9 @@
     | t=atomic_typ                  { t }
     | t1=atomic_typ ARROW t2=typ    {FunTy ((mkpos $startpos $endpos), t1, t2)}
 
+    lab:
+    | LBRACK s=id RBRACK    { s }
+
     atomic_typ:
     | LPAREN t=typ RPAREN   { t }
     | UNITTY                {UnitTy (mkpos $startpos $endpos)}
@@ -54,9 +57,11 @@
     | LOCTY LBRACE ids=separated_list(COMMA, id) RBRACE {LocTy (mkpos $startpos $endpos, ids)}
     | s=id                  {VarTy (mkpos $startpos $endpos, s)}
 
+    (* TODO *)
     pattern:
     | WILDCARD              {WildcardPat (mkpos $startpos $endpos)}
 
+    (* TODO *)
     expr:
     | e=op_expr             { e }
 
@@ -80,6 +85,14 @@
     | FALSELIT                  {FalseLit (mkpos $startpos $endpos)}
     // | l=LOCLIT                  {LocLit (mkpos $startpos $endpos, l)}  TODO
     | s=id                      {Var (mkpos $startpos $endpos, s)}
+
+    comprim_expr:
+    | SEND e=expr TO s=id       {Send (mkpos $startpos $endpos, e, s)}
+    | RECV t=typ FROM s=id      {Recv (mkpos $startpos $endpos, t, s)}
+    | CHOOSE l=lab FOR s=id     {ChooseFor (mkpos $startpos $endpos, l, s)}
+
+    locchk_expr:
+    | AMI e=expr    {AmI (mkpos $startpos $endpos, e)}
 
     decl:
     | EMULATEDLOCDECL s=id                  {EmulatedLocDecl (mkpos $startpos $endpos, s)}
