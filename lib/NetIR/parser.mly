@@ -24,6 +24,7 @@
 %token <string> ID
 %token <string> STRINGLIT
 %token UNITLIT TRUELIT FALSELIT LOCLIT MATCH WITH END
+%token INTLITPAT FLOATLITPAT CHARLITPAT STRINGLITPAT TRUELITPAT FALSELITPAT LOCLITPAT VARPAT
 %token SEND RECV CHOOSE CHOICE ALLOWCHOICE AMI TO FROM FOR
 %token TYPEDECL COLON WALRUS IMPORT BAR
 %token EMULATEDLOCDECL EMULATEDLOC DOUBLEARROW
@@ -39,7 +40,7 @@
     id:
     | s=ID  {(mkpos $startpos $endpos, s)}
 
-    typ:   
+    typ:
     | t=atomic_typ                  { t }
     | t1=atomic_typ ARROW t2=typ    {FunTy ((mkpos $startpos $endpos), t1, t2)}
 
@@ -57,11 +58,19 @@
     | LOCTY LBRACE ids=separated_list(COMMA, id) RBRACE {LocTy (mkpos $startpos $endpos, ids)}
     | s=id                  {VarTy (mkpos $startpos $endpos, s)}
 
-    (* TODO *)
     pattern:
     | WILDCARD              {WildcardPat (mkpos $startpos $endpos)}
+    | LPAREN e=expr RPAREN  { e }
+    | LPAREN RPAREN         {UnitLitPat (mkpos $startpos $endpos)}
+    | n=INTLITPAT           {IntLitPat (mkpos $startpos $endpos, n)}
+    | f=FLOATLITPAT         {FloatLitPat (mkpos $startpos $endpos, f)}
+    | c=CHARLITPAT          {CharLitPat (mkpos $startpos $endpos, c)}
+    | s=STRINGLITPAT        {StringLitPat (mkpos $startpos $endpos, s)}
+    | TRUELITPAT            {TrueLitPat (mkpos $startpos $endpos)}
+    | FALSELITPAT           {FalseLitPat (mkpos $startpos $endpos)}
+    // | l=LOCLITPAT          {LocLitPat (mkpos $startpos $endpos, l)}  TODO
+    | s=id                  {VarPat (mkpos $startpos $endpos, s)}
 
-    (* TODO *)
     expr:
     | e=op_expr             { e }
 
@@ -85,11 +94,13 @@
     | FALSELIT                  {FalseLit (mkpos $startpos $endpos)}
     // | l=LOCLIT                  {LocLit (mkpos $startpos $endpos, l)}  TODO
     | s=id                      {Var (mkpos $startpos $endpos, s)}
+    (* TODO: Add Match *)
 
     comprim_expr:
     | SEND e=expr TO s=id       {Send (mkpos $startpos $endpos, e, s)}
     | RECV t=typ FROM s=id      {Recv (mkpos $startpos $endpos, t, s)}
     | CHOOSE l=lab FOR s=id     {ChooseFor (mkpos $startpos $endpos, l, s)}
+    (* TODO: Add AllowChoice *)
 
     locchk_expr:
     | AMI e=expr    {AmI (mkpos $startpos $endpos, e)}
@@ -104,7 +115,7 @@
 
     var_decl:
     | BAR s=id l=list(typ) ARROW t=atomic_typ     {(s, l, t)}
- 
+
     %inline un_op:
     | MINUS       { Neg   (mkpos $startpos $endpos) }
     | NOT         { Not   (mkpos $startpos $endpos) }
