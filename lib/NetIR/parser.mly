@@ -18,13 +18,13 @@
 %token PLUS TIMES DIV AND OR EQ NEQ LT LEQ GT GEQ
 
 (*Expr*)
-%token <int> INTLIT
-%token <float> FLOATLIT
-%token <char> CHARLIT
+%token <int> INTLIT INTLITPAT
+%token <float> FLOATLIT FLOATLITPAT
+%token <char> CHARLIT CHARLITPAT
 %token <string> ID
-%token <string> STRINGLIT
+%token <string> STRINGLIT STRINGLITPAT
 %token UNITLIT TRUELIT FALSELIT LOCLIT MATCH WITH END
-%token INTLITPAT FLOATLITPAT CHARLITPAT STRINGLITPAT TRUELITPAT FALSELITPAT LOCLITPAT VARPAT
+%token TRUELITPAT FALSELITPAT LOCLITPAT VARPAT
 %token SEND RECV CHOOSE CHOICE ALLOWCHOICE AMI TO FROM FOR
 %token TYPEDECL COLON WALRUS IMPORT BAR
 %token EMULATEDLOCDECL EMULATEDLOC DOUBLEARROW
@@ -60,7 +60,7 @@
 
     pattern:
     | WILDCARD              {WildcardPat (mkpos $startpos $endpos)}
-    | LPAREN e=expr RPAREN  { e }
+    (* | LPAREN e=expr RPAREN  { e } *)
     | LPAREN RPAREN         {UnitLitPat (mkpos $startpos $endpos)}
     | n=INTLITPAT           {IntLitPat (mkpos $startpos $endpos, n)}
     | f=FLOATLITPAT         {FloatLitPat (mkpos $startpos $endpos, f)}
