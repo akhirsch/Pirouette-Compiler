@@ -29,6 +29,7 @@
     (= 0.35.0)
     :build))
   (bisect_ppx :with-test)
+  (ounit2 :with-test)
   (ocamlformat
    (and
     (>= 0.29.0)
