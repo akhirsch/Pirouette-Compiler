@@ -9,7 +9,6 @@ on:
     branches:
       - 'main'
       - 'dev'
-      - 'newcompiler'
 
     paths-ignore:
       - '.githooks/**'
@@ -20,10 +19,7 @@ on:
     branches:
       - 'main'
       - 'dev'
-      - 'newcompiler'
-      - '7-continuous-integration'
-      #Triggering this branch for testing
-      #Second test
+
     paths-ignore:
       - '.githooks/**'
       - '**/LICENSE'
