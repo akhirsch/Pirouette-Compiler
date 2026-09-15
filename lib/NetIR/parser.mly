@@ -18,17 +18,16 @@
 %token PLUS TIMES DIV AND OR EQ NEQ LT LEQ GT GEQ
 
 (*Expr*)
-%token <int> INTLIT INTLITPAT
-%token <float> FLOATLIT FLOATLITPAT
-%token <char> CHARLIT CHARLITPAT
+%token <int> INTLIT
+%token <float> FLOATLIT
+%token <char> CHARLIT
 %token <string> ID
-%token <string> STRINGLIT STRINGLITPAT
-%token UNITLIT TRUELIT FALSELIT LOCLIT MATCH WITH END
-%token TRUELITPAT FALSELITPAT LOCLITPAT VARPAT
+%token <string> STRINGLIT LOCLIT
+%token TRUELIT FALSELIT MATCH WITH END
 %token SEND RECV CHOOSE CHOICE ALLOWCHOICE AMI TO FROM FOR
 %token TYPEDECL COLON WALRUS IMPORT BAR
 %token EMULATEDLOCDECL EMULATEDLOC DOUBLEARROW
-%token WILDCARD LPAREN RPAREN LBRACK RBRACK LBRACE RBRACE APO QUOTE FUN ALLOW TYPE DATA COMMA
+%token WILDCARD LPAREN RPAREN LBRACK RBRACK LBRACE RBRACE FUN ALLOW DATA COMMA
 %token EOF
 
 %start <Ast.PosInfo_AST.program> program
@@ -40,12 +39,15 @@
     id:
     | s=ID  {(mkpos $startpos $endpos, s)}
 
+    loclit:
+    | s=LOCLIT {(mkpos $startpos $endpos, s)}
+
     typ:
     | t=atomic_typ                  { t }
     | t1=atomic_typ ARROW t2=typ    {FunTy ((mkpos $startpos $endpos), t1, t2)}
 
     lab:
-    | LBRACK s=id RBRACK    { s }
+    | LBRACK s=id RBRACK    { Label s }
 
     atomic_typ:
     | LPAREN t=typ RPAREN   { t }
@@ -59,20 +61,31 @@
     | s=id                  {VarTy (mkpos $startpos $endpos, s)}
 
     pattern:
+    | s=id l=list(atomic_pattern)  {ConstructorPat (mkpos $startpos $endpos, s, l)}
+
+    atomic_pattern:
     | WILDCARD              {WildcardPat (mkpos $startpos $endpos)}
-    (* | LPAREN e=expr RPAREN  { e } *)
-    | LPAREN RPAREN         {UnitLitPat (mkpos $startpos $endpos)}
-    | n=INTLITPAT           {IntLitPat (mkpos $startpos $endpos, n)}
-    | f=FLOATLITPAT         {FloatLitPat (mkpos $startpos $endpos, f)}
-    | c=CHARLITPAT          {CharLitPat (mkpos $startpos $endpos, c)}
-    | s=STRINGLITPAT        {StringLitPat (mkpos $startpos $endpos, s)}
-    | TRUELITPAT            {TrueLitPat (mkpos $startpos $endpos)}
-    | FALSELITPAT           {FalseLitPat (mkpos $startpos $endpos)}
-    // | l=LOCLITPAT          {LocLitPat (mkpos $startpos $endpos, l)}  TODO
     | s=id                  {VarPat (mkpos $startpos $endpos, s)}
+    | LPAREN RPAREN         {UnitLitPat (mkpos $startpos $endpos)}
+    | n=INTLIT              {IntLitPat (mkpos $startpos $endpos, n)}
+    | f=FLOATLIT            {FloatLitPat (mkpos $startpos $endpos, f)}
+    | c=CHARLIT             {CharLitPat (mkpos $startpos $endpos, c)}
+    | s=STRINGLIT           {StringLitPat (mkpos $startpos $endpos, s)}
+    | TRUELIT               {TrueLitPat (mkpos $startpos $endpos)}
+    | FALSELIT              {FalseLitPat (mkpos $startpos $endpos)}
+    | l=loclit              {LocLitPat (mkpos $startpos $endpos, l)}
+    | LBRACK LBRACK s=id RBRACK RBRACK {LocNamePat (mkpos $startpos $endpos, s)}
 
     expr:
-    | e=op_expr             { e }
+    | e=op_expr                     { e }
+    (* TODO: Add Match *)
+    | FUN f=id a=id WALRUS e=op_expr    {RecAbs (mkpos $startpos $endpos, f, a, e)}
+    | e=op_expr COLON t=typ             {TypeConstr (mkpos $startpos $endpos, e, t)}
+    | SEND e=op_expr TO s=id            {Send (mkpos $startpos $endpos, e, s)}
+    | RECV t=typ FROM s=id              {Recv (mkpos $startpos $endpos, t, s)}
+    | CHOOSE l=lab FOR s=id             {ChooseFor (mkpos $startpos $endpos, s, l)}
+    | AMI e=expr                        {AmI (mkpos $startpos $endpos, e)}
+    (* TODO: Add AllowChoice *)
 
     op_expr:
     | e=app_expr                            { e }
@@ -92,24 +105,14 @@
     | s=STRINGLIT               {StringLit (mkpos $startpos $endpos, s)}
     | TRUELIT                   {TrueLit (mkpos $startpos $endpos)}
     | FALSELIT                  {FalseLit (mkpos $startpos $endpos)}
-    // | l=LOCLIT                  {LocLit (mkpos $startpos $endpos, l)}  TODO
+    | l=loclit                  {LocLit (mkpos $startpos $endpos, l)}
     | s=id                      {Var (mkpos $startpos $endpos, s)}
-    (* TODO: Add Match *)
-
-    comprim_expr:
-    | SEND e=expr TO s=id       {Send (mkpos $startpos $endpos, e, s)}
-    | RECV t=typ FROM s=id      {Recv (mkpos $startpos $endpos, t, s)}
-    | CHOOSE l=lab FOR s=id     {ChooseFor (mkpos $startpos $endpos, l, s)}
-    (* TODO: Add AllowChoice *)
-
-    locchk_expr:
-    | AMI e=expr    {AmI (mkpos $startpos $endpos, e)}
 
     decl:
     | EMULATEDLOCDECL s=id                  {EmulatedLocDecl (mkpos $startpos $endpos, s)}
     | s=id COLON t=typ                      {TypeDecl (mkpos $startpos $endpos, s, t)}
     | TYPEDECL s=id WALRUS t=typ            {TypeAliasDecl (mkpos $startpos $endpos, s, t)}
-    | s=id WALRUS l=list(pattern) e=expr    {DefnDecl (mkpos $startpos $endpos, s, l, e)}
+    | s=id l=list(pattern) WALRUS e=expr    {DefnDecl (mkpos $startpos $endpos, s, l, e)}
     | IMPORT s=id                           {ImportDecl (mkpos $startpos $endpos, s)}
     | DATA s=id WALRUS l=list(var_decl)     {VariantDecl (mkpos $startpos $endpos, s, l)}
 

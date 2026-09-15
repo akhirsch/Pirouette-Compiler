@@ -9,10 +9,21 @@ let parse_type program_text =
     | [TypeDecl (_, (_, "test"), t)] -> t
     | _ -> assert_failure "Basic program structure not parsed"
 
+let parse_expr program_text =
+  let full_program_text = "test := " ^ program_text in
+  let lexbuf = Lexing.from_string full_program_text in
+  let returned = Netir.Parser.program Netir.Lexer.read lexbuf in
+  match returned with
+    | [DefnDecl (_, (_, "test"), [], e)] -> e
+    | _ -> assert_failure "Basic program structure not parsed"
+
 (* -- TYPE TESTS -- *)
 
+let var_type_test _ =
+  match parse_type "test" with | VarTy (_, (_, "test")) -> () | _ -> assert_failure "Var type did not parse"
+
 let unit_type_test _ =
-  match parse_type "unit" with | UnitTy _ -> () | _ -> assert_failure "Unit Type did not parse"
+  match parse_type "unit" with | UnitTy _ -> () | _ -> assert_failure "Unit type did not parse"
 
 let int_type_test _ =
   match parse_type "int" with | IntTy _ -> () | _ -> assert_failure "Int type did not parse"
@@ -38,12 +49,11 @@ let multi_fun_test _ =
     | _ -> assert_failure "Multi-fun type did not parse"
 
 let loc_type_test _ =
-  match parse_type "location {l}" with | LocTy (_, [(_, "l")]) -> () | _ -> assert_failure "Location type did not parse"
+  match parse_type "location {L}" with | LocTy (_, [(_, "L")]) -> () | _ -> assert_failure "Location type did not parse"
 
-let suite =
+let typ_suite =
   [
-    (* -- TYPE TESTS -- *)
-    (* "var type" >:: () TODO; *)
+    "var type" >:: var_type_test;
     "unit type" >:: unit_type_test;
     "int type" >:: int_type_test;
     "float type" >:: float_type_test;
@@ -53,4 +63,32 @@ let suite =
     "simple fun type" >:: simple_fun_test;
     "multi fun type" >:: multi_fun_test;
     "location type" >:: loc_type_test;
+  ]
+
+(* -- MISC TESTS -- *)
+
+let newline_char_test _ =
+  match parse_expr "'\\n'" with | CharLit (_, '\n') -> () | _ -> assert_failure "Newline character did not parse"
+
+let tab_char_test _ =
+  match parse_expr "'\\t'" with | CharLit (_, '\t') -> () | _ -> assert_failure "Tab character did not parse"
+
+let apo_char_test _ =
+  match parse_expr "'\\''" with | CharLit (_, '\'') -> () | _ -> assert_failure "Apostraphe character did nor parse"
+
+let backslash_char_test _ =
+  match parse_expr "'\\\\'" with | CharLit (_, '\\') -> () | _ -> assert_failure "Backslash character did not parse"
+
+let misc_suite = 
+  [
+    "Newline" >:: newline_char_test;
+    "Tab" >:: tab_char_test;
+    "Apostrophe" >:: apo_char_test;
+    "Backslash" >:: backslash_char_test;
+  ]
+
+let suite = 
+  [
+    "Type tests" >::: typ_suite;
+    "Misc tests" >::: misc_suite;
   ]
