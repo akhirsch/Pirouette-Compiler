@@ -42,12 +42,12 @@
     loclit:
     | s=LOCLIT {(mkpos $startpos $endpos, s)}
 
+    lab:
+    | LBRACK s=id RBRACK    { Label s }
+
     typ:
     | t=atomic_typ                  { t }
     | t1=atomic_typ ARROW t2=typ    {FunTy ((mkpos $startpos $endpos), t1, t2)}
-
-    lab:
-    | LBRACK s=id RBRACK    { Label s }
 
     atomic_typ:
     | LPAREN t=typ RPAREN   { t }
@@ -77,7 +77,7 @@
     | LBRACK LBRACK s=id RBRACK RBRACK {LocNamePat (mkpos $startpos $endpos, s)}
 
     expr:
-    | e=op_expr                     { e }
+    | e=op_expr                         { e }
     (* TODO: Add Match *)
     | FUN f=id a=id WALRUS e=op_expr    {RecAbs (mkpos $startpos $endpos, f, a, e)}
     | e=op_expr COLON t=typ             {TypeConstr (mkpos $startpos $endpos, e, t)}
@@ -109,12 +109,12 @@
     | s=id                      {Var (mkpos $startpos $endpos, s)}
 
     decl:
-    | EMULATEDLOCDECL s=id                  {EmulatedLocDecl (mkpos $startpos $endpos, s)}
-    | s=id COLON t=typ                      {TypeDecl (mkpos $startpos $endpos, s, t)}
-    | TYPEDECL s=id WALRUS t=typ            {TypeAliasDecl (mkpos $startpos $endpos, s, t)}
-    | s=id l=list(pattern) WALRUS e=expr    {DefnDecl (mkpos $startpos $endpos, s, l, e)}
-    | IMPORT s=id                           {ImportDecl (mkpos $startpos $endpos, s)}
-    | DATA s=id WALRUS l=list(var_decl)     {VariantDecl (mkpos $startpos $endpos, s, l)}
+    | EMULATEDLOCDECL s=id                          {EmulatedLocDecl (mkpos $startpos $endpos, s)}
+    | s=id COLON t=typ                              {TypeDecl (mkpos $startpos $endpos, s, t)}
+    | TYPEDECL s=id WALRUS t=typ                    {TypeAliasDecl (mkpos $startpos $endpos, s, t)}
+    | s=id l=list(pattern) WALRUS e=expr            {DefnDecl (mkpos $startpos $endpos, s, l, e)}
+    | IMPORT s=id                                   {ImportDecl (mkpos $startpos $endpos, s)}
+    | DATA s=id WALRUS l=nonempty_list(var_decl)    {VariantDecl (mkpos $startpos $endpos, s, l)}
 
     var_decl:
     | BAR s=id l=list(typ) ARROW t=atomic_typ     {(s, l, t)}

@@ -65,6 +65,34 @@ let typ_suite =
     "location type" >:: loc_type_test;
   ]
 
+(* -- PATTERN TESTS -- *)
+
+let pattern_suite =
+  [
+
+  ]
+
+(* -- BIN/UN OP TESTS -- *)
+
+let op_suite = 
+  [
+
+  ]
+
+(* -- EXPR TESTS -- *)
+
+let expr_suite =
+  [
+
+  ]
+
+(* -- DECL TESTS -- *)
+
+let decl_suite = 
+  [
+
+  ]
+
 (* -- MISC TESTS -- *)
 
 let newline_char_test _ =
@@ -90,5 +118,9 @@ let misc_suite =
 let suite = 
   [
     "Type tests" >::: typ_suite;
+    "Pattern tests" >::: pattern_suite;
+    "Op tests" >::: op_suite;
+    "Expr tests" >::: expr_suite;
+    "Decl tests" >::: decl_suite;
     "Misc tests" >::: misc_suite;
   ]

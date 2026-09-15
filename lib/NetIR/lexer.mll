@@ -12,7 +12,6 @@ let alpha = ['a'-'z' 'A'-'Z']
 let location = (caps) (caps | digit)* 
 (* We disallow underscores in location literals because otherwise we could not distinguish '_1' as being a
   typical variable, or a location. This distinction is also why locations are forced to be all capitals. *)
-
 let identifier = (alpha | '_') (alpha | digit | '_')*
 
 rule read =
@@ -95,12 +94,12 @@ and read_char = parse
     EX. 'fo' does not produce the error message "Invalid character literal: f" *)
 
 and read_string strbuf = parse 
-  | "\""               { STRINGLIT (Buffer.contents strbuf) }
-  | "\\n"          { Buffer.add_char strbuf '\n'; read_string strbuf lexbuf }
-  | "\\t"          { Buffer.add_char strbuf '\t'; read_string strbuf lexbuf }
-  | "\\\\"         { Buffer.add_char strbuf '\\'; read_string strbuf lexbuf }
+  | "\""            { STRINGLIT (Buffer.contents strbuf) }
+  | "\\n"           { Buffer.add_char strbuf '\n'; read_string strbuf lexbuf }
+  | "\\t"           { Buffer.add_char strbuf '\t'; read_string strbuf lexbuf }
+  | "\\\\"          { Buffer.add_char strbuf '\\'; read_string strbuf lexbuf }
   | "\\\""          { Buffer.add_char strbuf '"';  read_string strbuf lexbuf }
-  | "\\" _            { raise (SyntaxError ("Unknown escape sequence: " ^ (Lexing.lexeme lexbuf)))} 
-  | [^ '"' '\\']+     { Buffer.add_string strbuf (Lexing.lexeme lexbuf); 
-                          read_string strbuf lexbuf }
-  | eof               { raise (SyntaxError "String is not terminated") }
+  | "\\" _          { raise (SyntaxError ("Unknown escape sequence: " ^ (Lexing.lexeme lexbuf)))} 
+  | [^ '"' '\\']+   { Buffer.add_string strbuf (Lexing.lexeme lexbuf); 
+                        read_string strbuf lexbuf }
+  | eof             { raise (SyntaxError "String is not terminated") }
