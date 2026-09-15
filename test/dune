@@ -1,5 +1,4 @@
 (test
  (name test)
  (modules testpretty test)
- (libraries ounit2 netir metainfo)
-)
+ (libraries ounit2 netir metainfo))
