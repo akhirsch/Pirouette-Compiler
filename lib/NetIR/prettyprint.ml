@@ -142,7 +142,7 @@ module MkPrettify (A : Ast.AST) = struct
         ^ List.fold_left
             (fun s1 (n, ts, t) -> s1 ^ "\n" ^ prettify_cons n ts t)
             "" cs
-
+(*jackie -> this is exactly the pattern that you want to adopt for construct patt. *)
   let prettify_prog = function
     | [] -> ""
     | d :: ds ->
