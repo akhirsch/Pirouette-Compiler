@@ -78,15 +78,21 @@
 
     expr:
     | e=op_expr                         { e }
-    (* TODO: Add Match *)
+    | MATCH e=expr WITH l=separated_list(BAR, match_match) END {Match (mkpos $startpos $endpos, e, l)}
     | FUN f=id a=id WALRUS e=op_expr    {RecAbs (mkpos $startpos $endpos, f, a, e)}
     | e=op_expr COLON t=typ             {TypeConstr (mkpos $startpos $endpos, e, t)}
     | SEND e=op_expr TO s=id            {Send (mkpos $startpos $endpos, e, s)}
     | RECV t=typ FROM s=id              {Recv (mkpos $startpos $endpos, t, s)}
     | CHOOSE l=lab FOR s=id             {ChooseFor (mkpos $startpos $endpos, s, l)}
     | AMI e=expr                        {AmI (mkpos $startpos $endpos, e)}
-    (* TODO: Add AllowChoice *)
+    | ALLOW s=id CHOICE l=separated_list(BAR, allow_match) END {AllowChoice (mkpos $startpos $endpos, s, l)}
 
+    match_match:
+    | a=atomic_pattern WALRUS e=expr      {(a, e)}
+    
+    allow_match:
+    | l=lab DOUBLEARROW e=expr            {(l, e)}
+    
     op_expr:
     | e=app_expr                            { e }
     | e1=op_expr op=bin_op e2=atomic_expr   {Binop (mkpos $startpos $endpos, op, e1, e2)}
