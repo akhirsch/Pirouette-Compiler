@@ -148,9 +148,51 @@ let rec pattern_gen (p : Net.pattern) : pattern =
       [%expr Dummybackend.recv_label [%e estring ~loc n]]
         pexp_match ~loc (expr_gen e)
         (* this is not a runtime call this is a match 
-        | _ -> failwith "unexpected label" makes the match exhaustive.*)
+        | _ -> failwith "unexpected label" makes the match exhaustive.
+        TODO : how do i figure out how to add that unexpected label arm *)
       | Net.AmI (_, e) -> [%expr expr_gen ~loc e]
       (*of m * expr*)
+  
+    let decl_gen (d : Net.decl) =
+      match d with 
+      | EmulatedLocDecl (_, (_, l)) -> [%p (pstring ~loc (label_gen l))]
+      (*of m * name*)
+      | TypeDecl (_, (_, n), t) -> 
+      (*of m * name * typ  Declares the type of a program binding *)
+      | TypeAliasDecl (_, (_, n), t) ->
+      (* of m * name * typ *)
+      | DefnDecl (_, (_, n), ps, e) ->
+      (* of m * name * pattern list * expr 
+      let prettify_patterns ps =
+          match ps with
+          | [] -> " "
+          | p :: ps ->
+              " "
+              ^ List.fold_left
+                  (fun s p -> s ^ " " ^ prettify_pattern p)
+                  (prettify_pattern p) ps
+              ^ " "
+        in
+        n ^ prettify_patterns ps ^ ":= " ^ prettify_expr e*)
+      | ImportDecl (_, (_, n)) -> 
+      (* of m * name *)
+      | VariantDecl (_, (_, n), cs) ->
+        (*let prettify_cons (_, n) ts t =
+          match ts with
+          | [] -> "| " ^ n ^ " : " ^ prettify_typ t
+          | t1 :: ts ->
+              "| " ^ n ^ " : "
+              ^ List.fold_left
+                  (fun s t -> s ^ " -> " ^ prettify_typ t)
+                  (prettify_typ t1) ts
+              ^ " -> " ^ prettify_typ t
+        in
+        "data " ^ n ^ " :="
+        ^ List.fold_left
+            (fun s1 (n, ts, t) -> s1 ^ "\n" ^ prettify_cons n ts t)
+            "" cs
+      of m * name * (name * typ list * typ) list *)
 
+    type program = decl list
 
   
