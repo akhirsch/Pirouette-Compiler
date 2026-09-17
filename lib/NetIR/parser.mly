@@ -24,9 +24,9 @@
 %token <string> ID
 %token <string> STRINGLIT LOCLIT
 %token TRUELIT FALSELIT MATCH WITH END
-%token SEND RECV CHOOSE CHOICE ALLOWCHOICE AMI TO FROM FOR
+%token SEND RECV CHOOSE CHOICE AMI TO FROM FOR
 %token TYPEDECL COLON WALRUS IMPORT BAR
-%token EMULATEDLOCDECL EMULATEDLOC DOUBLEARROW
+%token EMULATEDLOCDECL DOUBLEARROW
 %token WILDCARD LPAREN RPAREN LBRACK RBRACK LBRACE RBRACE FUN ALLOW DATA COMMA
 %token EOF
 
@@ -88,7 +88,7 @@
     | ALLOW s=id CHOICE l=separated_list(BAR, allow_match) END {AllowChoice (mkpos $startpos $endpos, s, l)}
 
     match_match:
-    | a=atomic_pattern WALRUS e=expr      {(a, e)}
+    | a=pattern WALRUS e=expr      {(a, e)}
     
     allow_match:
     | l=lab DOUBLEARROW e=expr            {(l, e)}
@@ -123,7 +123,20 @@
     | DATA s=id WALRUS l=nonempty_list(var_decl)    {VariantDecl (mkpos $startpos $endpos, s, l)}
 
     var_decl:
-    | BAR s=id l=list(typ) ARROW t=atomic_typ     {(s, l, t)}
+    | BAR s=id t=typ    
+        {
+            let rec get_last_typ = function
+                | (acc, FunTy (_, t1, t2)) -> get_last_typ ([t1] @ acc, t2)
+                | (acc, t) -> (acc, t)
+            in
+            let arg_typs, ret_typs = get_last_typ ([], t) in
+                (s, arg_typs, ret_typs)
+        }
+        (* The syntax for var_decls is "name t1 -> t2 ... -> tn -> ret_typ."
+            The constructor requires the return type to be provided separately,
+            but the entire type will be parsed as a single fucntion type. So
+            we need this function to "unroll" the type, so we have access
+            to the return type for our constructor.*)
 
     %inline un_op:
     | MINUS       { Neg   (mkpos $startpos $endpos) }

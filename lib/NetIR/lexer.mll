@@ -71,7 +71,7 @@ rule read =
   | "choice" { CHOICE }
   | "AmI" { AMI }
   (* Declarations *)
-  | "emulated location" { EMULATEDLOC }
+  | "emulated location" { EMULATEDLOCDECL }
   | "type" { TYPEDECL }
   | "import" { IMPORT }
   | "data" { DATA }
