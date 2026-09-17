@@ -1,0 +1,4 @@
+;(executable
+; (public_name pirc)
+; (name main)
+; (libraries stdio pirc.netir))
