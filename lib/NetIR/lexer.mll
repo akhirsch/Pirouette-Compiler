@@ -52,7 +52,7 @@ rule read =
   | "true" { TRUELIT }
   | "false" { FALSELIT }
   | "->" { ARROW }
-  | "=>" { DOUBLEARROW } (* TODO Discuss/approve token name*)
+  | "=>" { DOUBLEARROW }
   | "_" { WILDCARD }
   | "(" { LPAREN }
   | "[" { LBRACK }
@@ -63,7 +63,7 @@ rule read =
   | "|" { BAR }
   | "'" { read_char lexbuf }
   | '"' { read_string (Buffer.create 16) lexbuf }
-  | ":=" { WALRUS } (* TODO Discuss/approve token name*)
+  | ":=" { WALRUS }
   | ":" { COLON }
   | ";" { SEMICOLON }
   | "," { COMMA }

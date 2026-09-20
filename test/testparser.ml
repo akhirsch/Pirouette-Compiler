@@ -120,7 +120,7 @@ let constructorpat_varpat_test _ =
         (ConstructorPat (_, (_, "left"), []), UnitLit _);
         (VarPat (_, (_, "right")), UnitLit _)
       ]))] -> ()
-    | _ -> assert_failure "ConstructorPat did not parse"
+    | _ -> assert_failure "Parsing error when no argument ConstructorPat and VarPat are both matched on."
 
 let pattern_suite =
   [
@@ -137,7 +137,7 @@ let op_suite =
 
 (* -- EXPR TESTS -- *)
 
-let match_test =
+let match_test _ =
   match parse_expr 
     "match true with
       | true := ()
@@ -151,7 +151,7 @@ let match_test =
 
 let expr_suite =
   [
-    (* "Match" >:: match_test; *)
+    "Match" >:: match_test;
   ]
 
 (* -- DECL TESTS -- *)
@@ -165,7 +165,7 @@ let var_decl_single_test _ =
     | _ -> assert_failure "Single VariantDecl did not parse"
 
 let var_decl_multi_test _ =
-    let full_program_text =
+  let full_program_text =
     "data test :=
       | typ1 : test
       | typ2 : int -> test" in
@@ -174,13 +174,28 @@ let var_decl_multi_test _ =
         (_, "typ1"), [], VarTy (_, (_, "test"));
         (_, "typ2"), [IntTy _], VarTy (_, (_, "test"))
         ])] -> ()
-    | _ -> assert_failure "Single VariantDecl did not parse"
+    | _ -> assert_failure "Multi VariantDecl did not parse"
 
+let var_decl_long_type_test _ =
+  let full_program_text =
+    "data test :=
+      | typ1 : unit -> int -> float -> char -> string -> bool -> test" in
+    match program_of_text full_program_text with
+    | [VariantDecl (_, (_, "test"), [(_, "typ1"), [
+      UnitTy _;
+      IntTy _;
+      FloatTy _;
+      CharTy _;
+      StringTy _;
+      BoolTy _;
+      ], VarTy (_, (_, "test"))])] -> ()
+    | _ -> assert_failure "VariantDecl with many types on one constructor did nor parse."
 
 let decl_suite = 
   [
     "VariantDecl single" >:: var_decl_single_test;
-    "VariantDecl multi" >:: var_decl_multi_test
+    "VariantDecl multi" >:: var_decl_multi_test;
+    "VariandDecl many types" >:: var_decl_long_type_test;
   ]
 
 (* -- MISC TESTS -- *)

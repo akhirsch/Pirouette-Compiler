@@ -65,7 +65,8 @@
         arguments. Any constructor with no argumnets will become a VarPat. This is done  
         because otherwise there would be a conflict between ConstructorPat and VarPat.
         
-        This is resolved using the post-processing TODO function in TODO.ml.*)
+        This is resolved using the post-processing parsed_ast_processing function in 
+        parsed_ast_processing.ml.*)
     pattern:
     | s=id LPAREN l=nonempty_list(atomic_pattern) RPAREN    {ConstructorPat (mkpos $startpos $endpos, s, l)}
     | p=atomic_pattern                                      { p }
@@ -92,13 +93,13 @@
     | RECV t=typ FROM s=id              {Recv (mkpos $startpos $endpos, t, s)}
     | CHOOSE l=lab FOR s=id             {ChooseFor (mkpos $startpos $endpos, s, l)}
     | AMI e=expr                        {AmI (mkpos $startpos $endpos, e)}
-    | ALLOW s=id CHOICE l=list(allow_match) END {AllowChoice (mkpos $startpos $endpos, s, l)}
+    | ALLOW s=id CHOICE l=nonempty_list(allow_match) END {AllowChoice (mkpos $startpos $endpos, s, l)}
 
     match_match:
-    | BAR a=pattern WALRUS e=expr      { (a, e) }
+    | BAR a=pattern WALRUS e=expr   { (a, e) }
     
     allow_match:
-    | BAR l=lab DOUBLEARROW e=expr            { (l, e) }
+    | BAR l=lab DOUBLEARROW e=expr  { (l, e) }
     
     op_expr:
     | e=app_expr                            { e }
@@ -134,8 +135,9 @@
     | BAR s=id COLON t=typ    
         {
             let rec get_last_typ = function
-                | (acc, FunTy (_, t1, t2)) -> get_last_typ (t1 :: acc, t2)
-                | (acc, t1) -> (acc, t1)
+                | (acc, FunTy (_, t1, t2)) -> get_last_typ (t1 :: acc, t2) 
+                    (* This will build the type list backwards, so we have to reverse it when returning*)
+                | (acc, t1) -> (List.rev acc, t1)
             in
             let arg_typs, ret_typ = get_last_typ ([], t) in
                 (s, arg_typs, ret_typ)

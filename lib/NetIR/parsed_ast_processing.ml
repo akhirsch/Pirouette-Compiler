@@ -11,22 +11,24 @@ module M = Ast.PosInfo_AST
   unrestricted.
 *)
 
-let rec replace_pat_constructor names ast =
-  let recurse = replace_pat_constructor names in
+let rec replace_pat_constructor constructor_names ast =
+  let recurse = replace_pat_constructor constructor_names in
   match ast with
   | M.VarPat (m1, (m2, name)) -> 
-    if List.mem name names then
+    if List.mem name constructor_names then
       M.ConstructorPat (m1, (m2, name), [])
     else
       M.VarPat (m1, (m2, name))
   | M.ConstructorPat (m, name, ps) -> M.ConstructorPat (m, name, List.map recurse ps)
   | x -> x
 
-let rec replace_expr_constructor names (ast : M.expr) : M.expr =
-  let recurse = replace_expr_constructor names in
+let rec replace_expr_constructor constructor_names (ast : M.expr) : M.expr =
+  let recurse = replace_expr_constructor constructor_names in
   match ast with
   | Match (m, e, ps_and_es) -> 
-    Match (m, recurse e, (List.map (fun (p, e) -> ((replace_pat_constructor names p), recurse e)) ps_and_es))
+    Match (m, recurse e, (List.map (fun (p, e) -> ((replace_pat_constructor constructor_names p), recurse e)) ps_and_es))
+    (* Match is the only expression that contains a pattern, so we only need to process Match nodes. All other matches here
+      only exist so we can recurse on expressions, as any arbitrary expression may be another Match node. *)
   | RecAbs (m, id1, id2, e) -> RecAbs (m, id1, id2, recurse e)
   | FunApp (m, e1, e2) -> FunApp (m, recurse e1, recurse e2)
   | TypeConstr (m, e, t) -> TypeConstr (m, recurse e, t)
@@ -37,10 +39,12 @@ let rec replace_expr_constructor names (ast : M.expr) : M.expr =
   | AmI (m, e) -> AmI (m, recurse e)
   | x -> x (* Any expression that doesn't itself contain an expression needs no processing.*)
 
-let replace_decl_constructor names ast = match ast with
+let replace_decl_constructor constructor_names ast = match ast with
   | M.DefnDecl (m, name, ps, e) -> 
-    M.DefnDecl (m, name, List.map (replace_pat_constructor names) ps, replace_expr_constructor names e)
-  | x -> x
+    M.DefnDecl (m, name, List.map (replace_pat_constructor constructor_names) ps, replace_expr_constructor constructor_names e)
+  | x -> x 
+    (* DefnDecls are the only decl nodes that contain patterns and expressions. We are only modifying patterns and expression
+      (as expressions can contain patterns), so we return all other nodes unchanged. *)
 
 let decl_collect = function
   | M.VariantDecl (_, _, var_decls) -> 
