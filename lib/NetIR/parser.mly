@@ -23,11 +23,12 @@
 %token <char> CHARLIT
 %token <string> ID
 %token <string> STRINGLIT LOCLIT
-%token TRUELIT FALSELIT MATCH WITH END
+%token TRUELIT FALSELIT MATCH WITH END UNITLIT
 %token SEND RECV CHOOSE CHOICE AMI TO FROM FOR
 %token TYPEDECL COLON WALRUS IMPORT BAR
 %token EMULATEDLOCDECL DOUBLEARROW
-%token WILDCARD LPAREN RPAREN LBRACK RBRACK LBRACE RBRACE FUN ALLOW DATA COMMA
+%token WILDCARD LPAREN RPAREN LBRACK RBRACK 
+%token LBRACE RBRACE FUN ALLOW DATA COMMA SEMICOLON
 %token EOF
 
 %start <Ast.PosInfo_AST.program> program
@@ -57,16 +58,22 @@
     | CHARTY                {CharTy (mkpos $startpos $endpos)}
     | STRINGTY              {StringTy (mkpos $startpos $endpos)}
     | BOOLTY                {BoolTy (mkpos $startpos $endpos)}
-    | LOCTY LBRACE ids=separated_list(COMMA, id) RBRACE {LocTy (mkpos $startpos $endpos, ids)}
+    | LOCTY LBRACE ids=separated_list(COMMA, loclit) RBRACE {LocTy (mkpos $startpos $endpos, ids)}
     | s=id                  {VarTy (mkpos $startpos $endpos, s)}
 
+    (* Note that the following pattern rules WILL NOT parse a constructor that has no
+        arguments. Any constructor with no argumnets will become a VarPat. This is done  
+        because otherwise there would be a conflict between ConstructorPat and VarPat.
+        
+        This is resolved using the post-processing TODO function in TODO.ml.*)
     pattern:
-    | s=id l=list(atomic_pattern)  {ConstructorPat (mkpos $startpos $endpos, s, l)}
+    | s=id LPAREN l=nonempty_list(atomic_pattern) RPAREN    {ConstructorPat (mkpos $startpos $endpos, s, l)}
+    | p=atomic_pattern                                      { p }
 
     atomic_pattern:
     | WILDCARD              {WildcardPat (mkpos $startpos $endpos)}
     | s=id                  {VarPat (mkpos $startpos $endpos, s)}
-    | LPAREN RPAREN         {UnitLitPat (mkpos $startpos $endpos)}
+    | UNITLIT               {UnitLitPat (mkpos $startpos $endpos)}
     | n=INTLIT              {IntLitPat (mkpos $startpos $endpos, n)}
     | f=FLOATLIT            {FloatLitPat (mkpos $startpos $endpos, f)}
     | c=CHARLIT             {CharLitPat (mkpos $startpos $endpos, c)}
@@ -78,20 +85,20 @@
 
     expr:
     | e=op_expr                         { e }
-    | MATCH e=expr WITH l=separated_list(BAR, match_match) END {Match (mkpos $startpos $endpos, e, l)}
+    | MATCH e=expr WITH l=nonempty_list(match_match) END {Match (mkpos $startpos $endpos, e, l)}
     | FUN f=id a=id WALRUS e=op_expr    {RecAbs (mkpos $startpos $endpos, f, a, e)}
     | e=op_expr COLON t=typ             {TypeConstr (mkpos $startpos $endpos, e, t)}
     | SEND e=op_expr TO s=id            {Send (mkpos $startpos $endpos, e, s)}
     | RECV t=typ FROM s=id              {Recv (mkpos $startpos $endpos, t, s)}
     | CHOOSE l=lab FOR s=id             {ChooseFor (mkpos $startpos $endpos, s, l)}
     | AMI e=expr                        {AmI (mkpos $startpos $endpos, e)}
-    | ALLOW s=id CHOICE l=separated_list(BAR, allow_match) END {AllowChoice (mkpos $startpos $endpos, s, l)}
+    | ALLOW s=id CHOICE l=list(allow_match) END {AllowChoice (mkpos $startpos $endpos, s, l)}
 
     match_match:
-    | a=pattern WALRUS e=expr      {(a, e)}
+    | BAR a=pattern WALRUS e=expr      { (a, e) }
     
     allow_match:
-    | l=lab DOUBLEARROW e=expr            {(l, e)}
+    | BAR l=lab DOUBLEARROW e=expr            { (l, e) }
     
     op_expr:
     | e=app_expr                            { e }
@@ -104,7 +111,7 @@
 
     atomic_expr:
     | LPAREN e=expr RPAREN      { e }
-    | LPAREN RPAREN             {UnitLit (mkpos $startpos $endpos)}
+    | UNITLIT                   {UnitLit (mkpos $startpos $endpos)}
     | n=INTLIT                  {IntLit (mkpos $startpos $endpos, n)}
     | f=FLOATLIT                {FloatLit (mkpos $startpos $endpos, f)}
     | c=CHARLIT                 {CharLit (mkpos $startpos $endpos, c)}
@@ -118,19 +125,20 @@
     | EMULATEDLOCDECL s=id                          {EmulatedLocDecl (mkpos $startpos $endpos, s)}
     | s=id COLON t=typ                              {TypeDecl (mkpos $startpos $endpos, s, t)}
     | TYPEDECL s=id WALRUS t=typ                    {TypeAliasDecl (mkpos $startpos $endpos, s, t)}
-    | s=id l=list(pattern) WALRUS e=expr            {DefnDecl (mkpos $startpos $endpos, s, l, e)}
+    | s=id l=list(pattern) WALRUS e=expr SEMICOLON  {DefnDecl (mkpos $startpos $endpos, s, l, e)}
+        // TODO Verify that ending with a semicolon is the best option
     | IMPORT s=id                                   {ImportDecl (mkpos $startpos $endpos, s)}
     | DATA s=id WALRUS l=nonempty_list(var_decl)    {VariantDecl (mkpos $startpos $endpos, s, l)}
 
     var_decl:
-    | BAR s=id t=typ    
+    | BAR s=id COLON t=typ    
         {
             let rec get_last_typ = function
-                | (acc, FunTy (_, t1, t2)) -> get_last_typ ([t1] @ acc, t2)
-                | (acc, t) -> (acc, t)
+                | (acc, FunTy (_, t1, t2)) -> get_last_typ (t1 :: acc, t2)
+                | (acc, t1) -> (acc, t1)
             in
-            let arg_typs, ret_typs = get_last_typ ([], t) in
-                (s, arg_typs, ret_typs)
+            let arg_typs, ret_typ = get_last_typ ([], t) in
+                (s, arg_typs, ret_typ)
         }
         (* The syntax for var_decls is "name t1 -> t2 ... -> tn -> ret_typ."
             The constructor requires the return type to be provided separately,

@@ -1,19 +1,20 @@
 open OUnit2
 open Netir.Ast.PosInfo_AST
 
+let program_of_text input =
+  let lexbuf = Lexing.from_string input in
+  let returned = Netir.Parser.program Netir.Lexer.read lexbuf in
+    Netir.Parsed_ast_processing.process_parsed_ast returned
+
 let parse_type program_text =
   let full_program_text = "test : " ^ program_text in
-  let lexbuf = Lexing.from_string full_program_text in
-  let returned = Netir.Parser.program Netir.Lexer.read lexbuf in
-  match returned with
+  match program_of_text full_program_text with
     | [TypeDecl (_, (_, "test"), t)] -> t
     | _ -> assert_failure "Basic program structure not parsed"
 
 let parse_expr program_text =
-  let full_program_text = "test := " ^ program_text in
-  let lexbuf = Lexing.from_string full_program_text in
-  let returned = Netir.Parser.program Netir.Lexer.read lexbuf in
-  match returned with
+  let full_program_text = "test := " ^ program_text ^ ";" in
+  match program_of_text full_program_text with
     | [DefnDecl (_, (_, "test"), [], e)] -> e
     | _ -> assert_failure "Basic program structure not parsed"
 
@@ -48,8 +49,17 @@ let multi_fun_test _ =
     | FunTy (_, StringTy _, (FunTy (_, CharTy _, IntTy _))) -> ()
     | _ -> assert_failure "Multi-fun type did not parse"
 
+let fun_with_varty_test _ =
+  match parse_type "string -> unit -> test" with
+    | FunTy (_, StringTy _, (FunTy (_, UnitTy _, VarTy (_, (_, "test"))))) -> ()
+    | _ -> assert_failure "Multi-fun type did not parse"
 let loc_type_test _ =
   match parse_type "location {L}" with | LocTy (_, [(_, "L")]) -> () | _ -> assert_failure "Location type did not parse"
+
+let multi_loc_type_test _ =
+  match parse_type "location {L1, L2}" with
+    | LocTy (_, [(_, "L1") ; (_, "L2")]) -> () 
+    | _ -> assert_failure "Location type did not parse"
 
 let typ_suite =
   [
@@ -62,14 +72,60 @@ let typ_suite =
     "bool type" >:: bool_type_test;
     "simple fun type" >:: simple_fun_test;
     "multi fun type" >:: multi_fun_test;
+    "multi fun with varty" >:: fun_with_varty_test;
     "location type" >:: loc_type_test;
+    "multi location type" >:: multi_loc_type_test;
   ]
 
 (* -- PATTERN TESTS -- *)
 
+let constructorpat_test _ =
+  let full_program_text = 
+    "data test :=
+      | tt : test
+      | ff : unit -> test
+    
+    main :=
+      match variable with
+      | tt := ()
+      | ff (_) := ()
+      end;" in
+  match program_of_text full_program_text with
+    | [VariantDecl (_, (_, "test"), [
+        ((_, "tt"), [], VarTy (_, (_, "test")));
+        ((_, "ff"), [UnitTy _], VarTy (_, (_, "test")))]
+      );
+      
+      DefnDecl (_, (_, "main"), [], Match (_, Var (_, (_, "variable")), [
+        (ConstructorPat (_, (_, "tt"), []), UnitLit _);
+        (ConstructorPat (_, (_, "ff"), [WildcardPat _]), UnitLit _)
+      ]))] -> ()
+    | _ -> assert_failure "ConstructorPat did not parse"
+  
+let constructorpat_varpat_test _ =
+  let full_program_text =
+    "data test :=
+      | left : test
+      
+    main := 
+      match variable with
+        | left := ()
+        | right := ()
+      end;" in
+  match program_of_text full_program_text with
+    | [VariantDecl (_, (_, "test"), [((_, "left"), [], VarTy (_, (_, "test")));]
+      );
+      
+      DefnDecl (_, (_, "main"), [], Match (_, Var (_, (_, "variable")), [
+        (ConstructorPat (_, (_, "left"), []), UnitLit _);
+        (VarPat (_, (_, "right")), UnitLit _)
+      ]))] -> ()
+    | _ -> assert_failure "ConstructorPat did not parse"
+
 let pattern_suite =
   [
-
+    "ConstructorPat" >:: constructorpat_test;
+    "VarPat ConstructoPat separation test" >:: constructorpat_varpat_test;
   ]
 
 (* -- BIN/UN OP TESTS -- *)
@@ -81,16 +137,50 @@ let op_suite =
 
 (* -- EXPR TESTS -- *)
 
+let match_test =
+  match parse_expr 
+    "match true with
+      | true := ()
+      | false := ()
+    end" with
+    | Match (_, TrueLit _, [
+      (TrueLitPat _, UnitLit _);
+      (FalseLitPat _, UnitLit _)
+    ]) -> ()
+    | _ -> assert_failure "match did not parse"
+
 let expr_suite =
   [
-
+    (* "Match" >:: match_test; *)
   ]
 
 (* -- DECL TESTS -- *)
 
+let var_decl_single_test _ =
+  let full_program_text =
+    "data test :=
+      | typ1 : test" in
+  match program_of_text full_program_text with
+    | [VariantDecl (_, (_, "test"), [(_, "typ1"), [], VarTy (_, (_, "test"))])] -> ()
+    | _ -> assert_failure "Single VariantDecl did not parse"
+
+let var_decl_multi_test _ =
+    let full_program_text =
+    "data test :=
+      | typ1 : test
+      | typ2 : int -> test" in
+  match program_of_text full_program_text with
+    | [VariantDecl (_, (_, "test"), [
+        (_, "typ1"), [], VarTy (_, (_, "test"));
+        (_, "typ2"), [IntTy _], VarTy (_, (_, "test"))
+        ])] -> ()
+    | _ -> assert_failure "Single VariantDecl did not parse"
+
+
 let decl_suite = 
   [
-
+    "VariantDecl single" >:: var_decl_single_test;
+    "VariantDecl multi" >:: var_decl_multi_test
   ]
 
 (* -- MISC TESTS -- *)

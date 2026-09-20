@@ -1,11 +1,17 @@
 {
+open Lexing
 open Parser
 
 exception SyntaxError of string
+
+let next_line lexbuf =
+    let pos = lexbuf.lex_curr_p in
+    lexbuf.lex_curr_p <- { pos with pos_lnum = pos.pos_lnum + 1; pos_bol = lexbuf.lex_curr_pos }
 }
 
 let white = [' ' '\t']+
 let digit = ['0'-'9']
+let newline = '\r' | '\n' | "\r\n"
 let int = '-'? digit+
 let caps = ['A'-'Z']
 let alpha = ['a'-'z' 'A'-'Z']
@@ -17,6 +23,7 @@ let identifier = (alpha | '_') (alpha | digit | '_')*
 rule read =
   parse
   | white { read lexbuf }
+  | newline { next_line lexbuf; read lexbuf}
   (* Types *)
   | "unit" { UNITTY }
   | "int" { INTTY }
@@ -41,6 +48,7 @@ rule read =
   | ">" { GT }
   | ">=" { GEQ }
   (* Patterns and Expressions *)
+  | "()" { UNITLIT }
   | "true" { TRUELIT }
   | "false" { FALSELIT }
   | "->" { ARROW }
@@ -51,12 +59,14 @@ rule read =
   | "{" { LBRACE }
   | ")" { RPAREN }
   | "]" { RBRACK}
-  | "}"  {RBRACE }
+  | "}"  { RBRACE }
   | "|" { BAR }
   | "'" { read_char lexbuf }
   | '"' { read_string (Buffer.create 16) lexbuf }
   | ":=" { WALRUS } (* TODO Discuss/approve token name*)
   | ":" { COLON }
+  | ";" { SEMICOLON }
+  | "," { COMMA }
   | "match" { MATCH }
   | "with" { WITH }
   | "end" { END }
@@ -76,8 +86,8 @@ rule read =
   | "import" { IMPORT }
   | "data" { DATA }
   | int { INTLIT (int_of_string (Lexing.lexeme lexbuf)) }
-  | identifier as s { ID s }
   | location as s { LOCLIT s }
+  | identifier as s { ID s }
   | eof { EOF }
   | _  { raise (SyntaxError ("Unexpected token: " ^ (Lexing.lexeme lexbuf))) }
 

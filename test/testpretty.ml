@@ -55,8 +55,8 @@ let suite =
     >:: test_eq_string "true" (prettify_pattern truelitpat);
     "false literal pattern"
     >:: test_eq_string "false" (prettify_pattern falselitpat);
-    "inlpat" >:: test_eq_string "inl ()" (prettify_pattern inlpat);
-    "inrpat" >:: test_eq_string "inr ()" (prettify_pattern inrpat);
+    "inlpat" >:: test_eq_string "inl (())" (prettify_pattern inlpat);
+    "inrpat" >:: test_eq_string "inr (())" (prettify_pattern inrpat);
     "location name pattern"
     >:: test_eq_string "[[A]]" (prettify_pattern (locnamepat "A"));
     (* Unary Operation Tests *)
@@ -94,7 +94,7 @@ let suite =
           (prettify_expr (typeconstr (floatlit 3.5) intty));
     "match"
     >:: test_eq_string
-          "match x with\n| inl () := inr ()\n| inr () := inl ()\nend"
+          "match x with\n| inl (()) := inr ()\n| inr (()) := inl ()\nend"
           (prettify_expr m);
     "function" >:: test_eq_string "fun f x := x + 3" (prettify_expr f);
     "funcall" >:: test_eq_string "(fun f x := x + 3) 4" (prettify_expr f_four);
@@ -118,18 +118,18 @@ let suite =
     >:: test_eq_string "type foo := int"
           (prettify_decl (typealiasdecl "foo" intty));
     "definition"
-    >:: test_eq_string "foo := 3" (prettify_decl (defndecl "foo" [] (intlit 3)));
+    >:: test_eq_string "foo := 3;" (prettify_decl (defndecl "foo" [] (intlit 3)));
     "one-param definition"
-    >:: test_eq_string "foo () := 3"
+    >:: test_eq_string "foo () := 3;"
           (prettify_decl (defndecl "foo" [ unitlitpat ] (intlit 3)));
     "two-param definition"
-    >:: test_eq_string "foo () x := 3 + x"
+    >:: test_eq_string "foo () x := 3 + x;"
           (prettify_decl
              (defndecl "foo"
                 [ unitlitpat; varpat "x" ]
                 (binop plus (intlit 3) (var "x"))));
     "three-param definition"
-    >:: test_eq_string "foo () x true := 3 + x"
+    >:: test_eq_string "foo () x true := 3 + x;"
           (prettify_decl
              (defndecl "foo"
                 [ unitlitpat; varpat "x"; truelitpat ]
