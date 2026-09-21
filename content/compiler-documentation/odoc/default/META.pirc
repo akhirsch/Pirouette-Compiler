@@ -1,0 +1,18 @@
+package "metainfo" (
+  directory = "metainfo"
+  description = ""
+  requires = ""
+  archive(byte) = "metainfo.cma"
+  archive(native) = "metainfo.cmxa"
+  plugin(byte) = "metainfo.cma"
+  plugin(native) = "metainfo.cmxs"
+)
+package "netir" (
+  directory = "netir"
+  description = ""
+  requires = "pirc.metainfo"
+  archive(byte) = "netir.cma"
+  archive(native) = "netir.cmxa"
+  plugin(byte) = "netir.cma"
+  plugin(native) = "netir.cmxs"
+)
