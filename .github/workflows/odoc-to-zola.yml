@@ -61,7 +61,7 @@ jobs:
             +++
 
             EOF
-            cat _default/_doc/_html/index.html >> _default/_doc/_html/index.md
+            cat _default/_doc/_html/index.html >> _build/default/_doc/_html/index.md
             rm _default/_doc/_html/index.html
 
       - name: Deploy to zola-site
