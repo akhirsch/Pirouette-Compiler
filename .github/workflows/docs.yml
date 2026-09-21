@@ -5,7 +5,8 @@ name: Deploy odoc to GitHub Pages
 on:
   push:
     branches:
-      - main
+      #- main
+      - 7-continuous-integration
       
 permissions: read-all
 
