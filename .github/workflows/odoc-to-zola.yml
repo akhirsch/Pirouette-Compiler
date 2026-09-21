@@ -39,6 +39,9 @@ jobs:
       - name: Install Dune
         run: opam install dune
 
+      - name: Install Odoc
+        run: opam install odoc
+
       - name: Generate Opam
         run: opam exec -- dune build @opam
 
