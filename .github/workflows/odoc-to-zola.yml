@@ -54,26 +54,6 @@ jobs:
       - name: Build Docs
         run: |
             opam exec -- dune build @doc
-            cat << 'EOF' > _build/default/_doc/_html/index.md
-            +++
-            title = "Module Documentation"
-            weight = 1
-            +++
-
-            EOF
-            cat _build/default/_doc/_html/index.html >> _build/default/_doc/_html/_index.md
-
-            cat << 'EOF' > _build/default/README_temp.md
-            +++
-            title = "Contribution Guide"
-            weight = 1
-            +++
-
-            EOF
-            cat _build/default/README.md >> _build/default/README_temp.md
-            mv _build/default/README_temp.md _build/default/README.md
-
-            
 
       - name: Deploy to zola-site
         uses: peaceiris/actions-gh-pages@v4
@@ -81,5 +61,5 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./_build
           publish_branch: zola-site
-          destination_dir: ./content/compiler-documentation/odoc
+          destination_dir: ./themes/tanuki/static/module-docs
           
