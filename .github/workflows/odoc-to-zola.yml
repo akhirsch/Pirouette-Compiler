@@ -61,8 +61,7 @@ jobs:
             +++
 
             EOF
-            cat _build/default/_doc/_html/index.html >> _build/default/_doc/_html/index.md
-            rm _build/default/_doc/_html/index.html
+            cat _build/default/_doc/_html/index.html >> _build/default/_doc/_html/_index.md
 
             cat << 'EOF' > _build/default/README_temp.md
             +++
