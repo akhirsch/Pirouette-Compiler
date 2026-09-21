@@ -1,0 +1,113 @@
+(lang dune 3.24)
+(name pirc)
+(sections (lib .) (libexec .) (doc ../../doc/pirc))
+(files
+ (lib
+  (META
+   dune-package
+   metainfo/meta.ml
+   metainfo/metainfo.a
+   metainfo/metainfo.cma
+   metainfo/metainfo.cmi
+   metainfo/metainfo.cmt
+   metainfo/metainfo.cmx
+   metainfo/metainfo.cmxa
+   metainfo/metainfo.ml
+   metainfo/metainfo__Meta.cmi
+   metainfo/metainfo__Meta.cmt
+   metainfo/metainfo__Meta.cmx
+   netir/ast.ml
+   netir/ast.mli
+   netir/astmapper.ml
+   netir/netir.a
+   netir/netir.cma
+   netir/netir.cmi
+   netir/netir.cmt
+   netir/netir.cmx
+   netir/netir.cmxa
+   netir/netir.ml
+   netir/netir__Ast.cmi
+   netir/netir__Ast.cmt
+   netir/netir__Ast.cmti
+   netir/netir__Ast.cmx
+   netir/netir__Astmapper.cmi
+   netir/netir__Astmapper.cmt
+   netir/netir__Astmapper.cmx
+   netir/netir__Nometa.cmi
+   netir/netir__Nometa.cmt
+   netir/netir__Nometa.cmx
+   netir/netir__Prettyprint.cmi
+   netir/netir__Prettyprint.cmt
+   netir/netir__Prettyprint.cmti
+   netir/netir__Prettyprint.cmx
+   netir/nometa.ml
+   netir/prettyprint.ml
+   netir/prettyprint.mli
+   opam))
+ (libexec (metainfo/metainfo.cmxs netir/netir.cmxs))
+ (doc (README.md)))
+(library
+ (name pirc.metainfo)
+ (kind normal)
+ (archives (byte metainfo/metainfo.cma) (native metainfo/metainfo.cmxa))
+ (plugins (byte metainfo/metainfo.cma) (native metainfo/metainfo.cmxs))
+ (native_archives metainfo/metainfo.a)
+ (main_module_name Metainfo)
+ (modes byte native)
+ (modules
+  (wrapped
+   (group
+    (alias
+     (obj_name metainfo)
+     (visibility public)
+     (kind alias)
+     (source (path Metainfo) (impl (path metainfo/metainfo.ml-gen))))
+    (name Metainfo)
+    (modules
+     (module
+      (obj_name metainfo__Meta)
+      (visibility public)
+      (source (path Meta) (impl (path metainfo/meta.ml))))))
+   (wrapped true))))
+(library
+ (name pirc.netir)
+ (kind normal)
+ (archives (byte netir/netir.cma) (native netir/netir.cmxa))
+ (plugins (byte netir/netir.cma) (native netir/netir.cmxs))
+ (native_archives netir/netir.a)
+ (requires pirc.metainfo)
+ (main_module_name Netir)
+ (modes byte native)
+ (modules
+  (wrapped
+   (group
+    (alias
+     (obj_name netir)
+     (visibility public)
+     (kind alias)
+     (source (path Netir) (impl (path netir/netir.ml-gen))))
+    (name Netir)
+    (modules
+     (module
+      (obj_name netir__Ast)
+      (visibility public)
+      (source
+       (path Ast)
+       (intf (path netir/ast.mli))
+       (impl (path netir/ast.ml))))
+     (module
+      (obj_name netir__Astmapper)
+      (visibility public)
+      (source (path Astmapper) (impl (path netir/astmapper.ml))))
+     (module
+      (obj_name netir__Nometa)
+      (visibility public)
+      (source (path Nometa) (impl (path netir/nometa.ml))))
+     (module
+      (obj_name netir__Prettyprint)
+      (visibility public)
+      (source
+       (path Prettyprint)
+       (intf (path netir/prettyprint.mli))
+       (impl (path netir/prettyprint.ml))))))
+   (wrapped true))))
