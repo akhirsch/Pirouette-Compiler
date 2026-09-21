@@ -56,13 +56,25 @@ jobs:
             opam exec -- dune build @doc
             cat << 'EOF' > _build/default/_doc/_html/index.md
             +++
-            title = "odoc Documentation"
+            title = "Module Documentation"
             weight = 1
             +++
 
             EOF
             cat _build/default/_doc/_html/index.html >> _build/default/_doc/_html/index.md
             rm _build/default/_doc/_html/index.html
+
+            cat << 'EOF' > _build/default/README_temp.md
+            +++
+            title = "Contribution Guide"
+            weight = 1
+            +++
+
+            EOF
+            cat _build/default/README.md >> _build/default/README_temp.md
+            mv _build/default/README_temp.md _build/default/README.md
+
+            
 
       - name: Deploy to zola-site
         uses: peaceiris/actions-gh-pages@v4
