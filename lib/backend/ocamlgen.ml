@@ -1,18 +1,24 @@
 open Ppxlib
 open Ast_builder.Default
 
-module Net  = Netir.Nometa
+(* TODO: JACKIE ** TURN THIS INTO A FUNCTOR so that we can use any AST *)
+(* steps: defining the input module type (signature), writing the functor
+ structure, and instantiating (applying) the functor.*)
+module MkOcamlGen (Net : Netir.Ast.AST) = struct
+  open Net
+  
 
 (* with this declared now i can write Net.___ avoiding name conflicts *)
 
 let loc = Location.none
+(* every node in ppxlib aAST carries a location *)
 
 (* <raw NetIR constructor pattern>  ->  <ppxlib [%…] quotation> *) 
 (* type_gen returns a core_type because a NetIR type becomes an OCaml type node *)
 let rec type_gen (t : Net.typ) : core_type =
   match t with
-    | Net.VarTy (_, ((), x)) ->  ptyp_constr ~loc (Located.lident ~loc x) []
-    (* type called x, not the type whose name is in the variable x *)
+    | Net.VarTy (_, (_, x)) ->  ptyp_var ~loc x
+    (* ptyp_var of string   a type variable such as 'a *)
     | Net.UnitTy _ -> [%type: unit]
     | Net.IntTy _ -> [%type: int]
     | Net.FloatTy _ -> [%type: float]
@@ -22,8 +28,8 @@ let rec type_gen (t : Net.typ) : core_type =
     | Net.FunTy (_, t1, t2) -> [%type: [%t type_gen t1] -> [%t type_gen t2]]
     | Net.LocTy (_, _) ->  [%type: string]
     
-(* return *)
-let rec pattern_gen (p : Net.pattern) : pattern = 
+
+let rec pattern_gen (p : Net.pattern) -> pattern = 
   match p with 
     | Net.WildcardPat _ -> [%pat? _]
     | Net.VarPat (_, (_, x)) -> pvar ~loc x
@@ -43,17 +49,16 @@ let rec pattern_gen (p : Net.pattern) : pattern =
       (* Located.lident wraps the string as the identifier that ppat_construct is expecting
       Ppat_construct of Longident.t Asttypes.loc * (string Asttypes.loc list * pattern) option *)
       let converted_ps = List.map pattern_gen ps in
-      (* converting each netIR arguement pattern to ocaml pattern node *)
+      (* converting each netIR argument pattern to ocaml pattern node *)
       let args =
       match converted_ps with
       | [] -> None
       | [ p ] -> Some p
       | many -> Some (ppat_tuple ~loc many)
-      (* ocaml constructors arguements stores arguements as a pattern 
+      (* ocaml constructors arguments stores arguements as a pattern 
       none, one and tuple *)
         in
         ppat_construct ~loc name args
-    
     | Net.LocNamePat (_, (_, s)) -> pvar ~loc s
     
 
@@ -151,7 +156,8 @@ let rec pattern_gen (p : Net.pattern) : pattern =
         | _ -> failwith "unexpected label" makes the match exhaustive.
         TODO : how do i figure out how to add that unexpected label arm *)
       | Net.AmI (_, e) -> [%expr expr_gen ~loc e]
-      (*of m * expr*)
+      (*of m * expr
+      fix this amI is dependent on the dummybackend *)
   
     let decl_gen (d : Net.decl) =
       match d with 
