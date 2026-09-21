@@ -1,3 +1,8 @@
++++
+title = "Contribution Guide"
+weight = 1
++++
+
 ## Install dependencies
 
 ```sh

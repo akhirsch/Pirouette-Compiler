@@ -1,5 +1,5 @@
 +++
-title = "odoc Documentation"
+title = "Module Documentation"
 weight = 1
 +++
 
