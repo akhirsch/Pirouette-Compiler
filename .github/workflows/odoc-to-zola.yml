@@ -1,0 +1,71 @@
+name: odoc-to-zola
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+  push:
+    branches:
+      - 'main'
+      - 'dev'
+      - '7-Continuous-Integration'
+
+    paths-ignore:
+      - '.githooks/**'
+      - '**/LICENSE'
+      - '**/*.md'
+
+permissions: read-all
+
+jobs:
+  odoc-to-zola:
+    strategy:
+      fail-fast: false
+    
+    permissions:
+      contents: write
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set-up OCaml
+        uses: ocaml/setup-ocaml@v3
+        with:
+          ocaml-compiler: 5.2.1
+
+      - name: Install Dune
+        run: opam install dune
+
+      - name: Generate Opam
+        run: opam exec -- dune build @opam
+
+      - name: Install dependencies
+        run: opam install . --deps-only --with-test
+
+      - name: Build
+        run: opam exec -- dune build
+      
+      - name: Build Docs
+        run: |
+            opam exec -- dune build @doc
+            cat << 'EOF' > _default/_doc/_html/index.md
+            +++
+            title = "odoc Documentation"
+            weight = 1
+            +++
+
+            EOF
+            cat _default/_doc/_html/index.html >> _default/_doc/_html/index.md
+            rm _default/_doc/_html/index.html
+
+      - name: Deploy to zola-site
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./_build
+          publish_branch: zola-site
+          destination_dir: ./content/compiler-documentation/odoc
+          
