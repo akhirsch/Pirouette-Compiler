@@ -7,8 +7,6 @@ on:
   push:
     branches:
       - 'main'
-      - 'dev'
-      - '7-continuous-integration'
 
     paths-ignore:
       - '.githooks/**'
