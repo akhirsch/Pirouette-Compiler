@@ -18,6 +18,12 @@ let parse_expr program_text =
     | [DefnDecl (_, (_, "test"), [], e)] -> e
     | _ -> assert_failure "Basic program structure not parsed"
 
+let parse_pat program_text =
+  let full_program_text = "match true with | " ^ program_text ^ " := () end" in
+  match parse_expr full_program_text with 
+    | Match (_, TrueLit _, [(p, UnitLit _)]) -> p
+    | _ -> assert_failure "Basic pattern structure not parsed."
+
 (* -- TYPE TESTS -- *)
 
 let var_type_test _ =
@@ -108,14 +114,13 @@ let wildcardpat_test _ =
     ]) -> ()
     | _ -> assert_failure "Wildcard pattern did not parse"
 
-(* TODO: Find out why this doesn't work *)
 let varpat_test _ =
   match parse_expr 
     "match true with
-      | VAR := ()
+      | x := ()
     end" with
     | Match (_, TrueLit _, [
-      (VarPat (_, (_, "VAR")), UnitLit _)
+      (VarPat (_, (_, "x")), UnitLit _)
     ]) -> ()
     | _ -> assert_failure "VarLitPat pattern did not parse"
 
@@ -139,7 +144,6 @@ let intpat_test _ =
     ]) -> ()
     | _ -> assert_failure "IntLitPat pattern did not parse"
 
-(* TODO: Find out why . isn't allowed *)
 let floatpat_test _ =
   match parse_expr 
     "match true with
@@ -190,6 +194,11 @@ let falsepat_test _ =
     ]) -> ()
     | _ -> assert_failure "FalseLitPat pattern did not parse"
 
+let locpat_test _ = 
+  match parse_pat "TEST" with
+    | LocLitPat (_, (_, "TEST")) -> ()
+    | _ -> assert_failure "LocLitPat did not parse"
+
 let constructorpat_test _ =
   let full_program_text = 
     "data test :=
@@ -233,19 +242,26 @@ let constructorpat_varpat_test _ =
       ]))] -> ()
     | _ -> assert_failure "Parsing error when no argument ConstructorPat and VarPat are both matched on."
 
+let loc_name_pat_test _ =
+  match parse_pat "[[n]]" with
+    | LocNamePat (_, (_, "n")) -> ()
+    | _ -> assert_failure "LocNamePat did not parse"
+
 let pattern_suite =
   [
-    "ConstructorPat" >:: constructorpat_test;
-    "VarPat ConstructoPat separation test" >:: constructorpat_varpat_test;
     "WildcardPat" >:: wildcardpat_test;
-    (* "VarPat" >:: varpat_test; *)
+    "VarPat" >:: varpat_test;
     "UnitLitPat" >:: unitpat_test;
     "IntLitPat" >:: intpat_test;
-    (* "FloatLitPat" >:: floatpat_test; *)
+    "FloatLitPat" >:: floatpat_test;
     "CharLitPat" >:: charpat_test;
     "StringLitPat" >:: stringpat_test;
     "TrueLitPat" >:: truepat_test;
     "FalseLitPat" >:: falsepat_test;
+    "LocaLitPat" >:: locpat_test;
+    "ConstructorPat" >:: constructorpat_test;
+    "VarPat ConstructoPat separation test" >:: constructorpat_varpat_test;
+    "LocNamePat" >:: loc_name_pat_test;
   ]
 
 (* -- BIN/UN OP TESTS -- *)

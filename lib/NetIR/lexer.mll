@@ -11,6 +11,7 @@ let next_line lexbuf =
 
 let white = [' ' '\t']+
 let digit = ['0'-'9']
+let float = (digit)* '.' (digit)+
 let newline = '\r' | '\n' | "\r\n"
 let int = '-'? digit+
 let caps = ['A'-'Z']
@@ -85,6 +86,7 @@ rule read =
   | "type" { TYPEDECL }
   | "import" { IMPORT }
   | "data" { DATA }
+  | float as f { FLOATLIT (float_of_string f)}
   | int { INTLIT (int_of_string (Lexing.lexeme lexbuf)) }
   | location as s { LOCLIT s }
   | identifier as s { ID s }
