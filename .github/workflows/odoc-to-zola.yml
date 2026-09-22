@@ -54,8 +54,8 @@ jobs:
       - name: Build Docs
         run: |
             opam exec -- dune build @doc
-            mv _build/default/_doc/_html* _build/default/_doc
-            rmdir default/_doc/_html
+            mv _build/default/_doc/_html/* _build/default/_doc/
+            rmdir _build/default/_doc/_html
 
       - name: Deploy to zola-site
         uses: peaceiris/actions-gh-pages@v4
