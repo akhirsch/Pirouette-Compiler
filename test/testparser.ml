@@ -21,28 +21,44 @@ let parse_expr program_text =
 (* -- TYPE TESTS -- *)
 
 let var_type_test _ =
-  match parse_type "test" with | VarTy (_, (_, "test")) -> () | _ -> assert_failure "Var type did not parse"
+  match parse_type "test" with 
+    | VarTy (_, (_, "test")) -> () 
+    | _ -> assert_failure "Var type did not parse"
 
 let unit_type_test _ =
-  match parse_type "unit" with | UnitTy _ -> () | _ -> assert_failure "Unit type did not parse"
+  match parse_type "unit" with 
+    | UnitTy _ -> () 
+    | _ -> assert_failure "Unit type did not parse"
 
 let int_type_test _ =
-  match parse_type "int" with | IntTy _ -> () | _ -> assert_failure "Int type did not parse"
+  match parse_type "int" with 
+    | IntTy _ -> () 
+    | _ -> assert_failure "Int type did not parse"
 
 let float_type_test _ =
-  match parse_type "float" with | FloatTy _ -> () | _ -> assert_failure "Float type did not parse"
+  match parse_type "float" with 
+    | FloatTy _ -> () 
+    | _ -> assert_failure "Float type did not parse"
 
 let char_type_test _ =
-  match parse_type "char" with | CharTy _ -> () | _ -> assert_failure "Char type did not parse"
+  match parse_type "char" with 
+    | CharTy _ -> () 
+    | _ -> assert_failure "Char type did not parse"
 
 let string_type_test _ = 
-   match parse_type "string" with | StringTy _ -> () | _ -> assert_failure "String type did not parse"
+  match parse_type "string" with 
+    | StringTy _ -> () 
+    | _ -> assert_failure "String type did not parse"
 
 let bool_type_test _ =
-  match parse_type "bool" with | BoolTy _ -> () | _ -> assert_failure "Bool type did not parse"
+  match parse_type "bool" with 
+    | BoolTy _ -> () 
+    | _ -> assert_failure "Bool type did not parse"
 
 let simple_fun_test _ =
-  match parse_type "unit -> bool" with | FunTy (_, UnitTy _, BoolTy _) -> () | _ -> assert_failure "Simple fun type did not parse"
+  match parse_type "unit -> bool" with 
+    | FunTy (_, UnitTy _, BoolTy _) -> () 
+    | _ -> assert_failure "Simple fun type did not parse"
 
 let multi_fun_test _ =
   match parse_type "string -> char -> int" with
@@ -53,8 +69,11 @@ let fun_with_varty_test _ =
   match parse_type "string -> unit -> test" with
     | FunTy (_, StringTy _, (FunTy (_, UnitTy _, VarTy (_, (_, "test"))))) -> ()
     | _ -> assert_failure "Multi-fun type did not parse"
+
 let loc_type_test _ =
-  match parse_type "location {L}" with | LocTy (_, [(_, "L")]) -> () | _ -> assert_failure "Location type did not parse"
+  match parse_type "location {L}" with 
+    | LocTy (_, [(_, "L")]) -> () 
+    | _ -> assert_failure "Location type did not parse"
 
 let multi_loc_type_test _ =
   match parse_type "location {L1, L2}" with
@@ -78,6 +97,98 @@ let typ_suite =
   ]
 
 (* -- PATTERN TESTS -- *)
+
+let wildcardpat_test _ =
+  match parse_expr 
+    "match true with
+      | _ := ()
+    end" with
+    | Match (_, TrueLit _, [
+      (WildcardPat _, UnitLit _)
+    ]) -> ()
+    | _ -> assert_failure "Wildcard pattern did not parse"
+
+(* TODO: Find out why this doesn't work *)
+let varpat_test _ =
+  match parse_expr 
+    "match true with
+      | VAR := ()
+    end" with
+    | Match (_, TrueLit _, [
+      (VarPat (_, (_, "VAR")), UnitLit _)
+    ]) -> ()
+    | _ -> assert_failure "VarLitPat pattern did not parse"
+
+let unitpat_test _ =
+  match parse_expr 
+    "match true with
+      | () := ()
+    end" with
+    | Match (_, TrueLit _, [
+      (UnitLitPat _, UnitLit _)
+    ]) -> ()
+    | _ -> assert_failure "UnitLitPat pattern did not parse"
+
+let intpat_test _ =
+  match parse_expr 
+    "match true with
+      | 1 := ()
+    end" with
+    | Match (_, TrueLit _, [
+      (IntLitPat (_, 1), UnitLit _)
+    ]) -> ()
+    | _ -> assert_failure "IntLitPat pattern did not parse"
+
+(* TODO: Find out why . isn't allowed *)
+let floatpat_test _ =
+  match parse_expr 
+    "match true with
+      | 1.0 := ()
+    end" with
+    | Match (_, TrueLit _, [
+      (FloatLitPat (_, 1.0), UnitLit _)
+    ]) -> ()
+    | _ -> assert_failure "FloatLitPat pattern did not parse"
+
+let charpat_test _ =
+  match parse_expr 
+    "match true with
+      | 'a' := ()
+    end" with
+    | Match (_, TrueLit _, [
+      (CharLitPat (_, 'a'), UnitLit _)
+    ]) -> ()
+    | _ -> assert_failure "CharLitPat pattern did not parse"
+
+let stringpat_test _ =
+  match parse_expr 
+    "match true with
+      | \"Test\" := ()
+    end" with
+    | Match (_, TrueLit _, [
+      (StringLitPat (_, "Test"), UnitLit _)
+    ]) -> ()
+    | _ -> assert_failure "StringLitPat pattern did not parse"
+
+let truepat_test _ =
+  match parse_expr 
+    "match true with
+      | true := ()
+    end" with
+    | Match (_, TrueLit _, [
+      (TrueLitPat _, UnitLit _)
+    ]) -> ()
+    | _ -> assert_failure "TrueLitPat pattern did not parse"
+
+let falsepat_test _ =
+  match parse_expr 
+    "match true with
+      | false := ()
+    end" with
+    | Match (_, TrueLit _, [
+      (FalseLitPat _, UnitLit _)
+    ]) -> ()
+    | _ -> assert_failure "FalseLitPat pattern did not parse"
 
 let constructorpat_test _ =
   let full_program_text = 
@@ -126,6 +237,15 @@ let pattern_suite =
   [
     "ConstructorPat" >:: constructorpat_test;
     "VarPat ConstructoPat separation test" >:: constructorpat_varpat_test;
+    "WildcardPat" >:: wildcardpat_test;
+    (* "VarPat" >:: varpat_test; *)
+    "UnitLitPat" >:: unitpat_test;
+    "IntLitPat" >:: intpat_test;
+    (* "FloatLitPat" >:: floatpat_test; *)
+    "CharLitPat" >:: charpat_test;
+    "StringLitPat" >:: stringpat_test;
+    "TrueLitPat" >:: truepat_test;
+    "FalseLitPat" >:: falsepat_test;
   ]
 
 (* -- BIN/UN OP TESTS -- *)
@@ -201,16 +321,24 @@ let decl_suite =
 (* -- MISC TESTS -- *)
 
 let newline_char_test _ =
-  match parse_expr "'\\n'" with | CharLit (_, '\n') -> () | _ -> assert_failure "Newline character did not parse"
+  match parse_expr "'\\n'" with 
+    | CharLit (_, '\n') -> () 
+    | _ -> assert_failure "Newline character did not parse"
 
 let tab_char_test _ =
-  match parse_expr "'\\t'" with | CharLit (_, '\t') -> () | _ -> assert_failure "Tab character did not parse"
+  match parse_expr "'\\t'" with 
+    | CharLit (_, '\t') -> () 
+    | _ -> assert_failure "Tab character did not parse"
 
 let apo_char_test _ =
-  match parse_expr "'\\''" with | CharLit (_, '\'') -> () | _ -> assert_failure "Apostraphe character did nor parse"
+  match parse_expr "'\\''" with 
+    | CharLit (_, '\'') -> () 
+    | _ -> assert_failure "Apostraphe character did nor parse"
 
 let backslash_char_test _ =
-  match parse_expr "'\\\\'" with | CharLit (_, '\\') -> () | _ -> assert_failure "Backslash character did not parse"
+  match parse_expr "'\\\\'" with 
+    | CharLit (_, '\\') -> () 
+    | _ -> assert_failure "Backslash character did not parse"
 
 let misc_suite = 
   [
