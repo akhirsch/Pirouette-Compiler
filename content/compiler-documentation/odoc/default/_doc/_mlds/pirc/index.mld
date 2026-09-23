@@ -1,7 +1,0 @@
-{0 pirc index}
-{1 Library pirc.metainfo}
-The entry point of this library is the module:
-{!module-Metainfo}.
-{1 Library pirc.netir}
-The entry point of this library is the module:
-{!module-Netir}.
