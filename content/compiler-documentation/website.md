@@ -6,6 +6,8 @@ weight = 1
 This website is written using the [Zola static site generator](https://www.getzola.org).
 You will need to install zola in order to build the website.
 
+Zola Version: zola 0.22.1
+
 # Documenting the Pirouette and NetIR Languages
 
 The main documentation of [Pirouette](@/pirouette/_index.md) and [NetIR](@/netir/_index.md) for users is here.
