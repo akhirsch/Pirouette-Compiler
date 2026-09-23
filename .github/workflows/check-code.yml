@@ -156,6 +156,7 @@ jobs:
             cat _coverage/index.html >> _coverage/index.md
             rm _coverage/index.html
 
+      #Taking our coverage directory and pushing it to the zola-site under compiler-documentation
       - name: Deploy to zola-site
         uses: peaceiris/actions-gh-pages@v4
         with:

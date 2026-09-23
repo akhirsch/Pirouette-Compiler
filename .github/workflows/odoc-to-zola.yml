@@ -50,13 +50,10 @@ jobs:
       - name: Build
         run: opam exec -- dune build
       
-        #Building the documentation and moving the generated html into the _doc folder 
       - name: Build Docs
-        run: |
-            opam exec -- dune build @doc
-            mv _build/default/_doc/_html/* _build/default/_doc/
-            rmdir _build/default/_doc/_html
+        run: opam exec -- dune build @doc
 
+        #Pushes the generated documentation that is in ./_build to the zola-site in the static/module-docs directory
       - name: Deploy to zola-site
         uses: peaceiris/actions-gh-pages@v4
         with:
