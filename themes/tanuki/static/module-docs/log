@@ -1,0 +1,16 @@
+# dune test
+# OCAMLPARAM: unset
+# Shared cache: enabled-except-user-rules
+# Shared cache location: /home/opc20/.cache/dune/db
+# Workspace root: /home/opc20/newpir/Pirouette-Compiler
+# Auto-detected concurrency: 12
+# Dune context:
+#  { name = "default"
+#  ; kind = "default"
+#  ; profile = Dev
+#  ; merlin = true
+#  ; fdo_target_exe = None
+#  ; build_dir = In_build_dir "default"
+#  ; instrument_with = []
+#  }
+$ /home/opc20/.opam/cs3110-2026sp/bin/ocamlc.opt -config > /tmp/dune_8ebdb5_output
