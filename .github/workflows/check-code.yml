@@ -28,6 +28,7 @@ on:
 permissions: read-all
 
 jobs:
+  #lints and formats the code
   lint-fmt:
     runs-on: ubuntu-latest
     steps:
@@ -42,6 +43,7 @@ jobs:
       - name: Lint and format
         uses: ocaml/setup-ocaml/lint-fmt@v3
 
+  #Checks that the project builds without errors
   build:
     strategy:
       fail-fast: false
@@ -71,6 +73,7 @@ jobs:
       - name: Build Docs
         run: opam exec -- dune build @doc
         
+  #Runs the test suite and checks that all tests pass
   Run-Test-Suite:
     strategy:
       fail-fast: false
@@ -100,13 +103,14 @@ jobs:
 
       - name: Run Tests
         run: |
-          opam exec -- dune test
-          if [[ $? == 0 ]]; 
+          TEST_OUTPUT=$(opam exec -- dune test)
+          if [[ $? == 0 ]]; # $? stores the exit code of the last command
           then echo "All tests were passed" 
           else echo $TEST_OUTPUT 
             exit 1
           fi
-
+  
+  #Runs Bisect and puts the html report on the zola site
   Run-Bisect-Report:
     strategy:
       fail-fast: false
@@ -137,11 +141,12 @@ jobs:
       - name: Build
         run: opam exec -- dune build  
       
+      #Running Bisect, putting the generated html into an md file and adding frontmatter so zola can parse it
       - name: Run Bisect
         run: |
             opam exec -- dune runtest --instrument-with bisect_ppx
             opam exec -- bisect-ppx-report html
-            cat << 'EOF' > _coverage/index.md
+            cat << 'EOF' > _coverage/index.md 
             +++
             title = "Bisect Report"
             weight = 1

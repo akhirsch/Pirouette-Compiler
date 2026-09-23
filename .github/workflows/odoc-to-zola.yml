@@ -16,6 +16,7 @@ on:
 permissions: read-all
 
 jobs:
+  #Generate odoc documentation and push it to zola-site
   odoc-to-zola:
     strategy:
       fail-fast: false
@@ -49,6 +50,7 @@ jobs:
       - name: Build
         run: opam exec -- dune build
       
+        #Building the documentation and moving the generated html into the _doc folder 
       - name: Build Docs
         run: |
             opam exec -- dune build @doc
