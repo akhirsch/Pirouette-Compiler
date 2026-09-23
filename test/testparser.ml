@@ -266,12 +266,140 @@ let pattern_suite =
 
 (* -- BIN/UN OP TESTS -- *)
 
+let neg_test _ =
+  match parse_expr "- 1" with
+    | Unop (_, Neg _, IntLit _) -> ()
+    | _ -> assert_failure "Neg operator did not parse"
+
+let not_test _ =
+  match parse_expr "!true" with
+    | Unop (_, Not _, TrueLit _) -> ()
+    | _ -> assert_failure "Not operator did not parse"
+
+let plus_test _ =
+  match parse_expr "1 + 1" with
+    | Binop (_, Plus _, IntLit _, IntLit _) -> ()
+    | _ -> assert_failure "Plus operator did not parse"
+
+let minus_test _ =
+  match parse_expr "1 - 1" with
+    | Binop (_, Minus _, IntLit _, IntLit _) -> ()
+    | _ -> assert_failure "Minus operator did not parse"
+
+let times_test _ =
+  match parse_expr "1 * 1" with
+    | Binop (_, Times _, IntLit _, IntLit _) -> ()
+    | _ -> assert_failure "Times operator did not parse"
+
+let div_test _ =
+  match parse_expr "1 / 1" with
+    | Binop (_, Div _, IntLit _, IntLit _) -> ()
+    | _ -> assert_failure "Div operator did not parse"
+
+let and_test _ =
+  match parse_expr "true && false" with
+    | Binop (_, And _, TrueLit _, FalseLit _) -> ()
+    | _ -> assert_failure "And operator did not parse"
+
+let or_test _ =
+  match parse_expr "true || false" with
+    | Binop (_, Or _, TrueLit _, FalseLit _) -> ()
+    | _ -> assert_failure "Or operator did not parse"
+
+let eq_test _ =
+  match parse_expr "1 == 1" with
+    | Binop (_, Eq _, IntLit _, IntLit _) -> ()
+    | _ -> assert_failure "Eq operator did not parse"
+
+let neq_test _ =
+  match parse_expr "1 != 1" with
+    | Binop (_, Neq _, IntLit _, IntLit _) -> ()
+    | _ -> assert_failure "Neq operator did not parse"
+
+let lt_test _ =
+  match parse_expr "1 < 1" with
+    | Binop (_, Lt _, IntLit _, IntLit _) -> ()
+    | _ -> assert_failure "Lt operator did not parse"
+
+let leq_test _ =
+  match parse_expr "1 <= 1" with
+    | Binop (_, Leq _, IntLit _, IntLit _) -> ()
+    | _ -> assert_failure "Leq operator did not parse"
+
+let gt_test _ =
+  match parse_expr "1 > 1" with
+    | Binop (_, Gt _, IntLit _, IntLit _) -> ()
+    | _ -> assert_failure "Gt operator did not parse"
+
+let geq_test _ =
+  match parse_expr "1 >= 1" with
+    | Binop (_, Geq _, IntLit _, IntLit _) -> ()
+    | _ -> assert_failure "Geq operator did not parse"
+
 let op_suite = 
   [
-
+    "Neg" >:: neg_test;
+    "Not" >:: not_test;
+    "Plus" >:: plus_test;
+    "Minus" >:: minus_test;
+    "Times" >:: times_test;
+    "Div" >:: div_test;
+    "And" >:: and_test;
+    "Or" >:: or_test;
+    "Eq" >:: eq_test;
+    "Neq" >:: neq_test;
+    "Lt" >:: lt_test;
+    "Leq" >:: leq_test;
+    "Gt" >:: gt_test;
+    "Geq" >:: geq_test;
   ]
 
 (* -- EXPR TESTS -- *)
+
+let var_test _ =
+  match parse_expr "x" with
+    | Var (_, (_, "x")) -> ()
+    | _ -> assert_failure "var did not parse"
+
+let unit_test _ =
+  match parse_expr "()" with
+    | UnitLit _ -> ()
+    | _ -> assert_failure "unit did not parse"
+
+let int_test _ =
+  match parse_expr "1" with
+    | IntLit (_, 1) -> ()
+    | _ -> assert_failure "int did not parse"
+
+let float_test _ =
+  match parse_expr "1.0" with
+    | FloatLit (_, 1.0) -> ()
+    | _ -> assert_failure "var did not parse"
+
+let char_test _ =
+  match parse_expr "'c'" with
+    | CharLit (_, 'c') -> ()
+    | _ -> assert_failure "char did not parse"
+
+let string_test _ =
+  match parse_expr "\"Hello\"" with
+    | StringLit (_, "Hello") -> ()
+    | _ -> assert_failure "string did not parse"
+
+let true_test _ =
+  match parse_expr "true" with
+    | TrueLit _ -> ()
+    | _ -> assert_failure "true did not parse"
+
+let false_test _ =
+  match parse_expr "false" with
+    | FalseLit _ -> ()
+    | _ -> assert_failure "false did not parse"
+
+let loc_test _ =
+  match parse_expr "TEST" with
+    | LocLit (_, (_, "TEST")) -> ()
+    | _ -> assert_failure "loc did not parse"
 
 let match_test _ =
   match parse_expr 
@@ -285,9 +413,70 @@ let match_test _ =
     ]) -> ()
     | _ -> assert_failure "match did not parse"
 
+let rec_test _ =
+  match parse_expr "fun f x := true" with
+    | RecAbs (_, (_, "f"), (_, "x"), TrueLit _) -> ()
+    | _ -> assert_failure "rec did not parse"
+
+let typeconstr_test _ =
+  match parse_expr "1 : int" with
+    | TypeConstr (_, IntLit _, IntTy _) -> ()
+    | _ -> assert_failure "typeconst did not parse"
+
+let send_test _ =
+  match parse_expr "send true to john" with
+    | Send (_, TrueLit _, (_, "john")) -> ()
+    | _ -> assert_failure "send did not parse"
+
+let recv_test _ =
+  match parse_expr "recv int from susan" with
+    | Recv (_, IntTy _, (_, "susan")) -> ()
+    | _ -> assert_failure "recv did not parse"
+
+(* TODO: Fix *)
+let choose_test _ =
+  match parse_expr "choose [L] for alice" with
+    | ChooseFor (_, (_, "alice"), Label _) -> ()
+    | _ -> assert_failure "choose did not parse"
+
+let ami_test _ =
+  match parse_expr "AmI Alice" with
+    | AmI (_, Var _) -> ()
+    | _ -> assert_failure "ami did not parse"
+
+(* TODO: Fix *)
+let allow_test _ =
+  match parse_expr 
+    "test = allow Alice choice
+      | [L] => true" with 
+    | AllowChoice (_, (_, "Alice"), [(Label _, TrueLit _)]) -> ()
+    | _ -> assert_failure "ami did not parse"
+
+let fun_test _ =
+  match parse_expr "f x" with
+    | FunApp (_, Var _, Var _) -> ()
+    | _ -> assert_failure "fun did not parse"
+
 let expr_suite =
   [
+    "Var" >:: var_test;
+    "Unit" >:: unit_test;
+    "Int" >:: int_test;
+    "Float" >:: float_test;
+    "Char" >:: char_test;
+    "String" >:: string_test;
+    "True" >:: true_test;
+    "False" >:: false_test;
+    "Loc" >:: loc_test;
     "Match" >:: match_test;
+    "Rec" >:: rec_test;
+    "TypeConstr" >:: typeconstr_test;
+    "Send" >:: send_test;
+    "Recv" >:: recv_test;
+    (* "ChooseFor" >:: choose_test; *)
+    "AmI" >:: ami_test;
+    (* "AllowChoice" >:: allow_test; *)
+    "Fun" >:: fun_test;
   ]
 
 (* -- DECL TESTS -- *)
