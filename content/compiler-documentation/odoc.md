@@ -7,5 +7,5 @@ The [`odoc` documentation generator](https://github.com/ocaml/odoc) is a documen
 When writing a module, you should generally use an interface (`.mli`) file and add documentation to that file.
 Odoc will then generate documentation.
 
-[View Odoc documentation here](/module-docs/default/_doc/index.html)
+[View Odoc documentation here](/module-docs/default/_doc/_html/index.html)
 
