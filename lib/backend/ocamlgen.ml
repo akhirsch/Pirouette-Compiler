@@ -29,7 +29,7 @@ let rec type_gen (t : Net.typ) : core_type =
     | Net.LocTy (_, _) ->  [%type: string]
     
 
-let rec pattern_gen (p : Net.pattern) -> pattern = 
+let rec pattern_gen (p : Net.pattern)  pattern = 
   match p with 
     | Net.WildcardPat _ -> [%pat? _]
     | Net.VarPat (_, (_, x)) -> pvar ~loc x
@@ -103,16 +103,24 @@ let rec pattern_gen (p : Net.pattern) -> pattern =
       | Net.FalseLit _ -> estring ~loc "false"
       | Net.LocLit (_, (_, n)) -> estring ~loc n 
       | Net.Match (_, e, pes) -> 
-                  (*  LHS, RHS *)
+      (* Turn each NetIR (pattern, body) pair into one OCaml match arm (a [case]).
+       ~lhs is the pattern (left of ->), 
+       ~rhs the body (right of ->),
+       ~guard is the optional [when] clause — NetIR has none, so always None. *)
         let cases = 
           List.map 
           (fun (pat, body) -> case
-          ~lhs:( pattern_gen pat)
-          ~guard: None
-          ~rhs:(expr_gen body))
+          ~lhs:( pattern_gen pat) (* NetIR pattern -> OCaml pattern *)
+          ~guard: None (* NetIR's Match has no place to store a guard. Its type is Match of m * expr * (pattern * expr) list — each arm is a pattern paired with a body only *)
+          (* A guard is the when cond you can attach to an OCaml arm *)
+          ~rhs:(expr_gen body)) (* NetIR body expr -> OCaml expr *)
           pes
         in
         pexp_match ~loc (expr_gen e) cases
+        (* pexp_match takes a case list, and case
+        case: ~lhs ~guard ~rhs builder just fills in those three fields. 
+        So a match node is a subject expression "e" plus a case list 
+        That's why in the Match arm you build a list of cases and hand it over where each element is one | p -> e*)
       | Net.RecAbs (_, (_, f), (_, x), e) -> 
         [%expr let rec [%p pvar ~loc f] = fun [%p pvar ~loc x] -> 
           [%e expr_gen e] in 
