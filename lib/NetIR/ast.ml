@@ -54,6 +54,7 @@ module type AST = sig
     | StringLit of m * string
     | TrueLit of m
     | FalseLit of m
+    | ConstructorLit of m * name * expr list
     | LocLit of m * name
     | Match of m * expr * (pattern * expr) list
     | RecAbs of m * name * name * expr
@@ -136,6 +137,7 @@ module MkAST (M : Metainfo.Meta.Metainfo) = struct
     | StringLit of M.t * string
     | TrueLit of M.t
     | FalseLit of M.t
+    | ConstructorLit of M.t * name * expr list
     | LocLit of M.t * name
     | Match of M.t * expr * (pattern * expr) list
     | RecAbs of M.t * name * name * expr
@@ -161,3 +163,5 @@ module MkAST (M : Metainfo.Meta.Metainfo) = struct
 
   type program = decl list
 end
+
+module PosInfo_AST = MkAST (Metainfo.Meta.PosInfo)
