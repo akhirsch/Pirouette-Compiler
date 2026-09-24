@@ -481,6 +481,34 @@ let expr_suite =
 
 (* -- DECL TESTS -- *)
 
+let emulated_loc_decl_test _ =
+  let full_program_text =
+    "emulated location test" in
+  match program_of_text full_program_text with
+    | [EmulatedLocDecl (_, (_, "test"))] -> ()
+    | _ -> assert_failure "EmulatedLocDecl did not parse"
+
+let type_decl_test _ =
+  let full_program_text =
+    "test : int" in
+  match program_of_text full_program_text with
+    | [TypeDecl (_, (_, "test"), IntTy _)] -> ()
+    | _ -> assert_failure "TypeDecl did not parse"
+
+let type_alias_decl_test _ =
+  let full_program_text =
+    "type test := int" in
+  match program_of_text full_program_text with
+    | [TypeAliasDecl (_, (_, "test"), IntTy _)] -> ()
+    | _ -> assert_failure "TypeAliasDecl did not parse"
+
+let import_decl_test _ =
+  let full_program_text =
+    "import test" in
+  match program_of_text full_program_text with
+    | [ImportDecl (_, (_, "test"))] -> ()
+    | _ -> assert_failure "ImportDecl did not parse"
+
 let var_decl_single_test _ =
   let full_program_text =
     "data test :=
@@ -518,6 +546,10 @@ let var_decl_long_type_test _ =
 
 let decl_suite = 
   [
+    "EmulatedLocDecl" >:: emulated_loc_decl_test;
+    "TypeDecl" >:: type_decl_test;
+    "TypeAliasDecl" >:: type_alias_decl_test;
+    "ImportDecl" >:: import_decl_test;
     "VariantDecl single" >:: var_decl_single_test;
     "VariantDecl multi" >:: var_decl_multi_test;
     "VariandDecl many types" >:: var_decl_long_type_test;
