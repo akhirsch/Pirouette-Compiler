@@ -1,6 +1,7 @@
 (test
  (name test)
  (modules
+   ocamlgen_test
    testpretty
    test)
  (libraries

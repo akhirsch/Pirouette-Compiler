@@ -109,7 +109,8 @@ let rec pattern_gen p =
           List.map 
           (fun (pat, body) -> case
           ~lhs:( pattern_gen pat) (* NetIR pattern -> OCaml pattern *)
-          ~guard: None (* NetIR's Match has no place to store a guard. Its type is Match of m * expr * (pattern * expr) list — each arm is a pattern paired with a body only *)
+          ~guard: None (* NetIR's Match has no place to store a guard 
+          type is Match of m * expr * (pattern * expr) list, each branch is a pattern paired with a body only *)
           (* A guard is the when cond you can attach to an OCaml arm *)
           ~rhs:(expr_gen body)) (* NetIR body expr -> OCaml expr *)
           pes
@@ -145,10 +146,10 @@ let rec pattern_gen p =
       (* a runtime call with a fixed text l is a Label of name *)
       (* works directly with AllowChoice *)
       | Net.AllowChoice (_, (_, n), bs) -> 
-        (*  zola site - Lesson 3 Program *)
+        (*  refrence: zola site - Lesson 3 Program *)
         (* receiving from ChooseFor: one side chooses a label, the other allows a set and branches on which arrived *)
         let cases =
-          (* cases maps each (label, body) pair in bs into one match arm:
+          (* cases maps each (label, body) pair in bs into one match branch:
            the label becomes a string-literal pattern on the left, the body becomes the expression on the right*)
           List.map (fun (lab, body) -> case 
             ~lhs:(pstring ~loc (label_gen lab)) (* LHS: label being matched  *)
@@ -156,12 +157,15 @@ let rec pattern_gen p =
             ~rhs:(expr_gen body)) (* RHS: expression body *)
             bs
           in
-            let fallback = case 
+            let fallback = case (*case: ~lhs ~guard ~rhs builder needed to build the ppxlib node through ast_builder *)
             ~lhs:[%pat? _] 
             ~guard:None
             ~rhs:[%expr failwith "unexpected label"]
+            (* the fail with case catch all _ for anything else *)
             in
         pexp_match ~loc
+       (* pexp_match takes a case list, and case
+        case: ~lhs ~guard ~rhs *)
           [%expr Dummybackend.recv_label [%e estring ~loc n]]
           (cases @ [ fallback ])
       | Net.AmI (_, e) -> [%expr [%e expr_gen e] = me]
