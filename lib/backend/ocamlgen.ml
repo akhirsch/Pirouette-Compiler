@@ -40,6 +40,8 @@ module MkOcamlGen (Net : Netir.Ast.AST) = struct
         (* n = string
       ps = net.pattern list 
       Ocaml constructors must bc capatlized *)
+      (*TODO: net_ because a constructor could possibly be names left and then that would change to left
+      and then it would cause a problem here *)
         let name = Located.lident ~loc (String.capitalize_ascii n) in
         (* Located.lident wraps the string as the identifier that ppat_construct is expecting
       Ppat_construct of Longident.t Asttypes.loc * (string Asttypes.loc list * pattern) option *)
@@ -60,23 +62,29 @@ module MkOcamlGen (Net : Netir.Ast.AST) = struct
     match u with Net.Neg _ -> "-" | Net.Not _ -> "!"
   (* this can return a string *)
 
-  let binop_gen (b : Net.binop) : string =
+let unop_gen (u : Net.unop) ( e : expression) : expression = 
+  match u with
+  | Neg _ -> [%expr ~- [%e e]]
+  | Not _ -> [%expr not [%e e]]
+
+
+  let binop_gen (b : Net.binop) (e1 : expression) (e2 : expression) : expression =
     (* binop doesnt need ppxlib at all because it only exists as part of an 
     expression similar use in the prettyprinter note how prettify_binop
-    reutrns a string and prettify_expr is what puts it between the operands*)
+    reutrns a string and prettify_expr is what puts it between the operands *)
     match b with
-    | Net.Plus _ -> "+"
-    | Net.Minus _ -> "-"
-    | Net.Times _ -> "*"
-    | Net.Div _ -> "/"
-    | Net.And _ -> "&&"
-    | Net.Or _ -> "||"
-    | Net.Eq _ -> "="
-    | Net.Neq _ -> "<>"
-    | Net.Lt _ -> "<"
-    | Net.Leq _ -> "<="
-    | Net.Gt _ -> ">"
-    | Net.Geq _ -> ">="
+    | Net.Plus _  -> [%expr [%e e1] + [%e e2]]
+    | Net.Minus _ -> [%expr [%e e1] - [%e e2]]
+    | Net.Times _ -> [%expr [%e e1] * [%e e2]]
+    | Net.Div _   -> [%expr [%e e1] / [%e e2]]
+    | Net.And _   -> [%expr [%e e1] && [%e e2]]
+    | Net.Or _    -> [%expr [%e e1] || [%e e2]]
+    | Net.Eq _    -> [%expr [%e e1] = [%e e2]]
+    | Net.Neq _   -> [%expr [%e e1] <> [%e e2]]
+    | Net.Lt _    -> [%expr [%e e1] < [%e e2]]
+    | Net.Leq _   -> [%expr [%e e1] <= [%e e2]]
+    | Net.Gt _    -> [%expr [%e e1] > [%e e2]]
+    | Net.Geq _   -> [%expr [%e e1] >= [%e e2]]
 
   let label_gen (l : Net.lab) : string =
     (*(Label (_, n)) = "[" ^ n ^ "]"*)
@@ -129,8 +137,7 @@ module MkOcamlGen (Net : Netir.Ast.AST) = struct
     | Net.TypeConstr (_, e, t) -> [%expr ([%e expr_gen e] : [%t type_gen t])]
     | Net.Unop (_, u, e) -> [%expr [%e evar ~loc (unop_gen u)] [%e expr_gen e]]
     (*of M.t * unop * expr*)
-    | Net.Binop (_, b, e1, e2) ->
-        [%expr [%e evar ~loc (binop_gen b)] [%e expr_gen e1] [%e expr_gen e2]]
+    | Net.Binop (_, b, e1, e2) -> binop_gen b (expr_gen e1) (expr_gen e2)
     (*of M.t * binop * expr * expr*)
     (* Communication Primitives *)
     | Net.Send (_, e, (_, n)) ->
@@ -176,8 +183,15 @@ module MkOcamlGen (Net : Netir.Ast.AST) = struct
   (*of m * expr
       DO I NEED TO? fix this amI is dependent on the dummybackend *)
   (* AmI e asks "is the location e the one running this file?" 
-      generated file already knows who it is from the let me = "Alice" binding that program_gen puts at the top*)
+      generated file already knows who it is from the let me = "Alice" 
+      binding that program_gen puts at the top *)
+      (* the top level will pass that expression into the complied program all the compiler functions
+      will take in the extra. param amI *)
+  (* Where does me come from? From argv (one program, run once per participant with the name as an argument) or baked into each generated file (program_gen emits let me = "Alice" into alice's file)?
+  Is me a value or a function? Dummybackend.me vs Dummybackend.me () — changes how the AmI branch spells it.
+Does program_gen emit an identity line at all? If identity is baked in, yes; if it comes from argv, maybe not, and the backend owns it instead.*)
 
+  (* have a symbol that is randomly generated that i know doesnt exist anywhere else hummm maybe *)
   (*let decl_gen d =
       match d with 
       | EmulatedLocDecl (_, (_, l)) -> failwith "TODO" (*[%p (pstring ~loc (label_gen l))]*)

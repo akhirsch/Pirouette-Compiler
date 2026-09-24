@@ -16,10 +16,10 @@ module MkOcamlGen (Net : Netir.Ast.AST) : sig
   val pattern_gen : Net.pattern -> pattern
   (** Convert a NetIR pattern into an OCaml pattern *)
 
-  val unop_gen : Net.unop -> string
+  val unop_gen : Net.unop -> expression -> expression
   (** Convert a NetIR unary operator into its OCaml operator string *)
 
-  val binop_gen : Net.binop -> string
+  val binop_gen : Net.binop -> expression -> expression -> expression
   (** Convert a NetIR binary operator into its OCaml operator string *)
 
   val label_gen : Net.lab -> string
