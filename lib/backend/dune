@@ -4,5 +4,5 @@
  (libraries netir ppxlib)
  (instrumentation
   (backend bisect_ppx))
-  (preprocess
+ (preprocess
   (pps ppxlib.metaquot)))
