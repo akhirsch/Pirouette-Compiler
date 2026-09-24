@@ -102,8 +102,6 @@ and read_char = parse
   | '\\' _              { raise (SyntaxError ("Unknown escape sequence: " ^ (Lexing.lexeme lexbuf)))}
   | ([^ '\''] as c) "'" { CHARLIT (c) }
   | _                   { raise (SyntaxError ("Invalid character literal: " ^ (Lexing.lexeme lexbuf)))}
-  (* TODO Verify that the catch-all case has an appropriate error message.
-    EX. 'fo' does not produce the error message "Invalid character literal: f" *)
 
 and read_string strbuf = parse 
   | "\""            { STRINGLIT (Buffer.contents strbuf) }

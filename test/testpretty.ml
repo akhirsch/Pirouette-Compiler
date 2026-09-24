@@ -118,7 +118,8 @@ let suite =
     >:: test_eq_string "type foo := int"
           (prettify_decl (typealiasdecl "foo" intty));
     "definition"
-    >:: test_eq_string "foo := 3;" (prettify_decl (defndecl "foo" [] (intlit 3)));
+    >:: test_eq_string "foo := 3;"
+          (prettify_decl (defndecl "foo" [] (intlit 3)));
     "one-param definition"
     >:: test_eq_string "foo () := 3;"
           (prettify_decl (defndecl "foo" [ unitlitpat ] (intlit 3)));

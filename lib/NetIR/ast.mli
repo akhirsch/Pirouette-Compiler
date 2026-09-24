@@ -54,6 +54,7 @@ module type AST = sig
     | StringLit of m * string
     | TrueLit of m
     | FalseLit of m
+    | ConstructorLit of m * name * expr list
     | LocLit of m * name
     | Match of m * expr * (pattern * expr) list
     | RecAbs of m * name * name * expr
@@ -83,5 +84,4 @@ module type AST = sig
 end
 
 module MkAST : functor (M : Metainfo.Meta.Metainfo) -> AST with type m = M.t
-
 module PosInfo_AST : AST with type m = Metainfo.Meta.PosInfo.t

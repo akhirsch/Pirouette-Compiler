@@ -30,8 +30,8 @@ module MkPrettify (A : Ast.AST) = struct
     | LocLitPat (_, (_, n)) -> n
     | ConstructorPat (_, (_, n), ps) ->
         let s = String.concat " " (List.map prettify_pattern ps) in
-          (* List.fold_left (fun s' p -> s' ^ " " ^ prettify_pattern p) "" ps *)
-        let s' = if String.length s = 0 then s else  " (" ^ s ^ ")" in
+        (* List.fold_left (fun s' p -> s' ^ " " ^ prettify_pattern p) "" ps *)
+        let s' = if String.length s = 0 then s else " (" ^ s ^ ")" in
         n ^ s'
     | LocNamePat (_, (_, n)) -> "[[" ^ n ^ "]]"
 
@@ -65,6 +65,8 @@ module MkPrettify (A : Ast.AST) = struct
       | StringLit (_, s) -> "\"" ^ s ^ "\""
       | TrueLit _ -> "true"
       | FalseLit _ -> "false"
+      | ConstructorLit (_, (_, id), es) ->
+          id ^ " " ^ String.concat " " (List.map (prettify_int_expr false) es)
       | LocLit (_, (_, n)) -> n
       | Match (_, e, pes) ->
           let prettify_arm p e =

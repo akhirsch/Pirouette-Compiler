@@ -1,11 +1,4 @@
 (test
  (name test)
- (modules
-   testpretty
-   testparser
-   test)
- (libraries
-   ounit2
-   netir
-   metainfo)
-)
+ (modules testpretty testparser test)
+ (libraries ounit2 netir metainfo))

@@ -104,11 +104,11 @@
     op_expr:
     | e=app_expr                            { e }
     | e1=op_expr op=bin_op e2=atomic_expr   {Binop (mkpos $startpos $endpos, op, e1, e2)}
+    | op=un_op e=atomic_expr    { Unop (mkpos $startpos $endpos, op, e)}
 
     app_expr:
     | e=atomic_expr             { e }
-    | f=app_expr a=atomic_expr  { FunApp (mkpos $startpos $endpos, f, a)}
-    | op=un_op e=atomic_expr    { Unop (mkpos $startpos $endpos, op, e)}
+    | f=atomic_expr a=app_expr  { FunApp (mkpos $startpos $endpos, f, a)}
 
     atomic_expr:
     | LPAREN e=expr RPAREN      { e }
@@ -127,7 +127,6 @@
     | s=id COLON t=typ                              {TypeDecl (mkpos $startpos $endpos, s, t)}
     | TYPEDECL s=id WALRUS t=typ                    {TypeAliasDecl (mkpos $startpos $endpos, s, t)}
     | s=id l=list(pattern) WALRUS e=expr SEMICOLON  {DefnDecl (mkpos $startpos $endpos, s, l, e)}
-        // TODO Verify that ending with a semicolon is the best option
     | IMPORT s=id                                   {ImportDecl (mkpos $startpos $endpos, s)}
     | DATA s=id WALRUS l=nonempty_list(var_decl)    {VariantDecl (mkpos $startpos $endpos, s, l)}
 
