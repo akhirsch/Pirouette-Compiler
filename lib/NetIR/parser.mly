@@ -44,7 +44,7 @@
     | s=LOCLIT {(mkpos $startpos $endpos, s)}
 
     lab:
-    | LBRACK s=id RBRACK    { Label s }
+    | LBRACK s=loclit RBRACK    { Label s }
 
     typ:
     | t=atomic_typ                  { t }

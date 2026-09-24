@@ -433,10 +433,9 @@ let recv_test _ =
     | Recv (_, IntTy _, (_, "susan")) -> ()
     | _ -> assert_failure "recv did not parse"
 
-(* TODO: Fix *)
 let choose_test _ =
   match parse_expr "choose [L] for alice" with
-    | ChooseFor (_, (_, "alice"), Label _) -> ()
+    | ChooseFor (_, (_, "alice"), Label (_, "L")) -> ()
     | _ -> assert_failure "choose did not parse"
 
 let ami_test _ =
@@ -447,9 +446,10 @@ let ami_test _ =
 (* TODO: Fix *)
 let allow_test _ =
   match parse_expr 
-    "test = allow Alice choice
-      | [L] => true" with 
-    | AllowChoice (_, (_, "Alice"), [(Label _, TrueLit _)]) -> ()
+    "allow Alice choice
+      | [L] => true
+      end" with 
+    | AllowChoice (_, (_, "Alice"), [(Label (_, "L"), TrueLit _)]) -> ()
     | _ -> assert_failure "ami did not parse"
 
 let fun_test _ =
@@ -473,9 +473,9 @@ let expr_suite =
     "TypeConstr" >:: typeconstr_test;
     "Send" >:: send_test;
     "Recv" >:: recv_test;
-    (* "ChooseFor" >:: choose_test; *)
+    "ChooseFor" >:: choose_test;
     "AmI" >:: ami_test;
-    (* "AllowChoice" >:: allow_test; *)
+    "AllowChoice" >:: allow_test;
     "Fun" >:: fun_test;
   ]
 
