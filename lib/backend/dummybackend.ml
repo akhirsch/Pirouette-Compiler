@@ -4,7 +4,7 @@
    Plain OCaml — no ppxlib. Each function name here must match what
    ocamlgen.ml emits. *)
 
-(* ---- Identity -------------------------------------------------------------
+(* ---- Identity ----------
    Who this running process is. 
    Needed by the AmI branch (compares a location against this) and used to prefix every log line
 
@@ -28,7 +28,7 @@
   Reading a ref is !me; 
   setting it is a little function let set_me name = me := name, called once at startup. *)
 
-(* ---- Log helper -----------------------------------------------------------
+(* ---- Log helper ---------------------
    Append one line to the log file. Private to this module — generated code
    never calls it directly.
 
@@ -39,9 +39,9 @@
 
 (* TODO: implement log : string -> unit *)
 
-(* ---- Outgoing operations --------------------------------------------------
-   Handled at this point: log the event, return unit, continue. The payload is
-   intentionally ignored 
+(* ---- Outgoing operations ---------
+   Handled at this point: log the event, return unit, continue
+   no payload
    CONFIRM WITH ANDREW — we only record THAT something was sent to [dest], not its value? *)
 
 (* TODO: implement send : string -> 'a -> unit
@@ -76,5 +76,4 @@
 (* TODO: implement recv_label : string -> string
    Logs a label-receive from [src], then returns the arrived label as a string.
    Used as the match subject in the AllowChoice branch. Same open question as
-   recv, but the return type is fixed (string), so option 2 (return a default
-   label) is available here without the VarTy problem. *)
+   recv, but the return type is fixed (string) *)
