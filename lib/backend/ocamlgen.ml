@@ -97,8 +97,8 @@ let rec pattern_gen p =
       | Net.FloatLit (_, f) -> efloat ~loc (string_of_float f)
       | Net.CharLit (_, c) -> echar ~loc c 
       | Net.StringLit (_, s) -> estring ~loc s 
-      | Net.TrueLit _ -> estring ~loc "true"
-      | Net.FalseLit _ -> estring ~loc "false"
+      | Net.TrueLit _ -> [%expr true]
+      | Net.FalseLit _ -> [%expr false]
       | Net.LocLit (_, (_, n)) -> estring ~loc n 
       | Net.Match (_, e, pes) -> 
       (* Turn each NetIR (pattern, body) pair into one OCaml match arm (a [case]).
