@@ -5,15 +5,13 @@ open Ast_builder.Default
 (* steps: defining the input module type (signature), writing the functor
  structure, and instantiating (applying) the functor.*)
 module MkOcamlGen (Net : Netir.Ast.AST) = struct
-  open Net
   
 
 (* with this declared now i can write Net.___ avoiding name conflicts *)
 
 let loc = Location.none
-(* every node in ppxlib aAST carries a location *)
+(* every node in ppxlib AST carries a location *)
 
-(* <raw NetIR constructor pattern>  ->  <ppxlib [%…] quotation> *) 
 (* type_gen returns a core_type because a NetIR type becomes an OCaml type node *)
 let rec type_gen (t : Net.typ) : core_type =
   match t with
@@ -29,7 +27,7 @@ let rec type_gen (t : Net.typ) : core_type =
     | Net.LocTy (_, _) ->  [%type: string]
     
 
-let rec pattern_gen (p : Net.pattern)  pattern = 
+let rec pattern_gen p = 
   match p with 
     | Net.WildcardPat _ -> [%pat? _]
     | Net.VarPat (_, (_, x)) -> pvar ~loc x
@@ -139,43 +137,49 @@ let rec pattern_gen (p : Net.pattern)  pattern =
       (*of M.t * binop * expr * expr*)
     (* Communication Primitives *)
       | Net.Send (_, e, (_, n)) -> [%expr Dummybackend.send [%e estring ~loc n] [%e expr_gen e]]
-       (* Send e  to n 
-       e is the payload and n is the name which holds a location *)
+       (* Send e  to n, e is the payload and n is the name which holds a location *)
       | Net.Recv (_, t, (_, n)) -> [%expr (Dummybackend.recv [%e estring ~loc n] : [%t type_gen t])]
       (*of m * typ * name  Recv t from n *)
       | Net.ChooseFor (_, (_, n), l) -> [%expr Dummybackend.choose
         [%e estring ~loc n] [%e estring ~loc (label_gen l)]]
-      (* a runtime call with a fixed text 
-      l is the lab which is a Label of name *)
+      (* a runtime call with a fixed text l is a Label of name *)
+      (* works directly with AllowChoice *)
       | Net.AllowChoice (_, (_, n), bs) -> 
-        (*  LHS, RHS *)
-        let parms = 
-          List.map 
-          (fun (lab, body) -> case
-          ~lhs:(pstring ~loc (label_gen lab))
-          ~guard: None
-          ~rhs:(expr_gen body))
-          bs
-        in
-        pexp_match ~loc (pattern_gen parms)
-      [%expr Dummybackend.recv_label [%e estring ~loc n]]
-        pexp_match ~loc (expr_gen e)
-        (* this is not a runtime call this is a match 
-        | _ -> failwith "unexpected label" makes the match exhaustive.
-        TODO : how do i figure out how to add that unexpected label arm *)
-      | Net.AmI (_, e) -> [%expr expr_gen ~loc e]
+        (*  zola site - Lesson 3 Program *)
+        (* receiving from ChooseFor: one side chooses a label, the other allows a set and branches on which arrived *)
+        let cases =
+          (* cases maps each (label, body) pair in bs into one match arm:
+           the label becomes a string-literal pattern on the left, the body becomes the expression on the right*)
+          List.map (fun (lab, body) -> case 
+            ~lhs:(pstring ~loc (label_gen lab)) (* LHS: label being matched  *)
+            ~guard:None 
+            ~rhs:(expr_gen body)) (* RHS: expression body *)
+            bs
+          in
+            let fallback = case 
+            ~lhs:[%pat? _] 
+            ~guard:None
+            ~rhs:[%expr failwith "unexpected label"]
+            in
+        pexp_match ~loc
+          [%expr Dummybackend.recv_label [%e estring ~loc n]]
+          (cases @ [ fallback ])
+      | Net.AmI (_, e) -> [%expr [%e expr_gen e] = me]
       (*of m * expr
-      fix this amI is dependent on the dummybackend *)
+      DO I NEED TO? fix this amI is dependent on the dummybackend *)
+      (* AmI e asks "is the location e the one running this file?" 
+      generated file already knows who it is from the let me = "Alice" binding that program_gen puts at the top*)
+      
   
-    let decl_gen (d : Net.decl) =
+    (*let decl_gen d =
       match d with 
-      | EmulatedLocDecl (_, (_, l)) -> [%p (pstring ~loc (label_gen l))]
+      | EmulatedLocDecl (_, (_, l)) -> failwith "TODO" (*[%p (pstring ~loc (label_gen l))]*)
       (*of m * name*)
-      | TypeDecl (_, (_, n), t) -> 
+      | TypeDecl (_, (_, n), t) -> failwith "TODO"
       (*of m * name * typ  Declares the type of a program binding *)
-      | TypeAliasDecl (_, (_, n), t) ->
+      | TypeAliasDecl (_, (_, n), t) -> failwith "TODO"
       (* of m * name * typ *)
-      | DefnDecl (_, (_, n), ps, e) ->
+      | DefnDecl (_, (_, n), ps, e) -> failwith "TODO"
       (* of m * name * pattern list * expr 
       let prettify_patterns ps =
           match ps with
@@ -188,9 +192,9 @@ let rec pattern_gen (p : Net.pattern)  pattern =
               ^ " "
         in
         n ^ prettify_patterns ps ^ ":= " ^ prettify_expr e*)
-      | ImportDecl (_, (_, n)) -> 
+      | ImportDecl (_, (_, n)) -> failwith "TODO"
       (* of m * name *)
-      | VariantDecl (_, (_, n), cs) ->
+      | VariantDecl (_, (_, n), cs) -> failwith "TODO"
         (*let prettify_cons (_, n) ts t =
           match ts with
           | [] -> "| " ^ n ^ " : " ^ prettify_typ t
@@ -207,6 +211,6 @@ let rec pattern_gen (p : Net.pattern)  pattern =
             "" cs
       of m * name * (name * typ list * typ) list *)
 
-    type program = decl list
+    type program = decl list*)
 
-  
+      end
