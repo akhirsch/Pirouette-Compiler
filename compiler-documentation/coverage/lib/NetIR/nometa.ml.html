@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <title>nometa.ml &mdash; Coverage report</title>
+    <meta name="description" content="98.11% coverage in lib/NetIR/nometa.ml">
+    <link rel="stylesheet" href="../../coverage.css"/>
+    <script src="../../highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+  </head>
+  <body>
+    <div id="header">
+      <h1>
+        <a href="../../index.html">
+          <span class="dirname">lib/NetIR/</span>nometa.ml
+        </a>
+      </h1>
+      <h2>98.11%</h2>
+    </div>
+    <div id="navbar">
+      <span class="unvisited" style="top:26.60%"></span>
+    </div>
+    <div id="report">
+      <div id="lines-layer">
+        <pre>
+<a id="L1"></a><span > </span>
+<a id="L2"></a><span > </span>
+<a id="L3"></a><span > </span>
+<a id="L4"></a><span > </span>
+<a id="L5"></a><span class="visited"> </span>
+<a id="L6"></a><span > </span>
+<a id="L7"></a><span > </span>
+<a id="L8"></a><span > </span>
+<a id="L9"></a><span > </span>
+<a id="L10"></a><span > </span>
+<a id="L11"></a><span > </span>
+<a id="L12"></a><span class="visited"> </span>
+<a id="L13"></a><span class="visited"> </span>
+<a id="L14"></a><span > </span>
+<a id="L15"></a><span > </span>
+<a id="L16"></a><span > </span>
+<a id="L17"></a><span class="visited"> </span>
+<a id="L18"></a><span > </span>
+<a id="L19"></a><span class="visited"> </span>
+<a id="L20"></a><span class="visited"> </span>
+<a id="L21"></a><span class="visited"> </span>
+<a id="L22"></a><span class="visited"> </span>
+<a id="L23"></a><span > </span>
+<a id="L24"></a><span > </span>
+<a id="L25"></a><span class="unvisited"> </span>
+<a id="L26"></a><span class="visited"> </span>
+<a id="L27"></a><span class="visited"> </span>
+<a id="L28"></a><span > </span>
+<a id="L29"></a><span > </span>
+<a id="L30"></a><span > </span>
+<a id="L31"></a><span > </span>
+<a id="L32"></a><span > </span>
+<a id="L33"></a><span > </span>
+<a id="L34"></a><span > </span>
+<a id="L35"></a><span > </span>
+<a id="L36"></a><span > </span>
+<a id="L37"></a><span > </span>
+<a id="L38"></a><span > </span>
+<a id="L39"></a><span > </span>
+<a id="L40"></a><span > </span>
+<a id="L41"></a><span > </span>
+<a id="L42"></a><span > </span>
+<a id="L43"></a><span > </span>
+<a id="L44"></a><span > </span>
+<a id="L45"></a><span > </span>
+<a id="L46"></a><span > </span>
+<a id="L47"></a><span > </span>
+<a id="L48"></a><span class="visited"> </span>
+<a id="L49"></a><span > </span>
+<a id="L50"></a><span > </span>
+<a id="L51"></a><span class="visited"> </span>
+<a id="L52"></a><span > </span>
+<a id="L53"></a><span class="visited"> </span>
+<a id="L54"></a><span class="visited"> </span>
+<a id="L55"></a><span class="visited"> </span>
+<a id="L56"></a><span class="visited"> </span>
+<a id="L57"></a><span > </span>
+<a id="L58"></a><span > </span>
+<a id="L59"></a><span class="visited"> </span>
+<a id="L60"></a><span class="visited"> </span>
+<a id="L61"></a><span class="visited"> </span>
+<a id="L62"></a><span class="visited"> </span>
+<a id="L63"></a><span class="visited"> </span>
+<a id="L64"></a><span class="visited"> </span>
+<a id="L65"></a><span class="visited"> </span>
+<a id="L66"></a><span class="visited"> </span>
+<a id="L67"></a><span class="visited"> </span>
+<a id="L68"></a><span class="visited"> </span>
+<a id="L69"></a><span class="visited"> </span>
+<a id="L70"></a><span class="visited"> </span>
+<a id="L71"></a><span class="visited"> </span>
+<a id="L72"></a><span class="visited"> </span>
+<a id="L73"></a><span class="visited"> </span>
+<a id="L74"></a><span class="visited"> </span>
+<a id="L75"></a><span class="visited"> </span>
+<a id="L76"></a><span class="visited"> </span>
+<a id="L77"></a><span class="visited"> </span>
+<a id="L78"></a><span class="visited"> </span>
+<a id="L79"></a><span class="visited"> </span>
+<a id="L80"></a><span class="visited"> </span>
+<a id="L81"></a><span class="visited"> </span>
+<a id="L82"></a><span class="visited"> </span>
+<a id="L83"></a><span class="visited"> </span>
+<a id="L84"></a><span class="visited"> </span>
+<a id="L85"></a><span > </span>
+<a id="L86"></a><span > </span>
+<a id="L87"></a><span class="visited"> </span>
+<a id="L88"></a><span class="visited"> </span>
+<a id="L89"></a><span class="visited"> </span>
+<a id="L90"></a><span class="visited"> </span>
+<a id="L91"></a><span class="visited"> </span>
+<a id="L92"></a><span > </span>
+<a id="L93"></a><span > </span>
+<a id="L94"></a><span class="visited"> </span>
+</pre>
+      </div>
+      <div id="text-layer">
+        <pre id="line-numbers">
+<a href="#L1"> 1</a>
+<a href="#L2"> 2</a>
+<a href="#L3"> 3</a>
+<a href="#L4"> 4</a>
+<a href="#L5"> 5</a>
+<a href="#L6"> 6</a>
+<a href="#L7"> 7</a>
+<a href="#L8"> 8</a>
+<a href="#L9"> 9</a>
+<a href="#L10">10</a>
+<a href="#L11">11</a>
+<a href="#L12">12</a>
+<a href="#L13">13</a>
+<a href="#L14">14</a>
+<a href="#L15">15</a>
+<a href="#L16">16</a>
+<a href="#L17">17</a>
+<a href="#L18">18</a>
+<a href="#L19">19</a>
+<a href="#L20">20</a>
+<a href="#L21">21</a>
+<a href="#L22">22</a>
+<a href="#L23">23</a>
+<a href="#L24">24</a>
+<a href="#L25">25</a>
+<a href="#L26">26</a>
+<a href="#L27">27</a>
+<a href="#L28">28</a>
+<a href="#L29">29</a>
+<a href="#L30">30</a>
+<a href="#L31">31</a>
+<a href="#L32">32</a>
+<a href="#L33">33</a>
+<a href="#L34">34</a>
+<a href="#L35">35</a>
+<a href="#L36">36</a>
+<a href="#L37">37</a>
+<a href="#L38">38</a>
+<a href="#L39">39</a>
+<a href="#L40">40</a>
+<a href="#L41">41</a>
+<a href="#L42">42</a>
+<a href="#L43">43</a>
+<a href="#L44">44</a>
+<a href="#L45">45</a>
+<a href="#L46">46</a>
+<a href="#L47">47</a>
+<a href="#L48">48</a>
+<a href="#L49">49</a>
+<a href="#L50">50</a>
+<a href="#L51">51</a>
+<a href="#L52">52</a>
+<a href="#L53">53</a>
+<a href="#L54">54</a>
+<a href="#L55">55</a>
+<a href="#L56">56</a>
+<a href="#L57">57</a>
+<a href="#L58">58</a>
+<a href="#L59">59</a>
+<a href="#L60">60</a>
+<a href="#L61">61</a>
+<a href="#L62">62</a>
+<a href="#L63">63</a>
+<a href="#L64">64</a>
+<a href="#L65">65</a>
+<a href="#L66">66</a>
+<a href="#L67">67</a>
+<a href="#L68">68</a>
+<a href="#L69">69</a>
+<a href="#L70">70</a>
+<a href="#L71">71</a>
+<a href="#L72">72</a>
+<a href="#L73">73</a>
+<a href="#L74">74</a>
+<a href="#L75">75</a>
+<a href="#L76">76</a>
+<a href="#L77">77</a>
+<a href="#L78">78</a>
+<a href="#L79">79</a>
+<a href="#L80">80</a>
+<a href="#L81">81</a>
+<a href="#L82">82</a>
+<a href="#L83">83</a>
+<a href="#L84">84</a>
+<a href="#L85">85</a>
+<a href="#L86">86</a>
+<a href="#L87">87</a>
+<a href="#L88">88</a>
+<a href="#L89">89</a>
+<a href="#L90">90</a>
+<a href="#L91">91</a>
+<a href="#L92">92</a>
+<a href="#L93">93</a>
+<a href="#L94">94</a>
+</pre>
+<pre><code class="ocaml">open Ast
+include MkAST (Metainfo.Meta.TrivInfo)
+
+(* Type smart constructors *)
+let varty (x : string) = <span data-count="21">V</span>arTy ((), ((), x))
+let unitty = UnitTy ()
+let intty = IntTy ()
+let floatty = FloatTy ()
+let charty = CharTy ()
+let stringty = StringTy ()
+let boolty = BoolTy ()
+let funty t1 t2 = <span data-count="3">F</span>unTy ((), t1, t2)
+let locty ls = <span data-count="9">L</span>ocTy ((), List.ma<span data-count="9">p</span> (fun s -&gt; <span data-count="9">(</span>(), s)) ls)
+
+(* Pattern smart constructor *)
+let wildcardpat = WildcardPat ()
+let varpat x = <span data-count="9">V</span>arPat ((), ((), x))
+let unitlitpat = UnitLitPat ()
+let intlitpat n = <span data-count="3">I</span>ntLitPat ((), n)
+let floatlitpat f = <span data-count="3">F</span>loatLitPat ((), f)
+let charlitpat c = <span data-count="3">C</span>harLitPat ((), c)
+let stringlitpat s = <span data-count="3">S</span>tringLitPat ((), s)
+let truelitpat = TrueLitPat ()
+let falselitpat = FalseLitPat ()
+let loclitpat n = <span data-count="0">L</span>ocLitPat ((), ((), n))
+let constructorpat n ps = <span data-count="6">C</span>onstructorPat ((), ((), n), ps)
+let locnamepat s = <span data-count="3">L</span>ocNamePat ((), ((), s))
+
+(* Unary operation smart constructors *)
+let neg = Neg ()
+let not = Not ()
+
+(* Binary operation smart constructors *)
+let plus = Plus ()
+let minus = Minus ()
+let times = Times ()
+let div = Div ()
+let andop = And ()
+let orop = Or ()
+let eq = Eq ()
+let neq = Neq ()
+let lt = Lt ()
+let leq = Leq ()
+let gt = Gt ()
+let geq = Geq ()
+
+(* Label smart constructor *)
+let mklab n = <span data-count="9">L</span>abel ((), n)
+
+(* Expression smart constructors *)
+let var x = <span data-count="18">V</span>ar ((), ((), x))
+let unitlit = UnitLit ()
+let intlit n = <span data-count="33">I</span>ntLit ((), n)
+let floatlit f = <span data-count="6">F</span>loatLit ((), f)
+let charlit c = <span data-count="3">C</span>harLit ((), c)
+let stringlit s = <span data-count="3">S</span>tringLit ((), s)
+let truelit = TrueLit ()
+let falselit = FalseLit ()
+let loclit n = <span data-count="3">L</span>ocLit ((), ((), n))
+let mkmatch d arms = <span data-count="3">M</span>atch ((), d, arms)
+let recabs f x e = <span data-count="3">R</span>ecAbs ((), ((), f), ((), x), e)
+let funapp f a = <span data-count="9">F</span>unApp ((), f, a)
+let typeconstr e t = <span data-count="6">T</span>ypeConstr ((), e, t)
+let unop u e = <span data-count="6">U</span>nop ((), u, e)
+let mkneg = uno<span data-count="3">p</span> neg
+let mknot = uno<span data-count="3">p</span> not
+let binop o e1 e2 = <span data-count="12">B</span>inop ((), o, e1, e2)
+let mkplus = bino<span data-count="3">p</span> plus
+let mkminus = bino<span data-count="3">p</span> minus
+let mktimes = bino<span data-count="3">p</span> times
+let mkdiv = bino<span data-count="3">p</span> div
+let mkand = bino<span data-count="3">p</span> andop
+let mkor = bino<span data-count="3">p</span> orop
+let mkeq = bino<span data-count="3">p</span> eq
+let mkneq = bino<span data-count="3">p</span> neq
+let mklt = bino<span data-count="3">p</span> lt
+let mkleq = bino<span data-count="3">p</span> leq
+let mkgt = bino<span data-count="3">p</span> gt
+let mkgeq = bino<span data-count="3">p</span> geq
+let send e p = <span data-count="3">S</span>end ((), e, ((), p))
+let recv t p = <span data-count="3">R</span>ecv ((), t, ((), p))
+let choosefor n l = <span data-count="3">C</span>hooseFor ((), ((), n), l)
+let allowchoice n arms = <span data-count="3">A</span>llowChoice ((), ((), n), arms)
+let ami e = <span data-count="3">A</span>mI ((), e)
+
+(* Declaration smart constructors *)
+let emlocdecl l = <span data-count="3">E</span>mulatedLocDecl ((), ((), l))
+let typedecl x t = <span data-count="3">T</span>ypeDecl ((), ((), x), t)
+let typealiasdecl x t = <span data-count="9">T</span>ypeAliasDecl ((), ((), x), t)
+let defndecl x p e = <span data-count="12">D</span>efnDecl ((), ((), x), p, e)
+let importdecl x = <span data-count="3">I</span>mportDecl ((), ((), x))
+
+let variantdecl x conses =
+  <span data-count="18">V</span>ariantDecl ((), ((), x), List.ma<span data-count="18">p</span> (fun (s, l, t) -&gt; <span data-count="18">(</span>((), s), l, t)) conses)
+</code></pre>
+      </div>
+    </div>
+    <script src="../../coverage.js"></script>
+  </body>
+</html>
