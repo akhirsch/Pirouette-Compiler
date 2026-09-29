@@ -9,6 +9,7 @@ open Ppxlib
     The corresponding [.ml] file contains the implementation of these
     translations, while this [.mli] file exposes the functions available to
     other modules. *)
+    
 module MkOcamlGen (Net : Netir.Ast.AST) : sig
   val type_gen : Net.typ -> core_type
   (** Convert a NetIR type into an OCaml core type *)
@@ -17,10 +18,10 @@ module MkOcamlGen (Net : Netir.Ast.AST) : sig
   (** Convert a NetIR pattern into an OCaml pattern *)
 
   val unop_gen : Net.unop -> expression -> expression
-  (** Convert a NetIR unary operator into its OCaml operator string *)
+  (** Convert a NetIR unary operator into its OCaml expression *)
 
   val binop_gen : Net.binop -> expression -> expression -> expression
-  (** Convert a NetIR binary operator into its OCaml operator string *)
+  (** Convert a NetIR binary operator into its OCaml expression *)
 
   val label_gen : Net.lab -> string
   (** Extract the string representation of a NetIR label *)

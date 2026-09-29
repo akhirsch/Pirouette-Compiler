@@ -1,15 +1,15 @@
 open Ppxlib
 open Ast_builder.Default
 
-(* TODO: JACKIE ** TURN THIS INTO A FUNCTOR so that we can use any AST *)
-(* steps: defining the input module type (signature), writing the functor
- structure, and instantiating (applying) the functor.*)
-module MkOcamlGen (Net : Netir.Ast.AST) = struct
+
+module MkOcamlGen (Net : Netir.Ast.AST ) = struct
   (* with this declared now i can write Net.___ avoiding name conflicts *)
 
-  let loc = Location.none
+  let loc = Location.none 
+    (*{ !Ast_helper.default_loc with loc_ghost = true }*)
   (* every node in ppxlib AST carries a location *)
 
+  (*------------------- TYPE GENRATION ---------------------------*)
   (* type_gen returns a core_type because a NetIR type becomes an OCaml type node *)
   let rec type_gen (t : Net.typ) : core_type =
     match t with
@@ -22,8 +22,9 @@ module MkOcamlGen (Net : Netir.Ast.AST) = struct
     | Net.StringTy _ -> [%type: string]
     | Net.BoolTy _ -> [%type: bool]
     | Net.FunTy (_, t1, t2) -> [%type: [%t type_gen t1] -> [%t type_gen t2]]
-    | Net.LocTy (_, _) -> [%type: string]
+    | Net.LocTy (_, _) -> [%type: Dummybackend.location]
 
+  (*------------------- PATTERN GENRATION ---------------------------*)
   let rec pattern_gen p =
     match p with
     | Net.WildcardPat _ -> [%pat? _]
@@ -31,6 +32,8 @@ module MkOcamlGen (Net : Netir.Ast.AST) = struct
     | Net.UnitLitPat _ -> [%pat? ()]
     | Net.IntLitPat (_, n) -> pint ~loc n
     | Net.FloatLitPat (_, f) -> pfloat ~loc (string_of_float f)
+    (* ast builder wont take a float it will only take a string so you have to convert
+    to get the float pattern *)
     | Net.CharLitPat (_, c) -> pchar ~loc c
     | Net.StringLitPat (_, s) -> pstring ~loc s
     | Net.TrueLitPat _ -> [%pat? true]
@@ -58,20 +61,14 @@ module MkOcamlGen (Net : Netir.Ast.AST) = struct
         ppat_construct ~loc name args
     | Net.LocNamePat (_, (_, s)) -> pvar ~loc s
 
-  let unop_gen (u : Net.unop) : string =
-    match u with Net.Neg _ -> "-" | Net.Not _ -> "!"
-  (* this can return a string *)
+(*------------------- UNOP GENRATION ---------------------------*)
+  let unop_gen (u : Net.unop) ( e : expression) : expression = 
+    match u with
+    | Neg _ -> [%expr ~- [%e e]]
+    | Not _ -> [%expr not [%e e]]
 
-let unop_gen (u : Net.unop) ( e : expression) : expression = 
-  match u with
-  | Neg _ -> [%expr ~- [%e e]]
-  | Not _ -> [%expr not [%e e]]
-
-
+(*------------------- BINOP GENRATION ---------------------------*)
   let binop_gen (b : Net.binop) (e1 : expression) (e2 : expression) : expression =
-    (* binop doesnt need ppxlib at all because it only exists as part of an 
-    expression similar use in the prettyprinter note how prettify_binop
-    reutrns a string and prettify_expr is what puts it between the operands *)
     match b with
     | Net.Plus _  -> [%expr [%e e1] + [%e e2]]
     | Net.Minus _ -> [%expr [%e e1] - [%e e2]]
@@ -86,11 +83,15 @@ let unop_gen (u : Net.unop) ( e : expression) : expression =
     | Net.Gt _    -> [%expr [%e e1] > [%e e2]]
     | Net.Geq _   -> [%expr [%e e1] >= [%e e2]]
 
+(*------------------- LABEL GENRATION ---------------------------*)
   let label_gen (l : Net.lab) : string =
-    (*(Label (_, n)) = "[" ^ n ^ "]"*)
+    (*type lab = Label of name 
+    labels are their own type rather than bare strings,*)
     match l with
     | Net.Label (_, n) -> n
+    (* So label_gen extracts the raw string the call sites decide what node to make from it*)
 
+(*------------------- EXPRESSION GENRATION ---------------------------*)
   let rec expr_gen (e : Net.expr) : expression =
     match e with
     | Net.Var (_, (_, n)) -> evar ~loc n
@@ -135,10 +136,8 @@ let unop_gen (u : Net.unop) ( e : expression) : expression =
       "the name being used" as an expression-> e *)
     | Net.FunApp (_, f, a) -> [%expr [%e expr_gen f] [%e expr_gen a]]
     | Net.TypeConstr (_, e, t) -> [%expr ([%e expr_gen e] : [%t type_gen t])]
-    | Net.Unop (_, u, e) -> [%expr [%e evar ~loc (unop_gen u)] [%e expr_gen e]]
-    (*of M.t * unop * expr*)
+    | Net.Unop (_, u, e) -> unop_gen u (expr_gen e)
     | Net.Binop (_, b, e1, e2) -> binop_gen b (expr_gen e1) (expr_gen e2)
-    (*of M.t * binop * expr * expr*)
     (* Communication Primitives *)
     | Net.Send (_, e, (_, n)) ->
         [%expr Dummybackend.send [%e estring ~loc n] [%e expr_gen e]]
@@ -191,46 +190,41 @@ let unop_gen (u : Net.unop) ( e : expression) : expression =
   Is me a value or a function? Dummybackend.me vs Dummybackend.me () — changes how the AmI branch spells it.
 Does program_gen emit an identity line at all? If identity is baked in, yes; if it comes from argv, maybe not, and the backend owns it instead.*)
 
-  (* have a symbol that is randomly generated that i know doesnt exist anywhere else hummm maybe *)
-  (*let decl_gen d =
+(*------------------- DECL GENRATION ---------------------------*)
+  let rec decl_gen d =
       match d with 
-      | EmulatedLocDecl (_, (_, l)) -> failwith "TODO" (*[%p (pstring ~loc (label_gen l))]*)
-      (*of m * name*)
-      | TypeDecl (_, (_, n), t) -> failwith "TODO"
-      (*of m * name * typ  Declares the type of a program binding *)
-      | TypeAliasDecl (_, (_, n), t) -> failwith "TODO"
-      (* of m * name * typ *)
-      | DefnDecl (_, (_, n), ps, e) -> failwith "TODO"
-      (* of m * name * pattern list * expr 
-      let prettify_patterns ps =
-          match ps with
-          | [] -> " "
-          | p :: ps ->
-              " "
-              ^ List.fold_left
-                  (fun s p -> s ^ " " ^ prettify_pattern p)
-                  (prettify_pattern p) ps
-              ^ " "
-        in
-        n ^ prettify_patterns ps ^ ":= " ^ prettify_expr e*)
-      | ImportDecl (_, (_, n)) -> failwith "TODO"
+      | Net.EmulatedLocDecl (_, (_, l)) -> [%stri []]
+      (* of m * name
+      Preprocessors use emulated locations to link generated boilerplate code back to the original 
+      macro invocation site, without getting confused by missing source text*)
+      | Net.TypeDecl (_, (_, n), t) -> [%type [label_gen n]]
+      (*   M.t * name * typ   
+      Ocaml a typed annotation 
+      Type name = ... *)
+      | Net.TypeAliasDecl (_, (_, n), t) -> [%type [label_gen n]]
+      (* M.t * name * typ 
+      Ppat_alias of pattern * string Asttypes.loc 
+      pattern: is the sub pattern being bounded to the alias
+      string asttypes.loc: the name variable 
+      To declare an alias, use the type keyword followed by the new name, 
+      an equals sign, and the existing type expression)
+      ex:
+      type user_id = int *)
+      | Net.DefnDecl (_, (_, n), ps, e) -> failwith "TODO"
+      (* of m * name * pattern list * expr
+       Ocaml let rec n ... = ... *)
+      | Net.ImportDecl (_, (_, n)) -> 
       (* of m * name *)
-      | VariantDecl (_, (_, n), cs) -> failwith "TODO"
-        (*let prettify_cons (_, n) ts t =
-          match ts with
-          | [] -> "| " ^ n ^ " : " ^ prettify_typ t
-          | t1 :: ts ->
-              "| " ^ n ^ " : "
-              ^ List.fold_left
-                  (fun s t -> s ^ " -> " ^ prettify_typ t)
-                  (prettify_typ t1) ts
-              ^ " -> " ^ prettify_typ t
-        in
-        "data " ^ n ^ " :="
-        ^ List.fold_left
-            (fun s1 (n, ts, t) -> s1 ^ "\n" ^ prettify_cons n ts t)
-            "" cs
-      of m * name * (name * typ list * typ) list *)
+      let name = Located.lident ~loc (String.capitalize_ascii n) in 
+      (* ocaml Module name must be capatlized *)
+        Pstr_include ~loc (Pmod_ident name) 
+      (* Ocaml include N *)
+      | Net.VariantDecl (_, (_, n), cs) -> failwith "TODO"
+        (*
+      of m * name * (name * typ list * typ) list 
+       type n = C of ... | ...*)
 
-    type program = decl list*)
-end
+  let program_gen (prog : Net.program) : structure =
+    List.concat_map decl_gen prog
+    (*decl list*)
+  end
