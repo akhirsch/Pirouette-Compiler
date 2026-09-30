@@ -4,7 +4,7 @@
   Each function name here must match what
    ocamlgen.ml emits. *)
 
-   (* dummybackend.ml is the runtime: it defines 
+(* dummybackend.ml is the runtime: it defines 
    it defines send, recv, choose, recv_label, me
     runs when the generated file runs, and does the logging.*)
 (* ---- Identity ----------
