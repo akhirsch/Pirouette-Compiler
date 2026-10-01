@@ -1,4 +1,4 @@
 (test
  (name test)
- (modules testpretty test)
+ (modules testpretty testparser test)
  (libraries ounit2 netir metainfo))

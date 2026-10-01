@@ -60,6 +60,8 @@ module ASTMapper (A1 : AST) (A2 : AST) = struct
     | A1.StringLit (m, s) -> A2.StringLit (f m, s)
     | A1.TrueLit m -> A2.TrueLit (f m)
     | A1.FalseLit m -> A2.FalseLit (f m)
+    | A1.ConstructorLit (m, id, es) ->
+        A2.ConstructorLit (f m, name_map f id, List.map (expr_map f) es)
     | A1.LocLit (m, n) -> A2.LocLit (f m, name_map f n)
     | A1.Match (m, e, pes) ->
         A2.Match
