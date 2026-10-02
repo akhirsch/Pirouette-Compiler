@@ -33,5 +33,6 @@ module MkOcamlGen : functor (Net : NetAST) -> sig
   val expr_gen : Net.expr -> expression
   (** Convert a NetIR expression into an OCaml expression *)
 
-  (* TODO: decl_gen/ prog_gen *)
+  val decl_gen : Net.decl -> structure_item
+  (** Conver a Decl expression into an Ppxlib structure item *)
 end

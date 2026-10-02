@@ -113,7 +113,7 @@ module MkOcamlGen (Net : NetAST) = struct
        ~guard is the optional [when] clause — NetIR has none, so always None. *)
         let cases =
           List.map
-            (fun (pat, body) ->
+            (fun (pat, body) -> 
               case
                 ~lhs:(pattern_gen pat) (* NetIR pattern -> OCaml pattern *)
                 ~guard:None
@@ -184,13 +184,13 @@ module MkOcamlGen (Net : NetAST) = struct
     | Net.AmI (_, e) -> [%expr [%e expr_gen e] = me]
 
   (*------------------- DECL GENRATION ---------------------------*)
-  (* let _decl_gen (d : Net.decl) : structure_item list =
+  let decl_gen (d : Net.decl) : structure_item =
     match d with
-    | Net.EmulatedLocDecl (_, (_, _l)) -> []
+    | Net.EmulatedLocDecl (_, (_, _l)) -> [%stri let a = ()] (*TODO*)
     (* JACKIE you have _l here so the warnings are supressed UNDO once prog_gen written *)
     (* Ocaml: emulated location Alice 
         This is not an ast node, this is the declaration that introduces a participant *)
-    | Net.TypeDecl (_, (_, _n), _t) -> []
+    | Net.TypeDecl (_, (_, _n), _t) -> [%stri let a = ()] (*TODO*)
     (* JACKIE you have the n and t _ here so that the warnings are supressed 
           UNDO that change once you write program gen *)
     (* n: Name
@@ -226,39 +226,26 @@ module MkOcamlGen (Net : NetAST) = struct
           (* manifest: is this equal to some other existing tyoe: YES thats an alias *)
           (* manifest actually gives that = sign *)
         in
-        [ pstr_type ~loc Nonrecursive [ td ] ]
+          pstr_type ~loc Nonrecursive [ td ]
         (* pstr_type is how we build a a top level type
         the type will not refrence itself type apple = apple is pointless so this is non recursive *)
-    | Net.DefnDecl (_, (_, n), ps, e) ->
-        (* of m * name * pattern list * expr
-       Ocaml let rec n ... = ... *)
-        let body = expr_gen e in
-        (* the body of the function -> an ocaml expression through expr_gen *)
-        let fun_expr =
-          (* fun_expr holds the body and the parameters *)
-          List.fold_right
-            (fun p acc -> pexp_fun ~loc Nolabel None p acc)
-            (* each p the fold sees is one OCaml pattern
-            acc starts as body and gets wrapped once per pattern *)
-            (List.map pattern_gen ps)
-            (* list.map mapts a pattern list over pattern gen to give us a list of Ocaml patterns*)
-            body
-        in
-        let v_bind = value_binding ~loc ~pat:(pvar ~loc n) ~expr:fun_expr in
-        (* value_binding builds one_name = expr 
-       ~pat: the left of the = a pattern, not just a name, because OCaml lets you bind patterns
-       pvar ~loc n : binds the name *)
-        [ pstr_value ~loc Nonrecursive [ v_bind ] ]
-        (* pstr_value is the let or the let in, that takes a list of value bindings into a top
-       level item pstr* is the top level builder syntax
-       takes a list because OCaml allows let a = … and b = … *)
-    | Net.ImportDecl _ (*_, (_, n)*) -> []
+    | Net.DefnDecl (_, (_, id), ps, e) ->
+        let body = List.fold_right
+          (fun p mkfun -> [%expr fun [%p pattern_gen p] -> [%e mkfun]])
+          ps (expr_gen e)
+        in 
+          [%stri let [%p Ast_builder.Default.pvar ~loc id] = [%e body]]
+    | Net.ImportDecl (_, (_, n)) -> 
+      let module_id = Ppxlib.Ast_builder.Default.pmod_ident ~loc 
+        (Located.lident ~loc n) 
+      in
+        [%stri include [%m module_id]]
     (* of m * name 
       let name = Located.lident ~loc (String.capitalize_ascii n) in 
       (* ocaml Module name must be capatlized *)
         Pstr_include ~loc (Pmod_ident name) 
        Ocaml include N *)
-    | Net.VariantDecl _ (*_, (_, n), cs*) -> [] *)
+    | Net.VariantDecl _ (*_, (_, n), cs*) -> [%stri let a = ()] (*TODO*)
   (*
       of m * name * (name * typ list * typ) list 
        type n = C of ... | ...*)
@@ -268,5 +255,5 @@ module MkOcamlGen (Net : NetAST) = struct
   (*decl list*)
   (*TODO: preserve the type annotation by merging it into the matching DefnDecl's let,
        i.e. emit  let n : t = ...  should be done here i think , 
-       which sees both decls by name.... i think *)
+       which sees both decls by name.... i think*)
 end
