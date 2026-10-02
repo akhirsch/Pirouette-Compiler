@@ -1,7 +1,10 @@
+module type NetAST = Ast.AST
+
 open Ppxlib
 open Ast_builder.Default
 
-module MkOcamlGen (Net : Netir.Ast.AST) = struct
+module MkOcamlGen (Net : NetAST) = struct
+
   (* with this declared now i can write Net.___ avoiding name conflicts *)
   let loc = Location.none
   (* every node in ppxlib AST carries a location *)
@@ -181,7 +184,7 @@ module MkOcamlGen (Net : Netir.Ast.AST) = struct
     | Net.AmI (_, e) -> [%expr [%e expr_gen e] = me]
 
   (*------------------- DECL GENRATION ---------------------------*)
-  let _decl_gen (d : Net.decl) : structure_item list =
+  (* let _decl_gen (d : Net.decl) : structure_item list =
     match d with
     | Net.EmulatedLocDecl (_, (_, _l)) -> []
     (* JACKIE you have _l here so the warnings are supressed UNDO once prog_gen written *)
@@ -255,7 +258,7 @@ module MkOcamlGen (Net : Netir.Ast.AST) = struct
       (* ocaml Module name must be capatlized *)
         Pstr_include ~loc (Pmod_ident name) 
        Ocaml include N *)
-    | Net.VariantDecl _ (*_, (_, n), cs*) -> []
+    | Net.VariantDecl _ (*_, (_, n), cs*) -> [] *)
   (*
       of m * name * (name * typ list * typ) list 
        type n = C of ... | ...*)

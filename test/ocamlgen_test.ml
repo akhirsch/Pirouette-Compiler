@@ -1,6 +1,6 @@
 open OUnit2
 module A = Netir.Nometa
-module G = Backend.Ocamlgen.MkOcamlGen (Netir.Ast.MkAST (Metainfo.Meta.TrivInfo))
+module G = Netir.Ocamlgen.MkOcamlGen (Netir.Ast.MkAST (Metainfo.Meta.TrivInfo))
 open A
 
 (* run a NetIR expr through the generator and print the resulting OCaml *)
@@ -54,5 +54,3 @@ let suite =
     (* AmI compares the given location against me the file's own identity*)
     "ami" >:: test_expr {|"A" = me|} (ami (loclit "A"));
   ]
-
-let () = run_test_tt_main ("ocamlgen" >::: suite)

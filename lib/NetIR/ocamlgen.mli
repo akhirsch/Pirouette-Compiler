@@ -1,5 +1,3 @@
-open Ppxlib
-
 (** OCaml code generation
 
     This module defines the interface for translating NetIR constructs into
@@ -10,7 +8,13 @@ open Ppxlib
     translations, while this [.mli] file exposes the functions available to
     other modules. *)
 
-module MkOcamlGen (Net : Netir.Ast.AST) : sig
+module type NetAST = Ast.AST
+(* Because of naming conflict betweeen "ast" and Ppxlib, we have to alias our AST module here. *)
+
+open Ppxlib
+
+module MkOcamlGen : functor (Net : NetAST) -> sig
+
   val type_gen : Net.typ -> core_type
   (** Convert a NetIR type into an OCaml core type *)
 

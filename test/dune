@@ -1,4 +1,4 @@
 (test
  (name test)
  (modules ocamlgen_test testpretty test)
- (libraries ounit2 netir metainfo backend))
+ (libraries ounit2 netir metainfo))
