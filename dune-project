@@ -28,6 +28,10 @@
    (and
     (= 0.35.0)
     :build))
+  cohttp
+  cohttp-lwt-unix
+  lwt
+  uri
   (bisect_ppx :with-test)
   (ounit2 :with-test)
   (ocamlformat
