@@ -12,26 +12,40 @@ type participant = { debug_name : string; hostname : Uri.t }
     (IP address + port). *)
 
 type message_type = Send | Choose  (** An incoming message from a peer. *)
+
 (** Convert HTTP path string to optional `message_type` *)
 let message_type_from_string = function
   | "send" -> Some Send
   | "choose" -> Some Choose
   | _ -> None
+
 (** Convert `message_type` to HTTP path string *)
-let message_type_to_string = function
-  | Send -> "send"
-  | Choose -> "choose"
+let message_type_to_string = function Send -> "send" | Choose -> "choose"
 
 type message = message_type * string
 
-let empty_message : message option = None
+type message_completion = bool Lwt_condition.t
+(** Indicates the message was received. If given `true`, the result processed
+    successfully; else, we have a `/send` vs `/choose` mismatch *)
+
+type peer = {
+  debug_name : string;
+  message_channel : (message * message_completion) Lwt_mvar.t;
+}
 
 (* TODO: `self, peers` should be immutable. *)
 type state = {
   self : participant;  (** Information about this participant *)
-  peers : participant list;  (** Information about our peers *)
-  peers2 : (Uri.t, participant * message option) Hashtbl.t;
-  messages : unit list;  (** Queued-up messages our peers sent us *)
+  (* peers : participant list;  (** Information about our peers *) *)
+  peers2 : (Uri.t, peer) Hashtbl.t;
+      (** Each Uri (with scheme+host+port) has a `participant` (debug name +
+          uri) and a channel that holds up to one message.
+
+          Choreographies guarantee that senders wait for us to receive messages,
+          so we only need to store one message at a time. *)
+      (* messages : unit list;  (** Queued-up messages our peers sent us *) *)
+      (* lock : Lwt_mutex.t; *)
+      (* condition : Lwt_condition.t; *)
 }
 (** The app's shared global state. *)
 
@@ -95,11 +109,26 @@ let create_state () : (state, init_error) result =
   (* Create map from hostname -> participant & message *)
   let peers2 : (Uri.t, _) Hashtbl.t =
     peers |> List.to_seq
-    |> Seq.map (fun p -> (p.hostname, (p, empty_message)))
+    |> Seq.map (fun (p : participant) ->
+        let peer : peer =
+          {
+            debug_name = p.debug_name;
+            message_channel = Lwt_mvar.create_empty ();
+          }
+        in
+        (p.hostname, peer))
     |> Hashtbl.of_seq
   in
   (* We will add to messages with the server *)
-  Result.Ok { self; peers; peers2; messages = [] }
+  let state =
+    {
+      self;
+      (* peers; *)
+      peers2;
+      (* messages = [] *)
+    }
+  in
+  Result.Ok state
 
 (*---------------------------------------------------------------------------*)
 (* HTTP Send/Receive                                                         *)
@@ -108,21 +137,28 @@ let create_state () : (state, init_error) result =
 type client_error =
   | MethodNotPost  (** We only allow POST for send/choose *)
   | UnknownPath  (** We only allow `/send` and `/choose` *)
-  | MissingOrigin (** We need the `Origin` header to identify the peer *)
+  | MissingOrigin  (** We need the `Origin` header to identify the peer *)
   | UnknownPeer  (** Peer must be registered *)
-  | CannotMessageTwice of message  (** Cannot message twice *)
+  | CannotMessageTwice  (** Cannot message twice *)
+(* TODO: Remove *)
+(* | WrongOperation  (** Expected `/send` but got `/choose` or vice versa. *) *)
 
 let client_result_to_http_status = function
-  | Result.Ok _ -> `OK
+  | Result.Ok true -> `OK
   | Result.Error MethodNotPost -> `Method_not_allowed
   | Result.Error UnknownPath -> `Not_found
   | Result.Error UnknownPeer -> `Unauthorized
-  | Result.Error MissingOrigin | Result.Error (CannotMessageTwice _) -> `Bad_request
+  | Result.Ok false
+  | Result.Error MissingOrigin
+  | Result.Error CannotMessageTwice ->
+      `Bad_request
 
 let start_server () : unit Lwt.t =
   let app_state : state = failwith "" in
+  (* Processes the given request with the given string. Returns
+     the message_completion indicating we've received the message. *)
   let process_request (req : Http.Request.t) (body : string) :
-      (unit, client_error) result =
+      (message_completion, client_error) result =
     (* Ensure it's a POST request. *)
     let* () =
       if req.meth == `POST then Result.Ok () else Result.Error MethodNotPost
@@ -131,53 +167,94 @@ let start_server () : unit Lwt.t =
     let request_uri : Uri.t = Cohttp.Request.uri req in
     let* message_type : message_type =
       Uri.path request_uri |> message_type_from_string
-      |> Option.to_result ~none:UnknownPath in
+      |> Option.to_result ~none:UnknownPath
+    in
     (* Extract the origin (should be scheme+host+port)
        Note: We don't validate inputs because if they're invalid, they
        will simply not get a Hashtbl match. *)
-    let* raw_peer_hostname = Http.Header.get (Http.Request.headers req) "Origin" |> Option.to_result ~none:MissingOrigin in
-    let peer_hostname: Uri.t = Uri.of_string raw_peer_hostname in
+    let* raw_peer_hostname =
+      Http.Header.get (Http.Request.headers req) "Origin"
+      |> Option.to_result ~none:MissingOrigin
+    in
+    let peer_hostname : Uri.t = Uri.of_string raw_peer_hostname in
     (* Check peer exists and hasn't double-messaged *)
-    let* participant =
+    let* channel =
       match Hashtbl.find_opt app_state.peers2 peer_hostname with
-      | Some (participant, None) -> Result.Ok participant
-      | Some (_, Some prev_message) ->
-          Result.Error (CannotMessageTwice prev_message)
+      (* Check `is_empty` doesn't cause race conditions because
+         we're the only thread who can put new data in the channel. *)
+      | Some { message_channel; _ } when Lwt_mvar.is_empty message_channel ->
+          Result.Ok message_channel
+      (* Fail if channel isn't empty (client double-messaged) *)
+      | Some _ -> Result.Error CannotMessageTwice
       | None -> Result.Error UnknownPeer
     in
-    (* Save message *)
-    let message = (message_type, body) in
-    Hashtbl.replace app_state.peers2 peer_hostname (participant, Some message);
-    Result.Ok ()
+    (* Send message via the channel *)
+    let message_completion : message_completion = Lwt_condition.create () in
+    let message = ((message_type, body), message_completion) in
+    (* Should return instantly since we're the only thread adding messages,
+       and we just checked there's no backlog. *)
+    Lwt_main.run (Lwt_mvar.put channel message);
+    (* Return completion *)
+    Result.Ok message_completion
   in
   let callback _conn (req : Http.Request.t) (body : Cohttp_lwt.Body.t) =
     (* Get body string
        Note: We get the body at the start before any error path to ensure we
        always terminate the connection (and avoid leaking memory). *)
     Cohttp_lwt.Body.to_string body >>= fun (body_str : string) ->
-    let res = process_request req body_str in
+    (* Get result *)
+    let uncompleted_res = Lwt_result.lift (process_request req body_str) in
+    (* Unwrap result and wait for completion *)
+    Lwt_result.bind_lwt uncompleted_res Lwt_condition.wait >>= fun res ->
+    (* Respond with status and an empty body *)
     let response_status = client_result_to_http_status res in
-    (* Respond with status with an empty body *)
     Cohttp_lwt_unix.Server.respond ~status:response_status
       ~body:Cohttp_lwt.Body.empty ()
   in
   let server = Cohttp_lwt_unix.Server.make ~callback () in
-  Cohttp_lwt_unix.Server.create ~mode:(`TCP (`Port 8000)) server
+  (* Get port (default is 8000) *)
+  let port = Uri.port app_state.self.hostname |> Option.value ~default:8000 in
+  (* Start server *)
+  Cohttp_lwt_unix.Server.create ~mode:(`TCP (`Port port)) server
 
-let get_message (message_type : message_type) (peer : participant) =
-  (* Set up condition to set up server message;
-     once received, set thing to NULL;
-     use lock/condvar for messages *)
-(* https://ocaml.org/manual/5.5/parallelism.html#s%3Apar_sync *)
-  failwith ""
-;;
+type get_message_error = InvalidPeer | Invalid
+
+let get_message (message_type : message_type) (peer : participant) : 'a =
+  let app_state : state = failwith "" in
+  (* Get peer *)
+  let* peer =
+    Hashtbl.find_opt app_state.peers2 peer.hostname
+    |> Option.to_result ~none:InvalidPeer
+  in
+  (* Block until message arrives *)
+  let (req_message_type, message_body), completion =
+    Lwt_main.run (Lwt_mvar.take peer.message_channel)
+  in
+  let decoded : 'a = Marshal.from_string message_body 0 in
+  (* Signal to peer that we got the message *)
+  let is_correct_type = req_message_type = message_type in
+  Lwt_condition.signal completion is_correct_type;
+  (* Return decoded data *)
+  decoded
 
 let post_message (message_type : message_type) (message : string)
     (peer : participant) =
-    let app_state: state = failwith "" in
+  let app_state : state = failwith "" in
   let body = Cohttp_lwt.Body.of_string message in
-  let headers = Http.Header.init_with "Origin" (Uri.to_string app_state.self.hostname) in
-  let request_uri = Uri.with_path peer.hostname (message_type_to_string message_type) in
-  let (resp, body) = Lwt_main.run (Cohttp_lwt_unix.Client.post ~headers ~body request_uri) in
-  (* TODO: Crash if not okay status; make sure to retry. *)
-  failwith ""
+  let headers =
+    Http.Header.init_with "Origin" (Uri.to_string app_state.self.hostname)
+  in
+  let request_uri =
+    Uri.with_path peer.hostname (message_type_to_string message_type)
+  in
+  let resp, _ =
+    Lwt_main.run (Cohttp_lwt_unix.Client.post ~headers ~body request_uri)
+  in
+  (* Crash if we get bad status *)
+  let status = Http.Response.status resp in
+  if status <> `OK then
+    failwith
+      ("HTTP backend encountered unexpected error when sending message "
+      ^ Http.Status.to_string status)
+  else ()
+(* TODO: Make sure to retry. *)
