@@ -4,3 +4,9 @@
  (libraries metainfo ppxlib)
  (instrumentation
   (backend bisect_ppx)))
+
+(ocamllex
+ (modules lexer))
+
+(menhir
+ (modules parser))
