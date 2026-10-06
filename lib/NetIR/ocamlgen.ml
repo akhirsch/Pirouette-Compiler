@@ -253,8 +253,10 @@ module MkOcamlGen (Net : NetAST) = struct
       let constructor_gen ((_, cname),ts, _result) = 
         constructor_declaration 
         ~loc
-        ~name: (Located.mk ~loc (String.capitalize_ascii cname))
-        ~args: (Pcstr_tuple (List.map type_gen ts))
+        ~name: (Located.mk ~loc (String.capitalize_ascii cname)) (* constructor names bounded to the location and capatalized *)
+        ~args: (Pcstr_tuple (List.map type_gen ts)) 
+        (* will be a tuple the smart constructor looks like this 
+        variantDecl "color"[("red", [], varty "color")] *)
         ~res: None
       in 
       let td = 

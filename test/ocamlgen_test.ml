@@ -20,6 +20,16 @@ that is why i  print it with the printer that speaks ppxlib's AST — Ppxlib.Ppr
 let test_expr expected e _ =
   assert_equal ~printer:(fun x -> x) expected (expr_str e)
 
+(*  VARIANT HELPERS *)
+    let decl_structure d = Ppxlib.Pprintast.string_of_structure [G.decl_gen d]
+    (* G is my ocamlgen module *)
+    let test_decl expected d _ =
+      assert_equal 
+      ~printer:(fun s -> "\n>>>\n" ^ s ^ "\n<<<\n")
+      (* added this so that when it prints in the terminal it is more clear to 
+      the white space errors i am having with variants *)
+    expected (decl_structure d)
+
 (* TODO: Match RecAbs AllowChoice *)
 
 (* WHAT I AM DOING: building NetIR AST nodes with the smart constructors from the 
@@ -53,4 +63,22 @@ let suite =
     (* -------------- Location check: Iam check ----------------*)
     (* AmI compares the given location against me the file's own identity*)
     "ami" >:: test_expr {|"A" = me|} (ami (loclit "A"));
+
+    (*----------------- Variant Test ----------------------------*)
+
+    "empty_variant" >:: test_decl 
+    "type false = |"
+    (variantdecl "false" []);
+
+    "one_const_var" >:: test_decl 
+    (* NO white space after = and only two spaces for the constructor arms*)
+    "type color =\n  | Red "
+    (variantdecl "color"
+    [("red", [], varty "color")]);
+
+    "two_const_var" >:: test_decl
+    "type color =\n  | Red \n  | Black "
+    (variantdecl "color"
+    [("red",[], varty "color"); 
+     ("black", [], varty "color")]);
   ]
