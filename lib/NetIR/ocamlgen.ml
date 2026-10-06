@@ -187,10 +187,7 @@ module MkOcamlGen (Net : NetAST) = struct
   (*------------------- DECL GENRATION ---------------------------*)
   let decl_gen (d : Net.decl) : structure_item =
     match d with
-    | Net.EmulatedLocDecl (_, (_, _l)) -> [%stri let a = ()] (*TODO*)
-    (* JACKIE you have _l here so the warnings are supressed UNDO once prog_gen written *)
-    (* Ocaml: emulated location Alice 
-        This is not an ast node, this is the declaration that introduces a participant *)
+    | Net.EmulatedLocDecl (_, (_, l)) -> [%stri let _ = (let _emulated_location = [%e estring ~loc l] in ())]
     | Net.TypeDecl (_, (_, n), t) -> 
       Ast_helper.Str.type_ ~loc Recursive
         [ Ast_helper.Type.mk ~loc ~manifest:(type_gen t) { txt = n; loc}]
