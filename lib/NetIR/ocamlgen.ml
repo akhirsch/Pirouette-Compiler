@@ -280,10 +280,8 @@ module MkOcamlGen (Net : NetAST) = struct
     pstr_type ~loc Recursive [td]
 
 
-  (*let program_gen (me : string) (prog : Net.program) : structure = [] *)
-  (*List.concat_map decl_gen prog*)
-  (*decl list*)
-  (*TODO: preserve the type annotation by merging it into the matching DefnDecl's let,
-       i.e. emit  let n : t = ...  should be done here i think , 
-       which sees both decls by name.... i think*)
+  let program_gen (me : string) (prog : Net.program) : structure = 
+  let id =  [%stri let me = [%e estring ~loc me]] in 
+  id :: List.map decl_gen prog
+
 end

@@ -35,4 +35,7 @@ module MkOcamlGen : functor (Net : NetAST) -> sig
 
   val decl_gen : Net.decl -> structure_item
   (** Conver a Decl expression into an Ppxlib structure item *)
+
+  val program_gen : string -> Net.program -> structure
+  
 end

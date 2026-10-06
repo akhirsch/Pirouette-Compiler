@@ -30,6 +30,13 @@ let test_expr expected e _ =
       the white space errors i am having with variants *)
     expected (decl_structure d)
 
+(*  PROGRAM GEN HELPERS *)
+    let prog_structure me p = Ppxlib.Pprintast.string_of_structure (G.program_gen me p)
+    let test_program expected me p _ = 
+      assert_equal
+      ~printer:(fun s -> "\n>>>\n" ^ s ^ "\n<<<\n")
+      expected (prog_structure me p)
+
 (* TODO: Match RecAbs AllowChoice *)
 
 (* WHAT I AM DOING: building NetIR AST nodes with the smart constructors from the 
@@ -81,4 +88,29 @@ let suite =
     (variantdecl "color"
     [("red",[], varty "color"); 
      ("black", [], varty "color")]);
+
+  (*--------------------Program Gen Test --------------------------*)
+  (*"empty program" >:: test_eq_string "" (prettify_prog []);
+    "one-decl program"
+    >:: test_eq_string "type foo := bar"
+          (prettify_prog [ typealiasdecl "foo" (varty "bar") ]);
+    "two-decl program"
+    >:: test_eq_string "type foo := bar\ndata false :="
+          (prettify_prog
+             [ typealiasdecl "foo" (varty "bar"); variantdecl "false" [] ]);*)
+    "empty_program" >:: test_program 
+    {|let me = "alice"|}
+    "alice" [];
+
+    "one_decl_prog" >:: test_program 
+    {|let me= "alice"
+    type nonrec foo = 'bar|}
+    "alice" [ typealiasdecl "foo" (varty "bar") ];
+
+    "two_decl_prog" >:: test_program
+    {|let me = "alice"
+    type nonrec foo = 'bar
+    type color = ||}
+    "alice" [typealiasdecl "foo" (varty "bar");
+            variantdecl "color" [] ];
   ]
