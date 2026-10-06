@@ -245,10 +245,36 @@ module MkOcamlGen (Net : NetAST) = struct
       (* ocaml Module name must be capatlized *)
         Pstr_include ~loc (Pmod_ident name) 
        Ocaml include N *)
-    | Net.VariantDecl _ (*_, (_, n), cs*) -> [%stri let a = ()] (*TODO*)
-  (*
-      of m * name * (name * typ list * typ) list 
-       type n = C of ... | ...*)
+    | Net.VariantDecl (_, (_, n), cs) -> 
+      (* val constructor_declaration :
+      loc:location -> 
+      name:string loc -> using Located.mk ~loc n (binding the location to the name)
+      args:constructor_arguments -> res:core_type option -> constructor_declaration*)
+      let constructor_gen ((_, cname),ts, _result) = 
+        constructor_declaration 
+        ~loc
+        ~name: (Located.mk ~loc (String.capitalize_ascii cname))
+        ~args: (Pcstr_tuple (List.map type_gen ts))
+        ~res: None
+      in 
+      let td = 
+      (* val type_declaration :
+    loc:location ->
+    name:string loc ->
+    params:(core_type * (variance * injectivity)) list ->
+    cstrs:(core_type * core_type * location) list ->
+    kind:type_kind ->
+    private_:private_flag -> manifest:core_type option -> type_declaration*)
+      type_declaration ~loc
+      ~name: (Located.mk ~loc n)
+      ~params: []
+      ~cstrs: []
+      ~kind: (Ptype_variant (List.map constructor_gen cs))
+      ~private_: Public
+      ~manifest: None
+    in
+    pstr_type ~loc Recursive [td]
+
 
   (*let program_gen (me : string) (prog : Net.program) : structure = [] *)
   (*List.concat_map decl_gen prog*)
