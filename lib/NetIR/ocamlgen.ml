@@ -191,17 +191,9 @@ module MkOcamlGen (Net : NetAST) = struct
     (* JACKIE you have _l here so the warnings are supressed UNDO once prog_gen written *)
     (* Ocaml: emulated location Alice 
         This is not an ast node, this is the declaration that introduces a participant *)
-    | Net.TypeDecl (_, (_, _n), _t) -> [%stri let a = ()] (*TODO*)
-    (* JACKIE you have the n and t _ here so that the warnings are supressed 
-          UNDO that change once you write program gen *)
-    (* n: Name
-         t: type  
-      OCaml type declaration doesn't exist as a standalone item either disappears or fuses into the let 
-      NetIR ex: three_to_alice : unit -> unit
-       OCaml's .ml (structure) grammar has NO top-level form for a bare value signature
-       and ppxlib has no Pstr_* constructor for it - can only exists in .mli files as Psig_value
-       this decl has nothing to build into on its own.
-       [] used here because the generated code still typechecks via inference *)
+    | Net.TypeDecl (_, (_, n), t) -> 
+      Ast_helper.Str.type_ ~loc Recursive
+        [ Ast_helper.Type.mk ~loc ~manifest:(type_gen t) { txt = n; loc}]
     | Net.TypeAliasDecl (_, (_, n), t) ->
         (* n: Name
          t: type  
