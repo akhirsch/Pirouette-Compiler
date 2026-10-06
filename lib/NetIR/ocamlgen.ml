@@ -237,7 +237,9 @@ module MkOcamlGen (Net : NetAST) = struct
           [%stri let [%p Ast_builder.Default.pvar ~loc id] = [%e body]]
     | Net.ImportDecl (_, (_, n)) -> 
       let module_id = Ppxlib.Ast_builder.Default.pmod_ident ~loc 
-        (Located.lident ~loc n) 
+        (Located.lident ~loc (String.capitalize_ascii n))
+        (* include Mymodule 
+        where the module or file that we are importing needs to be capitalized *)
       in
         [%stri include [%m module_id]]
     (* of m * name 
