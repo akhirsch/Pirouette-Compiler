@@ -2,6 +2,7 @@ module type NetAST = Ast.AST
 
 open Ppxlib
 open Ast_builder.Default
+open Backend
 
 module MkOcamlGen (Net : NetAST) = struct
 
@@ -281,7 +282,8 @@ module MkOcamlGen (Net : NetAST) = struct
 
 
   let program_gen (me : string) (prog : Net.program) : structure = 
-  let id =  [%stri let me = [%e estring ~loc me]] in 
-  id :: List.map decl_gen prog
+
+    let who_i_am = Dummybackend.who_i_am me in
+      who_i_am :: List.map decl_gen prog
 
 end

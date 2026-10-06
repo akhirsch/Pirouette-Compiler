@@ -1,3 +1,8 @@
+open Ppxlib
+open Ast_builder.Default
+
+let loc = Location.none
+
 (* dummybackend.ml — runtime for emulated locations.
    Generated participant files call into this module. Every communication
    operation logs the event to a file; nothing is really sent or received.
@@ -47,3 +52,8 @@
    Logs a label-receive from [src], then returns the arrived label as a string.
    Used as the match subject in the AllowChoice branch. Same open question as
    recv, but the return type is fixed (string) *)
+
+
+
+let who_i_am me =
+      [%stri let _ = [%e estring ~loc me]]

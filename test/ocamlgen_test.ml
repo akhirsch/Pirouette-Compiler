@@ -86,7 +86,7 @@ let suite =
     "two_const_var" >:: test_decl
     "type color =\n  | Red \n  | Black "
     (variantdecl "color"
-    [("red",[], varty "color"); 
+    [("red", [], varty "color"); 
      ("black", [], varty "color")]);
 
   (*--------------------Program Gen Test --------------------------*)
@@ -99,18 +99,18 @@ let suite =
           (prettify_prog
              [ typealiasdecl "foo" (varty "bar"); variantdecl "false" [] ]);*)
     "empty_program" >:: test_program 
-    {|let me = "alice"|}
+    {|let _ = "alice"|}
     "alice" [];
 
     "one_decl_prog" >:: test_program 
-    {|let me= "alice"
-    type nonrec foo = 'bar|}
+    ("let _ = \"alice\"\n" ^ 
+    "type nonrec foo = 'bar")
     "alice" [ typealiasdecl "foo" (varty "bar") ];
 
     "two_decl_prog" >:: test_program
-    {|let me = "alice"
-    type nonrec foo = 'bar
-    type color = ||}
+    ("let _ = \"alice\"\n" ^
+    "type nonrec foo = 'bar\n" ^
+    "type color = |")
     "alice" [typealiasdecl "foo" (varty "bar");
             variantdecl "color" [] ];
   ]
