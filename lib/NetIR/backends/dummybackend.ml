@@ -6,18 +6,18 @@ let loc = Location.none
 (* dummybackend.ml — runtime for emulated locations.
    Generated participant files call into this module. Every communication
    operation logs the event to a file; nothing is really sent or received.
-  Each function name here must match what
-   ocamlgen.ml emits. *)
+  Each function name here must match what ocamlgen.ml emits *)
 
 (* dummybackend.ml is the runtime: it defines 
    it defines send, recv, choose, recv_label, me
     runs when the generated file runs, and does the logging.*)
-(* ---- Identity ----------
-   TODO: Iam func handeling  *)
 
-(* TODO: implement identity storage/ how to accesss
-  storage — where should we keep the name? 
- *)
+    (* log also what are sending and recieveing we want a log that is very deatailed
+    this is going to be helpful for cram tests so we have all *)
+    
+(* ---- Identity ---------- *)
+let who_i_am me =
+      [%stri let _ = [%e estring ~loc me]]
 
 (* ---- Log helper ---------------------
    Append one line to the log file privet HELPER to this module 
@@ -52,8 +52,3 @@ let loc = Location.none
    Logs a label-receive from [src], then returns the arrived label as a string.
    Used as the match subject in the AllowChoice branch. Same open question as
    recv, but the return type is fixed (string) *)
-
-
-
-let who_i_am me =
-      [%stri let _ = [%e estring ~loc me]]

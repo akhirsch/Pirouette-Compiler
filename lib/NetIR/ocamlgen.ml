@@ -172,10 +172,10 @@ module MkOcamlGen (Net : NetAST) = struct
         let fallback =
           case
           (*case: ~lhs ~guard ~rhs builder needed to build the ppxlib node through ast_builder *)
-            ~lhs:[%pat? _]
+            ~lhs:[%pat? other]
             ~guard:None
-            ~rhs:[%expr failwith "unexpected label"]
-          (* the fail with case catch all _ for anything else *)
+            ~rhs:[%expr failwith (Printf.sprintf "unexpected label %s from %s" <the label> [%e estring ~loc n])]
+          (* Error Reporting:  *)
         in
         pexp_match ~loc
           (* pexp_match takes a case list, and case
