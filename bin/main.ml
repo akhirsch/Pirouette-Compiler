@@ -40,15 +40,18 @@ let speclist =
 let run_compiler (ast : lexbuf) =
   (*if the --pretty flag was given, pretty print code to console.
     otherwise, print result to output file *)
-  output :=
-    if !pretty then Format.asprintf "Pretty Print Placeholder"
-      (* _PLACEHOLDER ast PLACEHOLDER: the function should be something like Prettyprint.pp_program *)
-    else begin
-      let _ocaml_ast = _PLACEHOLDER ast in
-      (*PLACEHOLDER: replace with something like Ocamlgen.generate_ocaml *)
-      Format.asprintf "PLACEHOLDER"
-      (*  "%a@." Ppxlib.Pprintast.structure ocaml_ast     <----- Insert this once ocamlgen is implemented *)
-    end;
+  if !pretty && !output_file <> "" then
+    failwith "Can't pretty print and have output"
+  else
+    output :=
+      if !pretty then Format.asprintf "Pretty Print Placeholder"
+        (* _PLACEHOLDER ast PLACEHOLDER: the function should be something like Prettyprint.pp_program *)
+      else begin
+        let _ocaml_ast = _PLACEHOLDER ast in
+        (*PLACEHOLDER: replace with something like Ocamlgen.generate_ocaml *)
+        Format.asprintf "Ocamlgen Placeholder"
+        (*  "%a@." Ppxlib.Pprintast.structure ocaml_ast     <----- Insert this once ocamlgen is implemented *)
+      end;
 
   match !output_file with
   (*change output_file to an output stream, stdout for default*)
