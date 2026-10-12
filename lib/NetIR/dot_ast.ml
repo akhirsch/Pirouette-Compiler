@@ -201,17 +201,18 @@ struct
         let edge2 = spf "%s -> %s;\n" node_name n2 in
         (typ_node ^ edge1 ^ edge2 ^ c1 ^ c2, node_name)
     | LocTy (m, names) ->
-        let c, n =
-          let name_codes, node_names =
-            List.split (List.map (dot_name string_of_info) names)
-          in
-          (String.concat "" name_codes, String.concat "" node_names)
+        let name_codes, node_names =
+          List.split (List.map (dot_name string_of_info) names)
         in
         let typ_node =
           spf "%s [label=\"Loc Type %s\"];\n" node_name (string_of_info m)
         in
-        let edge1 = spf "%s -> %s;\n" node_name n in
-        (typ_node ^ edge1 ^ c, node_name)
+        let edges =
+          String.concat ""
+            (List.map (fun name -> spf "%s -> %s;\n" node_name name) node_names)
+        in
+        let codes = String.concat "" name_codes in
+        (typ_node ^ edges ^ codes, node_name)
 
   let rec dot_expr string_of_info expr =
     let node_name = generate_node_name () in
