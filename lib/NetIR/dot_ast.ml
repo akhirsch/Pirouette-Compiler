@@ -1,7 +1,5 @@
 module MkDotAST (M : sig
   include Metainfo.Meta.Metainfo
-
-  val to_string : t -> string
 end) =
 struct
   module AST = Ast.MkAST (M)
@@ -21,8 +19,14 @@ struct
     ( spf "%s [label=\"Name %s %s\"];\n" node_name str (string_of_info info),
       node_name )
 
-  let dot_lab string_of_info (label : lab) = 
-    ()
+  let dot_lab string_of_info (label : lab) =
+    let node_name = generate_node_name () in
+    match label with
+    | Label name ->
+        let c, n = dot_name string_of_info name in
+        let lab_node = spf "%s [label=\"Label\"];\n" node_name in
+        let edge = spf "%s -> %s;\n" node_name n in
+        (lab_node ^ edge ^ c, node_name)
 
   let dot_int int =
     let node_name = generate_node_name () in
@@ -104,7 +108,7 @@ struct
           let pat_codes, node_names =
             List.split (List.map (dot_pattern string_of_info) patterns)
           in
-          (String.concat "" pat_codes, node_names)
+          (String.concat "" pat_codes, String.concat "" node_names)
         in
         let pat_node =
           spf "%s [label=\"Constructor Pat %s\"];\n" node_name
@@ -197,11 +201,17 @@ struct
         let edge2 = spf "%s -> %s;\n" node_name n2 in
         (typ_node ^ edge1 ^ edge2 ^ c1 ^ c2, node_name)
     | LocTy (m, names) ->
+        let c, n =
+          let name_codes, node_names =
+            List.split (List.map (dot_name string_of_info) names)
+          in
+          (String.concat "" name_codes, String.concat "" node_names)
+        in
         let typ_node =
           spf "%s [label=\"Loc Type %s\"];\n" node_name (string_of_info m)
         in
-        let edge = spf "%s -> %s;\n" node_name names in
-        (typ_node ^ edge, node_name)
+        let edge1 = spf "%s -> %s;\n" node_name n in
+        (typ_node ^ edge1 ^ c, node_name)
 
   let rec dot_expr string_of_info expr =
     let node_name = generate_node_name () in
@@ -263,7 +273,30 @@ struct
         in
         let edge = spf "%s -> %s;\n" node_name n in
         (expr_node ^ edge ^ c, node_name)
-    | Match (m, expr, pes) -> ()
+    | Match (m, e, cases) ->
+        let dot_case string_of_info (pat, expr) =
+          let node_name = generate_node_name () in
+          let c1, pat_name = dot_pattern string_of_info pat in
+          let c2, expr_name = dot_expr string_of_info expr in
+          let case_node = spf "%s [label=\"Case\"];\n" node_name in
+          let edge1 = spf "%s -> %s;\n" node_name pat_name in
+          let edge2 = spf "%s -> %s;\n" node_name expr_name in
+          (case_node ^ edge1 ^ edge2 ^ c1 ^ c2, node_name)
+        in
+        let dot_cases cases =
+          let case_nodes, case_node_names =
+            List.split (List.map (dot_case string_of_info) cases)
+          in
+          (String.concat "" case_nodes, String.concat " " case_node_names)
+        in
+        let c1, n1 = dot_expr string_of_info e in
+        let match_node =
+          spf "%s [label=\"Match %s\"];\n" node_name (string_of_info m)
+        in
+        let c2, n2 = dot_cases cases in
+        let edge1 = spf "%s -> %s;\n" node_name n1 in
+        let edge2 = spf "%s -> %s;\n" node_name n2 in
+        (match_node ^ edge1 ^ edge2 ^ c1 ^ c2, node_name)
     | RecAbs (m, f, x, expr) ->
         let c1, n1 = dot_name string_of_info f in
         let c2, n2 = dot_name string_of_info x in
@@ -332,7 +365,7 @@ struct
         let edge2 = spf "%s -> %s;\n" node_name n2 in
         (decl_node ^ edge1 ^ edge2 ^ c1 ^ c2, node_name)
     | ChooseFor (m, name, lab) ->
-      let c1, n1 = dot_name string_of_info name in
+        let c1, n1 = dot_name string_of_info name in
         let c2, n2 = dot_lab string_of_info lab in
         let decl_node =
           spf "%s [label=\"Binop %s\"];\n" node_name (string_of_info m)
@@ -340,6 +373,37 @@ struct
         let edge1 = spf "%s -> %s;\n" node_name n1 in
         let edge2 = spf "%s -> %s;\n" node_name n2 in
         (decl_node ^ edge1 ^ edge2 ^ c1 ^ c2, node_name)
+    | AllowChoice (m, name, choices) ->
+        let dot_choice string_of_info (lab, expr) =
+          let node_name = generate_node_name () in
+          let c1, pat_name = dot_lab string_of_info lab in
+          let c2, expr_name = dot_expr string_of_info expr in
+          let case_node = spf "%s [label=\"Choice\"];\n" node_name in
+          let edge1 = spf "%s -> %s;\n" node_name pat_name in
+          let edge2 = spf "%s -> %s;\n" node_name expr_name in
+          (case_node ^ edge1 ^ edge2 ^ c1 ^ c2, node_name)
+        in
+        let dot_choices choices =
+          let case_nodes, case_node_names =
+            List.split (List.map (dot_choice string_of_info) choices)
+          in
+          (String.concat "" case_nodes, String.concat " " case_node_names)
+        in
+        let c1, n1 = dot_name string_of_info name in
+        let expr_node =
+          spf "%s [label=\"Match %s\"];\n" node_name (string_of_info m)
+        in
+        let c2, n2 = dot_choices choices in
+        let edge1 = spf "%s -> %s;\n" node_name n1 in
+        let edge2 = spf "%s -> %s;\n" node_name n2 in
+        (expr_node ^ edge1 ^ edge2 ^ c1 ^ c2, node_name)
+    | AmI (m, expr) ->
+        let c, n = dot_expr string_of_info expr in
+        let expr_node =
+          spf "%s [label=\"AmI %s\"];\n" node_name (string_of_info m)
+        in
+        let edge = spf "%s -> %s;\n" node_name n in
+        (expr_node ^ edge ^ c, node_name)
 
   let rec dot_decls string_of_info program =
     match program with
@@ -357,7 +421,7 @@ struct
     | EmulatedLocDecl (m, name) ->
         let c, n = dot_name string_of_info name in
         let decl_node =
-          spf "%s [label=\"Emulated Loc Decl %s\"];\n" node_name
+          spf "%s [label=\"EmulatedLocDecl %s\"];\n" node_name
             (string_of_info m)
         in
         let edge = spf "%s -> %s;\n" node_name n in
@@ -387,7 +451,7 @@ struct
           let pat_codes, node_names =
             List.split (List.map (dot_pattern string_of_info) patterns)
           in
-          (String.concat "" pat_codes, node_names)
+          (String.concat "" pat_codes, String.concat "" node_names)
         in
         let c3, n3 = dot_expr string_of_info expr in
         let decl_node =
@@ -404,10 +468,41 @@ struct
         in
         let edge = spf "%s -> %s;\n" node_name n in
         (decl_node ^ edge ^ c, node_name)
-    | VariantDecl (m, name, variants) ->
-        () (*Variants are a little complicated*)
+    | VariantDecl (m, name, constructors) ->
+        let c1, n1 = dot_name string_of_info name in
+        let c2, n2 =
+          let dot_constructor (cname, typs, typ) =
+            let node_name = generate_node_name () in
+            let cc1, ncname = dot_name string_of_info cname in
+            let cc2, ntyps =
+              let typ_codes, type_names =
+                List.split (List.map (dot_typ string_of_info) typs)
+              in
+              (String.concat "" typ_codes, String.concat " " type_names)
+            in
+            let cc3, ntyp = dot_typ string_of_info typ in
+            let constr_node =
+              spf "%s [label=\"Variant Constructor\"];\n" node_name
+            in
+            let edge1 = spf "%s -> %s;\n" node_name ncname in
+            let edge2 = spf "%s -> %s;\n" node_name ntyps in
+            let edge3 = spf "%s -> %s;\n" node_name ntyp in
+            (constr_node ^ edge1 ^ edge2 ^ edge3 ^ cc1 ^ cc2 ^ cc3, node_name)
+          in
+          let constr_codes, node_names =
+            List.split (List.map dot_constructor constructors)
+          in
+          (String.concat "" constr_codes, String.concat "" node_names)
+        in
+        let decl_node =
+          spf "%s [label=\"Variant Decl %s\"];\n" node_name (string_of_info m)
+        in
+        let edge1 = spf "%s -> %s;\n" node_name n1 in
+        let edge2 = spf "%s -> %s;\n" node_name n2 in
+        (decl_node ^ edge1 ^ edge2 ^ c1 ^ c2, node_name)
 
   let generate_dot_code string_of_info program =
     let code, _ = dot_decls string_of_info program in
-    () (*Stubbed for now*)
+    node_counter := 0;
+    spf "digraph G {\n%s\n}\n" code
 end
