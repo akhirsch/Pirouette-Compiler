@@ -271,7 +271,7 @@ struct
     | LocLit (m, name) ->
         let c, n = dot_name string_of_info name in
         let expr_node =
-          spf "%s [label=\"NameLit %s\"];\n" node_name (string_of_info m)
+          spf "%s [label=\"LocLit %s\"];\n" node_name (string_of_info m)
         in
         let edge = spf "%s -> %s;\n" node_name n in
         (expr_node ^ edge ^ c, node_name)

@@ -7,9 +7,8 @@ open Meta
 
 let test_eq_string s1 s2 _ = assert_equal ~printer:(fun x -> x) s1 s2
 
-(*-----typ tests-------*)
+(* ----- Type Tests ----- *)
 
-(*VarTy*)
 let expected_varty =
   "n0 [label=\"Var Type [test.ml: 1:15--1:16]\"];\n\
    n0 -> n1;\n\
@@ -22,7 +21,6 @@ let test_varty =
   let out, _ = DotAST.dot_typ Meta.string_of_mi typ in
   out
 
-(*UnitTy*)
 let expected_unitty = "n0 [label=\"Unit Type [test.ml: 1:15--1:16]\"];\n"
 
 let test_unitty =
@@ -32,7 +30,6 @@ let test_unitty =
   let out, _ = DotAST.dot_typ Meta.string_of_mi typ in
   out
 
-(*IntTy*)
 let expected_intty = "n0 [label=\"Int Type [test.ml: 1:15--1:16]\"];\n"
 
 let test_intty =
@@ -42,7 +39,6 @@ let test_intty =
   let out, _ = DotAST.dot_typ Meta.string_of_mi typ in
   out
 
-(*FloatTy*)
 let expected_floatty = "n0 [label=\"Float Type [test.ml: 1:15--1:16]\"];\n"
 
 let test_floatty =
@@ -52,7 +48,6 @@ let test_floatty =
   let out, _ = DotAST.dot_typ Meta.string_of_mi typ in
   out
 
-(*CharTy*)
 let expected_charty = "n0 [label=\"Char Type [test.ml: 1:15--1:16]\"];\n"
 
 let test_charty =
@@ -62,7 +57,6 @@ let test_charty =
   let out, _ = DotAST.dot_typ Meta.string_of_mi typ in
   out
 
-(*StringTy*)
 let expected_stringty = "n0 [label=\"String Type [test.ml: 1:15--1:16]\"];\n"
 
 let test_stringty =
@@ -72,7 +66,6 @@ let test_stringty =
   let out, _ = DotAST.dot_typ Meta.string_of_mi typ in
   out
 
-(*BoolTy*)
 let expected_boolty = "n0 [label=\"Bool Type [test.ml: 1:15--1:16]\"];\n"
 
 let test_boolty =
@@ -82,7 +75,6 @@ let test_boolty =
   let out, _ = DotAST.dot_typ Meta.string_of_mi typ in
   out
 
-(*FunTy*)
 let expected_funty =
   "n0 [label=\"Fun Type [test.ml: 1:15--1:16]\"];\n\
    n0 -> n1;\n\
@@ -97,7 +89,6 @@ let test_funty =
   let out, _ = DotAST.dot_typ Meta.string_of_mi typ in
   out
 
-(* LocTy*)
 let expected_locty =
   "n0 [label=\"Loc Type [test.ml: 1:15--1:16]\"];\n\
    n0 -> n1;\n\
@@ -128,9 +119,8 @@ let test_locty_mult =
   let out, _ = DotAST.dot_typ Meta.string_of_mi typ in
   out
 
-(*-----pattern tests-------*)
+(* ----- Pattern tests ----- *)
 
-(*Wildcard*)
 let expected_wildcard = "n0 [label=\"Wildcard Pat [test.ml: 1:15--1:16]\"];\n"
 
 let test_wildcard =
@@ -140,7 +130,6 @@ let test_wildcard =
   let out, _ = DotAST.dot_pattern Meta.string_of_mi pat in
   out
 
-(*Var pat*)
 let expected_varpat =
   "n0 [label=\"Var Pat [test.ml: 1:15--1:16]\"];\n\
    n0 -> n1;\n\
@@ -153,102 +142,93 @@ let test_varpat =
   let out, _ = DotAST.dot_pattern Meta.string_of_mi pat in
   out
 
-(*Unit Lit*)
-let expected_unitlit = "n0 [label=\"Unit Lit Pat [test.ml: 1:15--1:16]\"];\n"
+let expected_unitlit_pat = "n0 [label=\"Unit Lit Pat [test.ml: 1:15--1:16]\"];\n"
 
-let test_unitlit =
+let test_unitlit_pat =
   DotAST.node_counter := 0;
   let pos = { filename = "test.ml"; start = (1, 15); stop = (1, 16) } in
   let pat = UnitLitPat pos in
   let out, _ = DotAST.dot_pattern Meta.string_of_mi pat in
   out
 
-(*Int Lit*)
-let expected_intlit =
+let expected_intlit_pat =
   "n0 [label=\"Int Lit Pat [test.ml: 1:15--1:16]\"];\n\
    n0 -> n1;\n\
    n1 [label=\"Int 5\"];\n"
 
-let test_intlit =
+let test_intlit_pat =
   DotAST.node_counter := 0;
   let pos = { filename = "test.ml"; start = (1, 15); stop = (1, 16) } in
   let pat = IntLitPat (pos, 5) in
   let out, _ = DotAST.dot_pattern Meta.string_of_mi pat in
   out
 
-(*Float Lit*)
-let expected_floatlit =
+let expected_floatlit_pat =
   "n0 [label=\"Float Lit Pat [test.ml: 1:15--1:16]\"];\n\
    n0 -> n1;\n\
    n1 [label=\"Float 8.\"];\n"
 
-let test_floatlit =
+let test_floatlit_pat =
   DotAST.node_counter := 0;
   let pos = { filename = "test.ml"; start = (1, 15); stop = (1, 16) } in
   let pat = FloatLitPat (pos, 8.0) in
   let out, _ = DotAST.dot_pattern Meta.string_of_mi pat in
   out
 
-(*Char Lit*)
-let expected_charlit =
+let expected_charlit_pat =
   "n0 [label=\"Char Lit Pat [test.ml: 1:15--1:16]\"];\n\
    n0 -> n1;\n\
    n1 [label=\"Char P\"];\n"
 
-let test_charlit =
+let test_charlit_pat =
   DotAST.node_counter := 0;
   let pos = { filename = "test.ml"; start = (1, 15); stop = (1, 16) } in
   let pat = CharLitPat (pos, 'P') in
   let out, _ = DotAST.dot_pattern Meta.string_of_mi pat in
   out
 
-(*String lit*)
-let expected_stringlit =
+let expected_stringlit_pat =
   "n0 [label=\"String Lit Pat [test.ml: 1:15--1:16]\"];\n\
    n0 -> n1;\n\
    n1 [label=\"String Test string\"];\n"
 
-let test_stringlit =
+let test_stringlit_pat =
   DotAST.node_counter := 0;
   let pos = { filename = "test.ml"; start = (1, 15); stop = (1, 16) } in
   let pat = StringLitPat (pos, "Test string") in
   let out, _ = DotAST.dot_pattern Meta.string_of_mi pat in
   out
 
-(*True lit*)
-let expected_truelit = "n0 [label=\"True Lit Pat [test.ml: 1:15--1:16]\"];\n"
+let expected_truelit_pat = "n0 [label=\"True Lit Pat [test.ml: 1:15--1:16]\"];\n"
 
-let test_truelit =
+let test_truelit_pat =
   DotAST.node_counter := 0;
   let pos = { filename = "test.ml"; start = (1, 15); stop = (1, 16) } in
   let pat = TrueLitPat pos in
   let out, _ = DotAST.dot_pattern Meta.string_of_mi pat in
   out
 
-(*False lit*)
-let expected_falselit = "n0 [label=\"False Lit Pat [test.ml: 1:15--1:16]\"];\n"
+let expected_falselit_pat = "n0 [label=\"False Lit Pat [test.ml: 1:15--1:16]\"];\n"
 
-let test_falselit =
+let test_falselit_pat =
   DotAST.node_counter := 0;
   let pos = { filename = "test.ml"; start = (1, 15); stop = (1, 16) } in
   let pat = FalseLitPat pos in
   let out, _ = DotAST.dot_pattern Meta.string_of_mi pat in
   out
 
-(*Loc Lit*)
-let expected_loclit =
+let expected_loclit_pat =
   "n0 [label=\"Loc Lit Pat [test.ml: 1:15--1:16]\"];\n\
    n0 -> n1;\n\
    n1 [label=\"Name Alice [test.ml: 1:15--1:16]\"];\n"
 
-let test_loclit =
+let test_loclit_pat =
   DotAST.node_counter := 0;
   let pos = { filename = "test.ml"; start = (1, 15); stop = (1, 16) } in
   let pat = LocLitPat (pos, (pos, "Alice")) in
   let out, _ = DotAST.dot_pattern Meta.string_of_mi pat in
   out
 
-(*Constructor*)
 let expected_constr =
   "n0 [label=\"Constructor Pat [test.ml: 1:15--1:16]\"];\n\
    n0 -> n1;\n\
@@ -303,7 +283,6 @@ let test_constr_mult =
   let out, _ = DotAST.dot_pattern Meta.string_of_mi pat in
   out
 
-(*Loc Name*)
 let expected_locname =
   "n0 [label=\"Loc Name Pat [test.ml: 1:15--1:16]\"];\n\
    n0 -> n1;\n\
@@ -316,9 +295,8 @@ let test_locname =
   let out, _ = DotAST.dot_pattern Meta.string_of_mi pat in
   out
 
-(*------Operation tests-----------*)
+(* ----- Operation Tests ----- *)
 
-(*Neg*)
 let expected_neg = "n0 [label=\"Neg [test.ml: 1:15--1:16]\"];\n"
 
 let test_neg =
@@ -328,7 +306,6 @@ let test_neg =
   let out, _ = DotAST.dot_unop Meta.string_of_mi op in
   out
 
-(*Not*)
 let expected_not = "n0 [label=\"Not [test.ml: 1:15--1:16]\"];\n"
 
 let test_not =
@@ -338,7 +315,6 @@ let test_not =
   let out, _ = DotAST.dot_unop Meta.string_of_mi op in
   out
 
-(*Plus*)
 let expected_plus = "n0 [label=\"Plus [test.ml: 1:15--1:16]\"];\n"
 
 let test_plus =
@@ -348,7 +324,6 @@ let test_plus =
   let out, _ = DotAST.dot_binop Meta.string_of_mi op in
   out
 
-(*Minus*)
 let expected_minus = "n0 [label=\"Minus [test.ml: 1:15--1:16]\"];\n"
 
 let test_minus =
@@ -358,7 +333,6 @@ let test_minus =
   let out, _ = DotAST.dot_binop Meta.string_of_mi op in
   out
 
-(*Times*)
 let expected_times = "n0 [label=\"Times [test.ml: 1:15--1:16]\"];\n"
 
 let test_times =
@@ -368,7 +342,6 @@ let test_times =
   let out, _ = DotAST.dot_binop Meta.string_of_mi op in
   out
 
-(*Div*)
 let expected_div = "n0 [label=\"Div [test.ml: 1:15--1:16]\"];\n"
 
 let test_div =
@@ -378,7 +351,6 @@ let test_div =
   let out, _ = DotAST.dot_binop Meta.string_of_mi op in
   out
 
-(*And*)
 let expected_and = "n0 [label=\"And [test.ml: 1:15--1:16]\"];\n"
 
 let test_and =
@@ -388,7 +360,6 @@ let test_and =
   let out, _ = DotAST.dot_binop Meta.string_of_mi op in
   out
 
-(*Or*)
 let expected_or = "n0 [label=\"Or [test.ml: 1:15--1:16]\"];\n"
 
 let test_or =
@@ -398,7 +369,6 @@ let test_or =
   let out, _ = DotAST.dot_binop Meta.string_of_mi op in
   out
 
-(*Eq*)
 let expected_eq = "n0 [label=\"Eq [test.ml: 1:15--1:16]\"];\n"
 
 let test_eq =
@@ -408,7 +378,6 @@ let test_eq =
   let out, _ = DotAST.dot_binop Meta.string_of_mi op in
   out
 
-(*Neq*)
 let expected_neq = "n0 [label=\"Neq [test.ml: 1:15--1:16]\"];\n"
 
 let test_neq =
@@ -418,7 +387,6 @@ let test_neq =
   let out, _ = DotAST.dot_binop Meta.string_of_mi op in
   out
 
-(*Lt*)
 let expected_lt = "n0 [label=\"Lt [test.ml: 1:15--1:16]\"];\n"
 
 let test_lt =
@@ -428,7 +396,6 @@ let test_lt =
   let out, _ = DotAST.dot_binop Meta.string_of_mi op in
   out
 
-(*Leq*)
 let expected_leq = "n0 [label=\"Leq [test.ml: 1:15--1:16]\"];\n"
 
 let test_leq =
@@ -438,7 +405,6 @@ let test_leq =
   let out, _ = DotAST.dot_binop Meta.string_of_mi op in
   out
 
-(*Gt*)
 let expected_gt = "n0 [label=\"Gt [test.ml: 1:15--1:16]\"];\n"
 
 let test_gt =
@@ -448,7 +414,6 @@ let test_gt =
   let out, _ = DotAST.dot_binop Meta.string_of_mi op in
   out
 
-(*Geq*)
 let expected_geq = "n0 [label=\"Geq [test.ml: 1:15--1:16]\"];\n"
 
 let test_geq =
@@ -456,6 +421,335 @@ let test_geq =
   let pos = { filename = "test.ml"; start = (1, 15); stop = (1, 16) } in
   let op = Geq pos in
   let out, _ = DotAST.dot_binop Meta.string_of_mi op in
+  out
+
+(* ----- Expr Tests ----- *)
+
+let expected_varexpr =
+  "n0 [label=\"Expr [test.ml: 1:15--1:16]\"];\n\
+   n0 -> n1;\n\
+   n1 [label=\"Name Variable [test.ml: 1:15--1:16]\"];\n"
+
+let test_varexpr =
+  DotAST.node_counter := 0;
+  let pos = { filename = "test.ml"; start = (1, 15); stop = (1, 16) } in
+  let expr = Var (pos, (pos, "Variable")) in
+  let out, _ = DotAST.dot_expr Meta.string_of_mi expr in
+  out
+
+let expected_unitlit = "n0 [label=\"UnitLit [test.ml: 1:15--1:16]\"];\n"
+
+let test_unitlit =
+  DotAST.node_counter := 0;
+  let pos = { filename = "test.ml"; start = (1, 15); stop = (1, 16) } in
+  let expr = UnitLit pos in
+  let out, _ = DotAST.dot_expr Meta.string_of_mi expr in
+  out
+
+let expected_intlit =
+  "n0 [label=\"IntLit [test.ml: 1:15--1:16]\"];\n\
+   n0 -> n1;\n\
+   n1 [label=\"Int 5\"];\n"
+
+let test_intlit =
+  DotAST.node_counter := 0;
+  let pos = { filename = "test.ml"; start = (1, 15); stop = (1, 16) } in
+  let expr = IntLit (pos, 5) in
+  let out, _ = DotAST.dot_expr Meta.string_of_mi expr in
+  out
+
+let expected_floatlit =
+  "n0 [label=\"FloatLit [test.ml: 1:15--1:16]\"];\n\
+   n0 -> n1;\n\
+   n1 [label=\"Float 8.\"];\n"
+
+let test_floatlit =
+  DotAST.node_counter := 0;
+  let pos = { filename = "test.ml"; start = (1, 15); stop = (1, 16) } in
+  let expr = FloatLit (pos, 8.) in
+  let out, _ = DotAST.dot_expr Meta.string_of_mi expr in
+  out
+
+let expected_charlit =
+  "n0 [label=\"CharLit [test.ml: 1:15--1:16]\"];\n\
+   n0 -> n1;\n\
+   n1 [label=\"Char P\"];\n"
+
+let test_charlit =
+  DotAST.node_counter := 0;
+  let pos = { filename = "test.ml"; start = (1, 15); stop = (1, 16) } in
+  let expr = CharLit (pos, 'P') in
+  let out, _ = DotAST.dot_expr Meta.string_of_mi expr in
+  out
+
+let expected_stringlit =
+  "n0 [label=\"StringLit [test.ml: 1:15--1:16]\"];\n\
+   n0 -> n1;\n\
+   n1 [label=\"String Test string\"];\n"
+
+let test_stringlit =
+  DotAST.node_counter := 0;
+  let pos = { filename = "test.ml"; start = (1, 15); stop = (1, 16) } in
+  let expr = StringLit (pos, "Test string") in
+  let out, _ = DotAST.dot_expr Meta.string_of_mi expr in
+  out
+
+let expected_truelit = "n0 [label=\"TrueLit [test.ml: 1:15--1:16]\"];\n"
+
+let test_truelit =
+  DotAST.node_counter := 0;
+  let pos = { filename = "test.ml"; start = (1, 15); stop = (1, 16) } in
+  let expr = TrueLit pos in
+  let out, _ = DotAST.dot_expr Meta.string_of_mi expr in
+  out
+
+let expected_falselit = "n0 [label=\"FalseLit [test.ml: 1:15--1:16]\"];\n"
+
+let test_falselit =
+  DotAST.node_counter := 0;
+  let pos = { filename = "test.ml"; start = (1, 15); stop = (1, 16) } in
+  let expr = FalseLit pos in
+  let out, _ = DotAST.dot_expr Meta.string_of_mi expr in
+  out
+
+let expected_loclit =
+  "n0 [label=\"LocLit [test.ml: 1:15--1:16]\"];\n\
+   n0 -> n1;\n\
+   n1 [label=\"Name Alice [test.ml: 1:15--1:16]\"];\n"
+
+let test_loclit =
+  DotAST.node_counter := 0;
+  let pos = { filename = "test.ml"; start = (1, 15); stop = (1, 16) } in
+  let expr = LocLit (pos, (pos, "Alice")) in
+  let out, _ = DotAST.dot_expr Meta.string_of_mi expr in
+  out
+
+let expected_match =
+  "n0 [label=\"Match [test.ml: 1:15--1:16]\"];\n\
+  n0 -> n4;\n\
+  n0 -> n1;\n\
+  n4 [label=\"TrueLit [test.ml: 2:20--2:50]\"];\n\
+  n1 [label=\"Case\"];\n\
+  n1 -> n2;\n\
+  n1 -> n3;\n\
+  n2 [label=\"True Lit Pat [test.ml: 3:31--3:41]\"];\n\
+  n3 [label=\"UnitLit [test.ml: 3:31--3:41]\"];\n"
+
+let test_match =
+  DotAST.node_counter := 0;
+  let pos = { filename = "test.ml"; start = (1, 15); stop = (1, 16) } in
+  let pos2 = { filename = "test.ml"; start = (2, 20); stop = (2, 50) } in
+  let pos3 = { filename = "test.ml"; start = (3, 31); stop = (3, 41) } in
+  let expr =
+    Match (pos, TrueLit (pos2), [ TrueLitPat (pos3), UnitLit (pos3) ])
+  in
+  let out, _ = DotAST.dot_expr Meta.string_of_mi expr in
+  out
+
+let expected_recabs = 
+  "n0 [label=\"RecAbs [test.ml: 1:15--1:16]\"];\n\
+  n0 -> n1;\n\
+  n0 -> n2;\n\
+  n0 -> n3;\n\
+  n1 [label=\"Name f [test.ml: 2:20--2:50]\"];\n\
+  n2 [label=\"Name x [test.ml: 3:31--3:41]\"];\n\
+  n3 [label=\"TrueLit [test.ml: 4:10--4:20]\"];\n"
+
+let test_recabs =
+  DotAST.node_counter := 0;
+  let pos = { filename = "test.ml"; start = (1, 15); stop = (1, 16) } in
+  let pos2 = { filename = "test.ml"; start = (2, 20); stop = (2, 50) } in
+  let pos3 = { filename = "test.ml"; start = (3, 31); stop = (3, 41) } in
+  let pos4 = { filename = "test.ml"; start = (4, 10); stop = (4, 20) } in
+  let expr =
+    RecAbs (pos, (pos2, "f"), (pos3, "x"), TrueLit pos4)
+  in
+  let out, _ = DotAST.dot_expr Meta.string_of_mi expr in
+  out
+
+let expected_funapp = 
+  "n0 [label=\"FunApp [test.ml: 1:15--1:16]\"];\n\
+  n0 -> n1;\n\
+  n0 -> n3;\n\
+  n1 [label=\"Expr [test.ml: 2:20--2:50]\"];\n\
+  n1 -> n2;\n\
+  n2 [label=\"Name f [test.ml: 3:31--3:41]\"];\n\
+  n3 [label=\"Expr [test.ml: 4:10--4:20]\"];\n\
+  n3 -> n4;\n\
+  n4 [label=\"Name x [test.ml: 5:1--5:17]\"];\n"
+
+let test_funapp =
+  DotAST.node_counter := 0;
+  let pos = { filename = "test.ml"; start = (1, 15); stop = (1, 16) } in
+  let pos2 = { filename = "test.ml"; start = (2, 20); stop = (2, 50) } in
+  let pos3 = { filename = "test.ml"; start = (3, 31); stop = (3, 41) } in
+  let pos4 = { filename = "test.ml"; start = (4, 10); stop = (4, 20) } in
+  let pos5 = { filename = "test.ml"; start = (5, 1); stop = (5, 17) } in
+  let expr =
+    FunApp (pos, Var (pos2, (pos3, "f")), Var (pos4, (pos5, "x")))
+  in
+  let out, _ = DotAST.dot_expr Meta.string_of_mi expr in
+  out
+
+let expected_typeconstr = 
+  "n0 [label=\"TypeConstr [test.ml: 1:15--1:16]\"];\n\
+  n0 -> n1;\n\
+  n0 -> n3;\n\
+  n1 [label=\"IntLit [test.ml: 2:20--2:50]\"];\n\
+  n1 -> n2;\n\
+  n2 [label=\"Int 1\"];\n\
+  n3 [label=\"Int Type [test.ml: 3:31--3:41]\"];\n"
+
+let test_typeconstr =
+  DotAST.node_counter := 0;
+  let pos = { filename = "test.ml"; start = (1, 15); stop = (1, 16) } in
+  let pos2 = { filename = "test.ml"; start = (2, 20); stop = (2, 50) } in
+  let pos3 = { filename = "test.ml"; start = (3, 31); stop = (3, 41) } in
+  let expr =
+    TypeConstr (pos, IntLit (pos2, 1), IntTy pos3)
+  in
+  let out, _ = DotAST.dot_expr Meta.string_of_mi expr in
+  out
+
+let expected_unop = 
+  "n0 [label=\"Unop [test.ml: 1:15--1:16]\"];\n\
+  n0 -> n1;\n\
+  n0 -> n2;\n\
+  n1 [label=\"Neg [test.ml: 2:20--2:50]\"];\n\
+  n2 [label=\"IntLit [test.ml: 3:31--3:41]\"];\n\
+  n2 -> n3;\n\
+  n3 [label=\"Int 1\"];\n"
+
+let test_unop =
+  DotAST.node_counter := 0;
+  let pos = { filename = "test.ml"; start = (1, 15); stop = (1, 16) } in
+  let pos2 = { filename = "test.ml"; start = (2, 20); stop = (2, 50) } in
+  let pos3 = { filename = "test.ml"; start = (3, 31); stop = (3, 41) } in
+  let expr =
+    Unop (pos, Neg pos2, IntLit (pos3, 1))
+  in
+  let out, _ = DotAST.dot_expr Meta.string_of_mi expr in
+  out
+
+let expected_binop = 
+  "n0 [label=\"Binop [test.ml: 1:15--1:16]\"];\n\
+  n0 -> n1;\n\
+  n0 -> n2;\n\
+  n0 -> n4;\n\
+  n1 [label=\"Plus [test.ml: 2:20--2:50]\"];\n\
+  n2 [label=\"IntLit [test.ml: 3:31--3:41]\"];\n\
+  n2 -> n3;\n\
+  n3 [label=\"Int 1\"];\n\
+  n4 [label=\"IntLit [test.ml: 4:10--4:20]\"];\n\
+  n4 -> n5;\n\
+  n5 [label=\"Int 3\"];\n"
+
+let test_binop =
+  DotAST.node_counter := 0;
+  let pos = { filename = "test.ml"; start = (1, 15); stop = (1, 16) } in
+  let pos2 = { filename = "test.ml"; start = (2, 20); stop = (2, 50) } in
+  let pos3 = { filename = "test.ml"; start = (3, 31); stop = (3, 41) } in
+  let pos4 = { filename = "test.ml"; start = (4, 10); stop = (4, 20) } in
+  let expr =
+    Binop (pos, Plus pos2, IntLit (pos3, 1), IntLit (pos4, 3))
+  in
+  let out, _ = DotAST.dot_expr Meta.string_of_mi expr in
+  out
+
+let expected_send = 
+  "n0 [label=\"Send [test.ml: 1:15--1:16]\"];\n\
+  n0 -> n1;\n\
+  n0 -> n2;\n\
+  n1 [label=\"TrueLit [test.ml: 2:20--2:50]\"];\n\
+  n2 [label=\"Name john [test.ml: 3:31--3:41]\"];\n"
+
+let test_send =
+  DotAST.node_counter := 0;
+  let pos = { filename = "test.ml"; start = (1, 15); stop = (1, 16) } in
+  let pos2 = { filename = "test.ml"; start = (2, 20); stop = (2, 50) } in
+  let pos3 = { filename = "test.ml"; start = (3, 31); stop = (3, 41) } in
+  let expr =
+    Send (pos, TrueLit pos2, (pos3, "john"))
+  in
+  let out, _ = DotAST.dot_expr Meta.string_of_mi expr in
+  out
+
+let expected_recv = 
+  "n0 [label=\"Recv [test.ml: 1:15--1:16]\"];\n\
+  n0 -> n1;\n\
+  n0 -> n2;\n\
+  n1 [label=\"Int Type [test.ml: 2:20--2:50]\"];\n\
+  n2 [label=\"Name susan [test.ml: 3:31--3:41]\"];\n"
+
+let test_recv =
+  DotAST.node_counter := 0;
+  let pos = { filename = "test.ml"; start = (1, 15); stop = (1, 16) } in
+  let pos2 = { filename = "test.ml"; start = (2, 20); stop = (2, 50) } in
+  let pos3 = { filename = "test.ml"; start = (3, 31); stop = (3, 41) } in
+  let expr =
+    Recv (pos, IntTy pos2, (pos3, "susan"))
+  in
+  let out, _ = DotAST.dot_expr Meta.string_of_mi expr in
+  out
+
+let expected_choose = 
+  "n0 [label=\"Binop [test.ml: 1:15--1:16]\"];\n\
+  n0 -> n1;\n\
+  n0 -> n2;\n\
+  n1 [label=\"Name alice [test.ml: 2:20--2:50]\"];\n\
+  n2 [label=\"Label\"];\n\
+  n2 -> n3;\n\
+  n3 [label=\"Name L [test.ml: 3:31--3:41]\"];\n"
+
+let test_choose =
+  DotAST.node_counter := 0;
+  let pos = { filename = "test.ml"; start = (1, 15); stop = (1, 16) } in
+  let pos2 = { filename = "test.ml"; start = (2, 20); stop = (2, 50) } in
+  let pos3 = { filename = "test.ml"; start = (3, 31); stop = (3, 41) } in
+  let expr =
+    ChooseFor (pos, (pos2, "alice"), Label (pos3, "L"))
+  in
+  let out, _ = DotAST.dot_expr Meta.string_of_mi expr in
+  out
+
+let expected_allow = 
+  "n0 [label=\"AllowChoice [test.ml: 1:15--1:16]\"];\n\
+  n0 -> n5;\n\
+  n0 -> n1;\n\
+  n5 [label=\"Name Alice [test.ml: 2:20--2:50]\"];\n\
+  n1 [label=\"Choice\"];\n\
+  n1 -> n2;\n\
+  n1 -> n4;\n\
+  n2 [label=\"Label\"];\n\
+  n2 -> n3;\n\
+  n3 [label=\"Name L [test.ml: 3:31--3:41]\"];\n\
+  n4 [label=\"TrueLit [test.ml: 4:10--4:20]\"];\n"
+
+let test_allow =
+  DotAST.node_counter := 0;
+  let pos = { filename = "test.ml"; start = (1, 15); stop = (1, 16) } in
+  let pos2 = { filename = "test.ml"; start = (2, 20); stop = (2, 50) } in
+  let pos3 = { filename = "test.ml"; start = (3, 31); stop = (3, 41) } in
+  let pos4 = { filename = "test.ml"; start = (4, 10); stop = (4, 20) } in
+  let expr =
+    AllowChoice (pos, (pos2, "Alice"), [ (Label (pos3, "L"), TrueLit pos4) ])
+  in
+  let out, _ = DotAST.dot_expr Meta.string_of_mi expr in
+  out
+
+let expected_ami = 
+  "n0 [label=\"AmI [test.ml: 1:15--1:16]\"];\n\
+  n0 -> n1;\n\
+  n1 [label=\"TrueLit [test.ml: 2:20--2:50]\"];\n"
+
+let test_ami =
+  DotAST.node_counter := 0;
+  let pos = { filename = "test.ml"; start = (1, 15); stop = (1, 16) } in
+  let pos2 = { filename = "test.ml"; start = (2, 20); stop = (2, 50) } in
+  let expr =
+    AmI (pos, TrueLit pos2)
+  in
+  let out, _ = DotAST.dot_expr Meta.string_of_mi expr in
   out
 
 let suite =
@@ -472,14 +766,14 @@ let suite =
     "loc type multiple" >:: test_eq_string expected_locty_mult test_locty_mult;
     "wildcard pat" >:: test_eq_string expected_wildcard test_wildcard;
     "var pat" >:: test_eq_string expected_varpat test_varpat;
-    "unitlit pat" >:: test_eq_string expected_unitlit test_unitlit;
-    "intlit pat" >:: test_eq_string expected_intlit test_intlit;
-    "floatlit pat" >:: test_eq_string expected_floatlit test_floatlit;
-    "charlit pat" >:: test_eq_string expected_charlit test_charlit;
-    "stringlit pat" >:: test_eq_string expected_stringlit test_stringlit;
-    "truelit pat" >:: test_eq_string expected_truelit test_truelit;
-    "falselit pat" >:: test_eq_string expected_falselit test_falselit;
-    "loclit pat" >:: test_eq_string expected_loclit test_loclit;
+    "unitlit pat" >:: test_eq_string expected_unitlit_pat test_unitlit_pat;
+    "intlit pat" >:: test_eq_string expected_intlit_pat test_intlit_pat;
+    "floatlit pat" >:: test_eq_string expected_floatlit_pat test_floatlit_pat;
+    "charlit pat" >:: test_eq_string expected_charlit_pat test_charlit_pat;
+    "stringlit pat" >:: test_eq_string expected_stringlit_pat test_stringlit_pat;
+    "truelit pat" >:: test_eq_string expected_truelit_pat test_truelit_pat;
+    "falselit pat" >:: test_eq_string expected_falselit_pat test_falselit_pat;
+    "loclit pat" >:: test_eq_string expected_loclit_pat test_loclit_pat;
     "constr pat" >:: test_eq_string expected_constr test_constr;
     "constr pat mult" >:: test_eq_string test_constr_mult expected_constr_mult;
     "locname pat" >:: test_eq_string expected_locname test_locname;
@@ -495,4 +789,23 @@ let suite =
     "leq" >:: test_eq_string expected_leq test_leq;
     "gt" >:: test_eq_string expected_gt test_gt;
     "geq" >:: test_eq_string expected_geq test_geq;
+    "varexpr" >:: test_eq_string expected_varexpr test_varexpr;
+    "unitlit" >:: test_eq_string expected_unitlit test_unitlit;
+    "intlit" >:: test_eq_string expected_intlit test_intlit;
+    "floatlit" >:: test_eq_string expected_floatlit test_floatlit;
+    "charlit" >:: test_eq_string expected_charlit test_charlit;
+    "stringlit" >:: test_eq_string expected_stringlit test_stringlit;
+    "truelit" >:: test_eq_string expected_truelit test_truelit;
+    "falselit" >:: test_eq_string expected_falselit test_falselit;
+    "loclit" >:: test_eq_string expected_loclit test_loclit;
+    "match" >:: test_eq_string expected_match test_match;
+    "recabs" >:: test_eq_string expected_recabs test_recabs;
+    "funapp" >:: test_eq_string expected_funapp test_funapp;
+    "typeconstr" >:: test_eq_string expected_typeconstr test_typeconstr;
+    "unop" >:: test_eq_string expected_unop test_unop;
+    "send" >:: test_eq_string expected_send test_send;
+    "recv" >:: test_eq_string expected_recv test_recv;
+    "choose" >:: test_eq_string expected_choose test_choose;
+    "allow" >:: test_eq_string expected_allow test_allow;
+    "ami" >:: test_eq_string expected_ami test_ami;
   ]
