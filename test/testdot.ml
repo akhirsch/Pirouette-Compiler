@@ -7,6 +7,8 @@ open Meta
 
 let test_eq_string s1 s2 _ = assert_equal ~printer:(fun x -> x) s1 s2
 
+(*-----typ tests-------*)
+
 (*VarTy*)
 let expected_varty =
   "n0 [label=\"Var Type [test.ml: 1:15--1:16]\"];\n\
@@ -126,6 +128,161 @@ let test_locty_mult =
   let out, _ = DotAST.dot_typ Meta.string_of_mi typ in
   out
 
+(*-----pattern tests-------*)
+
+(*Wildcard*)
+let expected_wildcard = "n0 [label=\"Wildcard Pat [test.ml: 1:15--1:16]\"];\n"
+
+let test_wildcard =
+  DotAST.node_counter := 0;
+  let pos = { filename = "test.ml"; start = (1, 15); stop = (1, 16) } in
+  let pat = WildcardPat pos in
+  let out, _ = DotAST.dot_pattern Meta.string_of_mi pat in
+  out
+
+(*Var pat*)
+let expected_varpat =
+  "n0 [label=\"Var Pat [test.ml: 1:15--1:16]\"];\n\
+   n0 -> n1;\n\
+   n1 [label=\"Name testvar [test.ml: 1:15--1:16]\"];\n"
+
+let test_varpat =
+  DotAST.node_counter := 0;
+  let pos = { filename = "test.ml"; start = (1, 15); stop = (1, 16) } in
+  let pat = VarPat (pos, (pos, "testvar")) in
+  let out, _ = DotAST.dot_pattern Meta.string_of_mi pat in
+  out
+
+(*Unit Lit*)
+let expected_unitlit = "n0 [label=\"Unit Lit Pat [test.ml: 1:15--1:16]\"];\n"
+
+let test_unitlit =
+  DotAST.node_counter := 0;
+  let pos = { filename = "test.ml"; start = (1, 15); stop = (1, 16) } in
+  let pat = UnitLitPat pos in
+  let out, _ = DotAST.dot_pattern Meta.string_of_mi pat in
+  out
+
+(*Int Lit*)
+let expected_intlit =
+  "n0 [label=\"Int Lit Pat [test.ml: 1:15--1:16]\"];\n\
+   n0 -> n1;\n\
+   n1 [label=\"Int 5\"];\n"
+
+let test_intlit =
+  DotAST.node_counter := 0;
+  let pos = { filename = "test.ml"; start = (1, 15); stop = (1, 16) } in
+  let pat = IntLitPat (pos, 5) in
+  let out, _ = DotAST.dot_pattern Meta.string_of_mi pat in
+  out
+
+(*Float Lit*)
+let expected_floatlit =
+  "n0 [label=\"Float Lit Pat [test.ml: 1:15--1:16]\"];\n\
+   n0 -> n1;\n\
+   n1 [label=\"Float 8.\"];\n"
+
+let test_floatlit =
+  DotAST.node_counter := 0;
+  let pos = { filename = "test.ml"; start = (1, 15); stop = (1, 16) } in
+  let pat = FloatLitPat (pos, 8.0) in
+  let out, _ = DotAST.dot_pattern Meta.string_of_mi pat in
+  out
+
+(*Char Lit*)
+let expected_charlit =
+  "n0 [label=\"Char Lit Pat [test.ml: 1:15--1:16]\"];\n\
+   n0 -> n1;\n\
+   n1 [label=\"Char P\"];\n"
+
+let test_charlit =
+  DotAST.node_counter := 0;
+  let pos = { filename = "test.ml"; start = (1, 15); stop = (1, 16) } in
+  let pat = CharLitPat (pos, 'P') in
+  let out, _ = DotAST.dot_pattern Meta.string_of_mi pat in
+  out
+
+(*String lit*)
+let expected_stringlit =
+  "n0 [label=\"String Lit Pat [test.ml: 1:15--1:16]\"];\n\
+   n0 -> n1;\n\
+   n1 [label=\"String Test string\"];\n"
+
+let test_stringlit =
+  DotAST.node_counter := 0;
+  let pos = { filename = "test.ml"; start = (1, 15); stop = (1, 16) } in
+  let pat = StringLitPat (pos, "Test string") in
+  let out, _ = DotAST.dot_pattern Meta.string_of_mi pat in
+  out
+
+(*True lit*)
+let expected_truelit = "n0 [label=\"True Lit Pat [test.ml: 1:15--1:16]\"];\n"
+
+let test_truelit =
+  DotAST.node_counter := 0;
+  let pos = { filename = "test.ml"; start = (1, 15); stop = (1, 16) } in
+  let pat = TrueLitPat pos in
+  let out, _ = DotAST.dot_pattern Meta.string_of_mi pat in
+  out
+
+(*False lit*)
+let expected_falselit = "n0 [label=\"False Lit Pat [test.ml: 1:15--1:16]\"];\n"
+
+let test_falselit =
+  DotAST.node_counter := 0;
+  let pos = { filename = "test.ml"; start = (1, 15); stop = (1, 16) } in
+  let pat = FalseLitPat pos in
+  let out, _ = DotAST.dot_pattern Meta.string_of_mi pat in
+  out
+
+(*Loc Lit*)
+let expected_loclit =
+  "n0 [label=\"Loc Lit Pat [test.ml: 1:15--1:16]\"];\n\
+   n0 -> n1;\n\
+   n1 [label=\"Name Alice [test.ml: 1:15--1:16]\"];\n"
+
+let test_loclit =
+  DotAST.node_counter := 0;
+  let pos = { filename = "test.ml"; start = (1, 15); stop = (1, 16) } in
+  let pat = LocLitPat (pos, (pos, "Alice")) in
+  let out, _ = DotAST.dot_pattern Meta.string_of_mi pat in
+  out
+
+(*Constructor*)
+let expected_constr =
+  "n0 [label=\"Constructor Pat [test.ml: 1:15--1:16]\"];\n\
+   n0 -> n1;\n\
+   n0 -> n2;\n\
+   n1 [label=\"Name Bob [test.ml: 2:20--2:50]\"];\n\
+   n2 [label=\"Var Pat [test.ml: 3:31--3:41]\"];\n\
+   n2 -> n3;\n\
+   n3 [label=\"Name testvar [test.ml: 3:31--3:41]\"];\n"
+
+let test_constr =
+  DotAST.node_counter := 0;
+  let pos = { filename = "test.ml"; start = (1, 15); stop = (1, 16) } in
+  let pos2 = { filename = "test.ml"; start = (2, 20); stop = (2, 50) } in
+  let pos3 = { filename = "test.ml"; start = (3, 31); stop = (3, 41) } in
+  let pat =
+    ConstructorPat (pos, (pos2, "Bob"), [ VarPat (pos3, (pos3, "testvar")) ])
+  in
+  let out, _ = DotAST.dot_pattern Meta.string_of_mi pat in
+  out
+
+(*Loc Name*)
+let expected_locname =
+  "n0 [label=\"Loc Name Pat [test.ml: 1:15--1:16]\"];\n\
+   n0 -> n1;\n\
+   n1 [label=\"Name Alice [test.ml: 1:15--1:16]\"];\n"
+
+let test_locname =
+  DotAST.node_counter := 0;
+  let pos = { filename = "test.ml"; start = (1, 15); stop = (1, 16) } in
+  let pat = LocNamePat (pos, (pos, "Alice")) in
+  let out, _ = DotAST.dot_pattern Meta.string_of_mi pat in
+  out
+
+(*------Operation tests-----------*)
 let suite =
   [
     "var type" >:: test_eq_string expected_varty test_varty;
@@ -138,4 +295,16 @@ let suite =
     "fun type" >:: test_eq_string expected_funty test_funty;
     "loc type" >:: test_eq_string expected_locty test_locty;
     "loc type multiple" >:: test_eq_string expected_locty_mult test_locty_mult;
+    "wildcard pat" >:: test_eq_string expected_wildcard test_wildcard;
+    "var pat" >:: test_eq_string expected_varpat test_varpat;
+    "unitlit pat" >:: test_eq_string expected_unitlit test_unitlit;
+    "intlit pat" >:: test_eq_string expected_intlit test_intlit;
+    "floatlit pat" >:: test_eq_string expected_floatlit test_floatlit;
+    "charlit pat" >:: test_eq_string expected_charlit test_charlit;
+    "stringlit pat" >:: test_eq_string expected_stringlit test_stringlit;
+    "truelit pat" >:: test_eq_string expected_truelit test_truelit;
+    "falselit pat" >:: test_eq_string expected_falselit test_falselit;
+    "loclit pat" >:: test_eq_string expected_loclit test_loclit;
+    "constr pat" >:: test_eq_string expected_constr test_constr;
+    "locname pat" >:: test_eq_string expected_locname test_locname;
   ]
