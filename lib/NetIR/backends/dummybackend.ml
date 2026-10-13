@@ -12,12 +12,11 @@ let loc = Location.none
    it defines send, recv, choose, recv_label, me
     runs when the generated file runs, and does the logging.*)
 
-    (* log also what are sending and recieveing we want a log that is very deatailed
+(* log also what are sending and recieveing we want a log that is very deatailed
     this is going to be helpful for cram tests so we have all *)
-    
+
 (* ---- Identity ---------- *)
-let who_i_am me =
-      [%stri let _ = [%e estring ~loc me]]
+let who_i_am me = [%stri let _ = [%e estring ~loc me]]
 
 (* ---- Log helper ---------------------
    Append one line to the log file privet HELPER to this module 
@@ -29,7 +28,7 @@ let who_i_am me =
 (* ---- Outgoing operations ---------
    Handled at this point: log the event, return unit, continue
    no payload
-   CONFIRM WITH ANDREW — we only record THAT something was sent to [dest], not its value? *)
+   CONFIRM WITH ANDREW — we only record THAT something was sent to [dest], we also want the value *)
 
 (* TODO: implement send : string -> 'a -> unit
    Logs that a value was sent to [dest] 

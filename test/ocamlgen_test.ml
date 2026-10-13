@@ -21,21 +21,24 @@ let test_expr expected e _ =
   assert_equal ~printer:(fun x -> x) expected (expr_str e)
 
 (*  VARIANT HELPERS *)
-    let decl_structure d = Ppxlib.Pprintast.string_of_structure [G.decl_gen d]
-    (* G is my ocamlgen module *)
-    let test_decl expected d _ =
-      assert_equal 
-      ~printer:(fun s -> "\n>>>\n" ^ s ^ "\n<<<\n")
+let decl_structure d = Ppxlib.Pprintast.string_of_structure [ G.decl_gen d ]
+
+(* G is my ocamlgen module *)
+let test_decl expected d _ =
+  assert_equal
+    ~printer:(fun s -> "\n>>>\n" ^ s ^ "\n<<<\n")
       (* added this so that when it prints in the terminal it is more clear to 
       the white space errors i am having with variants *)
     expected (decl_structure d)
 
 (*  PROGRAM GEN HELPERS *)
-    let prog_structure me p = Ppxlib.Pprintast.string_of_structure (G.program_gen me p)
-    let test_program expected me p _ = 
-      assert_equal
-      ~printer:(fun s -> "\n>>>\n" ^ s ^ "\n<<<\n")
-      expected (prog_structure me p)
+let prog_structure me p =
+  Ppxlib.Pprintast.string_of_structure (G.program_gen me p)
+
+let test_program expected me p _ =
+  assert_equal
+    ~printer:(fun s -> "\n>>>\n" ^ s ^ "\n<<<\n")
+    expected (prog_structure me p)
 
 (* TODO: Match RecAbs AllowChoice *)
 
@@ -70,27 +73,19 @@ let suite =
     (* -------------- Location check: Iam check ----------------*)
     (* AmI compares the given location against me the file's own identity*)
     "ami" >:: test_expr {|"A" = me|} (ami (loclit "A"));
-
     (*----------------- Variant Test ----------------------------*)
-
-    "empty_variant" >:: test_decl 
-    "type false = |"
-    (variantdecl "false" []);
-
-    "one_const_var" >:: test_decl 
-    (* NO white space after = and only two spaces for the constructor arms*)
-    "type color =\n  | Red "
-    (variantdecl "color"
-    [("red", [], varty "color")]);
-
-    "two_const_var" >:: test_decl
-    "type color =\n  | Red \n  | Black "
-    (variantdecl "color"
-    [("red", [], varty "color"); 
-     ("black", [], varty "color")]);
-
-  (*--------------------Program Gen Test --------------------------*)
-  (*"empty program" >:: test_eq_string "" (prettify_prog []);
+    "empty_variant" >:: test_decl "type false = |" (variantdecl "false" []);
+    "one_const_var"
+    >:: test_decl
+          (* NO white space after = and only two spaces for the constructor arms*)
+          "type color =\n  | Red "
+          (variantdecl "color" [ ("red", [], varty "color") ]);
+    "two_const_var"
+    >:: test_decl "type color =\n  | Red \n  | Black "
+          (variantdecl "color"
+             [ ("red", [], varty "color"); ("black", [], varty "color") ]);
+    (*--------------------Program Gen Test --------------------------*)
+    (*"empty program" >:: test_eq_string "" (prettify_prog []);
     "one-decl program"
     >:: test_eq_string "type foo := bar"
           (prettify_prog [ typealiasdecl "foo" (varty "bar") ]);
@@ -98,19 +93,15 @@ let suite =
     >:: test_eq_string "type foo := bar\ndata false :="
           (prettify_prog
              [ typealiasdecl "foo" (varty "bar"); variantdecl "false" [] ]);*)
-    "empty_program" >:: test_program 
-    {|let _ = "alice"|}
-    "alice" [];
-
-    "one_decl_prog" >:: test_program 
-    ("let _ = \"alice\"\n" ^ 
-    "type nonrec foo = 'bar")
-    "alice" [ typealiasdecl "foo" (varty "bar") ];
-
-    "two_decl_prog" >:: test_program
-    ("let _ = \"alice\"\n" ^
-    "type nonrec foo = 'bar\n" ^
-    "type color = |")
-    "alice" [typealiasdecl "foo" (varty "bar");
-            variantdecl "color" [] ];
+    "empty_program" >:: test_program {|let _ = "alice"|} "alice" [];
+    "one_decl_prog"
+    >:: test_program
+          ("let _ = \"alice\"\n" ^ "type nonrec foo = 'bar")
+          "alice"
+          [ typealiasdecl "foo" (varty "bar") ];
+    "two_decl_prog"
+    >:: test_program
+          ("let _ = \"alice\"\n" ^ "type nonrec foo = 'bar\n" ^ "type color = |")
+          "alice"
+          [ typealiasdecl "foo" (varty "bar"); variantdecl "color" [] ];
   ]

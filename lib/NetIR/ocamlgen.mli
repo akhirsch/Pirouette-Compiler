@@ -14,7 +14,6 @@ module type NetAST = Ast.AST
 open Ppxlib
 
 module MkOcamlGen : functor (Net : NetAST) -> sig
-
   val type_gen : Net.typ -> core_type
   (** Convert a NetIR type into an OCaml core type *)
 
@@ -37,5 +36,4 @@ module MkOcamlGen : functor (Net : NetAST) -> sig
   (** Conver a Decl expression into an Ppxlib structure item *)
 
   val program_gen : string -> Net.program -> structure
-  
 end

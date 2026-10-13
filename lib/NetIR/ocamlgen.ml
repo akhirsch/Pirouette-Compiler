@@ -5,7 +5,6 @@ open Ast_builder.Default
 open Backend
 
 module MkOcamlGen (Net : NetAST) = struct
-
   (* with this declared now i can write Net.___ avoiding name conflicts *)
   let loc = Location.none
   (* every node in ppxlib AST carries a location *)
@@ -114,7 +113,7 @@ module MkOcamlGen (Net : NetAST) = struct
        ~guard is the optional [when] clause — NetIR has none, so always None. *)
         let cases =
           List.map
-            (fun (pat, body) -> 
+            (fun (pat, body) ->
               case
                 ~lhs:(pattern_gen pat) (* NetIR pattern -> OCaml pattern *)
                 ~guard:None
@@ -174,7 +173,11 @@ module MkOcamlGen (Net : NetAST) = struct
           (*case: ~lhs ~guard ~rhs builder needed to build the ppxlib node through ast_builder *)
             ~lhs:[%pat? other]
             ~guard:None
-            ~rhs:[%expr failwith (Printf.sprintf "unexpected label %s from %s" <the label> [%e estring ~loc n])]
+            ~rhs:
+              [%expr
+                failwith
+                  (Printf.sprintf "unexpected label %s from %s"
+                  < the label > [%e estring ~loc n])]
           (* Error Reporting:  *)
         in
         pexp_match ~loc
@@ -187,10 +190,14 @@ module MkOcamlGen (Net : NetAST) = struct
   (*------------------- DECL GENRATION ---------------------------*)
   let decl_gen (d : Net.decl) : structure_item =
     match d with
-    | Net.EmulatedLocDecl (_, (_, l)) -> [%stri let _ = (let _emulated_location = [%e estring ~loc l] in ())]
-    | Net.TypeDecl (_, (_, n), t) -> 
-      Ast_helper.Str.type_ ~loc Recursive
-        [ Ast_helper.Type.mk ~loc ~manifest:(type_gen t) { txt = n; loc}]
+    | Net.EmulatedLocDecl (_, (_, l)) ->
+        [%stri
+          let _ =
+            let _emulated_location = [%e estring ~loc l] in
+            ()]
+    | Net.TypeDecl (_, (_, n), t) ->
+        Ast_helper.Str.type_ ~loc Recursive
+          [ Ast_helper.Type.mk ~loc ~manifest:(type_gen t) { txt = n; loc } ]
     | Net.TypeAliasDecl (_, (_, n), t) ->
         (* n: Name
          t: type  
@@ -216,63 +223,81 @@ module MkOcamlGen (Net : NetAST) = struct
           (* manifest: is this equal to some other existing tyoe: YES thats an alias *)
           (* manifest actually gives that = sign *)
         in
-          pstr_type ~loc Nonrecursive [ td ]
+        pstr_type ~loc Nonrecursive [ td ]
         (* pstr_type is how we build a a top level type
         the type will not refrence itself type apple = apple is pointless so this is non recursive *)
     | Net.DefnDecl (_, (_, id), ps, e) ->
-        let body = List.fold_right
-          (fun p mkfun -> [%expr fun [%p pattern_gen p] -> [%e mkfun]])
-          ps (expr_gen e)
-        in 
-          [%stri let [%p Ast_builder.Default.pvar ~loc id] = [%e body]]
-    | Net.ImportDecl (_, (_, n)) -> 
-      let module_id = Ppxlib.Ast_builder.Default.pmod_ident ~loc 
-        (Located.lident ~loc (String.capitalize_ascii n))
-        (* include Mymodule 
+        let body =
+          List.fold_right
+            (fun p mkfun -> [%expr fun [%p pattern_gen p] -> [%e mkfun]])
+            ps (expr_gen e)
+        in
+        [%stri let [%p Ast_builder.Default.pvar ~loc id] = [%e body]]
+    | Net.ImportDecl (_, (_, n)) ->
+        let module_id =
+          Ppxlib.Ast_builder.Default.pmod_ident ~loc
+            (Located.lident ~loc (String.capitalize_ascii n))
+          (* include Mymodule 
         where the module or file that we are importing needs to be capitalized *)
-      in
+        in
         [%stri include [%m module_id]]
     (* of m * name 
       let name = Located.lident ~loc (String.capitalize_ascii n) in 
       (* ocaml Module name must be capatlized *)
         Pstr_include ~loc (Pmod_ident name) 
        Ocaml include N *)
-    | Net.VariantDecl (_, (_, n), cs) -> 
-      (* val constructor_declaration :
+    | Net.VariantDecl (_, (_, n), cs) ->
+        (* val constructor_declaration :
       loc:location -> 
       name:string loc -> using Located.mk ~loc n (binding the location to the name)
       args:constructor_arguments -> res:core_type option -> constructor_declaration*)
-      let constructor_gen ((_, cname),ts, _result) = 
-        constructor_declaration 
-        ~loc
-        ~name: (Located.mk ~loc (String.capitalize_ascii cname)) (* constructor names bounded to the location and capatalized *)
-        ~args: (Pcstr_tuple (List.map type_gen ts)) 
-        (* will be a tuple the smart constructor looks like this 
+        let constructor_gen ((_, cname), ts, _result) =
+          constructor_declaration ~loc
+            ~name:(Located.mk ~loc (String.capitalize_ascii cname))
+              (* constructor names bounded to the location and capatalized *)
+            ~args:(Pcstr_tuple (List.map type_gen ts))
+              (* will be a tuple the smart constructor looks like this 
         variantDecl "color"[("red", [], varty "color")] *)
-        ~res: None
-      in 
-      let td = 
-      (* val type_declaration :
+            ~res:None
+        in
+        let td =
+          (* val type_declaration :
     loc:location ->
     name:string loc ->
     params:(core_type * (variance * injectivity)) list ->
     cstrs:(core_type * core_type * location) list ->
     kind:type_kind ->
     private_:private_flag -> manifest:core_type option -> type_declaration*)
-      type_declaration ~loc
-      ~name: (Located.mk ~loc n)
-      ~params: []
-      ~cstrs: []
-      ~kind: (Ptype_variant (List.map constructor_gen cs))
-      ~private_: Public
-      ~manifest: None
-    in
-    pstr_type ~loc Recursive [td]
+          type_declaration ~loc ~name:(Located.mk ~loc n) ~params:[] ~cstrs:[]
+            ~kind:(Ptype_variant (List.map constructor_gen cs))
+            ~private_:Public ~manifest:None
+        in
+        pstr_type ~loc Recursive [ td ]
 
-
-  let program_gen (me : string) (prog : Net.program) : structure = 
+  (*let program_gen (me : string) (prog : Net.program) : structure = 
 
     let who_i_am = Dummybackend.who_i_am me in
-      who_i_am :: List.map decl_gen prog
+      who_i_am :: List.map decl_gen prog*)
 
+  (* program_gen: builds the full OCaml file for one participant
+     [me] is the participant's name (ex "Alice") known at compile time
+     [prog] is that participant's NetIR program *)
+  let program_gen (me : string) (prog : Net.program) : structure =
+    (* Identity header placed at the top of every generated file
+       Inside [%e ...] [me] is this function's parameter (the real string)
+       Everywhere else inside the quotes [me] is just text in the output *)
+    let who_i_am_items =
+      [
+        (* Generated: let me = "Alice"
+           Binds [me] so AmI checks like ("A" = me) compile *)
+        [%stri let me = [%e estring ~loc me]];
+        (* Generated: let () = Dummybackend.who_i_am me
+           Runs at startup and tells the runtime who this participant is,
+           so every log line can be prefixed with the name *)
+        [%stri let () = Dummybackend.who_i_am me];
+      ]
+    in
+
+    (* Header first, then each translated declaration in program order. *)
+    who_i_am_items @ List.map decl_gen prog
 end
