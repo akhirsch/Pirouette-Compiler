@@ -317,6 +317,147 @@ let test_locname =
   out
 
 (*------Operation tests-----------*)
+
+(*Neg*)
+let expected_neg = "n0 [label=\"Neg [test.ml: 1:15--1:16]\"];\n"
+
+let test_neg =
+  DotAST.node_counter := 0;
+  let pos = { filename = "test.ml"; start = (1, 15); stop = (1, 16) } in
+  let op = Neg pos in
+  let out, _ = DotAST.dot_unop Meta.string_of_mi op in
+  out
+
+(*Not*)
+let expected_not = "n0 [label=\"Not [test.ml: 1:15--1:16]\"];\n"
+
+let test_not =
+  DotAST.node_counter := 0;
+  let pos = { filename = "test.ml"; start = (1, 15); stop = (1, 16) } in
+  let op = Not pos in
+  let out, _ = DotAST.dot_unop Meta.string_of_mi op in
+  out
+
+(*Plus*)
+let expected_plus = "n0 [label=\"Plus [test.ml: 1:15--1:16]\"];\n"
+
+let test_plus =
+  DotAST.node_counter := 0;
+  let pos = { filename = "test.ml"; start = (1, 15); stop = (1, 16) } in
+  let op = Plus pos in
+  let out, _ = DotAST.dot_binop Meta.string_of_mi op in
+  out
+
+(*Minus*)
+let expected_minus = "n0 [label=\"Minus [test.ml: 1:15--1:16]\"];\n"
+
+let test_minus =
+  DotAST.node_counter := 0;
+  let pos = { filename = "test.ml"; start = (1, 15); stop = (1, 16) } in
+  let op = Minus pos in
+  let out, _ = DotAST.dot_binop Meta.string_of_mi op in
+  out
+
+(*Times*)
+let expected_times = "n0 [label=\"Times [test.ml: 1:15--1:16]\"];\n"
+
+let test_times =
+  DotAST.node_counter := 0;
+  let pos = { filename = "test.ml"; start = (1, 15); stop = (1, 16) } in
+  let op = Times pos in
+  let out, _ = DotAST.dot_binop Meta.string_of_mi op in
+  out
+
+(*Div*)
+let expected_div = "n0 [label=\"Div [test.ml: 1:15--1:16]\"];\n"
+
+let test_div =
+  DotAST.node_counter := 0;
+  let pos = { filename = "test.ml"; start = (1, 15); stop = (1, 16) } in
+  let op = Div pos in
+  let out, _ = DotAST.dot_binop Meta.string_of_mi op in
+  out
+
+(*And*)
+let expected_and = "n0 [label=\"And [test.ml: 1:15--1:16]\"];\n"
+
+let test_and =
+  DotAST.node_counter := 0;
+  let pos = { filename = "test.ml"; start = (1, 15); stop = (1, 16) } in
+  let op = And pos in
+  let out, _ = DotAST.dot_binop Meta.string_of_mi op in
+  out
+
+(*Or*)
+let expected_or = "n0 [label=\"Or [test.ml: 1:15--1:16]\"];\n"
+
+let test_or =
+  DotAST.node_counter := 0;
+  let pos = { filename = "test.ml"; start = (1, 15); stop = (1, 16) } in
+  let op = Or pos in
+  let out, _ = DotAST.dot_binop Meta.string_of_mi op in
+  out
+
+(*Eq*)
+let expected_eq = "n0 [label=\"Eq [test.ml: 1:15--1:16]\"];\n"
+
+let test_eq =
+  DotAST.node_counter := 0;
+  let pos = { filename = "test.ml"; start = (1, 15); stop = (1, 16) } in
+  let op = Eq pos in
+  let out, _ = DotAST.dot_binop Meta.string_of_mi op in
+  out
+
+(*Neq*)
+let expected_neq = "n0 [label=\"Neq [test.ml: 1:15--1:16]\"];\n"
+
+let test_neq =
+  DotAST.node_counter := 0;
+  let pos = { filename = "test.ml"; start = (1, 15); stop = (1, 16) } in
+  let op = Neq pos in
+  let out, _ = DotAST.dot_binop Meta.string_of_mi op in
+  out
+
+(*Lt*)
+let expected_lt = "n0 [label=\"Lt [test.ml: 1:15--1:16]\"];\n"
+
+let test_lt =
+  DotAST.node_counter := 0;
+  let pos = { filename = "test.ml"; start = (1, 15); stop = (1, 16) } in
+  let op = Lt pos in
+  let out, _ = DotAST.dot_binop Meta.string_of_mi op in
+  out
+
+(*Leq*)
+let expected_leq = "n0 [label=\"Leq [test.ml: 1:15--1:16]\"];\n"
+
+let test_leq =
+  DotAST.node_counter := 0;
+  let pos = { filename = "test.ml"; start = (1, 15); stop = (1, 16) } in
+  let op = Leq pos in
+  let out, _ = DotAST.dot_binop Meta.string_of_mi op in
+  out
+
+(*Gt*)
+let expected_gt = "n0 [label=\"Gt [test.ml: 1:15--1:16]\"];\n"
+
+let test_gt =
+  DotAST.node_counter := 0;
+  let pos = { filename = "test.ml"; start = (1, 15); stop = (1, 16) } in
+  let op = Gt pos in
+  let out, _ = DotAST.dot_binop Meta.string_of_mi op in
+  out
+
+(*Geq*)
+let expected_geq = "n0 [label=\"Geq [test.ml: 1:15--1:16]\"];\n"
+
+let test_geq =
+  DotAST.node_counter := 0;
+  let pos = { filename = "test.ml"; start = (1, 15); stop = (1, 16) } in
+  let op = Geq pos in
+  let out, _ = DotAST.dot_binop Meta.string_of_mi op in
+  out
+
 let suite =
   [
     "var type" >:: test_eq_string expected_varty test_varty;
@@ -342,4 +483,16 @@ let suite =
     "constr pat" >:: test_eq_string expected_constr test_constr;
     "constr pat mult" >:: test_eq_string test_constr_mult expected_constr_mult;
     "locname pat" >:: test_eq_string expected_locname test_locname;
+    "plus" >:: test_eq_string expected_plus test_plus;
+    "minus" >:: test_eq_string expected_minus test_minus;
+    "times" >:: test_eq_string expected_times test_times;
+    "div" >:: test_eq_string expected_div test_div;
+    "and" >:: test_eq_string expected_and test_and;
+    "or" >:: test_eq_string expected_or test_or;
+    "eq" >:: test_eq_string expected_eq test_eq;
+    "neq" >:: test_eq_string expected_neq test_neq;
+    "lt" >:: test_eq_string expected_lt test_lt;
+    "leq" >:: test_eq_string expected_leq test_leq;
+    "gt" >:: test_eq_string expected_gt test_gt;
+    "geq" >:: test_eq_string expected_geq test_geq;
   ]
