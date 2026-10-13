@@ -64,10 +64,13 @@ let suite =
     "funapp" >:: test_expr "f 4" (funapp (var "f") (intlit 4));
     "annot" >:: test_expr "(3 : int)" (typeconstr (intlit 3) intty);
     (*--------- Communication: calls to Dummybackend -----------*)
-    "send" >:: test_expr {|Dummybackend.send "A" 3|} (send (intlit 3) "A");
-    "recv" >:: test_expr {|(Dummybackend.recv "A" : int)|} (recv intty "A");
+    "send"
+    >:: test_expr {|Backend.Dummybackend.send "A" 3|} (send (intlit 3) "A");
+    "recv"
+    >:: test_expr {|(Backend.Dummybackend.recv "A" : int)|} (recv intty "A");
     "choose"
-    >:: test_expr {|Dummybackend.choose "A" "L"|} (choosefor "A" (mklab "L"));
+    >:: test_expr {|Backend.Dummybackend.choose "A" "L"|}
+          (choosefor "A" (mklab "L"));
     (* mklab is in nometa.ml *)
 
     (* -------------- Location check: Iam check ----------------*)
@@ -94,16 +97,22 @@ let suite =
           (prettify_prog
              [ typealiasdecl "foo" (varty "bar"); variantdecl "false" [] ]);*)
     "empty_program"
-    >:: test_program ("let me = \"alice\"\nlet () = Dummybackend.who_i_am me")
+    >:: test_program
+          "let me = \"alice\"\nlet () = Backend.Dummybackend.who_i_am me"
           "alice" [];
     "one_decl_prog"
     >:: test_program
-          ("let me = \"alice\"\nlet () = Dummybackend.who_i_am me\ntype nonrec foo = 'bar")
+          "let me = \"alice\"\n\
+           let () = Backend.Dummybackend.who_i_am me\n\
+           type nonrec foo = 'bar"
           "alice"
           [ typealiasdecl "foo" (varty "bar") ];
     "two_decl_prog"
     >:: test_program
-          ("let me = \"alice\"\nlet () = Dummybackend.who_i_am me\ntype nonrec foo = 'bar\ntype color = |")
+          "let me = \"alice\"\n\
+           let () = Backend.Dummybackend.who_i_am me\n\
+           type nonrec foo = 'bar\n\
+           type color = |"
           "alice"
           [ typealiasdecl "foo" (varty "bar"); variantdecl "color" [] ];
   ]

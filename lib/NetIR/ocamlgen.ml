@@ -142,14 +142,15 @@ module MkOcamlGen (Net : NetAST) = struct
     | Net.Binop (_, b, e1, e2) -> binop_gen b (expr_gen e1) (expr_gen e2)
     (* Communication Primitives *)
     | Net.Send (_, e, (_, n)) ->
-        [%expr Dummybackend.send [%e estring ~loc n] [%e expr_gen e]]
+        [%expr Backend.Dummybackend.send [%e estring ~loc n] [%e expr_gen e]]
     (* Send e  to n, e is the payload and n is the name which holds a location *)
     | Net.Recv (_, t, (_, n)) ->
-        [%expr (Dummybackend.recv [%e estring ~loc n] : [%t type_gen t])]
+        [%expr
+          (Backend.Dummybackend.recv [%e estring ~loc n] : [%t type_gen t])]
     (*of m * typ * name  Recv t from n *)
     | Net.ChooseFor (_, (_, n), l) ->
         [%expr
-          Dummybackend.choose [%e estring ~loc n]
+          Backend.Dummybackend.choose [%e estring ~loc n]
             [%e estring ~loc (label_gen l)]]
     (* a runtime call with a fixed text l is a Label of name *)
     (* works directly with AllowChoice *)
@@ -182,7 +183,7 @@ module MkOcamlGen (Net : NetAST) = struct
         pexp_match ~loc
           (* pexp_match takes a case list, and case
         case: ~lhs ~guard ~rhs *)
-          [%expr Dummybackend.recv_label [%e estring ~loc n]]
+          [%expr Backend.Dummybackend.recv_label [%e estring ~loc n]]
           (cases @ [ fallback ])
     | Net.AmI (_, e) -> [%expr [%e expr_gen e] = me]
 

@@ -12,8 +12,7 @@ let who_i_am name = me := name
 (* ---- log helper ---- *)
 (* print to stdout instead of a file
    cram captures this directly so no log files to clean up *)
-let log (msg : string) : unit =
-  Printf.printf "%s: %s\n%!" !me msg
+let log (msg : string) : unit = Printf.printf "%s: %s\n%!" !me msg
 
 (* ---- outgoing ----
    just log and return unit and keep going
