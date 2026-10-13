@@ -2,7 +2,6 @@ module type NetAST = Ast.AST
 
 open Ppxlib
 open Ast_builder.Default
-open Backend
 
 module MkOcamlGen (Net : NetAST) = struct
   (* with this declared now i can write Net.___ avoiding name conflicts *)
@@ -294,7 +293,7 @@ module MkOcamlGen (Net : NetAST) = struct
         (* Generated: let () = Dummybackend.who_i_am me
            Runs at startup and tells the runtime who this participant is,
            so every log line can be prefixed with the name *)
-        [%stri let () = Dummybackend.who_i_am me];
+        [%stri let () = Backend.Dummybackend.who_i_am me];
       ]
     in
 

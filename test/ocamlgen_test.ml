@@ -93,15 +93,17 @@ let suite =
     >:: test_eq_string "type foo := bar\ndata false :="
           (prettify_prog
              [ typealiasdecl "foo" (varty "bar"); variantdecl "false" [] ]);*)
-    "empty_program" >:: test_program {|let _ = "alice"|} "alice" [];
+    "empty_program"
+    >:: test_program ("let me = \"alice\"\nlet () = Dummybackend.who_i_am me")
+          "alice" [];
     "one_decl_prog"
     >:: test_program
-          ("let _ = \"alice\"\n" ^ "type nonrec foo = 'bar")
+          ("let me = \"alice\"\nlet () = Dummybackend.who_i_am me\ntype nonrec foo = 'bar")
           "alice"
           [ typealiasdecl "foo" (varty "bar") ];
     "two_decl_prog"
     >:: test_program
-          ("let _ = \"alice\"\n" ^ "type nonrec foo = 'bar\n" ^ "type color = |")
+          ("let me = \"alice\"\nlet () = Dummybackend.who_i_am me\ntype nonrec foo = 'bar\ntype color = |")
           "alice"
           [ typealiasdecl "foo" (varty "bar"); variantdecl "color" [] ];
   ]
