@@ -153,7 +153,9 @@ module MkOcamlGen (Net : NetAST) = struct
        pass the expected type as text so the log shows it *)
     | Net.Recv (_, t, (_, n)) ->
         let ty = type_gen t in
-        let ty_text = estring ~loc (Format.asprintf "%a" Pprintast.core_type ty) in
+        let ty_text =
+          estring ~loc (Format.asprintf "%a" Pprintast.core_type ty)
+        in
         [%expr
           (Backend.Dummybackend.recv [%e estring ~loc n] [%e ty_text] : [%t ty])]
     | Net.ChooseFor (_, (_, n), l) ->

@@ -95,7 +95,8 @@ let suite =
     "send"
     >:: test_expr {|Backend.Dummybackend.send "A" "3" 3|} (send (intlit 3) "A");
     "recv"
-    >:: test_expr {|(Backend.Dummybackend.recv "A" "int" : int)|} (recv intty "A");
+    >:: test_expr {|(Backend.Dummybackend.recv "A" "int" : int)|}
+          (recv intty "A");
     "choose"
     >:: test_expr {|Backend.Dummybackend.choose "A" "L"|}
           (choosefor "A" (mklab "L"));
