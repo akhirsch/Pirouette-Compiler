@@ -10,7 +10,7 @@ val who_i_am : string -> unit
 (* ---- outgoing ---- *)
 (* send dest v  logs that we would have sent to dest
    payload ignored for now ASK ANDREW *)
-val send : string -> 'a -> unit
+val send : string -> string -> 'a -> unit
 
 (* choose dest label  logs which label got picked for dest *)
 val choose : string -> string -> unit
@@ -18,7 +18,7 @@ val choose : string -> string -> unit
 (* ---- incoming ---- *)
 (* recv src  logs the receive then fails for now
    ASK ANDREW what this should actually return *)
-val recv : string -> 'a
+val recv : string -> string -> 'a
 
 (* recv_label src  logs the label receive
    always a string bc the AllowChoice match uses it *)

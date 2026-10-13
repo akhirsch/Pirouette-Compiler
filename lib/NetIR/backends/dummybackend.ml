@@ -15,22 +15,21 @@ let who_i_am name = me := name
 let log (msg : string) : unit = Printf.printf "%s: %s\n%!" !me msg
 
 (* ---- outgoing ----
-   just log and return unit and keep going
-   ignoring the payload rn bc cant print a polymorphic 'a
-   without a converter ASK ANDREW if we want the value too *)
-let send (dest : string) (_v : 'a) : unit = log ("would have sent to " ^ dest)
+   what is the code text of the payload so the log shows whats being sent
+   v is the actual value passed along like andrew said
+   not printing v itself bc we dont know its type at runtime *)
+let send (dest : string) (what : string) (_v : 'a) : unit =
+  log ("would have sent " ^ what ^ " to " ^ dest)
 
 (* logs which label got picked for dest *)
 let choose (dest : string) (label : string) : unit =
   log ("would have chosen " ^ label ^ " for " ^ dest)
 
 (* ---- incoming ----
-   these have to return something so the program can keep going
-   but theres no real value to give back so idk yet
-   ASK ANDREW what recv should return
-   failwith for now so generated files still typecheck *)
-let recv (src : string) : 'a =
-  log ("would have received from " ^ src);
+   ty is the type we expected to get so the log shows that
+   still no real value to give back so failwith for now *)
+let recv (src : string) (ty : string) : 'a =
+  log ("would have received " ^ ty ^ " from " ^ src);
   failwith "Dummybackend.recv: no value (emulated)"
 
 (* same open question as recv but return type is always string

@@ -56,18 +56,46 @@ let suite =
     "var" >:: test_expr "x" (var "x");
     "unit" >:: test_expr "()" unitlit;
     "loclit" >:: test_expr {|"A"|} (loclit "A");
+    (*--------------------- Types --------------------------------*)
+    "unitty" >:: test_expr "(() : unit)" (typeconstr unitlit unitty);
+    "floatty" >:: test_expr "(3.5 : float)" (typeconstr (floatlit 3.5) floatty);
+    "charty" >:: test_expr "('c' : char)" (typeconstr (charlit 'c') charty);
+    "stringty"
+    >:: test_expr {|("hi" : string)|} (typeconstr (stringlit "hi") stringty);
+    "boolty" >:: test_expr "(true : bool)" (typeconstr truelit boolty);
+    "funty"
+    >:: test_expr "(f : int -> int)" (typeconstr (var "f") (funty intty intty));
     (*---------- Operators: unop/binop applied ----------------*)
     "plus" >:: test_expr "3 + 4" (mkplus (intlit 3) (intlit 4));
     "neg" >:: test_expr "~- 3" (unop neg (intlit 3));
     "not" >:: test_expr "not true" (unop not truelit);
+    "minus" >:: test_expr "3 - 4" (mkminus (intlit 3) (intlit 4));
+    "times" >:: test_expr "3 * 4" (mktimes (intlit 3) (intlit 4));
+    "div" >:: test_expr "3 / 4" (mkdiv (intlit 3) (intlit 4));
+    "and" >:: test_expr "true && false" (mkand truelit falselit);
+    "or" >:: test_expr "true || false" (mkor truelit falselit);
+    "eq" >:: test_expr "3 = 4" (mkeq (intlit 3) (intlit 4));
+    "neq" >:: test_expr "3 <> 4" (mkneq (intlit 3) (intlit 4));
+    "lt" >:: test_expr "3 < 4" (mklt (intlit 3) (intlit 4));
+    "leq" >:: test_expr "3 <= 4" (mkleq (intlit 3) (intlit 4));
+    "gt" >:: test_expr "3 > 4" (mkgt (intlit 3) (intlit 4));
+    "geq" >:: test_expr "3 >= 4" (mkgeq (intlit 3) (intlit 4));
+    "match_more_literals"
+    >:: test_expr {|match x with | 3.5 -> 1 | 'c' -> 2 | "A" -> 3|}
+          (mkmatch (var "x")
+             [
+               (floatlitpat 3.5, intlit 1);
+               (charlitpat 'c', intlit 2);
+               (loclitpat "A", intlit 3);
+             ]);
     (*----------- Application and type annotation --------------*)
     "funapp" >:: test_expr "f 4" (funapp (var "f") (intlit 4));
     "annot" >:: test_expr "(3 : int)" (typeconstr (intlit 3) intty);
     (*--------- Communication: calls to Dummybackend -----------*)
     "send"
-    >:: test_expr {|Backend.Dummybackend.send "A" 3|} (send (intlit 3) "A");
+    >:: test_expr {|Backend.Dummybackend.send "A" "3" 3|} (send (intlit 3) "A");
     "recv"
-    >:: test_expr {|(Backend.Dummybackend.recv "A" : int)|} (recv intty "A");
+    >:: test_expr {|(Backend.Dummybackend.recv "A" "int" : int)|} (recv intty "A");
     "choose"
     >:: test_expr {|Backend.Dummybackend.choose "A" "L"|}
           (choosefor "A" (mklab "L"));
@@ -76,16 +104,23 @@ let suite =
     (* -------------- Location check: Iam check ----------------*)
     (* AmI compares the given location against me the file's own identity*)
     "ami" >:: test_expr {|"A" = me|} (ami (loclit "A"));
-        (*---------------- AllowChoice ----------------------------*)
+    (*---------------- AllowChoice ----------------------------*)
     (* one arm: should turn into a match on recv_label *)
     "allowchoice_one"
     >:: test_expr
-          "match Backend.Dummybackend.recv_label \"A\" with\n| \"L\" -> 1\n| other -> failwith (Printf.sprintf \"unexpected label %s from %s\" other \"A\")"
+          "match Backend.Dummybackend.recv_label \"A\" with\n\
+           | \"L\" -> 1\n\
+           | other -> failwith (Printf.sprintf \"unexpected label %s from %s\" \
+           other \"A\")"
           (allowchoice "A" [ (mklab "L", intlit 1) ]);
     (* two arms so both branches show up in the match *)
     "allowchoice_two"
     >:: test_expr
-          "match Backend.Dummybackend.recv_label \"A\" with\n| \"L\" -> 1\n| \"R\" -> 2\n| other -> failwith (Printf.sprintf \"unexpected label %s from %s\" other \"A\")"
+          "match Backend.Dummybackend.recv_label \"A\" with\n\
+           | \"L\" -> 1\n\
+           | \"R\" -> 2\n\
+           | other -> failwith (Printf.sprintf \"unexpected label %s from %s\" \
+           other \"A\")"
           (allowchoice "A" [ (mklab "L", intlit 1); (mklab "R", intlit 2) ]);
     (*---------------- RecAbs ---------------------------------*)
     (* recursive function f with param x *)
@@ -101,15 +136,49 @@ let suite =
     >:: test_decl "type color =\n  | Red \n  | Black "
           (variantdecl "color"
              [ ("red", [], varty "color"); ("black", [], varty "color") ]);
+    (*---------------- Match Tests ---------------------------------*)
+    (* basic patterns: int literal, variable, wildcard *)
+    "match_basic"
+    >:: test_expr "match x with | 1 -> 10 | y -> y | _ -> 0"
+          (mkmatch (var "x")
+             [
+               (intlitpat 1, intlit 10);
+               (varpat "y", var "y");
+               (wildcardpat, intlit 0);
+             ]);
+    (* other literal patterns so more of pattern_gen gets hit *)
+    "match_literals"
+    >:: test_expr
+          "match x with | true -> 1 | false -> 2 | \"hi\" -> 3 | () -> 4"
+          (mkmatch (var "x")
+             [
+               (truelitpat, intlit 1);
+               (falselitpat, intlit 2);
+               (stringlitpat "hi", intlit 3);
+               (unitlitpat, intlit 4);
+             ]);
+    (* constructor pattern w an argument
+       lowercase on purpose bc ocamlgen capitalizes constructors *)
+    "match_constructor"
+    >:: test_expr "match x with | Bar n -> n | _ -> 0"
+          (mkmatch (var "x")
+             [
+               (constructorpat "bar" [ varpat "n" ], var "n");
+               (wildcardpat, intlit 0);
+             ]);
+    (*---------------- Decl Gen ---------------------------------*)
+    (* type decl *)
+    "typedecl" >:: test_decl "type foo = int" (typedecl "foo" intty);
+    (* import turns into include and the module name gets capitalized *)
+    "importdecl" >:: test_decl "include Mylib" (importdecl "mylib");
+    (* emulated location decl: just a no op binding at runtime *)
+    "emlocdecl"
+    >:: test_decl "let _ = let _emulated_location = \"alice\" in ()"
+          (emlocdecl "alice");
+    (* defn decl: f with one param x that returns x *)
+    "defndecl"
+    >:: test_decl "let f x = x" (defndecl "f" [ varpat "x" ] (var "x"));
     (*--------------------Program Gen Test --------------------------*)
-    (*"empty program" >:: test_eq_string "" (prettify_prog []);
-    "one-decl program"
-    >:: test_eq_string "type foo := bar"
-          (prettify_prog [ typealiasdecl "foo" (varty "bar") ]);
-    "two-decl program"
-    >:: test_eq_string "type foo := bar\ndata false :="
-          (prettify_prog
-             [ typealiasdecl "foo" (varty "bar"); variantdecl "false" [] ]);*)
     "empty_program"
     >:: test_program
           "let me = \"alice\"\nlet () = Backend.Dummybackend.who_i_am me"

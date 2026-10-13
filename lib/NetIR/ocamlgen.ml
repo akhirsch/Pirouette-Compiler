@@ -21,7 +21,7 @@ module MkOcamlGen (Net : NetAST) = struct
     | Net.StringTy _ -> [%type: string]
     | Net.BoolTy _ -> [%type: bool]
     | Net.FunTy (_, t1, t2) -> [%type: [%t type_gen t1] -> [%t type_gen t2]]
-    | Net.LocTy (_, _) -> [%type: Dummybackend.location]
+    | Net.LocTy (_, _) -> [%type: Backend.Dummybackend.location]
 
   (*------------------- PATTERN GENRATION ---------------------------*)
   (* Convert a NetIR pattern into an OCaml pattern *)
@@ -141,13 +141,21 @@ module MkOcamlGen (Net : NetAST) = struct
     | Net.Unop (_, u, e) -> unop_gen u (expr_gen e)
     | Net.Binop (_, b, e1, e2) -> binop_gen b (expr_gen e1) (expr_gen e2)
     (* Communication Primitives *)
+    (* Send e to n, e is the payload and n is the name which holds a location
+       pass the payload code text AND the value added this so that stdout testing for
+       the emulated background log holds more info here that is the payload and what *)
     | Net.Send (_, e, (_, n)) ->
-        [%expr Backend.Dummybackend.send [%e estring ~loc n] [%e expr_gen e]]
-    (* Send e  to n, e is the payload and n is the name which holds a location *)
-    | Net.Recv (_, t, (_, n)) ->
+        let payload = expr_gen e in
+        let what = estring ~loc (Pprintast.string_of_expression payload) in
         [%expr
-          (Backend.Dummybackend.recv [%e estring ~loc n] : [%t type_gen t])]
-    (*of m * typ * name  Recv t from n *)
+          Backend.Dummybackend.send [%e estring ~loc n] [%e what] [%e payload]]
+    (* of m * typ * name  Recv t from n
+       pass the expected type as text so the log shows it *)
+    | Net.Recv (_, t, (_, n)) ->
+        let ty = type_gen t in
+        let ty_text = estring ~loc (Format.asprintf "%a" Pprintast.core_type ty) in
+        [%expr
+          (Backend.Dummybackend.recv [%e estring ~loc n] [%e ty_text] : [%t ty])]
     | Net.ChooseFor (_, (_, n), l) ->
         [%expr
           Backend.Dummybackend.choose [%e estring ~loc n]
