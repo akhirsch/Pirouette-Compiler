@@ -269,6 +269,40 @@ let test_constr =
   let out, _ = DotAST.dot_pattern Meta.string_of_mi pat in
   out
 
+let expected_constr_mult =
+  "n0 [label=\"Constructor Pat [test.ml: 1:15--1:16]\"];\n\
+   n0 -> n1;\n\
+   n0 -> n2;\n\
+   n0 -> n4;\n\
+   n0 -> n5;\n\
+   n1 [label=\"Name Bob [test.ml: 2:20--2:50]\"];\n\
+   n2 [label=\"Var Pat [test.ml: 3:31--3:41]\"];\n\
+   n2 -> n3;\n\
+   n3 [label=\"Name testvar [test.ml: 3:31--3:41]\"];\n\
+   n4 [label=\"Unit Lit Pat [test.ml: 5:0--5:100]\"];\n\
+   n5 [label=\"Int Lit Pat [test.ml: 6:0--6:34]\"];\n\
+   n5 -> n6;\n\
+   n6 [label=\"Int 5\"];\n"
+
+let test_constr_mult =
+  DotAST.node_counter := 0;
+  let pos = { filename = "test.ml"; start = (1, 15); stop = (1, 16) } in
+  let pos2 = { filename = "test.ml"; start = (2, 20); stop = (2, 50) } in
+  let pos3 = { filename = "test.ml"; start = (3, 31); stop = (3, 41) } in
+  let pos4 = { filename = "test.ml"; start = (5, 0); stop = (5, 100) } in
+  let pos5 = { filename = "test.ml"; start = (6, 0); stop = (6, 34) } in
+
+  let pat =
+    ConstructorPat
+      ( pos,
+        (pos2, "Bob"),
+        [
+          VarPat (pos3, (pos3, "testvar")); UnitLitPat pos4; IntLitPat (pos5, 5);
+        ] )
+  in
+  let out, _ = DotAST.dot_pattern Meta.string_of_mi pat in
+  out
+
 (*Loc Name*)
 let expected_locname =
   "n0 [label=\"Loc Name Pat [test.ml: 1:15--1:16]\"];\n\
@@ -306,5 +340,6 @@ let suite =
     "falselit pat" >:: test_eq_string expected_falselit test_falselit;
     "loclit pat" >:: test_eq_string expected_loclit test_loclit;
     "constr pat" >:: test_eq_string expected_constr test_constr;
+    "constr pat mult" >:: test_eq_string test_constr_mult expected_constr_mult;
     "locname pat" >:: test_eq_string expected_locname test_locname;
   ]
