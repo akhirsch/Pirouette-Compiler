@@ -17,7 +17,6 @@ let pretty = ref false
 let input_filename = ref None
 let input_string = ref ""
 let output_file = ref ""
-let output = ref ""
 
 let get_file filename =
   (*we only want to allow for one file*)
@@ -37,30 +36,30 @@ let speclist =
     ("--pretty", Arg.Set pretty, "Pretty-print output");
   ]
 
+let compiler_output (ast : lexbuf) =
+  if !pretty then Format.asprintf "Pretty Print Placeholder"
+    (* _PLACEHOLDER ast PLACEHOLDER: the function should be something like Prettyprint.pp_program *)
+  else
+    let _ocaml_ast = _PLACEHOLDER ast in
+    (*PLACEHOLDER: replace with something like Ocamlgen.generate_ocaml *)
+    Format.asprintf "Ocamlgen Placeholder"
+(*  "%a@." Ppxlib.Pprintast.structure ocaml_ast     <----- Insert this once ocamlgen is implemented *)
+
 let run_compiler (ast : lexbuf) =
   (*if the --pretty flag was given, pretty print code to console.
     otherwise, print result to output file *)
   if !pretty && !output_file <> "" then
     failwith "Can't pretty print and have output"
   else
-    output :=
-      if !pretty then Format.asprintf "Pretty Print Placeholder"
-        (* _PLACEHOLDER ast PLACEHOLDER: the function should be something like Prettyprint.pp_program *)
-      else begin
-        let _ocaml_ast = _PLACEHOLDER ast in
-        (*PLACEHOLDER: replace with something like Ocamlgen.generate_ocaml *)
-        Format.asprintf "Ocamlgen Placeholder"
-        (*  "%a@." Ppxlib.Pprintast.structure ocaml_ast     <----- Insert this once ocamlgen is implemented *)
-      end;
-
-  match !output_file with
-  (*change output_file to an output stream, stdout for default*)
-  | "" -> print_string !output
-  | f ->
-      let output_in_folder = f in
-      let oc = open_out output_in_folder in
-      output_string oc !output;
-      close_out oc
+    let output = compiler_output ast in
+    match !output_file with
+    (*change output_file to an output stream, stdout for default*)
+    | "" -> print_string output
+    | f ->
+        let output_in_folder = f in
+        let oc = open_out output_in_folder in
+        output_string oc output;
+        close_out oc
 
 let _run_compiler_with_error_messaging (lexbuf : lexbuf) =
   match _PLACEHOLDER (* Netir.Parser.prog Netir.Lexer.read *) lexbuf with
