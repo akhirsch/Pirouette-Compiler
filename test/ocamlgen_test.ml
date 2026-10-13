@@ -76,6 +76,20 @@ let suite =
     (* -------------- Location check: Iam check ----------------*)
     (* AmI compares the given location against me the file's own identity*)
     "ami" >:: test_expr {|"A" = me|} (ami (loclit "A"));
+        (*---------------- AllowChoice ----------------------------*)
+    (* one arm: should turn into a match on recv_label *)
+    "allowchoice_one"
+    >:: test_expr
+          "match Backend.Dummybackend.recv_label \"A\" with\n| \"L\" -> 1\n| other -> failwith (Printf.sprintf \"unexpected label %s from %s\" other \"A\")"
+          (allowchoice "A" [ (mklab "L", intlit 1) ]);
+    (* two arms so both branches show up in the match *)
+    "allowchoice_two"
+    >:: test_expr
+          "match Backend.Dummybackend.recv_label \"A\" with\n| \"L\" -> 1\n| \"R\" -> 2\n| other -> failwith (Printf.sprintf \"unexpected label %s from %s\" other \"A\")"
+          (allowchoice "A" [ (mklab "L", intlit 1); (mklab "R", intlit 2) ]);
+    (*---------------- RecAbs ---------------------------------*)
+    (* recursive function f with param x *)
+    "recabs" >:: test_expr "let rec f x = x in f" (recabs "f" "x" (var "x"));
     (*----------------- Variant Test ----------------------------*)
     "empty_variant" >:: test_decl "type false = |" (variantdecl "false" []);
     "one_const_var"

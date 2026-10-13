@@ -176,9 +176,10 @@ module MkOcamlGen (Net : NetAST) = struct
             ~rhs:
               [%expr
                 failwith
-                  (Printf.sprintf "unexpected label %s from %s"
-                  < the label > [%e estring ~loc n])]
-          (* Error Reporting:  *)
+                  (Printf.sprintf "unexpected label %s from %s" other
+                     [%e estring ~loc n])]
+          (* Error Reporting: other is binding a pattern so the error message will icnlude the 
+          unexpected label that arrived. *)
         in
         pexp_match ~loc
           (* pexp_match takes a case list, and case
