@@ -1,9 +1,4 @@
-(library
+(test
  (name test)
- (modules testpretty test testdot)
+ (modules testpretty testparser test testdot)
  (libraries ounit2 netir metainfo))
-
-(executable
- (name testdotvisual)
- (modules testdotvisual)
- (libraries netir metainfo))
