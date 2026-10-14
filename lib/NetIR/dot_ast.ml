@@ -268,6 +268,21 @@ struct
           spf "%s [label=\"FalseLit %s\"];\n" node_name (string_of_info m)
         in
         (expr_node, node_name)
+    | ConstructorLit (m, name, exprs) ->
+        let expr_codes, node_names =
+          List.split (List.map (dot_expr string_of_info) exprs)
+        in
+        let c1, n1 = dot_name string_of_info name in
+        let match_node =
+          spf "%s [label=\"ConstructorLit %s\"];\n" node_name (string_of_info m)
+        in
+        let edges =
+          String.concat ""
+            (List.map (fun name -> spf "%s -> %s;\n" node_name name) node_names)
+        in
+        let codes = String.concat "" expr_codes in
+        let edge1 = spf "%s -> %s;\n" node_name n1 in
+        (match_node ^ edge1 ^ edges ^ c1 ^ codes, node_name)
     | LocLit (m, name) ->
         let c, n = dot_name string_of_info name in
         let expr_node =
