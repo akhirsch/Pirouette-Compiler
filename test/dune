@@ -1,8 +1,8 @@
-(test
+(library
  (name test)
  (modules testpretty test testdot)
  (libraries ounit2 netir metainfo))
- 
+
 (executable
  (name testdotvisual)
  (libraries netir metainfo))
