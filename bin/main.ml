@@ -46,20 +46,16 @@ let compiler_output (ast : lexbuf) =
 (*  "%a@." Ppxlib.Pprintast.structure ocaml_ast     <----- Insert this once ocamlgen is implemented *)
 
 let run_compiler (ast : lexbuf) =
-  (*if the --pretty flag was given, pretty print code to console.
-    otherwise, print result to output file *)
-  if !pretty && !output_file <> "" then
-    failwith "Can't pretty print and have output"
-  else
-    let output = compiler_output ast in
-    match !output_file with
-    (*change output_file to an output stream, stdout for default*)
-    | "" -> print_string output
-    | f ->
-        let output_in_folder = f in
-        let oc = open_out output_in_folder in
-        output_string oc output;
-        close_out oc
+  (*If the --pretty flag was given, output the pretty printed code instead of the generated ocaml.*)
+  let output = compiler_output ast in
+  match !output_file with
+  (*change output_file to an output stream, stdout for default*)
+  | "" -> print_string output
+  | f ->
+      let output_in_folder = f in
+      let oc = open_out output_in_folder in
+      output_string oc output;
+      close_out oc
 
 let _run_compiler_with_error_messaging (lexbuf : lexbuf) =
   match _PLACEHOLDER (* Netir.Parser.prog Netir.Lexer.read *) lexbuf with
