@@ -8,20 +8,20 @@ weight = 1
   <head>
     <meta charset="utf-8"/>
     <title>Coverage report</title>
-    <meta name="description" content="62.66% coverage overall"/>
+    <meta name="description" content="96.36% coverage overall"/>
     <link rel="stylesheet" type="text/css" href="coverage.css"/>
   </head>
   <body>
     <div id="header">
       <h1>Coverage report</h1>
-      <h2>62.66%</h2>
+      <h2>96.36%</h2>
     </div>
     <div id="files">
       <div>
         <span class="meter">
-          <span class="covered" style="width: 0%"></span>
+          <span class="covered" style="width: 33%"></span>
         </span>
-        <span class="percentage">0% <span class="stats">(0 / 3)</span></span>
+        <span class="percentage">33% <span class="stats">(1 / 3)</span></span>
         <a href="lib/Metainfo/meta.ml.html">
           <span class="dirname">lib/Metainfo/</span>meta.ml
         </a>
@@ -37,11 +37,11 @@ weight = 1
       </div>
       <div>
         <span class="meter">
-          <span class="covered" style="width: 89%"></span>
+          <span class="covered" style="width: 96%"></span>
         </span>
-        <span class="percentage">89% <span class="stats">(101 / 113)</span></span>
-        <a href="lib/NetIR/lexer.ml.html">
-          <span class="dirname">lib/NetIR/</span>lexer.ml
+        <span class="percentage">96% <span class="stats">(393 / 406)</span></span>
+        <a href="lib/NetIR/dot_ast.ml.html">
+          <span class="dirname">lib/NetIR/</span>dot_ast.ml
         </a>
       </div>
       <div>
@@ -51,24 +51,6 @@ weight = 1
         <span class="percentage">98% <span class="stats">(52 / 53)</span></span>
         <a href="lib/NetIR/nometa.ml.html">
           <span class="dirname">lib/NetIR/</span>nometa.ml
-        </a>
-      </div>
-      <div>
-        <span class="meter">
-          <span class="covered" style="width: 95%"></span>
-        </span>
-        <span class="percentage">95% <span class="stats">(60 / 63)</span></span>
-        <a href="lib/NetIR/parsed_ast_processing.ml.html">
-          <span class="dirname">lib/NetIR/</span>parsed_ast_processing.ml
-        </a>
-      </div>
-      <div>
-        <span class="meter">
-          <span class="covered" style="width: 54%"></span>
-        </span>
-        <span class="percentage">54% <span class="stats">(756 / 1390)</span></span>
-        <a href="lib/NetIR/parser.ml.html">
-          <span class="dirname">lib/NetIR/</span>parser.ml
         </a>
       </div>
       <div>
