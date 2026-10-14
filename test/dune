@@ -5,4 +5,5 @@
 
 (executable
  (name testdotvisual)
+ (modules testdotvisual)
  (libraries netir metainfo))
