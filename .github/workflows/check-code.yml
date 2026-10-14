@@ -9,7 +9,7 @@ on:
     branches:
       - 'main'
       - 'dev'
-      - 'newcompiler'
+
     paths-ignore:
       - '.githooks/**'
       - '**/LICENSE'
@@ -19,7 +19,7 @@ on:
     branches:
       - 'main'
       - 'dev'
-      - 'newcompiler'
+
     paths-ignore:
       - '.githooks/**'
       - '**/LICENSE'
@@ -28,6 +28,7 @@ on:
 permissions: read-all
 
 jobs:
+  #lints and formats the code
   lint-fmt:
     runs-on: ubuntu-latest
     steps:
@@ -42,6 +43,7 @@ jobs:
       - name: Lint and format
         uses: ocaml/setup-ocaml/lint-fmt@v3
 
+  #Checks that the project builds without errors
   build:
     strategy:
       fail-fast: false
@@ -71,6 +73,7 @@ jobs:
       - name: Build Docs
         run: opam exec -- dune build @doc
         
+  #Runs the test suite and checks that all tests pass
   Run-Test-Suite:
     strategy:
       fail-fast: false
@@ -86,6 +89,12 @@ jobs:
         with:
           ocaml-compiler: 5.2.1
 
+      - name: Install Dune
+        run: opam install dune
+
+      - name: Generate Opam
+        run: opam exec -- dune build @opam
+
       - name: Install dependencies
         run: opam install . --deps-only --with-test
 
@@ -95,10 +104,64 @@ jobs:
       - name: Run Tests
         run: |
           TEST_OUTPUT=$(opam exec -- dune test)
-          if [[ -n TEST_OUTPUT ]] ; # Ounit2 produces no output when all tests pass.
-          then
-            echo $TEST_OUTPUT
+          if [[ $? == 0 ]]; # $? stores the exit code of the last command
+          then echo "All tests were passed" 
+          else echo $TEST_OUTPUT 
             exit 1
-          else
-            echo "All tests were passed."
           fi
+  
+  #Runs Bisect and puts the html report on the zola site
+  Run-Bisect-Report:
+    strategy:
+      fail-fast: false
+    
+    permissions:
+      contents: write
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set-up OCaml
+        uses: ocaml/setup-ocaml@v3
+        with:
+          ocaml-compiler: 5.2.1
+
+      - name: Install Dune
+        run: opam install dune
+
+      - name: Generate Opam
+        run: opam exec -- dune build @opam
+
+      - name: Install dependencies
+        run: opam install . --deps-only --with-test
+
+      - name: Build
+        run: opam exec -- dune build  
+      
+      #Running Bisect, putting the generated html into an md file and adding frontmatter so zola can parse it
+      - name: Run Bisect
+        run: |
+            opam exec -- dune runtest --instrument-with bisect_ppx
+            opam exec -- bisect-ppx-report html
+            cat << 'EOF' > _coverage/index.md 
+            +++
+            title = "Bisect Report"
+            weight = 1
+            +++
+
+            EOF
+            cat _coverage/index.html >> _coverage/index.md
+            rm _coverage/index.html
+
+      #Taking our coverage directory and pushing it to the zola-site under compiler-documentation
+      - name: Deploy to zola-site
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./_coverage
+          publish_branch: zola-site
+          destination_dir: ./content/compiler-documentation/coverage
+          

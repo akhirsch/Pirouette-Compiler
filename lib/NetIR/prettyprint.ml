@@ -29,10 +29,10 @@ module MkPrettify (A : Ast.AST) = struct
     | FalseLitPat _ -> "false"
     | LocLitPat (_, (_, n)) -> n
     | ConstructorPat (_, (_, n), ps) ->
-        let s =
-          List.fold_left (fun s' p -> s' ^ " " ^ prettify_pattern p) "" ps
-        in
-        n ^ s
+        let s = String.concat " " (List.map prettify_pattern ps) in
+        (* List.fold_left (fun s' p -> s' ^ " " ^ prettify_pattern p) "" ps *)
+        let s' = if String.length s = 0 then s else " (" ^ s ^ ")" in
+        n ^ s'
     | LocNamePat (_, (_, n)) -> "[[" ^ n ^ "]]"
 
   let prettify_unop = function Neg _ -> "-" | Not _ -> "!"
@@ -65,6 +65,8 @@ module MkPrettify (A : Ast.AST) = struct
       | StringLit (_, s) -> "\"" ^ s ^ "\""
       | TrueLit _ -> "true"
       | FalseLit _ -> "false"
+      | ConstructorLit (_, (_, id), es) ->
+          id ^ " " ^ String.concat " " (List.map (prettify_int_expr false) es)
       | LocLit (_, (_, n)) -> n
       | Match (_, e, pes) ->
           let prettify_arm p e =
@@ -125,7 +127,7 @@ module MkPrettify (A : Ast.AST) = struct
                   (prettify_pattern p) ps
               ^ " "
         in
-        n ^ prettify_patterns ps ^ ":= " ^ prettify_expr e
+        n ^ prettify_patterns ps ^ ":= " ^ prettify_expr e ^ ";"
     | ImportDecl (_, (_, n)) -> "import " ^ n
     | VariantDecl (_, (_, n), cs) ->
         let prettify_cons (_, n) ts t =

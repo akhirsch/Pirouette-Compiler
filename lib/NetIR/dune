@@ -6,3 +6,9 @@
   (pps ppxlib.metaquot))
  (instrumentation
   (backend bisect_ppx)))
+
+(ocamllex
+ (modules lexer))
+
+(menhir
+ (modules parser))
