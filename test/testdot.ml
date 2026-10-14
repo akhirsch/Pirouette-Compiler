@@ -546,7 +546,7 @@ let test_match =
   let out, _ = DotAST.dot_expr Meta.string_of_mi expr in
   out
 
-let expected_recabs = 
+let expected_recabs =
   "n0 [label=\"RecAbs [test.ml: 1:15--1:16]\"];\n\
   n0 -> n1;\n\
   n0 -> n2;\n\
@@ -567,7 +567,7 @@ let test_recabs =
   let out, _ = DotAST.dot_expr Meta.string_of_mi expr in
   out
 
-let expected_funapp = 
+let expected_funapp =
   "n0 [label=\"FunApp [test.ml: 1:15--1:16]\"];\n\
   n0 -> n1;\n\
   n0 -> n3;\n\
@@ -591,7 +591,7 @@ let test_funapp =
   let out, _ = DotAST.dot_expr Meta.string_of_mi expr in
   out
 
-let expected_typeconstr = 
+let expected_typeconstr =
   "n0 [label=\"TypeConstr [test.ml: 1:15--1:16]\"];\n\
   n0 -> n1;\n\
   n0 -> n3;\n\
@@ -611,7 +611,7 @@ let test_typeconstr =
   let out, _ = DotAST.dot_expr Meta.string_of_mi expr in
   out
 
-let expected_unop = 
+let expected_unop =
   "n0 [label=\"Unop [test.ml: 1:15--1:16]\"];\n\
   n0 -> n1;\n\
   n0 -> n2;\n\
@@ -631,7 +631,7 @@ let test_unop =
   let out, _ = DotAST.dot_expr Meta.string_of_mi expr in
   out
 
-let expected_binop = 
+let expected_binop =
   "n0 [label=\"Binop [test.ml: 1:15--1:16]\"];\n\
   n0 -> n1;\n\
   n0 -> n2;\n\
@@ -656,7 +656,7 @@ let test_binop =
   let out, _ = DotAST.dot_expr Meta.string_of_mi expr in
   out
 
-let expected_send = 
+let expected_send =
   "n0 [label=\"Send [test.ml: 1:15--1:16]\"];\n\
   n0 -> n1;\n\
   n0 -> n2;\n\
@@ -674,7 +674,7 @@ let test_send =
   let out, _ = DotAST.dot_expr Meta.string_of_mi expr in
   out
 
-let expected_recv = 
+let expected_recv =
   "n0 [label=\"Recv [test.ml: 1:15--1:16]\"];\n\
   n0 -> n1;\n\
   n0 -> n2;\n\
@@ -692,7 +692,7 @@ let test_recv =
   let out, _ = DotAST.dot_expr Meta.string_of_mi expr in
   out
 
-let expected_choose = 
+let expected_choose =
   "n0 [label=\"Binop [test.ml: 1:15--1:16]\"];\n\
   n0 -> n1;\n\
   n0 -> n2;\n\
@@ -712,7 +712,7 @@ let test_choose =
   let out, _ = DotAST.dot_expr Meta.string_of_mi expr in
   out
 
-let expected_allow = 
+let expected_allow =
   "n0 [label=\"AllowChoice [test.ml: 1:15--1:16]\"];\n\
   n0 -> n5;\n\
   n0 -> n1;\n\
@@ -737,7 +737,7 @@ let test_allow =
   let out, _ = DotAST.dot_expr Meta.string_of_mi expr in
   out
 
-let expected_ami = 
+let expected_ami =
   "n0 [label=\"AmI [test.ml: 1:15--1:16]\"];\n\
   n0 -> n1;\n\
   n1 [label=\"TrueLit [test.ml: 2:20--2:50]\"];\n"
@@ -750,6 +750,125 @@ let test_ami =
     AmI (pos, TrueLit pos2)
   in
   let out, _ = DotAST.dot_expr Meta.string_of_mi expr in
+  out
+
+(* ----- Decl Tests ----- *)
+
+let expected_locdecl =
+  "n0 [label=\"EmulatedLocDecl [test.ml: 1:15--1:16]\"];\n\
+  n0 -> n1;\n\
+  n1 [label=\"Name test [test.ml: 2:20--2:50]\"];\n"
+
+let test_locdecl =
+  DotAST.node_counter := 0;
+  let pos = { filename = "test.ml"; start = (1, 15); stop = (1, 16) } in
+  let pos2 = { filename = "test.ml"; start = (2, 20); stop = (2, 50) } in
+  let expr =
+    EmulatedLocDecl (pos, (pos2, "test"))
+  in
+  let out, _ = DotAST.dot_decl Meta.string_of_mi expr in
+  out
+
+let expected_decl =
+  "n0 [label=\"Type Decl [test.ml: 1:15--1:16]\"];\n\
+  n0 -> n1;\n\
+  n0 -> n2;\n\
+  n1 [label=\"Name test [test.ml: 2:20--2:50]\"];\n\
+  n2 [label=\"Int Type [test.ml: 3:31--3:41]\"];\n"
+
+let test_decl =
+  DotAST.node_counter := 0;
+  let pos = { filename = "test.ml"; start = (1, 15); stop = (1, 16) } in
+  let pos2 = { filename = "test.ml"; start = (2, 20); stop = (2, 50) } in
+  let pos3 = { filename = "test.ml"; start = (3, 31); stop = (3, 41) } in
+  let expr =
+    TypeDecl (pos, (pos2, "test"), IntTy pos3)
+  in
+  let out, _ = DotAST.dot_decl Meta.string_of_mi expr in
+  out
+
+let expected_aliasdecl =
+  "n0 [label=\"Type Alias Decl [test.ml: 1:15--1:16]\"];\n\
+  n0 -> n1;\n\
+  n0 -> n2;\n\
+  n1 [label=\"Name test [test.ml: 2:20--2:50]\"];\n\
+  n2 [label=\"Int Type [test.ml: 3:31--3:41]\"];\n"
+
+let test_aliasdecl =
+  DotAST.node_counter := 0;
+  let pos = { filename = "test.ml"; start = (1, 15); stop = (1, 16) } in
+  let pos2 = { filename = "test.ml"; start = (2, 20); stop = (2, 50) } in
+  let pos3 = { filename = "test.ml"; start = (3, 31); stop = (3, 41) } in
+  let expr =
+    TypeAliasDecl (pos, (pos2, "test"), IntTy pos3)
+  in
+  let out, _ = DotAST.dot_decl Meta.string_of_mi expr in
+  out
+
+let expected_defndecl =
+  "n0 [label=\"Defn Decl [test.ml: 1:15--1:16]\"];\n\
+  n0 -> n1;\n\
+  n0 -> n2;\n\
+  n0 -> n4;\n\
+  n1 [label=\"Name test [test.ml: 2:20--2:50]\"];\n\
+  n2 [label=\"Var Pat [test.ml: 3:31--3:41]\"];\n\
+  n2 -> n3;\n\
+  n3 [label=\"Name x [test.ml: 4:10--4:20]\"];\n\
+  n4 [label=\"UnitLit [test.ml: 5:1--5:17]\"];\n"
+
+let test_defndecl =
+  DotAST.node_counter := 0;
+  let pos = { filename = "test.ml"; start = (1, 15); stop = (1, 16) } in
+  let pos2 = { filename = "test.ml"; start = (2, 20); stop = (2, 50) } in
+  let pos3 = { filename = "test.ml"; start = (3, 31); stop = (3, 41) } in
+  let pos4 = { filename = "test.ml"; start = (4, 10); stop = (4, 20) } in
+  let pos5 = { filename = "test.ml"; start = (5, 1); stop = (5, 17) } in
+  let expr =
+    DefnDecl (pos, (pos2, "test"), [ VarPat (pos3, (pos4, "x")) ], UnitLit pos5)
+  in
+  let out, _ = DotAST.dot_decl Meta.string_of_mi expr in
+  out
+
+let expected_importdecl =
+  "n0 [label=\"Import Decl [test.ml: 1:15--1:16]\"];\n\
+  n0 -> n1;\n\
+  n1 [label=\"Name test [test.ml: 2:20--2:50]\"];\n"
+
+let test_importdecl =
+  DotAST.node_counter := 0;
+  let pos = { filename = "test.ml"; start = (1, 15); stop = (1, 16) } in
+  let pos2 = { filename = "test.ml"; start = (2, 20); stop = (2, 50) } in
+  let expr =
+    ImportDecl (pos, (pos2, "test"))
+  in
+  let out, _ = DotAST.dot_decl Meta.string_of_mi expr in
+  out
+
+let expected_varientdecl =
+  "n0 [label=\"Variant Decl [test.ml: 1:15--1:16]\"];\n\
+  n0 -> n1;\n\
+  n0 -> n2;\n\
+  n1 [label=\"Name test [test.ml: 2:20--2:50]\"];\n\
+  n2 [label=\"Variant Constructor\"];\n\
+  n2 -> n3;\n\
+  n2 -> n4;\n\
+  n3 [label=\"Name typ1 [test.ml: 3:31--3:41]\"];\n\
+  n4 [label=\"Var Type [test.ml: 4:10--4:20]\"];\n\
+  n4 -> n5;\n\
+  n5 [label=\"Name test [test.ml: 5:1--5:17]\"];\n"
+
+let test_varientdecl =
+  DotAST.node_counter := 0;
+  let pos = { filename = "test.ml"; start = (1, 15); stop = (1, 16) } in
+  let pos2 = { filename = "test.ml"; start = (2, 20); stop = (2, 50) } in
+  let pos3 = { filename = "test.ml"; start = (3, 31); stop = (3, 41) } in
+  let pos4 = { filename = "test.ml"; start = (4, 10); stop = (4, 20) } in
+  let pos5 = { filename = "test.ml"; start = (5, 1); stop = (5, 17) } in
+  let expr =
+    VariantDecl (pos, (pos2, "test"),
+      [ ((pos3, "typ1"), [], VarTy (pos4, (pos5, "test"))) ])
+  in
+  let out, _ = DotAST.dot_decl Meta.string_of_mi expr in
   out
 
 let suite =
@@ -808,4 +927,10 @@ let suite =
     "choose" >:: test_eq_string expected_choose test_choose;
     "allow" >:: test_eq_string expected_allow test_allow;
     "ami" >:: test_eq_string expected_ami test_ami;
+    "locdecl" >:: test_eq_string expected_locdecl test_locdecl;
+    "decl" >:: test_eq_string expected_decl test_decl;
+    "aliasdecl" >:: test_eq_string expected_aliasdecl test_aliasdecl;
+    "defndecl" >:: test_eq_string expected_defndecl test_defndecl;
+    "importdecl" >:: test_eq_string expected_importdecl test_importdecl;
+    "varientdecl" >:: test_eq_string expected_varientdecl test_varientdecl;
   ]
