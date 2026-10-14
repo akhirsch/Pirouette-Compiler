@@ -104,6 +104,13 @@ module MkOcamlGen (Net : NetAST) = struct
     | Net.StringLit (_, s) -> estring ~loc s
     | Net.TrueLit _ -> [%expr true]
     | Net.FalseLit _ -> [%expr false]
+    | Net.ConstructorLit (_, (_, id), es) -> 
+      let arg_expr = if List.is_empty es then 
+          Some (pexp_tuple ~loc (List.map expr_gen es)) 
+        else
+          None 
+      in
+        pexp_construct ~loc ({ txt = Lident id; loc }) arg_expr
     | Net.LocLit (_, (_, n)) -> estring ~loc n
     | Net.Match (_, e, pes) ->
         (* Turn each NetIR (pattern, body) pair into one OCaml match arm (a [case]).
