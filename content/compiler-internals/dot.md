@@ -3,16 +3,20 @@ title = "DOT"
 weight = 1
 +++
 
-DOT is a language by GraphViz which allows you to define nodes and edges in a graph and render them visually. To generate DOT code, we want to walk the ast and represent each node of the ast as a string: node_name [label="Text"];. As we walk the tree, we will keep concatenating these nodes together. The DOT code can either be written to a file, or pasted directly into the command line.
-To render DOT code in your command line:
-For a file: dot -Tsvg ast.dot > output.svg
-For a string: echo -e 'digraph { "n0 [label=\"Emulated Loc Decl [test.ml: 1:15--1:16]\"];\nn0 -> n1;\nn1 [label=\"Name example [test.ml: 2:20--2:50]\"];\n" }' | dot -Tsvg > output.svg
+DOT is a language by GraphViz which allows you to define nodes and edges in a graph and render them visually. To generate DOT code, we want to walk the ast and represent each node of the ast as a string: ```node_name [label="Text"];```. As we walk the tree, we will keep concatenating these nodes together. The DOT code can either be written to a file, or pasted directly into the command line.
+To render DOT code in your command line:\
+For a file: ```dot -Tsvg ast.dot > output.svg```\
+For a string: ```echo -e 'digraph { "n0 [label=\"Emulated Loc Decl [test.ml: 1:15--1:16]\"];\nn0 -> n1;\nn1 [label=\"Name example [test.ml: 2:20--2:50]\"];\n" }' | dot -Tsvg > output.svg```
+
+## Version
+This implementation is based on dot - graphviz version 2.43.0 (0). This implementation may break if other versions are used. You can check which dot version you have by running 'dot -V' in your command line
 
 ## Example DOT AST
 Below is an example of a rendered DOT AST.
 <img src="/img/example_dot_ast.svg" alt="Graph of nodes describing an AST">
 
 For reference, this is the corresponding DOT code:
+```
 "digraph G {\n\
    n0 [label=\"Variant Decl [test.ml: 1:15--1:16]\"];\n\
    n0 -> n1;\n\
@@ -43,3 +47,4 @@ For reference, this is the corresponding DOT code:
    n14 [label=\"Name test [test.ml: 14:20--14:50]\"];\n\
    n15 [label=\"Int Type [test.ml: 15:31--15:41]\"];\n\n\
    }\n"
+   ```
