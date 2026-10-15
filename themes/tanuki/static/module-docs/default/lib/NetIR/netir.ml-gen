@@ -6,8 +6,17 @@ module Ast = Netir__Ast
 (** @canonical Netir.Astmapper *)
 module Astmapper = Netir__Astmapper
 
+(** @canonical Netir.Lexer *)
+module Lexer = Netir__Lexer
+
 (** @canonical Netir.Nometa *)
 module Nometa = Netir__Nometa
+
+(** @canonical Netir.Parsed_ast_processing *)
+module Parsed_ast_processing = Netir__Parsed_ast_processing
+
+(** @canonical Netir.Parser *)
+module Parser = Netir__Parser
 
 (** @canonical Netir.Prettyprint *)
 module Prettyprint = Netir__Prettyprint
