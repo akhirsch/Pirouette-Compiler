@@ -21,7 +21,7 @@ module MkOcamlGen (Net : NetAST) = struct
     | Net.StringTy _ -> [%type: string]
     | Net.BoolTy _ -> [%type: bool]
     | Net.FunTy (_, t1, t2) -> [%type: [%t type_gen t1] -> [%t type_gen t2]]
-    | Net.LocTy (_, _) -> [%type: Backend.Dummybackend.location]
+    | Net.LocTy (_, ids) -> Backend.Dummybackend.location_type (List.map (fun (_, x) -> x) ids) (*TODO*)
 
   (*------------------- PATTERN GENRATION ---------------------------*)
   (* Convert a NetIR pattern into an OCaml pattern *)
@@ -40,12 +40,7 @@ module MkOcamlGen (Net : NetAST) = struct
     | Net.FalseLitPat _ -> [%pat? false]
     | Net.LocLitPat (_, (_, l)) -> pstring ~loc l
     | Net.ConstructorPat (_, (_, n), ps) ->
-        (* n = string
-      ps = net.pattern list 
-      Ocaml constructors must bc capatlized *)
-        (*TODO: net_ because a constructor could possibly be names left and then that would change to left
-      and then it would cause a problem here *)
-        let name = Located.lident ~loc (String.capitalize_ascii n) in
+        let name = Located.lident ~loc ("Pir_" ^ n) in
         (* Located.lident wraps the string as the identifier that ppat_construct is expecting
       Ppat_construct of Longident.t Asttypes.loc * (string Asttypes.loc list * pattern) option *)
         let converted_ps = List.map pattern_gen ps in
@@ -56,7 +51,7 @@ module MkOcamlGen (Net : NetAST) = struct
           | [ p ] -> Some p
           | many -> Some (ppat_tuple ~loc many)
           (* ocaml constructors arguments stores arguements as a pattern 
-      none, one and tuple *)
+          none, one and tuple *)
         in
         ppat_construct ~loc name args
     | Net.LocNamePat (_, (_, s)) -> pvar ~loc s
@@ -109,39 +104,40 @@ module MkOcamlGen (Net : NetAST) = struct
           if List.is_empty es then Some (pexp_tuple ~loc (List.map expr_gen es))
           else None
         in
-        pexp_construct ~loc { txt = Lident id; loc } arg_expr
+          pexp_construct ~loc { txt = Lident id; loc } arg_expr
+          (*Ppxlib constructor nodes take arguments in two forms; None, and Some tuple 
+            Even if there is only one argument to the constructor, *)
     | Net.LocLit (_, (_, n)) -> estring ~loc n
     | Net.Match (_, e, pes) ->
         (* Turn each NetIR (pattern, body) pair into one OCaml match arm (a [case]).
-       ~lhs is the pattern (left of ->), 
-       ~rhs the body (right of ->),
-       ~guard is the optional [when] clause — NetIR has none, so always None. *)
+          ~lhs is the pattern (left of ->), 
+          ~rhs the body (right of ->),
+          ~guard is the optional [when] clause — NetIR has none, so always None. *)
         let cases =
           List.map
             (fun (pat, body) ->
               case
-                ~lhs:(pattern_gen pat) (* NetIR pattern -> OCaml pattern *)
-                ~guard:None
-                  (* NetIR's Match has no place to store a guard 
-          type is Match of m * expr * (pattern * expr) list, each branch is a pattern paired with a body only *)
-                  (* A guard is the when cond you can attach to an OCaml arm *)
-                ~rhs:(expr_gen body)) (* NetIR body expr -> OCaml expr *)
+                ~lhs:(pattern_gen pat)  (* NetIR pattern -> OCaml pattern *)
+                ~guard:None             (* Not implemented in NetIR *)
+                ~rhs:(expr_gen body))   (* NetIR body expr -> OCaml expr *)
             pes
         in
-        pexp_match ~loc (expr_gen e) cases
-        (* pexp_match takes a case list, and case
-        case: ~lhs ~guard ~rhs builder just fills in those three fields. 
-        So a match node is a subject expression "e" plus a case list 
-        That's why in the Match arm you build a list of cases and hand it over where each element is one | p -> e*)
+          pexp_match ~loc (expr_gen e) cases
+          (* pexp_match takes a case list, and case
+            case: ~lhs ~guard ~rhs builder just fills in those three fields. 
+            So a match node is a subject expression "e" plus a case list 
+            That's why in the Match arm you build a list of cases and hand it over where each element is one | p -> e *)
     | Net.RecAbs (_, (_, f), (_, x), e) ->
         [%expr
           let rec [%p pvar ~loc f] = fun [%p pvar ~loc x] -> [%e expr_gen e] in
           [%e evar ~loc f]]
-    (*NetIR writes fun f x := e: an anonymous function that takes argument x, 
-      has body e, and can call itself as f inside the body. 
-      "Rec" for recursive, "Abs" for abstraction*)
-    (* OCaml's grammar treats "the name being defined" as a pattern->f and
-      "the name being used" as an expression-> e *)
+        (* TODO Add "is_free" check for "f", and decide whether or not to add rec depending on the check
+            This will cut down on compilation warnings when the compiler is in use.*)
+        (*NetIR writes fun f x := e: a function, f, that takes argument x, 
+          has body e, and can call itself as f inside the body. 
+          "Rec" for recursive, "Abs" for abstraction*)
+        (* OCaml's grammar treats "the name being defined" as a pattern -> f and
+          "the name being used" as an expression -> e *)
     | Net.FunApp (_, f, a) -> [%expr [%e expr_gen f] [%e expr_gen a]]
     | Net.TypeConstr (_, e, t) -> [%expr ([%e expr_gen e] : [%t type_gen t])]
     | Net.Unop (_, u, e) -> unop_gen u (expr_gen e)
@@ -150,20 +146,16 @@ module MkOcamlGen (Net : NetAST) = struct
     (* Send e to n, e is the payload and n is the name which holds a location
        pass the payload code text AND the value added this so that stdout testing for
        the emulated background log holds more info here that is the payload and what *)
-    | Net.Send (_, e, (_, n)) ->
-        let payload = expr_gen e in
-        let what = estring ~loc (Pprintast.string_of_expression payload) in
-        [%expr
-          Backend.Dummybackend.send [%e estring ~loc n] [%e what] [%e payload]]
+    | Net.Send (_, e, (_, n)) -> Backend.Dummybackend.send (expr_gen e) n
     (* of m * typ * name  Recv t from n
        pass the expected type as text so the log shows it *)
-    | Net.Recv (_, t, (_, n)) ->
-        let ty = type_gen t in
+    | Net.Recv (_, t, (_, n)) -> Backend.Dummybackend.recv (type_gen t) n
+        (* let ty = type_gen t in
         let ty_text =
           estring ~loc (Format.asprintf "%a" Pprintast.core_type ty)
         in
         [%expr
-          (Backend.Dummybackend.recv [%e estring ~loc n] [%e ty_text] : [%t ty])]
+          (Backend.Dummybackend.recv [%e estring ~loc n] [%e ty_text] : [%t ty])] *)
     | Net.ChooseFor (_, (_, n), l) ->
         [%expr
           Backend.Dummybackend.choose [%e estring ~loc n]
@@ -202,7 +194,7 @@ module MkOcamlGen (Net : NetAST) = struct
         case: ~lhs ~guard ~rhs *)
           [%expr Backend.Dummybackend.recv_label [%e estring ~loc n]]
           (cases @ [ fallback ])
-    | Net.AmI (_, e) -> [%expr [%e expr_gen e] = me]
+    | Net.AmI (_, e) -> Backend.Dummybackend.am_i (expr_gen e)
 
   (*------------------- DECL GENRATION ---------------------------*)
   let decl_gen (d : Net.decl) : structure_item =
@@ -270,7 +262,7 @@ module MkOcamlGen (Net : NetAST) = struct
       args:constructor_arguments -> res:core_type option -> constructor_declaration*)
         let constructor_gen ((_, cname), ts, _result) =
           constructor_declaration ~loc
-            ~name:(Located.mk ~loc (String.capitalize_ascii cname))
+            ~name:(Located.mk ~loc ("Pir_" ^ cname))
               (* constructor names bounded to the location and capatalized *)
             ~args:(Pcstr_tuple (List.map type_gen ts))
               (* will be a tuple the smart constructor looks like this 
@@ -300,20 +292,48 @@ module MkOcamlGen (Net : NetAST) = struct
      [me] is the participant's name (ex "Alice") known at compile time
      [prog] is that participant's NetIR program *)
   let program_gen (me : string) (prog : Net.program) : structure =
+    
+    (* Emulated locations are collected and declared as a single variant, so location
+      calls elsewhere in the program can benefit from Ocaml's type checking. This allows
+      undeclared emulated locations to be caught as an error.*)
+
+    let (emu_loc_delcs, inter_prog) = List.partition (fun x -> match x with | Net.EmulatedLocDecl _ -> true | _ -> false) prog in
+    let emu_loc_variant = 
+      if List.is_empty emu_loc_delcs then 
+        (* Without this catch, we may create an "empty" variant:
+          "type emulated_locations = |", which would cause an error *)
+        [] 
+      else (
+        let emu_loc_variant_cases = List.map
+          (fun x -> match x with
+            | Net.EmulatedLocDecl (_, (_, id)) ->
+              constructor_declaration 
+                ~loc 
+                ~name:(Located.mk ~loc ("Pir_" ^ id)) 
+                ~args:(Pcstr_tuple []) (* Location constructors have no arguments *)
+                ~res:None
+            | _ -> failwith "Partitioning function at the top of program_gen failed")
+          emu_loc_delcs
+        in
+        [pstr_type ~loc Recursive [
+          type_declaration ~loc
+            ~name:(Located.mk ~loc "pir_emulated_location")
+            ~params:[]
+            ~cstrs:[]
+            ~kind:(Ptype_variant emu_loc_variant_cases)
+            ~private_:Public
+            ~manifest:None
+        ]]
+      ) 
+    in
     (* Identity header placed at the top of every generated file
        Inside [%e ...] [me] is this function's parameter (the real string)
        Everywhere else inside the quotes [me] is just text in the output *)
-    let who_i_am_items =
-      [
+    let who_i_am =
         (* Generated: let me = "Alice"
            Binds [me] so AmI checks like ("A" = me) compile *)
-        [%stri let me = [%e estring ~loc me]];
-        (* Generated: let () = Dummybackend.who_i_am me
-           Runs at startup and tells the runtime who this participant is,
-           so every log line can be prefixed with the name *)
-        [%stri let () = Backend.Dummybackend.who_i_am me];
-      ]
+        Backend.Dummybackend.who_i_am me;
     in
     (* Header first, then each translated declaration in program order. *)
-    who_i_am_items @ List.map decl_gen prog
+     who_i_am :: emu_loc_variant @ List.map decl_gen inter_prog
 end
