@@ -1,13 +1,16 @@
 open Lwt.Infix
 
 let ( let* ) = Result.bind
+let ( let** ) = Lwt.bind
+let ( let**? ) = Lwt_result.bind
+(* let ( let%lwt ) = Lwt.bind *)
 
 (*---------------------------------------------------------------------------*)
 (* State                                                                     *)
 (*---------------------------------------------------------------------------*)
 
 (* TODO: How can i namespace these types to avoid collisions (only expose `send`, `recv`, etc.)? *)
-type participant = { debug_name : string; hostname : Uri.t }
+type participant = { name : string; hostname : Uri.t }
 (** A participant in the system with their debug_name (NetIR name) and hostname
     (IP address + port). *)
 
@@ -15,12 +18,12 @@ type message_type = Send | Choose  (** An incoming message from a peer. *)
 
 (** Convert HTTP path string to optional `message_type` *)
 let message_type_from_string = function
-  | "send" -> Some Send
-  | "choose" -> Some Choose
+  | "/send" -> Some Send
+  | "/choose" -> Some Choose
   | _ -> None
 
 (** Convert `message_type` to HTTP path string *)
-let message_type_to_string = function Send -> "send" | Choose -> "choose"
+let message_type_to_string = function Send -> "/send" | Choose -> "/choose"
 
 type message = message_type * string
 
@@ -29,7 +32,8 @@ type message_completion = bool Lwt_condition.t
     successfully; else, we have a `/send` vs `/choose` mismatch *)
 
 type peer = {
-  name : string;
+  (* name : string; *)
+  hostname : Uri.t;
   message_channel : (message * message_completion) Lwt_mvar.t;
 }
 (** A peer has a debug name and a channel to receive messages on. *)
@@ -37,15 +41,16 @@ type peer = {
 (* TODO: `self, peers` should be immutable. *)
 type state = {
   self : participant;  (** Information about this participant *)
-  (* peers : participant list;  (** Information about our peers *) *)
+  name_to_peer : (string, peer) Hashtbl.t;
   name_to_hostname : (string, Uri.t) Hashtbl.t;
       (** Each location name mapped to the peer's Uri (scheme+host+port) *)
-  hostname_to_peer : (Uri.t, peer) Hashtbl.t;
-      (** Each hostname URI (with scheme+host+port) has a `peer` (debug name +
-          uri) and a channel that holds up to one message.
-
-          Choreographies guarantee that senders wait for us to receive messages,
-          so we only need to store one message at a time. *)
+      (* TODO: Remove *)
+      (* (* hostname_to_peer : (Uri.t, peer) Hashtbl.t; *) *)
+      (*     (** Each hostname URI (with scheme+host+port) has a `peer` (debug name + *)
+  (*         uri) and a channel that holds up to one message. *)
+  (**)
+  (*         Choreographies guarantee that senders wait for us to receive messages, *)
+  (*         so we only need to store one message at a time. *) *)
 }
 (** The app's shared global state.
 
@@ -80,7 +85,7 @@ let create_state () : (state, init_error) result =
   (* Parse an individual participant string *)
   let parse_participant (str : string) : (participant, init_error) result =
     (* Get debug name and hostname *)
-    let* debug_name, raw_hostname =
+    let* name, raw_hostname =
       String.split_first ~sep:"=" str
       |> Option.to_result ~none:(InvalidParticipant (NoDebugName, str))
     in
@@ -94,12 +99,13 @@ let create_state () : (state, init_error) result =
     let hostname =
       Uri.make ~scheme:"http" ~host ?port:(Uri.port full_hostname) ()
     in
-    Result.Ok { debug_name; hostname }
+    Result.Ok { name; hostname }
   in
   (* Parse each participant, or return failure *)
   let* participants : participant list =
-    Sys.argv
-    |> Array.fold_left
+    (* Drop program name (first arg), and then parse each participant. *)
+    Sys.argv |> Array.to_list |> List.tl
+    |> List.fold_left
          (fun acc (raw_participant : string) ->
            (* Parse new participant if previous ones succeeded *)
            let* prev_list = acc in
@@ -113,20 +119,31 @@ let create_state () : (state, init_error) result =
     | [] | [ _ ] -> Result.Error LessThanTwoArgs
     | first :: rest -> Result.Ok (first, rest)
   in
-  (* Create map from hostname -> participant & message *)
-  let hostname_to_peer : (Uri.t, _) Hashtbl.t =
-    peers |> List.to_seq
-    |> Seq.map (fun (p : participant) ->
-        let peer : peer =
-          { name = p.debug_name; message_channel = Lwt_mvar.create_empty () }
-        in
-        (p.hostname, peer))
-    |> Hashtbl.of_seq
-  in
+
+  (* (* Create map from hostname -> participant & message *) *)
+  (* let hostname_to_peer : (Uri.t, _) Hashtbl.t = *)
+  (*   peers |> List.to_seq *)
+  (*   |> Seq.map (fun (p : participant) -> *)
+  (*       let peer : peer = *)
+  (*         { name = p.debug_name; message_channel = Lwt_mvar.create_empty () } *)
+  (*       in *)
+  (*       (p.hostname, peer)) *)
+  (*   |> Hashtbl.of_seq *)
+  (* in *)
+
   (* Create map from name -> hostname *)
   let name_to_hostname =
     peers |> List.to_seq
-    |> Seq.map (fun (p : participant) -> (p.debug_name, p.hostname))
+    |> Seq.map (fun (p : participant) -> (p.name, p.hostname))
+    |> Hashtbl.of_seq
+  in
+  (* Create map from name -> peer *)
+  let name_to_peer : (string, peer) Hashtbl.t =
+    peers |> List.to_seq
+    |> Seq.map (fun (p : participant) ->
+        ( p.name,
+          { hostname = p.hostname; message_channel = Lwt_mvar.create_empty () }
+        ))
     |> Hashtbl.of_seq
   in
   (* We will add to messages with the server *)
@@ -135,7 +152,7 @@ let create_state () : (state, init_error) result =
       self;
       (* peers; *)
       name_to_hostname;
-      hostname_to_peer;
+      name_to_peer;
       (* messages = [] *)
     }
   in
@@ -153,12 +170,11 @@ let _app_state =
 (** Get the participant with the given destination name *)
 let get_participant (destination : string) : participant =
   let hostname : Uri.t =
-    Hashtbl.find_opt _app_state.name_to_hostname destination
-    |> Option.value
-         ~default:
-           (failwith ("HTTP backend hasn't registered '" ^ destination ^ "'"))
+    match Hashtbl.find_opt _app_state.name_to_hostname destination with
+    | Some hostname -> hostname
+    | None -> failwith ("HTTP backend hasn't registered '" ^ destination ^ "'")
   in
-  { debug_name = destination; hostname }
+  { name = destination; hostname }
 
 (*---------------------------------------------------------------------------*)
 (* HTTP Send/Receive                                                         *)
@@ -187,56 +203,64 @@ let start_server () : unit Lwt.t =
   (* Processes the given request with the given string. Returns
      the message_completion indicating we've received the message. *)
   let process_request (req : Http.Request.t) (body : string) :
-      (message_completion, client_error) result =
+      (bool, client_error) result Lwt.t =
     (* Ensure it's a POST request. *)
-    let* () =
-      if req.meth == `POST then Result.Ok () else Result.Error MethodNotPost
+    let**? () =
+      if req.meth == `POST then Lwt.return_ok ()
+      else Lwt.return_error MethodNotPost
     in
     (* Extract message kind (send/choose), or throw *)
     let request_uri : Uri.t = Cohttp.Request.uri req in
-    let* message_type : message_type =
+    let**? message_type : message_type =
       Uri.path request_uri |> message_type_from_string
       |> Option.to_result ~none:UnknownPath
+      |> Lwt.return
     in
     (* Extract the origin (should be scheme+host+port)
        Note: We don't validate inputs because if they're invalid, they
        will simply not get a Hashtbl match. *)
-    let* raw_peer_hostname =
+    let**? raw_peer_hostname =
       Http.Header.get (Http.Request.headers req) "Origin"
       |> Option.to_result ~none:MissingOrigin
+      |> Lwt.return
     in
-    let peer_hostname : Uri.t = Uri.of_string raw_peer_hostname in
+    let**? raw_peer_name =
+      Http.Header.get (Http.Request.headers req) "X-Pirouette-From"
+      |> Option.to_result ~none:MissingOrigin
+      |> Lwt.return
+    in
     (* Check peer exists and hasn't double-messaged *)
-    let* channel =
-      match Hashtbl.find_opt _app_state.hostname_to_peer peer_hostname with
+    let**? channel =
+      match Hashtbl.find_opt _app_state.name_to_peer raw_peer_name with
       (* Check `is_empty` doesn't cause race conditions because
          we're the only thread who can put new data in the channel. *)
-      | Some { message_channel; _ } when Lwt_mvar.is_empty message_channel ->
-          Result.Ok message_channel
+      | Some { hostname; message_channel }
+        when Uri.to_string hostname = raw_peer_hostname
+             && Lwt_mvar.is_empty message_channel ->
+          Lwt.return_ok message_channel
       (* Fail if channel isn't empty (client double-messaged) *)
-      | Some _ -> Result.Error CannotMessageTwice
-      | None -> Result.Error UnknownPeer
+      | Some _ -> Lwt.return_error CannotMessageTwice
+      | None -> Lwt.return_error UnknownPeer
     in
     (* Send message via the channel *)
     let message_completion : message_completion = Lwt_condition.create () in
     let message = ((message_type, body), message_completion) in
     (* Should return instantly since we're the only thread adding messages,
        and we just checked there's no backlog. *)
-    Lwt_main.run (Lwt_mvar.put channel message);
+    let** () = Lwt_mvar.put channel message in
     (* Return completion *)
-    Result.Ok message_completion
+    let** success = Lwt_condition.wait message_completion in
+    Lwt.return_ok success
   in
   let callback _conn (req : Http.Request.t) (body : Cohttp_lwt.Body.t) =
     (* Get body string
        Note: We get the body at the start before any error path to ensure we
        always terminate the connection (and avoid leaking memory). *)
-    Cohttp_lwt.Body.to_string body >>= fun (body_str : string) ->
-    (* Get result *)
-    let uncompleted_res = Lwt_result.lift (process_request req body_str) in
-    (* Unwrap result and wait for completion *)
-    Lwt_result.bind_lwt uncompleted_res Lwt_condition.wait >>= fun res ->
+    let** body_str = Cohttp_lwt.Body.to_string body in
+    (* Get result of sending messaging and wait for client to receive. *)
+    let** process_result = process_request req body_str in
     (* Respond with status and an empty body *)
-    let response_status = client_result_to_http_status res in
+    let response_status = client_result_to_http_status process_result in
     Cohttp_lwt_unix.Server.respond ~status:response_status
       ~body:Cohttp_lwt.Body.empty ()
   in
@@ -246,13 +270,14 @@ let start_server () : unit Lwt.t =
   (* Start server *)
   Cohttp_lwt_unix.Server.create ~mode:(`TCP (`Port port)) server
 
-type get_message_error = InvalidPeer | Invalid
+type get_message_error = InvalidPeer
 
-let get_message (message_type : message_type) (peer : participant) : 'a =
-  let app_state : state = failwith "" in
+let get_error_to_str = function InvalidPeer -> "invalid peer"
+
+let _get_message_impl (message_type : message_type) (peer : participant) : 'a =
   (* Get peer *)
   let* peer =
-    Hashtbl.find_opt app_state.hostname_to_peer peer.hostname
+    Hashtbl.find_opt _app_state.name_to_peer peer.name
     |> Option.to_result ~none:InvalidPeer
   in
   (* Block until message arrives *)
@@ -266,11 +291,19 @@ let get_message (message_type : message_type) (peer : participant) : 'a =
   (* Return decoded data *)
   decoded
 
+let get_message (message_type : message_type) (peer : participant) : 'a =
+  match _get_message_impl message_type peer with
+  | Ok value -> value
+  | Error err ->
+      failwith "HTTP Backend couldn't get message: " ^ get_error_to_str err
+
 let post_message (message_type : message_type) (peer : participant)
     (message : string) =
   let body = Cohttp_lwt.Body.of_string message in
   let headers =
-    Http.Header.init_with "Origin" (Uri.to_string _app_state.self.hostname)
+    Http.Header.add
+      (Http.Header.init_with "Origin" (Uri.to_string _app_state.self.hostname))
+      "X-Pirouette-From" _app_state.self.name
   in
   let request_uri =
     Uri.with_path peer.hostname (message_type_to_string message_type)
@@ -285,26 +318,27 @@ let post_message (message_type : message_type) (peer : participant)
       ("HTTP backend encountered unexpected error when sending message "
       ^ Http.Status.to_string status)
   else ()
+
+let _ = start_server ()
 (* TODO: Make sure to retry. *)
 
 (*---------------------------------------------------------------------------*)
 (* Runtime Implementations                                                         *)
 (*---------------------------------------------------------------------------*)
 
-(* Hand [value] to [destination] by POSTing it to their mailbox. Returns once
-   they have taken it off the wire, not once they have received it. *)
+(* Send [value] to [destination] by POSTing it to their mailbox. Returns once
+   the peer consumes the value from the mailbox (not when they receive it). *)
 let send (destination : string) (value : 'a) : unit =
   let participant = get_participant destination in
-  (* No [Marshal.Closures] because participants are separate binaries
-     (so a closure marshalled here would be a code pointer into the
+  (* No Marshal.Closures flag because participants are separate binaries
+     (a closure marshalled here would be a code pointer into the
      wrong program) *)
   let message : string = Marshal.to_string value [] in
   post_message Send participant message
 
-(* The next value [source] sent us, blocking until one arrives. The caller
-   annotates the result type, and [Marshal.from_string] is trusted to match
-   it -- a mismatch between what the two sides think they agreed on is
-   undetected here and corrupts the value. *)
+(* Get the next value [source] sent us, blocking until it arrives. The caller
+   annotates the result type, and we trust [Marshal.from_string] to match
+   it; a mismatch results in undefined behavior. *)
 let recv (source : string) : 'a =
   let participant = get_participant source in
   get_message Send participant
