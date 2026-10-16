@@ -1,5 +1,3 @@
-open Lwt.Infix
-
 let ( let* ) = Result.bind
 let ( let** ) = Lwt.bind
 let ( let**? ) = Lwt_result.bind
@@ -32,34 +30,21 @@ type message_completion = bool Lwt_condition.t
     successfully; else, we have a `/send` vs `/choose` mismatch *)
 
 type peer = {
-  (* name : string; *)
   hostname : Uri.t;
   message_channel : (message * message_completion) Lwt_mvar.t;
 }
 (** A peer has a debug name and a channel to receive messages on. *)
 
-(* TODO: `self, peers` should be immutable. *)
 type state = {
   self : participant;  (** Information about this participant *)
   name_to_peer : (string, peer) Hashtbl.t;
-  name_to_hostname : (string, Uri.t) Hashtbl.t;
-      (** Each location name mapped to the peer's Uri (scheme+host+port) *)
-      (* TODO: Remove *)
-      (* (* hostname_to_peer : (Uri.t, peer) Hashtbl.t; *) *)
-      (*     (** Each hostname URI (with scheme+host+port) has a `peer` (debug name + *)
-  (*         uri) and a channel that holds up to one message. *)
-  (**)
-  (*         Choreographies guarantee that senders wait for us to receive messages, *)
-  (*         so we only need to store one message at a time. *) *)
+      (** Each location name mapped to a peer *)
 }
-(** The app's shared global state.
-
-    Invariant: For any peer `p` with hostname `h` and name `n`, we have
-    `name_to_hostname[n] = h` and `hostname_to_peer[h] = p` *)
+(** The app's shared global state. *)
 
 type participant_parse_error = NoDebugName | InvalidHostname
 
-let describe_participant_error = function
+let participant_error_to_string = function
   | NoDebugName -> "debug name -- expected <debug name>=<hostname>"
   | InvalidHostname -> "hostname"
 
@@ -67,14 +52,37 @@ type init_error =
   | LessThanTwoArgs
   | InvalidParticipant of participant_parse_error * string
 
-let describe_init_error = function
+let init_error_to_string = function
   | LessThanTwoArgs ->
       "Expected at least 2 arguments: <self_name>=<self_hostname> \
        <participant1_name>=<participant1_hostname> ..."
   | InvalidParticipant (parse_error, raw_participant) ->
       Printf.sprintf "Invalid participant %s: '%s'"
-        (describe_participant_error parse_error)
+        (participant_error_to_string parse_error)
         raw_participant
+
+type get_message_error = InvalidSourcePeer | WrongMessageType of message_type
+
+let get_error_to_string = function
+  | InvalidSourcePeer -> "invalid peer"
+  | WrongMessageType received ->
+      (* Calculate expected type *)
+      let expected = match received with Send -> Choose | Choose -> Send in
+      (* Format *)
+      Printf.sprintf "expected %s but the peer sent %s"
+        (message_type_to_string expected)
+        (message_type_to_string received)
+
+type post_message_error =
+  | InvalidDestPeer
+  | BadStatus of Http.Status.t
+  | PostError of exn
+
+let post_error_to_string = function
+  | InvalidDestPeer -> "invalid peer"
+  | PostError exn -> "protocol exception: " ^ Printexc.to_string exn
+  | BadStatus status ->
+      "peer responded with unexpected status: " ^ Http.Status.to_string status
 
 (*---------------------------------------------------------------------------*)
 (* Initialization                                                            *)
@@ -119,24 +127,6 @@ let create_state () : (state, init_error) result =
     | [] | [ _ ] -> Result.Error LessThanTwoArgs
     | first :: rest -> Result.Ok (first, rest)
   in
-
-  (* (* Create map from hostname -> participant & message *) *)
-  (* let hostname_to_peer : (Uri.t, _) Hashtbl.t = *)
-  (*   peers |> List.to_seq *)
-  (*   |> Seq.map (fun (p : participant) -> *)
-  (*       let peer : peer = *)
-  (*         { name = p.debug_name; message_channel = Lwt_mvar.create_empty () } *)
-  (*       in *)
-  (*       (p.hostname, peer)) *)
-  (*   |> Hashtbl.of_seq *)
-  (* in *)
-
-  (* Create map from name -> hostname *)
-  let name_to_hostname =
-    peers |> List.to_seq
-    |> Seq.map (fun (p : participant) -> (p.name, p.hostname))
-    |> Hashtbl.of_seq
-  in
   (* Create map from name -> peer *)
   let name_to_peer : (string, peer) Hashtbl.t =
     peers |> List.to_seq
@@ -147,15 +137,7 @@ let create_state () : (state, init_error) result =
     |> Hashtbl.of_seq
   in
   (* We will add to messages with the server *)
-  let state =
-    {
-      self;
-      (* peers; *)
-      name_to_hostname;
-      name_to_peer;
-      (* messages = [] *)
-    }
-  in
+  let state = { self; name_to_peer } in
   Result.Ok state
 
 (** The global state containing our identity & peer information, and used to
@@ -165,16 +147,16 @@ let _app_state =
   match create_state () with
   | Ok state -> state
   | Error err ->
-      failwith ("HTTP Backend init failed: " ^ describe_init_error err)
+      failwith ("HTTP Backend init failed: " ^ init_error_to_string err)
 
 (** Get the participant with the given destination name *)
 let get_participant (destination : string) : participant =
-  let hostname : Uri.t =
-    match Hashtbl.find_opt _app_state.name_to_hostname destination with
-    | Some hostname -> hostname
+  let peer =
+    match Hashtbl.find_opt _app_state.name_to_peer destination with
+    | Some peer -> peer
     | None -> failwith ("HTTP backend hasn't registered '" ^ destination ^ "'")
   in
-  { name = destination; hostname }
+  { name = destination; hostname = peer.hostname }
 
 (*---------------------------------------------------------------------------*)
 (* HTTP Send/Receive                                                         *)
@@ -199,6 +181,24 @@ let client_result_to_http_status = function
   | Result.Error CannotMessageTwice ->
       `Bad_request
 
+(** Retries if the connection fails (retries every 0.05 s, deadline is 10 s). *)
+let with_connection_retry (task : unit -> 'a Lwt.t) : 'a Lwt.t =
+  let deadline_seconds = 10.0 in
+  let retry_seconds = 0.05 in
+  (* Compute deadline *)
+  let deadline = Unix.gettimeofday () +. deadline_seconds in
+  (* Define actual computation body *)
+  let rec recursive_body () =
+    Lwt.catch task (function
+      | Unix.Unix_error (Unix.ECONNREFUSED, _, _)
+        when Unix.gettimeofday () < deadline ->
+          let** () = Lwt_unix.sleep retry_seconds in
+          recursive_body ()
+      | e -> Lwt.reraise e)
+  in
+  (* Start trying *)
+  recursive_body ()
+
 let start_server () : unit Lwt.t =
   (* Processes the given request with the given string. Returns
      the message_completion indicating we've received the message. *)
@@ -216,14 +216,9 @@ let start_server () : unit Lwt.t =
       |> Option.to_result ~none:UnknownPath
       |> Lwt.return
     in
-    (* Extract the origin (should be scheme+host+port)
+    (* Extract the name
        Note: We don't validate inputs because if they're invalid, they
        will simply not get a Hashtbl match. *)
-    let**? raw_peer_hostname =
-      Http.Header.get (Http.Request.headers req) "Origin"
-      |> Option.to_result ~none:MissingOrigin
-      |> Lwt.return
-    in
     let**? raw_peer_name =
       Http.Header.get (Http.Request.headers req) "X-Pirouette-From"
       |> Option.to_result ~none:MissingOrigin
@@ -234,9 +229,7 @@ let start_server () : unit Lwt.t =
       match Hashtbl.find_opt _app_state.name_to_peer raw_peer_name with
       (* Check `is_empty` doesn't cause race conditions because
          we're the only thread who can put new data in the channel. *)
-      | Some { hostname; message_channel }
-        when Uri.to_string hostname = raw_peer_hostname
-             && Lwt_mvar.is_empty message_channel ->
+      | Some { message_channel; _ } when Lwt_mvar.is_empty message_channel ->
           Lwt.return_ok message_channel
       (* Fail if channel isn't empty (client double-messaged) *)
       | Some _ -> Lwt.return_error CannotMessageTwice
@@ -270,75 +263,99 @@ let start_server () : unit Lwt.t =
   (* Start server *)
   Cohttp_lwt_unix.Server.create ~mode:(`TCP (`Port port)) server
 
-type get_message_error = InvalidPeer
-
-let get_error_to_str = function InvalidPeer -> "invalid peer"
-
-let _get_message_impl (message_type : message_type) (peer : participant) : 'a =
+let _get_message_impl (type a) (message_type : message_type)
+    (peer_name : string) : (a, get_message_error) Lwt_result.t =
   (* Get peer *)
-  let* peer =
-    Hashtbl.find_opt _app_state.name_to_peer peer.name
-    |> Option.to_result ~none:InvalidPeer
+  let**? peer =
+    Hashtbl.find_opt _app_state.name_to_peer peer_name
+    |> Option.to_result ~none:InvalidSourcePeer
+    |> Lwt_result.lift
   in
-  (* Block until message arrives *)
-  let (req_message_type, message_body), completion =
-    Lwt_main.run (Lwt_mvar.take peer.message_channel)
+  (* Wait for message to arrive *)
+  let** (req_message_type, message_body), completion =
+    Lwt_mvar.take peer.message_channel
   in
-  let decoded : 'a = Marshal.from_string message_body 0 in
-  (* Signal to peer that we got the message *)
+  (* Signal to peer whether we could take the message *)
   let is_correct_type = req_message_type = message_type in
   Lwt_condition.signal completion is_correct_type;
-  (* Return decoded data *)
-  decoded
+  (* Ensure we have a `/send` message (or throw) *)
+  let**? () =
+    if is_correct_type then Lwt.return_ok ()
+    else Lwt.return_error (WrongMessageType req_message_type)
+  in
+  (* Decode only once the kind matches
+      Note: A `/choose` body contains a label, so decoding it is invalid. *)
+  Lwt.return_ok (Marshal.from_string message_body 0 : a)
 
-let get_message (message_type : message_type) (peer : participant) : 'a =
-  match _get_message_impl message_type peer with
+let get_message (type a) (message_type : message_type) (peer_name : string) : a
+    =
+  (* Block until we get the message *)
+  match Lwt_main.run (_get_message_impl message_type peer_name) with
   | Ok value -> value
   | Error err ->
-      failwith "HTTP Backend couldn't get message: " ^ get_error_to_str err
+      failwith ("HTTP Backend couldn't get message: " ^ get_error_to_string err)
 
-let post_message (message_type : message_type) (peer : participant)
-    (message : string) =
+let _post_message_impl (message_type : message_type) (peer_name : string)
+    (message : string) : (unit, post_message_error) Lwt_result.t =
   let body = Cohttp_lwt.Body.of_string message in
-  let headers =
-    Http.Header.add
-      (Http.Header.init_with "Origin" (Uri.to_string _app_state.self.hostname))
-      "X-Pirouette-From" _app_state.self.name
+  let headers = Http.Header.init_with "X-Pirouette-From" _app_state.self.name in
+  let**? peer =
+    Hashtbl.find_opt _app_state.name_to_peer peer_name
+    |> Option.to_result ~none:InvalidDestPeer
+    |> Lwt_result.lift
   in
   let request_uri =
     Uri.with_path peer.hostname (message_type_to_string message_type)
   in
-  let resp, _ =
-    Lwt_main.run (Cohttp_lwt_unix.Client.post ~headers ~body request_uri)
+  (* Block until we post the message (allow for retries) *)
+  let** resp, _ =
+    with_connection_retry (fun () ->
+        Cohttp_lwt_unix.Client.post ~headers ~body request_uri)
   in
-  (* Crash if we get bad status *)
+  (* Throw if we get bad status *)
   let status = Http.Response.status resp in
-  if status <> `OK then
-    failwith
-      ("HTTP backend encountered unexpected error when sending message "
-      ^ Http.Status.to_string status)
-  else ()
+  if status <> `OK then Lwt.return_error (BadStatus status)
+  else Lwt.return_ok ()
 
-let _ = start_server ()
-(* TODO: Make sure to retry. *)
+let post_message (message_type : message_type) (peer_name : string)
+    (message : string) : unit =
+  (* Block until we post the message *)
+  match Lwt_main.run (_post_message_impl message_type peer_name message) with
+  | Ok () -> ()
+  | Error err ->
+      failwith
+        ("HTTP Backend couldn't post message: " ^ post_error_to_string err)
+
+(* Start the server
+
+   Note: `Lwt.async` explicitly throws upon failure. For example, if the port is
+   already taken, we immediately die. *)
+let () =
+  Lwt.async (fun () ->
+      Lwt.catch start_server (fun exn ->
+          failwith
+            ("HTTP Backend unexpected protocol failure: "
+           ^ Printexc.to_string exn)))
 
 (*---------------------------------------------------------------------------*)
 (* Runtime Implementations                                                         *)
 (*---------------------------------------------------------------------------*)
 
-(* Send [value] to [destination] by POSTing it to their mailbox. Returns once
-   the peer consumes the value from the mailbox (not when they receive it). *)
-let send (destination : string) (value : 'a) : unit =
-  let participant = get_participant destination in
-  (* No Marshal.Closures flag because participants are separate binaries
-     (a closure marshalled here would be a code pointer into the
-     wrong program) *)
-  let message : string = Marshal.to_string value [] in
-  post_message Send participant message
+(* Send [value] to [destination] and block until the peer calls `recv` on said value.
 
-(* Get the next value [source] sent us, blocking until it arrives. The caller
-   annotates the result type, and we trust [Marshal.from_string] to match
-   it; a mismatch results in undefined behavior. *)
-let recv (source : string) : 'a =
-  let participant = get_participant source in
-  get_message Send participant
+   Preconditions:
+   - The given type must be encodable with `Marshal.to_string _ []` (closures
+     are explicitly not supported).
+   *)
+let send (destination : string) (value : 'a) : unit =
+  (* No Marshal.Closures flag because we closure pointers may be invalid
+     in other participants processes. *)
+  let message : string = Marshal.to_string value [] in
+  post_message Send destination message
+
+(* Blocks until we get the next value from [source].
+
+   Preconditions:
+   - The caller annotates the result type, and we trust [Marshal.from_string]
+     to match it; a mismatch results in undefined behavior. *)
+let recv (type a) (source : string) : a = get_message Send source
