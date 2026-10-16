@@ -42,6 +42,10 @@ type state = {
 }
 (** The app's shared global state. *)
 
+(*---------------------------------------------------------------------------*)
+(* Errors                                                                    *)
+(*---------------------------------------------------------------------------*)
+
 type participant_parse_error = NoDebugName | InvalidHostname
 
 let participant_error_to_string = function
@@ -61,9 +65,26 @@ let init_error_to_string = function
         (participant_error_to_string parse_error)
         raw_participant
 
-type get_message_error = InvalidSourcePeer | WrongMessageType of message_type
+type client_error =
+  | MethodNotPost  (** We only allow POST for send/choose *)
+  | UnknownPath  (** We only allow `/send` and `/choose` *)
+  | MissingOrigin  (** We need the `Origin` header to identify the peer *)
+  | UnknownPeer  (** Peer must be registered *)
+  | CannotMessageTwice  (** Cannot message twice *)
 
-let get_error_to_string = function
+let client_result_to_http_status = function
+  | Result.Ok true -> `OK
+  | Result.Error MethodNotPost -> `Method_not_allowed
+  | Result.Error UnknownPath -> `Not_found
+  | Result.Error UnknownPeer -> `Unauthorized
+  | Result.Ok false
+  | Result.Error MissingOrigin
+  | Result.Error CannotMessageTwice ->
+      `Bad_request
+
+type http_get_error = InvalidSourcePeer | WrongMessageType of message_type
+
+let http_get_error_to_string = function
   | InvalidSourcePeer -> "invalid peer"
   | WrongMessageType received ->
       (* Calculate expected type *)
@@ -73,14 +94,10 @@ let get_error_to_string = function
         (message_type_to_string expected)
         (message_type_to_string received)
 
-type post_message_error =
-  | InvalidDestPeer
-  | BadStatus of Http.Status.t
-  | PostError of exn
+type http_post_error = InvalidDestPeer | BadStatus of Http.Status.t
 
-let post_error_to_string = function
+let http_post_error_to_string = function
   | InvalidDestPeer -> "invalid peer"
-  | PostError exn -> "protocol exception: " ^ Printexc.to_string exn
   | BadStatus status ->
       "peer responded with unexpected status: " ^ Http.Status.to_string status
 
@@ -159,27 +176,8 @@ let get_participant (destination : string) : participant =
   { name = destination; hostname = peer.hostname }
 
 (*---------------------------------------------------------------------------*)
-(* HTTP Send/Receive                                                         *)
+(* HTTP Get/Post                                                         *)
 (*---------------------------------------------------------------------------*)
-
-type client_error =
-  | MethodNotPost  (** We only allow POST for send/choose *)
-  | UnknownPath  (** We only allow `/send` and `/choose` *)
-  | MissingOrigin  (** We need the `Origin` header to identify the peer *)
-  | UnknownPeer  (** Peer must be registered *)
-  | CannotMessageTwice  (** Cannot message twice *)
-(* TODO: Remove *)
-(* | WrongOperation  (** Expected `/send` but got `/choose` or vice versa. *) *)
-
-let client_result_to_http_status = function
-  | Result.Ok true -> `OK
-  | Result.Error MethodNotPost -> `Method_not_allowed
-  | Result.Error UnknownPath -> `Not_found
-  | Result.Error UnknownPeer -> `Unauthorized
-  | Result.Ok false
-  | Result.Error MissingOrigin
-  | Result.Error CannotMessageTwice ->
-      `Bad_request
 
 (** Retries if the connection fails (retries every 0.05 s, deadline is 10 s). *)
 let with_connection_retry (task : unit -> 'a Lwt.t) : 'a Lwt.t =
@@ -264,7 +262,7 @@ let start_server () : unit Lwt.t =
   Cohttp_lwt_unix.Server.create ~mode:(`TCP (`Port port)) server
 
 let _get_message_impl (type a) (message_type : message_type)
-    (peer_name : string) : (a, get_message_error) Lwt_result.t =
+    (peer_name : string) : (a, http_get_error) Lwt_result.t =
   (* Get peer *)
   let**? peer =
     Hashtbl.find_opt _app_state.name_to_peer peer_name
@@ -293,10 +291,11 @@ let get_message (type a) (message_type : message_type) (peer_name : string) : a
   match Lwt_main.run (_get_message_impl message_type peer_name) with
   | Ok value -> value
   | Error err ->
-      failwith ("HTTP Backend couldn't get message: " ^ get_error_to_string err)
+      failwith
+        ("HTTP Backend couldn't get message: " ^ http_get_error_to_string err)
 
 let _post_message_impl (message_type : message_type) (peer_name : string)
-    (message : string) : (unit, post_message_error) Lwt_result.t =
+    (message : string) : (unit, http_post_error) Lwt_result.t =
   let body = Cohttp_lwt.Body.of_string message in
   let headers = Http.Header.init_with "X-Pirouette-From" _app_state.self.name in
   let**? peer =
@@ -324,7 +323,7 @@ let post_message (message_type : message_type) (peer_name : string)
   | Ok () -> ()
   | Error err ->
       failwith
-        ("HTTP Backend couldn't post message: " ^ post_error_to_string err)
+        ("HTTP Backend couldn't post message: " ^ http_post_error_to_string err)
 
 (* Start the server
 
