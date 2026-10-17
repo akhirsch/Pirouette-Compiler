@@ -6,8 +6,11 @@ struct
   open AST
 
   let spf = Printf.sprintf
+
+  (*Tracks the number of nodes we've made to generate unique node names*)
   let node_counter = ref 0
 
+  (*Reads the current node counter, increments it, and concatentates it with the node_id to create a node name.*)
   let generate_node_name () =
     let node_id = !node_counter in
     node_counter := !node_counter + 1;
@@ -387,7 +390,7 @@ struct
         let c1, n1 = dot_name string_of_info name in
         let c2, n2 = dot_lab string_of_info lab in
         let decl_node =
-          spf "%s [label=\"Binop %s\"];\n" node_name (string_of_info m)
+          spf "%s [label=\"ChooseFor %s\"];\n" node_name (string_of_info m)
         in
         let edge1 = spf "%s -> %s;\n" node_name n1 in
         let edge2 = spf "%s -> %s;\n" node_name n2 in
@@ -531,6 +534,7 @@ struct
 
   let generate_dot_code string_of_info program =
     let code, _ = dot_decls string_of_info program in
+    (*Set node counter to 0 so that the next call to generate_dot_code starts at 0*)
     node_counter := 0;
     spf "digraph G {\n%s\n}\n" code
 end

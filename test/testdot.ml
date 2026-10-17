@@ -680,7 +680,7 @@ let test_recv =
   out
 
 let expected_choose =
-  "n0 [label=\"Binop [test.ml: 1:15--1:16]\"];\n\
+  "n0 [label=\"ChooseFor [test.ml: 1:15--1:16]\"];\n\
    n0 -> n1;\n\
    n0 -> n2;\n\
    n1 [label=\"Name alice [test.ml: 2:20--2:50]\"];\n\
