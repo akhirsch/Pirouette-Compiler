@@ -7,9 +7,9 @@ open Meta
 (*This test is meant to be ran using the command line.
 Run: 
 dune exec test/dottests/dotvisual.exe
-dot -Tsvg -o output.svg 
+dot ast.dot -Tsvg -o output.svg 
 and open output.svg
-to see the results. It should build with no errors and you should see a graph of the  *)
+to see the results. It should build with no errors and you should see a graph of the AST*)
 
 let () =
   let pos = { filename = "test.ml"; start = (1, 15); stop = (1, 16) } in

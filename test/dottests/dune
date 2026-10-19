@@ -1,3 +1,7 @@
 (executable
  (name dotvisual)
  (libraries netir metainfo))
+
+(executable
+ (name dotspecialchar)
+ (libraries netir metainfo))
