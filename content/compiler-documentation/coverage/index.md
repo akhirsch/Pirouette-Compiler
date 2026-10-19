@@ -8,20 +8,20 @@ weight = 1
   <head>
     <meta charset="utf-8"/>
     <title>Coverage report</title>
-    <meta name="description" content="62.66% coverage overall"/>
+    <meta name="description" content="69.16% coverage overall"/>
     <link rel="stylesheet" type="text/css" href="coverage.css"/>
   </head>
   <body>
     <div id="header">
       <h1>Coverage report</h1>
-      <h2>62.66%</h2>
+      <h2>69.16%</h2>
     </div>
     <div id="files">
       <div>
         <span class="meter">
-          <span class="covered" style="width: 0%"></span>
+          <span class="covered" style="width: 33%"></span>
         </span>
-        <span class="percentage">0% <span class="stats">(0 / 3)</span></span>
+        <span class="percentage">33% <span class="stats">(1 / 3)</span></span>
         <a href="lib/Metainfo/meta.ml.html">
           <span class="dirname">lib/Metainfo/</span>meta.ml
         </a>
@@ -33,6 +33,15 @@ weight = 1
         <span class="percentage">100% <span class="stats">(0 / 0)</span></span>
         <a href="lib/NetIR/ast.ml.html">
           <span class="dirname">lib/NetIR/</span>ast.ml
+        </a>
+      </div>
+      <div>
+        <span class="meter">
+          <span class="covered" style="width: 96%"></span>
+        </span>
+        <span class="percentage">96% <span class="stats">(398 / 411)</span></span>
+        <a href="lib/NetIR/dot_ast.ml.html">
+          <span class="dirname">lib/NetIR/</span>dot_ast.ml
         </a>
       </div>
       <div>
