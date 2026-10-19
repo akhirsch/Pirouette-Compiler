@@ -19,7 +19,8 @@ struct
   let dot_name string_of_info name =
     let node_name = generate_node_name () in
     let info, str = name in
-    ( spf "%s [label=\"Name %s %s\"];\n" node_name str (string_of_info info),
+    ( spf "%s [label=\"Name %s %s\"];\n" node_name (String.escaped str)
+        (string_of_info info),
       node_name )
 
   let dot_lab string_of_info (label : lab) =
@@ -42,11 +43,14 @@ struct
 
   let dot_char char =
     let node_name = generate_node_name () in
-    (spf "%s [label=\"Char %s\"];\n" node_name (String.make 1 char), node_name)
+    ( spf "%s [label=\"Char %s\"];\n" node_name
+        (String.escaped (String.make 1 char)),
+      node_name )
 
   let dot_string string =
     let node_name = generate_node_name () in
-    (spf "%s [label=\"String %s\"];\n" node_name string, node_name)
+    ( spf "%s [label=\"String %s\"];\n" node_name (String.escaped string),
+      node_name )
 
   let rec dot_pattern string_of_info pat =
     let node_name = generate_node_name () in
@@ -533,8 +537,15 @@ struct
         (decl_node ^ edge1 ^ edges ^ c1 ^ codes, node_name)
 
   let generate_dot_code string_of_info program =
+    let string_of_info m = String.escaped (string_of_info m) in
     let code, _ = dot_decls string_of_info program in
     (*Set node counter to 0 so that the next call to generate_dot_code starts at 0*)
     node_counter := 0;
+    (* print_endline "DEBUG: WRITING FILE";
+    let full_code = spf "digraph G {\n%s\n}\n" code in
+    let oc = open_out "../../../test_dot.dot" in
+    output_string oc full_code;
+    close_out oc;
+    print_endline "DEBUG: WROTE FILE"; *)
     spf "digraph G {\n%s\n}\n" code
 end

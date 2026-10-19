@@ -7,7 +7,7 @@ end) : sig
   output a string of DOT code, which then can be written to a file or copied and visualized via the command line
 
   For a file: dot -Tsvg ast.dot > output.svg
-  For a string: echo -e 'digraph { "n0 [label=\"Emulated Loc Decl [test.ml: 1:15--1:16]\"];\nn0 -> n1;\nn1 [label=\"Name example [test.ml: 2:20--2:50]\"];\n" }' | dot -Tsvg > output.svg
+  For a string: echo -e "digraph G { n0 [label=\"Emulated Loc Decl [test.ml: 1:15--1:16]\"];\nn0 -> n1;\nn1 [label=\"Name example [test.ml: 2:20--2:50]\"];\n }" | dot -Tsvg > output.svg
   
 
   Each function takes [string_of_info], this is the [Meta.string_of_mi] function.

@@ -5,8 +5,11 @@ open AST
 open Meta
 
 (*This test is meant to be ran using the command line.
-Run dune exec test/testdotvisual.exe | dot -Tsvg -o output.svg and open output
-to see the results *)
+Run: 
+dune exec test/dottests/dotvisual.exe
+dot -Tsvg -o output.svg 
+and open output.svg
+to see the results. It should build with no errors and you should see a graph of the  *)
 
 let () =
   let pos = { filename = "test.ml"; start = (1, 15); stop = (1, 16) } in
@@ -37,4 +40,8 @@ let () =
   in
   let alias = TypeAliasDecl (pos13, (pos14, "test"), IntTy pos15) in
   let prog = [ variant; import; defn; alias ] in
-  print_string (DotAST.generate_dot_code Meta.string_of_mi prog)
+
+  let code = DotAST.generate_dot_code Meta.string_of_mi prog in
+  let oc = open_out "ast.dot" in
+  output_string oc code;
+  close_out oc

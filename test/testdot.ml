@@ -7,6 +7,9 @@ open Meta
 
 let test_eq_string s1 s2 _ = assert_equal ~printer:(fun x -> x) s1 s2
 
+(*Here we're testing the individual functions to see if they generate the expected dot code. At the bottom
+  the entrypoint is tested*)
+
 (* ----- Type Tests ----- *)
 
 let expected_varty =
@@ -101,6 +104,7 @@ let test_locty =
   let out, _ = DotAST.dot_typ Meta.string_of_mi typ in
   out
 
+(*Testing locty handles lists correctly*)
 let expected_locty_mult =
   "n0 [label=\"Loc Type [test.ml: 1:15--1:16]\"];\n\
    n0 -> n1;\n\
@@ -119,7 +123,21 @@ let test_locty_mult =
   let out, _ = DotAST.dot_typ Meta.string_of_mi typ in
   out
 
-(* ----- Pattern tests ----- *)
+let type_suite =
+  [
+    "var type" >:: test_eq_string expected_varty test_varty;
+    "unit type" >:: test_eq_string expected_unitty test_unitty;
+    "int type" >:: test_eq_string expected_intty test_intty;
+    "float type" >:: test_eq_string expected_floatty test_floatty;
+    "char type" >:: test_eq_string expected_charty test_charty;
+    "string type" >:: test_eq_string expected_stringty test_stringty;
+    "bool type" >:: test_eq_string expected_boolty test_boolty;
+    "fun type" >:: test_eq_string expected_funty test_funty;
+    "loc type" >:: test_eq_string expected_locty test_locty;
+    "loc type multiple" >:: test_eq_string expected_locty_mult test_locty_mult;
+  ]
+
+(* ----- Pattern Tests ----- *)
 
 let expected_wildcard = "n0 [label=\"Wildcard Pat [test.ml: 1:15--1:16]\"];\n"
 
@@ -252,6 +270,7 @@ let test_constr =
   let out, _ = DotAST.dot_pattern Meta.string_of_mi pat in
   out
 
+(*Testing constructor handles lists correctly*)
 let expected_constr_mult =
   "n0 [label=\"Constructor Pat [test.ml: 1:15--1:16]\"];\n\
    n0 -> n1;\n\
@@ -297,6 +316,23 @@ let test_locname =
   let pat = LocNamePat (pos, (pos, "Alice")) in
   let out, _ = DotAST.dot_pattern Meta.string_of_mi pat in
   out
+
+let pattern_suite =
+  [
+    "wildcard pat" >:: test_eq_string expected_wildcard test_wildcard;
+    "var pat" >:: test_eq_string expected_varpat test_varpat;
+    "unitlit pat" >:: test_eq_string expected_unitlit_pat test_unitlit_pat;
+    "intlit pat" >:: test_eq_string expected_intlit_pat test_intlit_pat;
+    "floatlit pat" >:: test_eq_string expected_floatlit_pat test_floatlit_pat;
+    "charlit pat" >:: test_eq_string expected_charlit_pat test_charlit_pat;
+    "stringlit pat" >:: test_eq_string expected_stringlit_pat test_stringlit_pat;
+    "truelit pat" >:: test_eq_string expected_truelit_pat test_truelit_pat;
+    "falselit pat" >:: test_eq_string expected_falselit_pat test_falselit_pat;
+    "loclit pat" >:: test_eq_string expected_loclit_pat test_loclit_pat;
+    "constr pat" >:: test_eq_string expected_constr test_constr;
+    "constr pat mult" >:: test_eq_string test_constr_mult expected_constr_mult;
+    "locname pat" >:: test_eq_string expected_locname test_locname;
+  ]
 
 (* ----- Operation Tests ----- *)
 
@@ -425,6 +461,22 @@ let test_geq =
   let op = Geq pos in
   let out, _ = DotAST.dot_binop Meta.string_of_mi op in
   out
+
+let op_suite =
+  [
+    "plus" >:: test_eq_string expected_plus test_plus;
+    "minus" >:: test_eq_string expected_minus test_minus;
+    "times" >:: test_eq_string expected_times test_times;
+    "div" >:: test_eq_string expected_div test_div;
+    "and" >:: test_eq_string expected_and test_and;
+    "or" >:: test_eq_string expected_or test_or;
+    "eq" >:: test_eq_string expected_eq test_eq;
+    "neq" >:: test_eq_string expected_neq test_neq;
+    "lt" >:: test_eq_string expected_lt test_lt;
+    "leq" >:: test_eq_string expected_leq test_leq;
+    "gt" >:: test_eq_string expected_gt test_gt;
+    "geq" >:: test_eq_string expected_geq test_geq;
+  ]
 
 (* ----- Expr Tests ----- *)
 
@@ -735,6 +787,29 @@ let test_ami =
   let out, _ = DotAST.dot_expr Meta.string_of_mi expr in
   out
 
+let expr_suite =
+  [
+    "varexpr" >:: test_eq_string expected_varexpr test_varexpr;
+    "unitlit" >:: test_eq_string expected_unitlit test_unitlit;
+    "intlit" >:: test_eq_string expected_intlit test_intlit;
+    "floatlit" >:: test_eq_string expected_floatlit test_floatlit;
+    "charlit" >:: test_eq_string expected_charlit test_charlit;
+    "stringlit" >:: test_eq_string expected_stringlit test_stringlit;
+    "truelit" >:: test_eq_string expected_truelit test_truelit;
+    "falselit" >:: test_eq_string expected_falselit test_falselit;
+    "loclit" >:: test_eq_string expected_loclit test_loclit;
+    "match" >:: test_eq_string expected_match test_match;
+    "recabs" >:: test_eq_string expected_recabs test_recabs;
+    "funapp" >:: test_eq_string expected_funapp test_funapp;
+    "typeconstr" >:: test_eq_string expected_typeconstr test_typeconstr;
+    "unop" >:: test_eq_string expected_unop test_unop;
+    "send" >:: test_eq_string expected_send test_send;
+    "recv" >:: test_eq_string expected_recv test_recv;
+    "choose" >:: test_eq_string expected_choose test_choose;
+    "allow" >:: test_eq_string expected_allow test_allow;
+    "ami" >:: test_eq_string expected_ami test_ami;
+  ]
+
 (* ----- Decl Tests ----- *)
 
 let expected_locdecl =
@@ -848,6 +923,16 @@ let test_variantdecl =
   let out, _ = DotAST.dot_decl Meta.string_of_mi expr in
   out
 
+let decl_suite =
+  [
+    "locdecl" >:: test_eq_string expected_locdecl test_locdecl;
+    "decl" >:: test_eq_string expected_decl test_decl;
+    "aliasdecl" >:: test_eq_string expected_aliasdecl test_aliasdecl;
+    "defndecl" >:: test_eq_string expected_defndecl test_defndecl;
+    "importdecl" >:: test_eq_string expected_importdecl test_importdecl;
+  ]
+
+(**)
 let expected_program =
   "digraph G {\n\
    n0 [label=\"Variant Decl [test.ml: 1:15--1:16]\"];\n\
@@ -880,6 +965,7 @@ let expected_program =
    n15 [label=\"Int Type [test.ml: 15:31--15:41]\"];\n\n\
    }\n"
 
+(* ----- Entrypoint Tests ----- *)
 let test_program =
   DotAST.node_counter := 0;
   let pos = { filename = "test.ml"; start = (1, 15); stop = (1, 16) } in
@@ -912,67 +998,52 @@ let test_program =
   let prog = [ variant; import; defn; alias ] in
   DotAST.generate_dot_code Meta.string_of_mi prog
 
+(*Testing that special characters are escaped correctly*)
+let expected_special_characters =
+  "digraph G {\n\
+   n0 [label=\"Variant Decl [test.ml: 1:15--1:16]\"];\n\
+   n0 -> n1;\n\
+   n0 -> n2;\n\
+   n1 [label=\"Name Newline \\n Backslash_n\\\\n [test.ml: 1:15--1:16]\"];\n\
+   n2 [label=\"Variant Constructor\"];\n\
+   n2 -> n3;\n\
+   n2 -> n4;\n\
+   n3 [label=\"Name \\\"Quotation Marks\\\"  [test.ml: 1:15--1:16]\"];\n\
+   n4 [label=\"Var Type [test.ml: 1:15--1:16]\"];\n\
+   n4 -> n5;\n\
+   n5 [label=\"Name Backslashes \\\\ [test.ml: 1:15--1:16]\"];\n\n\
+   }\n"
+
+let test_special_characters =
+  DotAST.node_counter := 0;
+
+  let pos = { filename = "test.ml"; start = (1, 15); stop = (1, 16) } in
+  let variant =
+    VariantDecl
+      ( pos,
+        (pos, "Newline \n Backslash_n\\n"),
+        [
+          ( (pos, "\"Quotation Marks\" "),
+            [],
+            VarTy (pos, (pos, "Backslashes \\")) );
+        ] )
+  in
+  let prog = [ variant ] in
+  DotAST.generate_dot_code Meta.string_of_mi prog
+
+let prog_suite =
+  [
+    "program" >:: test_eq_string expected_program test_program;
+    "special characters"
+    >:: test_eq_string expected_special_characters test_special_characters;
+  ]
+
 let suite =
   [
-    "var type" >:: test_eq_string expected_varty test_varty;
-    "unit type" >:: test_eq_string expected_unitty test_unitty;
-    "int type" >:: test_eq_string expected_intty test_intty;
-    "float type" >:: test_eq_string expected_floatty test_floatty;
-    "char type" >:: test_eq_string expected_charty test_charty;
-    "string type" >:: test_eq_string expected_stringty test_stringty;
-    "bool type" >:: test_eq_string expected_boolty test_boolty;
-    "fun type" >:: test_eq_string expected_funty test_funty;
-    "loc type" >:: test_eq_string expected_locty test_locty;
-    "loc type multiple" >:: test_eq_string expected_locty_mult test_locty_mult;
-    "wildcard pat" >:: test_eq_string expected_wildcard test_wildcard;
-    "var pat" >:: test_eq_string expected_varpat test_varpat;
-    "unitlit pat" >:: test_eq_string expected_unitlit_pat test_unitlit_pat;
-    "intlit pat" >:: test_eq_string expected_intlit_pat test_intlit_pat;
-    "floatlit pat" >:: test_eq_string expected_floatlit_pat test_floatlit_pat;
-    "charlit pat" >:: test_eq_string expected_charlit_pat test_charlit_pat;
-    "stringlit pat" >:: test_eq_string expected_stringlit_pat test_stringlit_pat;
-    "truelit pat" >:: test_eq_string expected_truelit_pat test_truelit_pat;
-    "falselit pat" >:: test_eq_string expected_falselit_pat test_falselit_pat;
-    "loclit pat" >:: test_eq_string expected_loclit_pat test_loclit_pat;
-    "constr pat" >:: test_eq_string expected_constr test_constr;
-    "constr pat mult" >:: test_eq_string test_constr_mult expected_constr_mult;
-    "locname pat" >:: test_eq_string expected_locname test_locname;
-    "plus" >:: test_eq_string expected_plus test_plus;
-    "minus" >:: test_eq_string expected_minus test_minus;
-    "times" >:: test_eq_string expected_times test_times;
-    "div" >:: test_eq_string expected_div test_div;
-    "and" >:: test_eq_string expected_and test_and;
-    "or" >:: test_eq_string expected_or test_or;
-    "eq" >:: test_eq_string expected_eq test_eq;
-    "neq" >:: test_eq_string expected_neq test_neq;
-    "lt" >:: test_eq_string expected_lt test_lt;
-    "leq" >:: test_eq_string expected_leq test_leq;
-    "gt" >:: test_eq_string expected_gt test_gt;
-    "geq" >:: test_eq_string expected_geq test_geq;
-    "varexpr" >:: test_eq_string expected_varexpr test_varexpr;
-    "unitlit" >:: test_eq_string expected_unitlit test_unitlit;
-    "intlit" >:: test_eq_string expected_intlit test_intlit;
-    "floatlit" >:: test_eq_string expected_floatlit test_floatlit;
-    "charlit" >:: test_eq_string expected_charlit test_charlit;
-    "stringlit" >:: test_eq_string expected_stringlit test_stringlit;
-    "truelit" >:: test_eq_string expected_truelit test_truelit;
-    "falselit" >:: test_eq_string expected_falselit test_falselit;
-    "loclit" >:: test_eq_string expected_loclit test_loclit;
-    "match" >:: test_eq_string expected_match test_match;
-    "recabs" >:: test_eq_string expected_recabs test_recabs;
-    "funapp" >:: test_eq_string expected_funapp test_funapp;
-    "typeconstr" >:: test_eq_string expected_typeconstr test_typeconstr;
-    "unop" >:: test_eq_string expected_unop test_unop;
-    "send" >:: test_eq_string expected_send test_send;
-    "recv" >:: test_eq_string expected_recv test_recv;
-    "choose" >:: test_eq_string expected_choose test_choose;
-    "allow" >:: test_eq_string expected_allow test_allow;
-    "ami" >:: test_eq_string expected_ami test_ami;
-    "locdecl" >:: test_eq_string expected_locdecl test_locdecl;
-    "decl" >:: test_eq_string expected_decl test_decl;
-    "aliasdecl" >:: test_eq_string expected_aliasdecl test_aliasdecl;
-    "defndecl" >:: test_eq_string expected_defndecl test_defndecl;
-    "importdecl" >:: test_eq_string expected_importdecl test_importdecl;
-    "variantdecl" >:: test_eq_string expected_variantdecl test_variantdecl;
-    "program" >:: test_eq_string expected_program test_program;
+    "Type Tests" >::: type_suite;
+    "Pattern Tests" >::: pattern_suite;
+    "Operation Tests" >::: op_suite;
+    "Expr Tests" >::: expr_suite;
+    "Decl Tests" >::: decl_suite;
+    "Program Tests" >::: prog_suite;
   ]
