@@ -93,9 +93,12 @@ jobs:
 
       - name: Generate Opam
         run: opam exec -- dune build @opam
-
+        
+        #Installing graphviz for dot tests
       - name: Install dependencies
-        run: opam install . --deps-only --with-test
+        run: |
+          sudo apt-get install -y graphviz 
+          opam install . --deps-only --with-test
 
       - name: Build
         run: opam exec -- dune build
