@@ -7,6 +7,4 @@
  (libraries netir metainfo))
 
 (cram
- (deps 
-  %{exe:dotvisual.exe}
-  %{exe:dotspecialchar.exe}))
+ (deps %{exe:dotvisual.exe} %{exe:dotspecialchar.exe}))
