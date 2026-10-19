@@ -1,0 +1,10 @@
+(executable
+ (name dotvisual)
+ (libraries netir metainfo))
+
+(executable
+ (name dotspecialchar)
+ (libraries netir metainfo))
+
+(cram
+ (deps %{exe:dotvisual.exe} %{exe:dotspecialchar.exe}))
