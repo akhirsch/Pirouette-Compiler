@@ -27,5 +27,4 @@ val choose : string -> string -> Ppxlib.expression
 (* recv_label src  logs the label receive
    always a string bc the AllowChoice match uses it *)
 val recv_label : string -> Ppxlib.expression
-
 val am_i : Ppxlib.expression -> Ppxlib.expression

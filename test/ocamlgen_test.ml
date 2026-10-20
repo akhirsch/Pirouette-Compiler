@@ -93,9 +93,12 @@ let suite =
     "annot" >:: test_expr "(3 : int)" (typeconstr (intlit 3) intty);
     (*--------- Communication: calls to Dummybackend -----------*)
     "send"
-    >:: test_expr {|Printf.printf "%s: %s\n%!" pir_me "would have sent 3 to A"|} (send (intlit 3) "A");
+    >:: test_expr {|Printf.printf "%s: %s\n%!" pir_me "would have sent 3 to A"|}
+          (send (intlit 3) "A");
     "recv"
-    >:: test_expr ({|Printf.printf "%s: %s\n%!" pir_me "would have received int from A";|} ^ "\nRandom.int 999")
+    >:: test_expr
+          ({|Printf.printf "%s: %s\n%!" pir_me "would have received int from A";|}
+         ^ "\nRandom.int 999")
           (recv intty "A");
     "choose"
     >:: test_expr {|Backend.Dummybackend.choose "A" "L"|}
@@ -180,21 +183,13 @@ let suite =
     "defndecl"
     >:: test_decl "let f x = x" (defndecl "f" [ varpat "x" ] (var "x"));
     (*--------------------Program Gen Test --------------------------*)
-    "empty_program"
-    >:: test_program
-          "let pir_me = \"alice\""
-          "alice" [];
+    "empty_program" >:: test_program "let pir_me = \"alice\"" "alice" [];
     "one_decl_prog"
-    >:: test_program
-          "let pir_me = \"alice\"\n\
-           type nonrec foo = 'bar"
-          "alice"
+    >:: test_program "let pir_me = \"alice\"\ntype nonrec foo = 'bar" "alice"
           [ typealiasdecl "foo" (varty "bar") ];
     "two_decl_prog"
     >:: test_program
-          "let pir_me = \"alice\"\n\
-           type nonrec foo = 'bar\n\
-           type color = |"
+          "let pir_me = \"alice\"\ntype nonrec foo = 'bar\ntype color = |"
           "alice"
-          [ typealiasdecl "foo" (varty "bar"); variantdecl "color" []];
+          [ typealiasdecl "foo" (varty "bar"); variantdecl "color" [] ];
   ]
