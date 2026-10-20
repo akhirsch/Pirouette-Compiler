@@ -93,9 +93,9 @@ let suite =
     "annot" >:: test_expr "(3 : int)" (typeconstr (intlit 3) intty);
     (*--------- Communication: calls to Dummybackend -----------*)
     "send"
-    >:: test_expr {|Backend.Dummybackend.send "A" "3" 3|} (send (intlit 3) "A");
+    >:: test_expr {|Printf.printf "%s: %s\n%!" pir_me "would have sent 3 to A"|} (send (intlit 3) "A");
     "recv"
-    >:: test_expr {|(Backend.Dummybackend.recv "A" "int" : int)|}
+    >:: test_expr ({|Printf.printf "%s: %s\n%!" pir_me "would have received int from A";|} ^ "\nRandom.int 999")
           (recv intty "A");
     "choose"
     >:: test_expr {|Backend.Dummybackend.choose "A" "L"|}
@@ -104,7 +104,7 @@ let suite =
 
     (* -------------- Location check: Iam check ----------------*)
     (* AmI compares the given location against me the file's own identity*)
-    "ami" >:: test_expr {|"A" = me|} (ami (loclit "A"));
+    "ami" >:: test_expr {|String.equal "A" pir_me|} (ami (loclit "A"));
     (*---------------- AllowChoice ----------------------------*)
     (* one arm: should turn into a match on recv_label *)
     "allowchoice_one"
@@ -131,10 +131,10 @@ let suite =
     "one_const_var"
     >:: test_decl
           (* NO white space after = and only two spaces for the constructor arms*)
-          "type color =\n  | Red "
+          "type color =\n  | Pir_red "
           (variantdecl "color" [ ("red", [], varty "color") ]);
     "two_const_var"
-    >:: test_decl "type color =\n  | Red \n  | Black "
+    >:: test_decl "type color =\n  | Pir_red \n  | Pir_black "
           (variantdecl "color"
              [ ("red", [], varty "color"); ("black", [], varty "color") ]);
     (*---------------- Match Tests ---------------------------------*)
@@ -161,7 +161,7 @@ let suite =
     (* constructor pattern w an argument
        lowercase on purpose bc ocamlgen capitalizes constructors *)
     "match_constructor"
-    >:: test_expr "match x with | Bar n -> n | _ -> 0"
+    >:: test_expr "match x with | Pir_bar n -> n | _ -> 0"
           (mkmatch (var "x")
              [
                (constructorpat "bar" [ varpat "n" ], var "n");
@@ -182,21 +182,19 @@ let suite =
     (*--------------------Program Gen Test --------------------------*)
     "empty_program"
     >:: test_program
-          "let me = \"alice\"\nlet () = Backend.Dummybackend.who_i_am me"
+          "let pir_me = \"alice\""
           "alice" [];
     "one_decl_prog"
     >:: test_program
-          "let me = \"alice\"\n\
-           let () = Backend.Dummybackend.who_i_am me\n\
+          "let pir_me = \"alice\"\n\
            type nonrec foo = 'bar"
           "alice"
           [ typealiasdecl "foo" (varty "bar") ];
     "two_decl_prog"
     >:: test_program
-          "let me = \"alice\"\n\
-           let () = Backend.Dummybackend.who_i_am me\n\
+          "let pir_me = \"alice\"\n\
            type nonrec foo = 'bar\n\
            type color = |"
           "alice"
-          [ typealiasdecl "foo" (varty "bar"); variantdecl "color" [] ];
+          [ typealiasdecl "foo" (varty "bar"); variantdecl "color" []];
   ]

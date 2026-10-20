@@ -6,9 +6,11 @@ open Ast_builder.Default
 
 let loc = Location.none
 (* ---- Location type ---- *)
-(* Returns the location type, need to figure out what this is lol*)
+(* Returns the location type. We know in this backedn that locations are
+   all member of the variant constructed in "who_i_am." Thus, we can simply
+   return that variant as our type.*)
 let location_type _ =
-   [%type: unit]  (*TODO*)
+   ptyp_var ~loc "pir_me"
 
 (* ---- identity ---- *)
 (* gets set once at the top of every generated file
