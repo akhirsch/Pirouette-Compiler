@@ -24,7 +24,13 @@ module MkOcamlGen (Net : NetAST) = struct
     | Net.LocTy (_, ids) ->
         Backend.Dummybackend.location_type (List.map (fun (_, x) -> x) ids)
   (*TODO*)
+    (* the list of locations that the process could be running on the list of names are like variants, 
+    and we want to pattern match on that and then if its anything else it will send an error you wont know the list 
+    but write the check as a fold at compile time you know what processes will be running determined by the type 
+    WHAT PROCESSES is this data allowed to work with in COMING from the user, *)
 
+    (* at some point someone is writing data of this type and then we check it, and your ast should have every type of 
+    the ast node, part of the metadata we are taking in type-checked ocaml code *)
   (*------------------- PATTERN GENRATION ---------------------------*)
   (* Convert a NetIR pattern into an OCaml pattern *)
   let rec pattern_gen (p : Net.pattern) : pattern =
@@ -246,18 +252,13 @@ module MkOcamlGen (Net : NetAST) = struct
         in
         [%stri let [%p Ast_builder.Default.pvar ~loc id] = [%e body]]
     | Net.ImportDecl (_, (_, n)) ->
-        let module_id =
-          Ppxlib.Ast_builder.Default.pmod_ident ~loc
-            (Located.lident ~loc (String.capitalize_ascii n))
-          (* include Mymodule 
-        where the module or file that we are importing needs to be capitalized *)
-        in
-        [%stri include [%m module_id]]
-    (* of m * name 
-      let name = Located.lident ~loc (String.capitalize_ascii n) in 
-      (* ocaml Module name must be capatlized *)
-        Pstr_include ~loc (Pmod_ident name) 
-       Ocaml include N *)
+      (* TODO: imports are not supported yet; generate no code until they are *)
+        Printf.eprintf
+          "Warning: import of module %S is not supported yet; skipping it.\n%!"
+          n;
+        [%stri [@@@ocaml.text "import skipped: not supported yet"]]
+        (* the @@@ocaml.txt compiles to nothing, also leaves a note in the generated output 
+        showing where the import was*)
     | Net.VariantDecl (_, (_, n), cs) ->
         (* val constructor_declaration :
       loc:location -> 
