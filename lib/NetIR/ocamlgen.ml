@@ -23,13 +23,14 @@ module MkOcamlGen (Net : NetAST) = struct
     | Net.FunTy (_, t1, t2) -> [%type: [%t type_gen t1] -> [%t type_gen t2]]
     | Net.LocTy (_, ids) ->
         Backend.Dummybackend.location_type (List.map (fun (_, x) -> x) ids)
+
   (*TODO*)
-    (* the list of locations that the process could be running on the list of names are like variants, 
+  (* the list of locations that the process could be running on the list of names are like variants, 
     and we want to pattern match on that and then if its anything else it will send an error you wont know the list 
     but write the check as a fold at compile time you know what processes will be running determined by the type 
     WHAT PROCESSES is this data allowed to work with in COMING from the user, *)
 
-    (* at some point someone is writing data of this type and then we check it, and your ast should have every type of 
+  (* at some point someone is writing data of this type and then we check it, and your ast should have every type of 
     the ast node, part of the metadata we are taking in type-checked ocaml code *)
   (*------------------- PATTERN GENRATION ---------------------------*)
   (* Convert a NetIR pattern into an OCaml pattern *)
@@ -97,7 +98,7 @@ module MkOcamlGen (Net : NetAST) = struct
 
   (*------------------- EXPRESSION GENRATION ---------------------------*)
   (* Converts a NetIR expression into an OCaml expression *)
-  let rec expr_gen (me: string) (e : Net.expr) : expression =
+  let rec expr_gen (me : string) (e : Net.expr) : expression =
     let expr_gen = expr_gen me in
     match e with
     | Net.Var (_, (_, n)) -> evar ~loc n
@@ -205,7 +206,7 @@ module MkOcamlGen (Net : NetAST) = struct
     | Net.AmI (_, e) -> Backend.Dummybackend.am_i me (expr_gen e)
 
   (*------------------- DECL GENRATION ---------------------------*)
-  let decl_gen (me: string) (d : Net.decl) : structure_item =
+  let decl_gen (me : string) (d : Net.decl) : structure_item =
     let expr_gen = expr_gen me in
     match d with
     | Net.EmulatedLocDecl (_, (_, l)) ->
@@ -252,7 +253,7 @@ module MkOcamlGen (Net : NetAST) = struct
         in
         [%stri let [%p Ast_builder.Default.pvar ~loc id] = [%e body]]
     | Net.ImportDecl (_, (_, n)) ->
-      (* TODO: imports are not supported yet; generate no code until they are *)
+        (* TODO: imports are not supported yet; generate no code until they are *)
         Printf.eprintf
           "Warning: import of module %S is not supported yet; skipping it.\n%!"
           n;

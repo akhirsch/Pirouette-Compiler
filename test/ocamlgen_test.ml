@@ -20,7 +20,9 @@ let test_expr expected e _ =
   assert_equal ~printer:(fun x -> x) expected (expr_str e)
 
 (*  VARIANT HELPERS *)
-let decl_structure d = Ppxlib.Pprintast.string_of_structure [ G.decl_gen "Bob" d ]
+let decl_structure d =
+  Ppxlib.Pprintast.string_of_structure [ G.decl_gen "Bob" d ]
+
 (* G is my ocamlgen module *)
 let test_decl expected d _ =
   assert_equal
@@ -90,8 +92,9 @@ let suite =
     "funapp" >:: test_expr "f 4" (funapp (var "f") (intlit 4));
     "annot" >:: test_expr "(3 : int)" (typeconstr (intlit 3) intty);
     (*--------- Communication: calls to Dummybackend -----------*)
-        "send"
-    >:: test_expr {|Printf.printf "%s\n%!" "pir_Bob: would have sent 3 to pir_Alice"|}
+    "send"
+    >:: test_expr
+          {|Printf.printf "%s\n%!" "pir_Bob: would have sent 3 to pir_Alice"|}
           (send (intlit 3) "Alice");
     "recv"
     >:: test_expr
@@ -99,16 +102,30 @@ let suite =
 Random.int 999|}
           (recv intty "A");
     "choose"
-    >:: test_expr {|Printf.printf "%s\n%!" "pir_Bob: would have chosen L for pir_A"|}
+    >:: test_expr
+          {|Printf.printf "%s\n%!" "pir_Bob: would have chosen L for pir_A"|}
           (choosefor "A" (mklab "L"));
     "ami" >:: test_expr {|String.equal "A" "Bob"|} (ami (loclit "A"));
     "allowchoice_one"
     >:: test_expr
-          "match Printf.printf \"%s\\n%!\"\n        \"pir_Bob: would have received a label from pir_A\";\n      Random.int 999\nwith\n| \"L\" -> 1\n| other -> failwith (Printf.sprintf \"unexpected label %s from %s\" other \"A\")"
+          "match Printf.printf \"%s\\n%!\"\n\
+          \        \"pir_Bob: would have received a label from pir_A\";\n\
+          \      Random.int 999\n\
+           with\n\
+           | \"L\" -> 1\n\
+           | other -> failwith (Printf.sprintf \"unexpected label %s from %s\" \
+           other \"A\")"
           (allowchoice "A" [ (mklab "L", intlit 1) ]);
     "allowchoice_two"
     >:: test_expr
-          "match Printf.printf \"%s\\n%!\"\n        \"pir_Bob: would have received a label from pir_A\";\n      Random.int 999\nwith\n| \"L\" -> 1\n| \"R\" -> 2\n| other -> failwith (Printf.sprintf \"unexpected label %s from %s\" other \"A\")"
+          "match Printf.printf \"%s\\n%!\"\n\
+          \        \"pir_Bob: would have received a label from pir_A\";\n\
+          \      Random.int 999\n\
+           with\n\
+           | \"L\" -> 1\n\
+           | \"R\" -> 2\n\
+           | other -> failwith (Printf.sprintf \"unexpected label %s from %s\" \
+           other \"A\")"
           (allowchoice "A" [ (mklab "L", intlit 1); (mklab "R", intlit 2) ]);
     (*---------------- RecAbs ---------------------------------*)
     (* recursive function f with param x *)
@@ -158,7 +175,9 @@ Random.int 999|}
     (* type decl *)
     "typedecl" >:: test_decl "type foo = int" (typedecl "foo" intty);
     (* import turns into include and the module name gets capitalized *)
-    "importdecl" >:: test_decl {|[@@@ocaml.text "import skipped: not supported yet"]|} (importdecl "mylib");
+    "importdecl"
+    >:: test_decl {|[@@@ocaml.text "import skipped: not supported yet"]|}
+          (importdecl "mylib");
     (* emulated location decl: just a no op binding at runtime *)
     "emlocdecl"
     >:: test_decl "let _ = let _emulated_location = \"alice\" in ()"
