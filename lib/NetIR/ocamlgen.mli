@@ -29,10 +29,10 @@ module MkOcamlGen : functor (Net : NetAST) -> sig
   val label_gen : Net.lab -> string
   (** Extract the string representation of a NetIR label *)
 
-  val expr_gen : Net.expr -> expression
+  val expr_gen : string -> Net.expr -> expression
   (** Convert a NetIR expression into an OCaml expression *)
 
-  val decl_gen : Net.decl -> structure_item
+  val decl_gen : string -> Net.decl -> structure_item
   (** Conver a Decl expression into an Ppxlib structure item *)
 
   val program_gen : string -> Net.program -> structure

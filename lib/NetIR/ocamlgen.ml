@@ -97,7 +97,8 @@ module MkOcamlGen (Net : NetAST) = struct
 
   (*------------------- EXPRESSION GENRATION ---------------------------*)
   (* Converts a NetIR expression into an OCaml expression *)
-  let rec expr_gen (e : Net.expr) : expression =
+  let rec expr_gen (me: string) (e : Net.expr) : expression =
+    let expr_gen = expr_gen me in
     match e with
     | Net.Var (_, (_, n)) -> evar ~loc n
     | Net.UnitLit _ -> [%expr ()]
@@ -154,11 +155,11 @@ module MkOcamlGen (Net : NetAST) = struct
     (* Send e to n, e is the payload and n is the name which holds a location
        pass the payload code text AND the value added this so that stdout testing for
        the emulated background log holds more info here that is the payload and what *)
-    | Net.Send (_, e, (_, n)) -> Backend.Dummybackend.send (expr_gen e) n
+    | Net.Send (_, e, (_, n)) -> Backend.Dummybackend.send me (expr_gen e) n
     (* of m * typ * name  Recv t from n
        pass the expected type as text so the log shows it *)
     | Net.Recv (_, t, (_, n)) ->
-        Backend.Dummybackend.recv (type_gen t) n
+        Backend.Dummybackend.recv me (type_gen t) n
         (* let ty = type_gen t in
         let ty_text =
           estring ~loc (Format.asprintf "%a" Pprintast.core_type ty)
@@ -166,9 +167,7 @@ module MkOcamlGen (Net : NetAST) = struct
         [%expr
           (Backend.Dummybackend.recv [%e estring ~loc n] [%e ty_text] : [%t ty])] *)
     | Net.ChooseFor (_, (_, n), l) ->
-        [%expr
-          Backend.Dummybackend.choose [%e estring ~loc n]
-            [%e estring ~loc (label_gen l)]]
+        Backend.Dummybackend.choose me n (label_gen l)
     (* a runtime call with a fixed text l is a Label of name *)
     (* works directly with AllowChoice *)
     | Net.AllowChoice (_, (_, n), bs) ->
@@ -201,12 +200,13 @@ module MkOcamlGen (Net : NetAST) = struct
         pexp_match ~loc
           (* pexp_match takes a case list, and case
         case: ~lhs ~guard ~rhs *)
-          [%expr Backend.Dummybackend.recv_label [%e estring ~loc n]]
+          (Backend.Dummybackend.recv_label me n)
           (cases @ [ fallback ])
-    | Net.AmI (_, e) -> Backend.Dummybackend.am_i (expr_gen e)
+    | Net.AmI (_, e) -> Backend.Dummybackend.am_i me (expr_gen e)
 
   (*------------------- DECL GENRATION ---------------------------*)
-  let decl_gen (d : Net.decl) : structure_item =
+  let decl_gen (me: string) (d : Net.decl) : structure_item =
+    let expr_gen = expr_gen me in
     match d with
     | Net.EmulatedLocDecl (_, (_, l)) ->
         [%stri
@@ -344,5 +344,5 @@ module MkOcamlGen (Net : NetAST) = struct
       Backend.Dummybackend.who_i_am me
     in
     (* Header first, then each translated declaration in program order. *)
-    (who_i_am :: emu_loc_variant) @ List.map decl_gen inter_prog
+    (who_i_am :: emu_loc_variant) @ List.map (decl_gen me) inter_prog
 end

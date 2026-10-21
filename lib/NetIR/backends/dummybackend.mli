@@ -14,17 +14,17 @@ val who_i_am : string -> Ppxlib.structure_item
 (* ---- outgoing ---- *)
 (* send dest v  logs that we would have sent to dest
 payload ignored for now ASK ANDREW *)
-val send : Ppxlib.expression -> string -> Ppxlib.expression
+val send : string -> Ppxlib.expression -> string -> Ppxlib.expression
 
 (* ---- incoming ---- *)
 (* recv src  logs the receive then fails for now
    ASK ANDREW what this should actually return *)
-val recv : Ppxlib.core_type -> string -> Ppxlib.expression
+val recv : string -> Ppxlib.core_type -> string -> Ppxlib.expression
 
 (* choose dest label  logs which label got picked for dest *)
-val choose : string -> string -> Ppxlib.expression
+val choose : string -> string -> string -> Ppxlib.expression
 
 (* recv_label src  logs the label receive
    always a string bc the AllowChoice match uses it *)
-val recv_label : string -> Ppxlib.expression
-val am_i : Ppxlib.expression -> Ppxlib.expression
+val recv_label : string -> string -> Ppxlib.expression
+val am_i : string -> Ppxlib.expression -> Ppxlib.expression

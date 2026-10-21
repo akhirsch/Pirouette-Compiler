@@ -1,7 +1,6 @@
 open OUnit2
-module A = Netir.Nometa
 module G = Netir.Ocamlgen.MkOcamlGen (Netir.Ast.MkAST (Metainfo.Meta.TrivInfo))
-open A
+open Netir.Nometa
 
 (* run a NetIR expr through the generator and print the resulting OCaml *)
 
@@ -9,7 +8,7 @@ open A
    - A is the NetIR AST with nometa data which is unit metadata, giving us the smart constructors
      to build test inputs
    - G is our code generator the real translator being tested *)
-let expr_str e = Ppxlib.Pprintast.string_of_expression (G.expr_gen e)
+let expr_str e = Ppxlib.Pprintast.string_of_expression (G.expr_gen "Bob" e)
 (* Run a NetIR expression through the generator and print the resulting OCaml
    G.expr_gen: produces a ppxlib Parsetree node 
    Ppxlib.Pprintast turns it into source text *)
@@ -21,8 +20,7 @@ let test_expr expected e _ =
   assert_equal ~printer:(fun x -> x) expected (expr_str e)
 
 (*  VARIANT HELPERS *)
-let decl_structure d = Ppxlib.Pprintast.string_of_structure [ G.decl_gen d ]
-
+let decl_structure d = Ppxlib.Pprintast.string_of_structure [ G.decl_gen "Bob" d ]
 (* G is my ocamlgen module *)
 let test_decl expected d _ =
   assert_equal
@@ -55,7 +53,7 @@ let suite =
     "false" >:: test_expr "false" falselit;
     "var" >:: test_expr "x" (var "x");
     "unit" >:: test_expr "()" unitlit;
-    "loclit" >:: test_expr {|"A"|} (loclit "A");
+    "loclit" >:: test_expr {|"Alice"|} (loclit "Alice");
     (*--------------------- Types --------------------------------*)
     "unitty" >:: test_expr "(() : unit)" (typeconstr unitlit unitty);
     "floatty" >:: test_expr "(3.5 : float)" (typeconstr (floatlit 3.5) floatty);
@@ -92,39 +90,25 @@ let suite =
     "funapp" >:: test_expr "f 4" (funapp (var "f") (intlit 4));
     "annot" >:: test_expr "(3 : int)" (typeconstr (intlit 3) intty);
     (*--------- Communication: calls to Dummybackend -----------*)
-    "send"
-    >:: test_expr {|Printf.printf "%s: %s\n%!" pir_me "would have sent 3 to A"|}
-          (send (intlit 3) "A");
+        "send"
+    >:: test_expr {|Printf.printf "%s\n%!" "pir_Bob: would have sent 3 to pir_Alice"|}
+          (send (intlit 3) "Alice");
     "recv"
     >:: test_expr
-          ({|Printf.printf "%s: %s\n%!" pir_me "would have received int from A";|}
-         ^ "\nRandom.int 999")
+          {|Printf.printf "%s\n%!" "pir_Bob: would have received int from pir_A";
+Random.int 999|}
           (recv intty "A");
     "choose"
-    >:: test_expr {|Backend.Dummybackend.choose "A" "L"|}
+    >:: test_expr {|Printf.printf "%s\n%!" "pir_Bob: would have chosen L for pir_A"|}
           (choosefor "A" (mklab "L"));
-    (* mklab is in nometa.ml *)
-
-    (* -------------- Location check: Iam check ----------------*)
-    (* AmI compares the given location against me the file's own identity*)
-    "ami" >:: test_expr {|String.equal "A" pir_me|} (ami (loclit "A"));
-    (*---------------- AllowChoice ----------------------------*)
-    (* one arm: should turn into a match on recv_label *)
+    "ami" >:: test_expr {|String.equal "A" "Bob"|} (ami (loclit "A"));
     "allowchoice_one"
     >:: test_expr
-          "match Backend.Dummybackend.recv_label \"A\" with\n\
-           | \"L\" -> 1\n\
-           | other -> failwith (Printf.sprintf \"unexpected label %s from %s\" \
-           other \"A\")"
+          "match Printf.printf \"%s\\n%!\"\n        \"pir_Bob: would have received a label from pir_A\";\n      Random.int 999\nwith\n| \"L\" -> 1\n| other -> failwith (Printf.sprintf \"unexpected label %s from %s\" other \"A\")"
           (allowchoice "A" [ (mklab "L", intlit 1) ]);
-    (* two arms so both branches show up in the match *)
     "allowchoice_two"
     >:: test_expr
-          "match Backend.Dummybackend.recv_label \"A\" with\n\
-           | \"L\" -> 1\n\
-           | \"R\" -> 2\n\
-           | other -> failwith (Printf.sprintf \"unexpected label %s from %s\" \
-           other \"A\")"
+          "match Printf.printf \"%s\\n%!\"\n        \"pir_Bob: would have received a label from pir_A\";\n      Random.int 999\nwith\n| \"L\" -> 1\n| \"R\" -> 2\n| other -> failwith (Printf.sprintf \"unexpected label %s from %s\" other \"A\")"
           (allowchoice "A" [ (mklab "L", intlit 1); (mklab "R", intlit 2) ]);
     (*---------------- RecAbs ---------------------------------*)
     (* recursive function f with param x *)
