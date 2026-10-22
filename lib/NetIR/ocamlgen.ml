@@ -47,7 +47,7 @@ module MkOcamlGen (Net : NetAST) = struct
     | Net.StringLitPat (_, s) -> pstring ~loc s
     | Net.TrueLitPat _ -> [%pat? true]
     | Net.FalseLitPat _ -> [%pat? false]
-    | Net.LocLitPat (_, (_, l)) -> pstring ~loc l
+    | Net.LocLitPat (_, (_, l)) -> ppat_construct ~loc { txt = Lident ("Pir_" ^ l); loc } None
     | Net.ConstructorPat (_, (_, n), ps) ->
         let name = Located.lident ~loc ("Pir_" ^ n) in
         (* Located.lident wraps the string as the identifier that ppat_construct is expecting
@@ -111,13 +111,13 @@ module MkOcamlGen (Net : NetAST) = struct
     | Net.FalseLit _ -> [%expr false]
     | Net.ConstructorLit (_, (_, id), es) ->
         let arg_expr =
-          if List.is_empty es then Some (pexp_tuple ~loc (List.map expr_gen es))
-          else None
+          if List.is_empty es then None
+          else Some (pexp_tuple ~loc (List.map expr_gen es))
         in
-        pexp_construct ~loc { txt = Lident id; loc } arg_expr
-        (*Ppxlib constructor nodes take arguments in two forms; None, and Some tuple 
+          pexp_construct ~loc { txt = Lident id; loc } arg_expr
+          (*Ppxlib constructor nodes take arguments in two forms; None, and Some tuple 
             Even if there is only one argument to the constructor, *)
-    | Net.LocLit (_, (_, n)) -> estring ~loc n
+    | Net.LocLit (_, (_, n)) -> pexp_construct ~loc { txt = Lident ("Pir_" ^ n); loc } None
     | Net.Match (_, e, pes) ->
         (* Turn each NetIR (pattern, body) pair into one OCaml match arm (a [case]).
           ~lhs is the pattern (left of ->), 

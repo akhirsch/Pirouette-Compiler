@@ -12,15 +12,16 @@ let loc = Location.none
    return that variant as our type.*)
 let location_type _ = ptyp_var ~loc "pir_emulated_location"
 
-(* let pir (name : string) : string = "pir_" ^ name *)
-(* Helper to keep the use the name prefix in all comm and printing to log 
-as pir_name *)
+(* Takes a location name as a string, and returns the corresponding constructor
+   from our emmulated location variant.*)
+let package_constructor id =
+   pexp_construct ~loc { txt = Lident ("Pir_" ^ id); loc } None
 
 (* ---- identity ---- *)
 (* gets set once at the top of every generated file
    let () = Dummybackend.who_i_am me
    so the log knows who is talking *)
-let who_i_am name = [%stri let pir_me = [%e estring ~loc name]]
+let who_i_am name = [%stri let pir_me = [%e package_constructor name]]
 
 (* ---- log helper ---- *)
 (* print to stdout instead of a file
