@@ -339,11 +339,13 @@ module MkOcamlGen (Net : NetAST) = struct
     (* Identity header placed at the top of every generated file
        Inside [%e ...] [me] is this function's parameter (the real string)
        Everywhere else inside the quotes [me] is just text in the output *)
-    let who_i_am =
-      (* Generated: let me = "Alice"
+    let who_i_am = if List.is_empty emu_loc_variant then
+        []
+      else
+      (* Generated: let pir_me = "Alice"
            Binds [me] so AmI checks like ("A" = me) compile *)
-      Backend.Dummybackend.who_i_am me
+        [Backend.Dummybackend.who_i_am me]
     in
     (* Header first, then each translated declaration in program order. *)
-    (who_i_am :: emu_loc_variant) @ List.map (decl_gen me) inter_prog
+    who_i_am @ emu_loc_variant @ List.map (decl_gen me) inter_prog
 end

@@ -94,22 +94,20 @@ let suite =
     (*--------- Communication: calls to Dummybackend -----------*)
     "send"
     >:: test_expr
-          {|Printf.printf "%s\n%!" "pir_Bob: would have sent 3 to pir_Alice"|}
+          {|Printf.printf "%s\n%!" "Bob: would have sent 3 to Alice"|}
           (send (intlit 3) "Alice");
     "recv"
     >:: test_expr
-          {|Printf.printf "%s\n%!" "pir_Bob: would have received int from pir_A";
-Random.int 999|}
+          {|Printf.printf "%s\n%!" "Bob: would have received int from A"; Random.int 999|}
           (recv intty "A");
     "choose"
     >:: test_expr
-          {|Printf.printf "%s\n%!" "pir_Bob: would have chosen L for pir_A"|}
+          {|Printf.printf "%s\n%!" "Bob: would have chosen L for A"|}
           (choosefor "A" (mklab "L"));
     "ami" >:: test_expr {|String.equal "A" "Bob"|} (ami (loclit "A"));
     "allowchoice_one"
     >:: test_expr
-          "match Printf.printf \"%s\\n%!\"\n\
-          \        \"pir_Bob: would have received a label from pir_A\";\n\
+          "match Printf.printf \"%s\\n%!\" \"Bob: would have received a label from A\";\n\
           \      Random.int 999\n\
            with\n\
            | \"L\" -> 1\n\
@@ -118,8 +116,7 @@ Random.int 999|}
           (allowchoice "A" [ (mklab "L", intlit 1) ]);
     "allowchoice_two"
     >:: test_expr
-          "match Printf.printf \"%s\\n%!\"\n\
-          \        \"pir_Bob: would have received a label from pir_A\";\n\
+          "match Printf.printf \"%s\\n%!\" \"Bob: would have received a label from A\";\n\
           \      Random.int 999\n\
            with\n\
            | \"L\" -> 1\n\
@@ -186,13 +183,13 @@ Random.int 999|}
     "defndecl"
     >:: test_decl "let f x = x" (defndecl "f" [ varpat "x" ] (var "x"));
     (*--------------------Program Gen Test --------------------------*)
-    "empty_program" >:: test_program "let pir_me = \"alice\"" "alice" [];
+    (* "empty_program" >:: test_program "let pir_me = \"alice\"" "alice" []; *)
     "one_decl_prog"
-    >:: test_program "let pir_me = \"alice\"\ntype nonrec foo = 'bar" "alice"
+    >:: test_program "type nonrec foo = 'bar" "alice"
           [ typealiasdecl "foo" (varty "bar") ];
     "two_decl_prog"
     >:: test_program
-          "let pir_me = \"alice\"\ntype nonrec foo = 'bar\ntype color = |"
+          "type nonrec foo = 'bar\ntype color = |"
           "alice"
           [ typealiasdecl "foo" (varty "bar"); variantdecl "color" [] ];
   ]

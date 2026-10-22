@@ -10,8 +10,9 @@ let loc = Location.none
 (* Returns the location type. We know in this backedn that locations are
    all member of the variant constructed in "who_i_am." Thus, we can simply
    return that variant as our type.*)
-let location_type _ = ptyp_var ~loc "pir_me"
-let pir (name : string) : string = "pir_" ^ name
+let location_type _ = ptyp_var ~loc "pir_emulated_location"
+
+(* let pir (name : string) : string = "pir_" ^ name *)
 (* Helper to keep the use the name prefix in all comm and printing to log 
 as pir_name *)
 
@@ -25,7 +26,7 @@ let who_i_am name = [%stri let pir_me = [%e estring ~loc name]]
 (* print to stdout instead of a file
    cram captures this directly so no log files to clean up *)
 let log (me : string) (msg : string) : Ppxlib.expression =
-  [%expr Printf.printf "%s\n%!" [%e estring ~loc (pir me ^ ": " ^ msg)]]
+  [%expr Printf.printf "%s\n%!" [%e estring ~loc (me ^ ": " ^ msg)]]
 
 (* ---- outgoing ----
    what is the code text of the payload so the log shows whats being sent
@@ -33,7 +34,7 @@ let log (me : string) (msg : string) : Ppxlib.expression =
    not printing v itself bc we dont know its type at runtime *)
 let send (me : string) (payload : expression) (dest : string) =
   let what = Pprintast.string_of_expression payload in
-  log me ("would have sent " ^ what ^ " to " ^ pir dest)
+  log me ("would have sent " ^ what ^ " to " ^ dest)
 
 (* ---- incoming ----
    ty is the type we expected to get so the log shows that
@@ -41,7 +42,7 @@ let send (me : string) (payload : expression) (dest : string) =
 let recv (me : string) (ty : core_type) (src : string) : expression =
   let ty_text = Format.asprintf "%a" Pprintast.core_type ty in
   let log_expr =
-    log me ("would have received " ^ ty_text ^ " from " ^ pir src)
+    log me ("would have received " ^ ty_text ^ " from " ^ src)
   in
   [%expr
     [%e log_expr];
@@ -50,11 +51,11 @@ let recv (me : string) (ty : core_type) (src : string) : expression =
 (* logs which label got picked for dest *)
 let choose (me : string) (dest : string) (label : string) =
   (*TODO*)
-  log me ("would have chosen " ^ label ^ " for " ^ pir dest)
+  log me ("would have chosen " ^ label ^ " for " ^ dest)
 
 let recv_label (me : string) (src : string) =
   (*TODO*)
-  let log_expr = log me ("would have received a label from " ^ pir src) in
+  let log_expr = log me ("would have received a label from " ^ src) in
   [%expr
     [%e log_expr];
     Random.int 999]
