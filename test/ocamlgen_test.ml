@@ -55,7 +55,7 @@ let suite =
     "false" >:: test_expr "false" falselit;
     "var" >:: test_expr "x" (var "x");
     "unit" >:: test_expr "()" unitlit;
-    "loclit" >:: test_expr {|"Alice"|} (loclit "Alice");
+    "loclit" >:: test_expr {|Pir_Alice|} (loclit "Alice");
     (*--------------------- Types --------------------------------*)
     "unitty" >:: test_expr "(() : unit)" (typeconstr unitlit unitty);
     "floatty" >:: test_expr "(3.5 : float)" (typeconstr (floatlit 3.5) floatty);
@@ -81,7 +81,7 @@ let suite =
     "gt" >:: test_expr "3 > 4" (mkgt (intlit 3) (intlit 4));
     "geq" >:: test_expr "3 >= 4" (mkgeq (intlit 3) (intlit 4));
     "match_more_literals"
-    >:: test_expr {|match x with | 3.5 -> 1 | 'c' -> 2 | "A" -> 3|}
+    >:: test_expr {|match x with | 3.5 -> 1 | 'c' -> 2 | Pir_A -> 3|}
           (mkmatch (var "x")
              [
                (floatlitpat 3.5, intlit 1);
@@ -93,21 +93,22 @@ let suite =
     "annot" >:: test_expr "(3 : int)" (typeconstr (intlit 3) intty);
     (*--------- Communication: calls to Dummybackend -----------*)
     "send"
-    >:: test_expr
-          {|Printf.printf "%s\n%!" "Bob: would have sent 3 to Alice"|}
+    >:: test_expr {|Printf.printf "%s\n%!" "Bob: would have sent 3 to Alice"|}
           (send (intlit 3) "Alice");
     "recv"
     >:: test_expr
           {|Printf.printf "%s\n%!" "Bob: would have received int from A"; Random.int 999|}
           (recv intty "A");
     "choose"
-    >:: test_expr
-          {|Printf.printf "%s\n%!" "Bob: would have chosen L for A"|}
+    >:: test_expr {|Printf.printf "%s\n%!" "Bob: would have chosen L for A"|}
           (choosefor "A" (mklab "L"));
-    "ami" >:: test_expr {|String.equal "A" "Bob"|} (ami (loclit "A"));
+    "ami"
+    >:: test_expr {|match Pir_A with | Pir_Bob -> true | _ -> false|}
+          (ami (loclit "A"));
     "allowchoice_one"
     >:: test_expr
-          "match Printf.printf \"%s\\n%!\" \"Bob: would have received a label from A\";\n\
+          "match Printf.printf \"%s\\n%!\" \"Bob: would have received a label \
+           from A\";\n\
           \      Random.int 999\n\
            with\n\
            | \"L\" -> 1\n\
@@ -116,7 +117,8 @@ let suite =
           (allowchoice "A" [ (mklab "L", intlit 1) ]);
     "allowchoice_two"
     >:: test_expr
-          "match Printf.printf \"%s\\n%!\" \"Bob: would have received a label from A\";\n\
+          "match Printf.printf \"%s\\n%!\" \"Bob: would have received a label \
+           from A\";\n\
           \      Random.int 999\n\
            with\n\
            | \"L\" -> 1\n\
@@ -188,8 +190,6 @@ let suite =
     >:: test_program "type nonrec foo = 'bar" "alice"
           [ typealiasdecl "foo" (varty "bar") ];
     "two_decl_prog"
-    >:: test_program
-          "type nonrec foo = 'bar\ntype color = |"
-          "alice"
+    >:: test_program "type nonrec foo = 'bar\ntype color = |" "alice"
           [ typealiasdecl "foo" (varty "bar"); variantdecl "color" [] ];
   ]

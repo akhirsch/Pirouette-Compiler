@@ -47,7 +47,8 @@ module MkOcamlGen (Net : NetAST) = struct
     | Net.StringLitPat (_, s) -> pstring ~loc s
     | Net.TrueLitPat _ -> [%pat? true]
     | Net.FalseLitPat _ -> [%pat? false]
-    | Net.LocLitPat (_, (_, l)) -> ppat_construct ~loc { txt = Lident ("Pir_" ^ l); loc } None
+    | Net.LocLitPat (_, (_, l)) ->
+        ppat_construct ~loc { txt = Lident ("Pir_" ^ l); loc } None
     | Net.ConstructorPat (_, (_, n), ps) ->
         let name = Located.lident ~loc ("Pir_" ^ n) in
         (* Located.lident wraps the string as the identifier that ppat_construct is expecting
@@ -114,10 +115,11 @@ module MkOcamlGen (Net : NetAST) = struct
           if List.is_empty es then None
           else Some (pexp_tuple ~loc (List.map expr_gen es))
         in
-          pexp_construct ~loc { txt = Lident id; loc } arg_expr
-          (*Ppxlib constructor nodes take arguments in two forms; None, and Some tuple 
+        pexp_construct ~loc { txt = Lident id; loc } arg_expr
+        (*Ppxlib constructor nodes take arguments in two forms; None, and Some tuple 
             Even if there is only one argument to the constructor, *)
-    | Net.LocLit (_, (_, n)) -> pexp_construct ~loc { txt = Lident ("Pir_" ^ n); loc } None
+    | Net.LocLit (_, (_, n)) ->
+        pexp_construct ~loc { txt = Lident ("Pir_" ^ n); loc } None
     | Net.Match (_, e, pes) ->
         (* Turn each NetIR (pattern, body) pair into one OCaml match arm (a [case]).
           ~lhs is the pattern (left of ->), 
@@ -288,11 +290,6 @@ module MkOcamlGen (Net : NetAST) = struct
         in
         pstr_type ~loc Recursive [ td ]
 
-  (*let program_gen (me : string) (prog : Net.program) : structure = 
-
-    let who_i_am = Dummybackend.who_i_am me in
-      who_i_am :: List.map decl_gen prog*)
-
   (* program_gen: builds the full OCaml file for one participant
      [me] is the participant's name (ex "Alice") known at compile time
      [prog] is that participant's NetIR program *)
@@ -339,12 +336,12 @@ module MkOcamlGen (Net : NetAST) = struct
     (* Identity header placed at the top of every generated file
        Inside [%e ...] [me] is this function's parameter (the real string)
        Everywhere else inside the quotes [me] is just text in the output *)
-    let who_i_am = if List.is_empty emu_loc_variant then
-        []
+    let who_i_am =
+      if List.is_empty emu_loc_variant then []
       else
-      (* Generated: let pir_me = "Alice"
+        (* Generated: let pir_me = "Alice"
            Binds [me] so AmI checks like ("A" = me) compile *)
-        [Backend.Dummybackend.who_i_am me]
+        [ Backend.Dummybackend.who_i_am me ]
     in
     (* Header first, then each translated declaration in program order. *)
     who_i_am @ emu_loc_variant @ List.map (decl_gen me) inter_prog

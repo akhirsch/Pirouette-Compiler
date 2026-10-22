@@ -15,7 +15,7 @@ let location_type _ = ptyp_var ~loc "pir_emulated_location"
 (* Takes a location name as a string, and returns the corresponding constructor
    from our emmulated location variant.*)
 let package_constructor id =
-   pexp_construct ~loc { txt = Lident ("Pir_" ^ id); loc } None
+  pexp_construct ~loc { txt = Lident ("Pir_" ^ id); loc } None
 
 (* ---- identity ---- *)
 (* gets set once at the top of every generated file
@@ -42,9 +42,7 @@ let send (me : string) (payload : expression) (dest : string) =
    still no real value to give back so failwith for now *)
 let recv (me : string) (ty : core_type) (src : string) : expression =
   let ty_text = Format.asprintf "%a" Pprintast.core_type ty in
-  let log_expr =
-    log me ("would have received " ^ ty_text ^ " from " ^ src)
-  in
+  let log_expr = log me ("would have received " ^ ty_text ^ " from " ^ src) in
   [%expr
     [%e log_expr];
     Random.int 999]
@@ -61,4 +59,17 @@ let recv_label (me : string) (src : string) =
     [%e log_expr];
     Random.int 999]
 
-let am_i (me : string) e = [%expr String.equal [%e e] [%e estring ~loc me]]
+let am_i (me : string) e =
+  (* Since locations are constructors fo the emulated declaration variant,
+      we can check if some expression equals our own variant by matching on
+      the argument to ami, and returning true if it matches the "me" 
+      constructor.*)
+  let cases =
+    [
+      case
+        ~lhs:(ppat_construct ~loc { txt = Lident ("Pir_" ^ me); loc } None)
+        ~guard:None ~rhs:[%expr true];
+      case ~lhs:[%pat? _] ~guard:None ~rhs:[%expr false];
+    ]
+  in
+  pexp_match ~loc e cases
