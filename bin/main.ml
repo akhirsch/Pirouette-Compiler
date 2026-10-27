@@ -36,6 +36,10 @@ let speclist =
     ("--pretty", Arg.Set pretty, "Pretty-print output");
   ]
 
+let get_decl_list lexbuf =
+  let returned = Netir.Parser.program Netir.Lexer.read lexbuf in
+  Netir.Parsed_ast_processing.process_parsed_ast returned
+
 let compiler_output (ast : lexbuf) =
   if !pretty then Format.asprintf "Pretty Print Placeholder"
     (* _PLACEHOLDER ast PLACEHOLDER: the function should be something like Prettyprint.pp_program *)
@@ -87,7 +91,11 @@ let () =
           failwith "Input strings not yet implemented")
   | Some _infile -> (
       match !input_string with
-      | "" -> failwith "Input files not yet implemented"
+      | "" ->
+          let content =
+            In_channel.with_open_text !input_string In_channel.input_all
+          in
+          run_compiler (Lexing.from_string content)
       | _ ->
           failwith
             "can't take an input file and an input string at the same time")
