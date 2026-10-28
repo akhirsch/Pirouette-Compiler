@@ -1,7 +1,7 @@
 open Lexing
 
 module Prettyprint =
-  Netir.Prettyprint.MkPrettify (Netir.Ast.MkAST (Metainfo.Meta.PosInfo))
+  Netir.Prettyprint.MkPrettify (Netir.Ast.PosInfo_AST)
 (* Todo: ensure this is the correct module structure *)
 
 module Ocamlgen = struct end
@@ -36,13 +36,13 @@ let speclist =
     ("--pretty", Arg.Set pretty, "Pretty-print output");
   ]
 
-let get_decl_list lexbuf =
+let prettify lexbuf =
   let returned = Netir.Parser.program Netir.Lexer.read lexbuf in
-  Netir.Parsed_ast_processing.process_parsed_ast returned
+  let decls = Netir.Parsed_ast_processing.process_parsed_ast returned in
+  Prettyprint.prettify_prog decls
 
 let compiler_output (ast : lexbuf) =
-  if !pretty then Format.asprintf "Pretty Print Placeholder"
-    (* _PLACEHOLDER ast PLACEHOLDER: the function should be something like Prettyprint.pp_program *)
+  if !pretty then prettify ast
   else
     let _ocaml_ast = _PLACEHOLDER ast in
     (*PLACEHOLDER: replace with something like Ocamlgen.generate_ocaml *)
