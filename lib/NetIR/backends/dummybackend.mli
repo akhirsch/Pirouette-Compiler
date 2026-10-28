@@ -16,6 +16,5 @@ val recv : string -> Ppxlib.core_type -> string -> Ppxlib.expression
 
 (* choose dest label  logs which label got picked for dest *)
 val choose : string -> string -> string -> Ppxlib.expression
-
 val recv_label : string -> string -> Ppxlib.expression
 val am_i : string -> Ppxlib.expression -> Ppxlib.expression
