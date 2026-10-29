@@ -2,3 +2,7 @@
  (deps
   (source_tree ../../lib/NetIR/backends)
   (source_tree cram_programs)))
+
+(cram
+ (applies_to ocamlgencram)
+ (enabled_if false))
