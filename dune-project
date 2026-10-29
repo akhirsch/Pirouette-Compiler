@@ -2,6 +2,8 @@
 
 (using menhir 3.0)
 
+(using mdx 0.4)
+
 (name pirc)
 
 (generate_opam_files true)

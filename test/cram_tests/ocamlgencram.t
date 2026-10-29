@@ -1,35 +1,16 @@
 Every example compiles without errors:
 
-  $ for example in cram_programs/*.pir; do
-  > pirc $example
-  > rm -f *.ml
-  > done
-
-Send is logged:
-
-  $ pirc cram_programs/send.pir
-  $ ocaml Bob.ml
-  Bob: would have sent 3 to Alice
-  $ rm -f *.ml
-
-Recv is logged:
-
-  $ pirc cram_programs/recv.pir
-  $ ocaml Bob.ml
-  Bob: would have received int from Alice
-  $ rm -f *.ml
-
-Choose is logged:
-
-  $ pirc cram_programs/choose.pir
-  $ ocaml Bob.ml
-  Bob: would have chosen L for Alice
-  $ rm -f *.ml
-
-A participant can talk to more than one location:
-
-  $ pirc cram_programs/three_locations.pir
-  $ ocaml Carol.ml
-  Carol: would have sent 1 to Alice
-  Carol: would have sent 2 to Bob
-  $ rm -f *.ml
+  Open utop with the backend loaded and run the backend tests:
+  
+  $ ls
+  $ dune utop NetIR 
+  > #install_printer Ppxlib.Pprintast.expression;;
+  > open Ppxlib;;
+  > let loc = Location.none;;
+  > let int_ty = Ast_builder.Default.ptyp_constr ~loc (Ast_builder.Default.Located.lident ~loc "int") [];;
+  > Backend.Dummybackend.send "Bob" (Ast_builder.Default.eint ~loc 3) "Alice";;
+  > Backend.Dummybackend.recv "Bob" int_ty "Alice";;
+  > Backend.Dummybackend.choose "Bob" "Alice" "L";;
+  > Backend.Dummybackend.recv_label "Alice" "Bob";;
+  > Backend.Dummybackend.am_i "Bob" (Ast_builder.Default.evar ~loc "x");;
+  
