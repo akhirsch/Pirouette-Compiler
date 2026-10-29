@@ -1,4 +1,4 @@
 (cram
  (deps
-  (source_tree cram_programs)
-  (source_tree ../../lib/NetIR/backends)))
+  (source_tree ../../lib/NetIR/backends)
+  (source_tree cram_programs)))
