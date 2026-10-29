@@ -16,33 +16,38 @@ NetIR AST → `ocamlgen` → ppxlib Parsetree → `Pprintast` → one `.ml` file
 
 The backend has two parts:
 
-- **`ocamlgen`** (compile time) translates each participant's NetIR program into
+- **`ocamlgen`** translates each participant's NetIR program into
   OCaml. It lives in `lib/NetIR/ocamlgen.ml`.
-- **`Dummybackend`** (runtime) is the library the generated files call into.
-  It lives in `lib/NetIR/backends/dummybackend.ml`, in the `backend` library.
+- **`Dummybackend`** is the library that defines what happens during communication.
+  It lives in `lib/NetIR/backends/dummybackend.ml`.
 
 ## Generated files
 
 Every generated file starts with a header that records which participant it
-belongs to:
+belongs to. For the emulated backend, we store all declared locations in an
+OCaml variant. So the header when using the emulated backend uses that process's
+constructor. Assuming our file is for "alice", in a network of "alice" and "bob":
 
 ```ocaml
-let me = "alice"
-let () = Backend.Dummybackend.who_i_am me
+type pir_emulated_location =
+  | Pir_alice
+  | Pir_bob
+
+let pir_me = Pir_alice
 ```
+The "Pir_" prefix is used to avoid naming collisions with user defined variable names.
 
-`me` is used by `AmI` checks, and `who_i_am` tells the runtime the participant's
-name so every log line can include it.
-
-Communication in NetIR becomes calls to the runtime:
+Communication in NetIR becomes mainly print statements. This allows us to log communcations for quick
+testing and verification, without requiring the infrastructure of actual communication.
+Still assuming this is in the "alice" file:
 
 | NetIR | Generated OCaml |
 |---|---|
-| `send X to Y` | `Backend.Dummybackend.send "Y" "X" x` |
-| `receive T from Y` | `(Backend.Dummybackend.recv "Y" "T" : T)` |
-| `choose [L] for Y` | `Backend.Dummybackend.choose "Y" "L"` |
-| `allow Y choice \| [L] -> ...` | `match Backend.Dummybackend.recv_label "Y" with "L" -> ...` |
-| `AmI Y` | `"Y" = me` |
+| `send X to bob` | `Printf.printf "%s/n%!" "alice would have sent X to bob"` |
+| `receive int from bob` | `Printf.printf "%s/n%!" "alice would have received int from bob"` |
+| `choose [L] for bob` | `Printf.printf "%s/n%!" "alice would have chosen L for bob"` |
+| `allow bob choice \| [L] -> ...` | `TODO` |
+| `AmI bob` | `match Pir_bob with \| Pir_alice -> true \| _ -> false` |
 
 `send` is passed the payload twice: once as the text of the code being sent,
 so it can be logged, and once as the actual value.
