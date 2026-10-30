@@ -1,19 +1,19 @@
 (* One location of the test choreography.
 
-   The choreography is a token passed once around a ring: location 0 starts it,
-   everyone else appends their own index and passes it on, and location 0 checks
-   what comes back. Each hop has to wait for the one before it, so the check at
-   the end only passes if every message arrived, in order, at the right peer.
+   The choreography is a number list passed once around a ring. Location 0 starts;
+   everyone else appends their own index and passes it on; location 0 checks
+   the final result.
 
-   Written in projection order -- receive before send for everyone but location
-   0 -- because `send` returns only once the peer's `recv` has taken the
-   message, which is what the choreography's synchronous semantics asks for. *)
+   We're testing we don't get a deadlock and that results are in the right
+   order. If `send` or `recv` aren't implemented correctly, something will
+   likely break. *)
 
 module Backend = Backend.Http_backend2
 
 type failure = UnexpectedResult of int list * int list
 
-(** Our peers, where the first element is us.
+(** Given `peers` containing an element `me`, performs choreography. Returns
+    `UnexpectedResult` if an error occurs.
 
     Raises if peers is `me` isn't in peers. *)
 let main (me : string) (peers : string list) : (unit, failure) Result.t =
