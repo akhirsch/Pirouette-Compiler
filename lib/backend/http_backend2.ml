@@ -1,7 +1,6 @@
 let ( let* ) = Result.bind
 let ( let** ) = Lwt.bind
 let ( let**? ) = Lwt_result.bind
-(* let ( let%lwt ) = Lwt.bind *)
 
 (*---------------------------------------------------------------------------*)
 (* State                                                                     *)
@@ -339,6 +338,8 @@ let () =
 (*---------------------------------------------------------------------------*)
 (* Runtime Implementations                                                         *)
 (*---------------------------------------------------------------------------*)
+
+let am_i e = _app_state.self.name = e
 
 (* Send [value] to [destination] and block until the peer calls `recv` on said value.
 
