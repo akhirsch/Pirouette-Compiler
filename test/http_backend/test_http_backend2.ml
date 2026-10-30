@@ -1,4 +1,5 @@
-(* Runs the participants for the choreography described in 'participant.ml'.
+(* Drives the participants for the ring choreography described in
+   'participant.ml'.
 
    Each participant corresponds to a process. This driver picks addresses,
    starts everyone, and collects results (ensuring everyone exits with
@@ -7,16 +8,17 @@
 
 open OUnit2
 
-let participant_count = 10
+(** Number of participants in choreography *)
+let participant_count = 100
 
-(* Timeout in case of deadlock / other failure. *)
+(** Timeout in case of deadlock / other failure. *)
 let timeout_seconds = 5.0
 
-(* Get free ports, traps if unable.
+(** Gets free ports, traps if unable.
 
-   Note: Another process could take a port in the meantime. However, this
-   event is unlikely and handing a socket to the child process would add
-   significant complexity. *)
+    Note: Another process could take a port in the meantime. However, this event
+    is unlikely and handing a socket to the child process would add significant
+    complexity. *)
 let get_free_ports (count : int) : int list =
   (* For each participant, create socket & get port *)
   let sockets_and_ports =
@@ -41,64 +43,35 @@ let get_free_ports (count : int) : int list =
       Unix.close socket;
       port)
 
-let name_of (location : string) : string =
-  List.hd (String.split_on_char '=' location)
-
-let run_participant ~(log : Unix.file_descr) (locations : string list)
-    (location : string) : string * int =
+(** Starts the given participant process at `location`. *)
+let start_participant ~(log : Unix.file_descr) (locations : string list)
+    (location : string) : Lwt_process.process_none =
   (* Move participant's location to the front *)
   let arguments =
     "participant.exe" :: location :: List.filter (( <> ) location) locations
   in
-  (* Run participant (using `log` for stdout/stderr) *)
-  let exit_code =
-    Unix.create_process "./participant.exe" (Array.of_list arguments) Unix.stdin
-      log log
-  in
-  (name_of location, exit_code)
+  (* Run participant using `log` for stdout/stderr
 
-(* How each participant exited, or [None] for one still running at [deadline],
-   which we kill so it doesn't outlive the test. *)
-let wait_for_all (participants : (string * int) list) ~(deadline : float) :
-    (string * Unix.process_status option) list =
-  let exited = Hashtbl.create participant_count in
-  let rec poll () =
-    let pending =
-      List.filter (fun (_, pid) -> not (Hashtbl.mem exited pid)) participants
-    in
-    if pending <> [] then
-      if Unix.gettimeofday () > deadline then
-        List.iter
-          (fun (_, pid) ->
-            (try Unix.kill pid Sys.sigkill with Unix.Unix_error _ -> ());
-            ignore (Unix.waitpid [] pid);
-            Hashtbl.replace exited pid None)
-          pending
-      else begin
-        List.iter
-          (fun (_, pid) ->
-            match Unix.waitpid [ WNOHANG ] pid with
-            | 0, _ -> ()
-            | _, status -> Hashtbl.replace exited pid (Some status))
-          pending;
-        (* [select] with no descriptors is just a sleep between sweeps. *)
-        ignore (Unix.select [] [] [] 0.05);
-        poll ()
-      end
+     Note: In case of deadlock, `~timeout` will SIGKILL the participant. *)
+  let process =
+    Lwt_process.open_process_none ~timeout:timeout_seconds
+      ~stdout:(`FD_copy log) ~stderr:(`FD_copy log)
+      ("./participant.exe", Array.of_list arguments)
   in
-  poll ();
-  List.map (fun (name, pid) -> (name, Hashtbl.find exited pid)) participants
+  process
 
+(** Describes how a participant exited. *)
 let describe (name, status) =
   Printf.sprintf "  %s %s" name
     (match status with
-    | Some (Unix.WEXITED code) -> Printf.sprintf "exited %d" code
-    | Some (Unix.WSIGNALED signal) ->
-        Printf.sprintf "killed by signal %d" signal
-    | Some (Unix.WSTOPPED signal) ->
-        Printf.sprintf "stopped by signal %d" signal
-    | None -> "did not finish in time")
+    | Unix.WEXITED code -> Printf.sprintf "exited %d" code
+    | Unix.WSIGNALED signal when signal = Sys.sigkill ->
+        (* A SIGKILL is `~timeout` above firing. *)
+        Printf.sprintf "did not finish in %gs" timeout_seconds
+    | Unix.WSIGNALED signal -> Printf.sprintf "killed by signal %d" signal
+    | Unix.WSTOPPED signal -> Printf.sprintf "stopped by signal %d" signal)
 
+(** Runs ring choreography. *)
 let test_ring _ =
   (* Get free ports and format as participant inputs.
      Each location has the form "p[index]=http://localhost:[port]" *)
@@ -110,23 +83,34 @@ let test_ring _ =
   (* Create shared log file (each line will name its participant) *)
   let log_path = Filename.temp_file "pirc-http-backend2" ".log" in
   let log = Unix.openfile log_path [ O_WRONLY; O_TRUNC ] 0o600 in
-  (* Start each participant *)
+  (* Start each participant
+     Note: `open_process_none` forks immediately, so every participant has
+     inherited `log` by the time we close our copy. *)
   let participants =
     Fun.protect
       ~finally:(fun () -> Unix.close log)
-      (fun () -> List.map (run_participant ~log locations) locations)
+      (fun () ->
+        locations
+        |> List.map (fun location ->
+            (location, start_participant ~log locations location)))
   in
-  (* Wait for everyone, up to deadline *)
+  (* Wait for everyone to exit (or be killed on timeout) *)
   let statuses =
-    wait_for_all participants ~deadline:(Unix.gettimeofday () +. timeout_seconds)
+    participants
+    |> Lwt_list.map_p (fun (name, process) ->
+        process#status |> Lwt.map (fun status -> (name, status)))
+    |> Lwt_main.run
   in
-  let failures =
-    statuses |> List.filter (fun (_, status) -> status <> Some (Unix.WEXITED 0))
+  let failure_count =
+    statuses
+    |> List.filter (fun (_, status) -> status <> Unix.WEXITED 0)
+    |> List.length
   in
-  if failures <> [] then
+  (* Report if there are failures *)
+  if failure_count <> 0 then
     assert_failure
       (Printf.sprintf "%d of %d participants failed:\n%s\noutput:\n%s"
-         (List.length failures) participant_count
+         failure_count participant_count
          (String.concat "\n" (List.map describe statuses))
          (In_channel.with_open_bin log_path In_channel.input_all))
 
