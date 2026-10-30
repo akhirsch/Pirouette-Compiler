@@ -6,13 +6,16 @@
  (modules send_participant choose_participant ring)
  (libraries backend))
 
-; Note: The tests share a lock so they don't run at once. They each pick free
-; ports and then let the participants bind them, so concurrent suites can be
-; handed the same port and one participant dies with EADDRINUSE.
+; Note: Test cases must run sequentially (`-runner sequential`).
+; That's because each test must ensure the free ports it finds are actually
+; available for its participants and that `Lwt_main.run` doesn't block forever.
+; Further, `(locks ports)` ensures only one action that uses ports runs at a time.
 
 (tests
  (names test_http_backend)
  (modules test_http_backend)
  (libraries ounit2 unix lwt.unix)
  (locks ports)
- (deps send_participant.exe choose_participant.exe))
+ (deps send_participant.exe choose_participant.exe)
+ (action
+  (run %{test} -runner sequential)))

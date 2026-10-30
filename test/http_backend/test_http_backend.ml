@@ -130,7 +130,6 @@ let () =
     >::: [
            ( "a token goes around a ring of 100" >:: fun _ ->
              run ~executable:"send_participant.exe" ~count:100 );
-           (* FIXME: Enable *)
-           (* ( "a label goes around a ring of 10" >:: fun _ -> *)
-           (*   run ~executable:"choose_participant.exe" ~count:10 ); *)
+           ( "a label goes around a ring of 10" >:: fun _ ->
+             run ~executable:"choose_participant.exe" ~count:10 );
          ])
