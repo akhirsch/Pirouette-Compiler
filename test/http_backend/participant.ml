@@ -8,7 +8,7 @@
    order. If `send` or `recv` aren't implemented correctly, something will
    likely break. *)
 
-module Backend = Backend.Http_backend2
+module Backend = Backend.Http_backend
 
 type failure = UnexpectedResult of int list * int list
 
