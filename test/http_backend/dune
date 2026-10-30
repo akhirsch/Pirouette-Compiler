@@ -1,13 +1,18 @@
 ; A participant is its own executable because the backend makes a process one
-; location; the test below only starts them and collects the results.
+; location; the tests below only start them and collect the results.
 
-(executable
- (name participant)
- (modules participant)
+(executables
+ (names send_participant choose_participant)
+ (modules send_participant choose_participant ring)
  (libraries backend))
 
-(test
- (name test_http_backend)
+; Note: The tests share a lock so they don't run at once. They each pick free
+; ports and then let the participants bind them, so concurrent suites can be
+; handed the same port and one participant dies with EADDRINUSE.
+
+(tests
+ (names test_http_backend)
  (modules test_http_backend)
  (libraries ounit2 unix lwt.unix)
- (deps participant.exe))
+ (locks ports)
+ (deps send_participant.exe choose_participant.exe))

@@ -1,15 +1,8 @@
-(* Drives the participants for the ring choreography described in
-   'participant.ml'.
-
-   Each participant corresponds to a process. This driver picks addresses,
-   starts everyone, and collects results (ensuring everyone exits with
-   status 0).
-*)
-
 open OUnit2
 
-(** Number of participants in choreography *)
-let participant_count = 100
+(*---------------------------------------------------------------------------*)
+(* Runner                                                                    *)
+(*---------------------------------------------------------------------------*)
 
 (** Timeout in case of deadlock / other failure. *)
 let timeout_seconds = 5.0
@@ -18,7 +11,16 @@ let timeout_seconds = 5.0
 
     Note: Another process could take a port in the meantime. However, this event
     is unlikely and handing a socket to the child process would add significant
-    complexity. *)
+    complexity.
+
+    FIXME: That event is not unlikely once two runners overlap, because we
+    release every port before any participant binds it. With the suites in
+    separate `(tests ...)` executables, dune ran them concurrently and the
+    second runner was handed ports the first had just released; a participant
+    then died binding its own address (`Unix.EADDRINUSE`) and the rest of its
+    ring timed out. It reproduced in roughly 1 run in 8. Serializing the runners
+    (one executable, or `(locks ports)`) hides it, but the window is still open
+    within a single runner. *)
 let get_free_ports (count : int) : int list =
   (* For each participant, create socket & get port *)
   let sockets_and_ports =
@@ -43,12 +45,12 @@ let get_free_ports (count : int) : int list =
       Unix.close socket;
       port)
 
-(** Starts the given participant process at `location`. *)
-let start_participant ~(log : Unix.file_descr) (locations : string list)
-    (location : string) : Lwt_process.process_none =
+(** Starts the given `executable` as the participant at `location`. *)
+let start_participant ~(log : Unix.file_descr) ~(executable : string)
+    (locations : string list) (location : string) : Lwt_process.process_none =
   (* Move participant's location to the front *)
   let arguments =
-    "participant.exe" :: location :: List.filter (( <> ) location) locations
+    executable :: location :: List.filter (( <> ) location) locations
   in
   (* Run participant using `log` for stdout/stderr
 
@@ -56,7 +58,7 @@ let start_participant ~(log : Unix.file_descr) (locations : string list)
   let process =
     Lwt_process.open_process_none ~timeout:timeout_seconds
       ~stdout:(`FD_copy log) ~stderr:(`FD_copy log)
-      ("./participant.exe", Array.of_list arguments)
+      ("./" ^ executable, Array.of_list arguments)
   in
   process
 
@@ -71,17 +73,19 @@ let describe (name, status) =
     | Unix.WSIGNALED signal -> Printf.sprintf "killed by signal %d" signal
     | Unix.WSTOPPED signal -> Printf.sprintf "stopped by signal %d" signal)
 
-(** Runs ring choreography. *)
-let test_ring _ =
+(** Spawn `count` processes for each choreography participant described in
+    `executable`. The runner picks addresses, starts everyone, and collects
+    results (ensuring everyone exits with status 0) *)
+let run ~(executable : string) ~(count : int) : unit =
   (* Get free ports and format as participant inputs.
      Each location has the form "p[index]=http://localhost:[port]" *)
   let locations =
-    get_free_ports participant_count
+    get_free_ports count
     |> List.mapi (fun index port ->
         Printf.sprintf "p%02d=http://localhost:%d" index port)
   in
   (* Create shared log file (each line will name its participant) *)
-  let log_path = Filename.temp_file "pirc-http-backend2" ".log" in
+  let log_path = Filename.temp_file "pirc-http-backend" ".log" in
   let log = Unix.openfile log_path [ O_WRONLY; O_TRUNC ] 0o600 in
   (* Start each participant
      Note: `open_process_none` forks immediately, so every participant has
@@ -92,7 +96,7 @@ let test_ring _ =
       (fun () ->
         locations
         |> List.map (fun location ->
-            (location, start_participant ~log locations location)))
+            (location, start_participant ~log ~executable locations location)))
   in
   (* Wait for everyone to exit (or be killed on timeout) *)
   let statuses =
@@ -110,10 +114,23 @@ let test_ring _ =
   if failure_count <> 0 then
     assert_failure
       (Printf.sprintf "%d of %d participants failed:\n%s\noutput:\n%s"
-         failure_count participant_count
+         failure_count count
          (String.concat "\n" (List.map describe statuses))
          (In_channel.with_open_bin log_path In_channel.input_all))
 
+(*---------------------------------------------------------------------------*)
+(* Test                                                                      *)
+(*---------------------------------------------------------------------------*)
+
+(* Creates two runners; one for the `send_participant` and one for
+   the `choose_participant` choreography. *)
 let () =
   run_test_tt_main
-    ("http_backend2" >::: [ "a token goes around a ring of 10" >:: test_ring ])
+    ("http_backend"
+    >::: [
+           ( "a token goes around a ring of 100" >:: fun _ ->
+             run ~executable:"send_participant.exe" ~count:100 );
+           (* FIXME: Enable *)
+           (* ( "a label goes around a ring of 10" >:: fun _ -> *)
+           (*   run ~executable:"choose_participant.exe" ~count:10 ); *)
+         ])
