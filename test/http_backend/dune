@@ -7,7 +7,7 @@
  (libraries backend))
 
 (test
- (name test_http_backend2)
- (modules test_http_backend2)
+ (name test_http_backend)
+ (modules test_http_backend)
  (libraries ounit2 unix lwt.unix)
  (deps participant.exe))
