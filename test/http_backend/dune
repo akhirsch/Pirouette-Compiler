@@ -1,0 +1,13 @@
+; A participant is its own executable because the backend makes a process one
+; location; the test below only starts them and collects the results.
+
+(executable
+ (name participant)
+ (modules participant)
+ (libraries backend))
+
+(test
+ (name test_http_backend2)
+ (modules test_http_backend2)
+ (libraries ounit2 unix)
+ (deps participant.exe))
