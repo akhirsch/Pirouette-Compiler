@@ -9,5 +9,5 @@
 (test
  (name test_http_backend2)
  (modules test_http_backend2)
- (libraries ounit2 unix)
+ (libraries ounit2 unix lwt.unix)
  (deps participant.exe))
