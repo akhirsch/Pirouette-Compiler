@@ -196,6 +196,7 @@ let with_connection_retry (task : unit -> 'a Lwt.t) : 'a Lwt.t =
   (* Start trying *)
   recursive_body ()
 
+(** Starts the HTTP server, returning an Lwt promise *)
 let start_server () : unit Lwt.t =
   (* Processes the given request with the given string. Returns
      the message_completion indicating we've received the message. *)
@@ -260,6 +261,7 @@ let start_server () : unit Lwt.t =
   (* Start server *)
   Cohttp_lwt_unix.Server.create ~mode:(`TCP (`Port port)) server
 
+(** Implements `get_message` by returning an `Lwt_result` *)
 let _get_message_impl (type a) (message_type : message_type)
     (peer_name : string) : (a, http_get_error) Lwt_result.t =
   (* Get peer *)
@@ -285,6 +287,8 @@ let _get_message_impl (type a) (message_type : message_type)
       label, so decoding at the wrong kind is undefined behavior. *)
   Lwt.return_ok (Marshal.from_string message_body 0 : a)
 
+(** Gets and decodes a message of `message_type` (Send or Choose) from the given
+    `peer_name`. Blocks until message arrives; traps on error. *)
 let get_message (type a) (message_type : message_type) (peer_name : string) : a
     =
   (* Block until we get the message *)
@@ -294,6 +298,7 @@ let get_message (type a) (message_type : message_type) (peer_name : string) : a
       failwith
         ("HTTP Backend couldn't get message: " ^ http_get_error_to_string err)
 
+(** Implements `post_message` by returning an `Lwt_result` *)
 let _post_message_impl (message_type : message_type) (peer_name : string)
     (message : string) : (unit, http_post_error) Lwt_result.t =
   let body = Cohttp_lwt.Body.of_string message in
@@ -316,6 +321,8 @@ let _post_message_impl (message_type : message_type) (peer_name : string)
   if status <> `OK then Lwt.return_error (BadStatus status)
   else Lwt.return_ok ()
 
+(** Sends the encoded `message` of `message_type` (Send or Choose) to the given
+    `peer_name`. Blocks until peer gets; traps on error. *)
 let post_message (message_type : message_type) (peer_name : string)
     (message : string) : unit =
   (* Block until we post the message *)
@@ -340,6 +347,7 @@ let () =
 (* Runtime Implementations                                                         *)
 (*---------------------------------------------------------------------------*)
 
+(** Checks if this participant has label `e` *)
 let am_i e = _app_state.self.name = e
 
 (** Send [value] to [destination] and block until the peer calls `recv` on said
