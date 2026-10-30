@@ -178,7 +178,13 @@ let get_participant (destination : string) : participant =
 (* HTTP Get/Post                                                         *)
 (*---------------------------------------------------------------------------*)
 
-(** Retries if the connection fails (retries every 0.05 s, deadline is 10 s). *)
+(** Retries if the connection fails (retries every 0.05 s, deadline is 10 s).
+
+    FIXME: We only catch `ECONNREFUSED`, so a peer that dies *mid-request*
+    escapes as `Cohttp_lwt__Connection.Retry` instead. Observed in a test run
+    where one participant died of `EADDRINUSE`: its peer crashed with a bare
+    `Fatal error: exception Cohttp_lwt__Connection.Retry`, naming a
+    cohttp-internal module rather than one of our `http_post_error`s. *)
 let with_connection_retry (task : unit -> 'a Lwt.t) : 'a Lwt.t =
   let deadline_seconds = 10.0 in
   let retry_seconds = 0.05 in
