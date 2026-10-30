@@ -281,7 +281,8 @@ let _get_message_impl (type a) (message_type : message_type)
     else Lwt.return_error (WrongMessageType req_message_type)
   in
   (* Decode only once the kind matches
-      Note: A `/choose` body contains a label, so decoding it is invalid. *)
+      Note: A `/send` body holds an arbitrary value and a `/choose` body a
+      label, so decoding at the wrong kind is undefined behavior. *)
   Lwt.return_ok (Marshal.from_string message_body 0 : a)
 
 let get_message (type a) (message_type : message_type) (peer_name : string) : a
@@ -341,21 +342,31 @@ let () =
 
 let am_i e = _app_state.self.name = e
 
-(* Send [value] to [destination] and block until the peer calls `recv` on said value.
+(** Send [value] to [destination] and block until the peer calls `recv` on said
+    value.
 
-   Preconditions:
-   - The given type must be encodable with `Marshal.to_string _ []` (closures
-     are explicitly not supported).
-   *)
+    Preconditions:
+    - The given type must be encodable with `Marshal.to_string _ []` (closures
+      are explicitly not supported). *)
 let send (destination : string) (value : 'a) : unit =
   (* No Marshal.Closures flag because we closure pointers may be invalid
      in other participants processes. *)
   let message : string = Marshal.to_string value [] in
   post_message Send destination message
 
-(* Blocks until we get the next value from [source].
+(** Blocks until we get the next value from [source].
 
-   Preconditions:
-   - The caller annotates the result type, and we trust [Marshal.from_string]
-     to match it; a mismatch results in undefined behavior. *)
+    Preconditions:
+    - The caller annotates the result type, and we trust [Marshal.from_string]
+      to match it; a mismatch results in undefined behavior. *)
 let recv (type a) (source : string) : a = get_message Send source
+
+(** Choose label [label] for [destination] and block until the peer calls
+    `recv_label`. *)
+let choose (destination : string) (label : string) : unit =
+  (* Note: A label is just a string, so we encode it like any other value. *)
+  let message : string = Marshal.to_string label [] in
+  post_message Choose destination message
+
+(** Blocks until we get the next label from [source]. *)
+let recv_label (source : string) : string = get_message Choose source
