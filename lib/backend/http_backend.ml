@@ -6,6 +6,9 @@ let ( let**? ) = Lwt_result.bind
 (* State                                                                     *)
 (*---------------------------------------------------------------------------*)
 
+module StringMap = Map.Make (String)
+(** Maps location names to values. *)
+
 (* TODO: How can i namespace these types to avoid collisions (only expose `send`, `recv`, etc.)? *)
 type participant = { name : string; hostname : Uri.t }
 (** A participant in the system with their debug_name (NetIR name) and hostname
@@ -36,8 +39,7 @@ type peer = {
 
 type state = {
   self : participant;  (** Information about this participant *)
-  name_to_peer : (string, peer) Hashtbl.t;
-      (** Each location name mapped to a peer *)
+  name_to_peer : peer StringMap.t;  (** Each location name mapped to a peer *)
 }
 (** The app's shared global state. *)
 
@@ -144,13 +146,13 @@ let create_state () : (state, init_error) result =
     | first :: rest -> Result.Ok (first, rest)
   in
   (* Create map from name -> peer *)
-  let name_to_peer : (string, peer) Hashtbl.t =
+  let name_to_peer : peer StringMap.t =
     peers |> List.to_seq
     |> Seq.map (fun (p : participant) ->
         ( p.name,
           { hostname = p.hostname; message_channel = Lwt_mvar.create_empty () }
         ))
-    |> Hashtbl.of_seq
+    |> StringMap.of_seq
   in
   (* We will add to messages with the server *)
   let state = { self; name_to_peer } in
@@ -168,7 +170,7 @@ let _app_state =
 (** Get the participant with the given destination name *)
 let get_participant (destination : string) : participant =
   let peer =
-    match Hashtbl.find_opt _app_state.name_to_peer destination with
+    match StringMap.find_opt destination _app_state.name_to_peer with
     | Some peer -> peer
     | None -> failwith ("HTTP backend hasn't registered '" ^ destination ^ "'")
   in
@@ -222,7 +224,7 @@ let start_server () : unit Lwt.t =
     in
     (* Extract the name
        Note: We don't validate inputs because if they're invalid, they
-       will simply not get a Hashtbl match. *)
+       will simply not match a peer in the map. *)
     let**? raw_peer_name =
       Http.Header.get (Http.Request.headers req) "X-Pirouette-From"
       |> Option.to_result ~none:MissingOrigin
@@ -230,7 +232,7 @@ let start_server () : unit Lwt.t =
     in
     (* Check peer exists and hasn't double-messaged *)
     let**? channel =
-      match Hashtbl.find_opt _app_state.name_to_peer raw_peer_name with
+      match StringMap.find_opt raw_peer_name _app_state.name_to_peer with
       (* Check `is_empty` doesn't cause race conditions because
          we're the only thread who can put new data in the channel. *)
       | Some { message_channel; _ } when Lwt_mvar.is_empty message_channel ->
@@ -272,7 +274,7 @@ let _get_message_impl (type a) (message_type : message_type)
     (peer_name : string) : (a, http_get_error) Lwt_result.t =
   (* Get peer *)
   let**? peer =
-    Hashtbl.find_opt _app_state.name_to_peer peer_name
+    StringMap.find_opt peer_name _app_state.name_to_peer
     |> Option.to_result ~none:InvalidSourcePeer
     |> Lwt_result.lift
   in
@@ -310,7 +312,7 @@ let _post_message_impl (message_type : message_type) (peer_name : string)
   let body = Cohttp_lwt.Body.of_string message in
   let headers = Http.Header.init_with "X-Pirouette-From" _app_state.self.name in
   let**? peer =
-    Hashtbl.find_opt _app_state.name_to_peer peer_name
+    StringMap.find_opt peer_name _app_state.name_to_peer
     |> Option.to_result ~none:InvalidDestPeer
     |> Lwt_result.lift
   in
