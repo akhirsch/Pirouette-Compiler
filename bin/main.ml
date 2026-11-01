@@ -2,7 +2,9 @@ open Lexing
 
 module Prettyprint =
   Netir.Prettyprint.MkPrettify (Netir.Ast.PosInfo_AST)
-(* Todo: ensure this is the correct module structure *)
+
+module Meta = Metainfo.Meta.PosInfo
+module DotAST = Netir.Dot_ast.MkDotAST (Netir.Ast.PosInfo_AST)
 
 module Ocamlgen = struct end
 (* PLACEHOLDER: Once the ocamlgen has been implemented, this will be filled in *)
@@ -14,6 +16,7 @@ let usage_msg =
 
 let verbose = ref false
 let pretty = ref false
+let dot = ref false
 let input_filename = ref None
 let input_string = ref ""
 let output_file = ref ""
@@ -34,15 +37,23 @@ let speclist =
     ("--output", Arg.Set_string output_file, "Set output file name");
     ("-p", Arg.Set pretty, "Pretty-print output");
     ("--pretty", Arg.Set pretty, "Pretty-print output");
+    ("-d", Arg.Set dot, "Output DOT graph");
+    ("--dot", Arg.Set dot, "Output DOT graph");
   ]
 
-let prettify lexbuf =
+let get_decls lexbuf =
   let returned = Netir.Parser.program Netir.Lexer.read lexbuf in
-  let decls = Netir.Parsed_ast_processing.process_parsed_ast returned in
-  Prettyprint.prettify_prog decls
+  Netir.Parsed_ast_processing.process_parsed_ast returned
+
+let prettify lexbuf =
+  Prettyprint.prettify_prog (get_decls lexbuf)
+
+let get_dot lexbuf =
+  DotAST.generate_dot_code Meta.string_of_mi (get_decls lexbuf)
 
 let compiler_output (ast : lexbuf) =
   if !pretty then prettify ast
+  else if !dot then get_dot ast
   else
     let _ocaml_ast = _PLACEHOLDER ast in
     (*PLACEHOLDER: replace with something like Ocamlgen.generate_ocaml *)
