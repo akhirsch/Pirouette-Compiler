@@ -46,14 +46,15 @@ let recv (me : string) (ty : core_type) (src : string) : expression =
   [%expr
     [%e log_expr];
     Random.int 999]
+(* using random.int because we are not actually logging any of the communications
+    being sent back and fourth, we are generating a placeholder value without actually 
+    transferring data *)
 
 (* logs which label got picked for dest *)
 let choose (me : string) (dest : string) (label : string) =
-  (*TODO*)
   log me ("would have chosen " ^ label ^ " for " ^ dest)
 
 let recv_label (me : string) (src : string) =
-  (*TODO*)
   let log_expr = log me ("would have received a label from " ^ src) in
   [%expr
     [%e log_expr];
