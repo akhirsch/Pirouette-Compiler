@@ -37,8 +37,8 @@ let speclist =
     ("--output", Arg.Set_string output_file, "Set output file name");
     ("-p", Arg.Set pretty, "Pretty-print output");
     ("--pretty", Arg.Set pretty, "Pretty-print output");
-    ("-d", Arg.Set dot, "Output DOT graph");
-    ("--dot", Arg.Set dot, "Output DOT graph");
+    ("-d", Arg.Set dot, "Output DOT code");
+    ("--dot", Arg.Set dot, "Output DOT code");
   ]
 
 let get_decls lexbuf =
