@@ -1,7 +1,7 @@
 open OUnit2
 module Meta = Metainfo.Meta.PosInfo
-module AST = Netir.Ast.MkAST (Meta)
-module DotAST = Netir.Dot_ast.MkDotAST (Meta)
+module AST = Netir.Ast.PosInfo_AST
+module DotAST = Netir.Dot_ast.MkDotAST (AST)
 open AST
 open Meta
 
