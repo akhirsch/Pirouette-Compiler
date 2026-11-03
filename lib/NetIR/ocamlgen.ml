@@ -161,9 +161,7 @@ module MkOcamlGen (Net : NetAST) = struct
     | Net.Send (_, e, (_, n)) -> Backend.Dummybackend.send me (expr_gen e) n
     (* of m * typ * name  Recv t from n
        pass the expected type as text so the log shows it *)
-    | Net.Recv (_, t, (_, n)) ->
-        Backend.Dummybackend.recv me (type_gen t) n
-        
+    | Net.Recv (_, t, (_, n)) -> Backend.Dummybackend.recv me (type_gen t) n
     | Net.ChooseFor (_, (_, n), l) ->
         Backend.Dummybackend.choose me n (label_gen l)
     (* a runtime call with a fixed text l is a Label of name *)
