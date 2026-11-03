@@ -35,4 +35,5 @@
   (ocamlformat
    (and
     (>= 0.29.0)
-    :dev))))
+    :dev))
+  (mdx :with-test)))

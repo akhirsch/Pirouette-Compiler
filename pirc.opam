@@ -14,8 +14,8 @@ depends: [
   "ppxlib" {= "0.35.0" & build}
   "bisect_ppx" {with-test}
   "ounit2" {with-test}
-  "mdx" {with-test}
   "ocamlformat" {>= "0.29.0" & dev}
+  "mdx" {with-test}
   "odoc" {with-doc}
 ]
 build: [
