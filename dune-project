@@ -2,6 +2,8 @@
 
 (using menhir 3.0)
 
+(using mdx 0.4)
+
 (name pirc)
 
 (generate_opam_files true)
@@ -33,4 +35,5 @@
   (ocamlformat
    (and
     (>= 0.29.0)
-    :dev))))
+    :dev))
+  (mdx :with-test)))
