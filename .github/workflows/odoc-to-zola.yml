@@ -11,6 +11,7 @@ on:
     branches:
       - 'main'
       - 'dev'
+      - '20-zola_gitworkflow'
 
     paths-ignore:
       - '.githooks/**'
