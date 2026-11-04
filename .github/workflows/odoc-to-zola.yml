@@ -79,7 +79,7 @@ jobs:
       - name: Install Zola
         uses: taiki-e/install-action@v2
         with:
-          tool: zola
+          tool: zola@0.22.1
  
       - name: Build Zola site
         working-directory: zola-site
