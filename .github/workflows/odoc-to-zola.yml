@@ -39,13 +39,6 @@ jobs:
       - name: Checkout compiler
         uses: actions/checkout@v6
  
-      - name: Checkout Zola site
-        uses: actions/checkout@v6
-        with:
-          ref: zola-site
-          path: zola-site
-          submodules: recursive
- 
       - name: Configure Pages
         id: pages
         uses: actions/configure-pages@v5
@@ -73,7 +66,16 @@ jobs:
       # index.html ends up in ./_build/default/_doc/_html/
       - name: Build Docs
         run: opam exec -- dune build @doc
- 
+
+      #moved checkout zola site here after the dune steps Github told me
+      # this was problematic before bc dune trying to scan a symlink that was already scanned 
+      - name: Checkout Zola site
+        uses: actions/checkout@v6
+        with:
+          ref: zola-site
+          path: zola-site
+          submodules: recursive
+
       - name: Install Zola
         uses: taiki-e/install-action@v2
         with:
