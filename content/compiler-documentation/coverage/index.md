@@ -8,13 +8,13 @@ weight = 1
   <head>
     <meta charset="utf-8"/>
     <title>Coverage report</title>
-    <meta name="description" content="70.19% coverage overall"/>
+    <meta name="description" content="69.16% coverage overall"/>
     <link rel="stylesheet" type="text/css" href="coverage.css"/>
   </head>
   <body>
     <div id="header">
       <h1>Coverage report</h1>
-      <h2>70.19%</h2>
+      <h2>69.16%</h2>
     </div>
     <div id="files">
       <div>
@@ -24,15 +24,6 @@ weight = 1
         <span class="percentage">33% <span class="stats">(1 / 3)</span></span>
         <a href="lib/Metainfo/meta.ml.html">
           <span class="dirname">lib/Metainfo/</span>meta.ml
-        </a>
-      </div>
-      <div>
-        <span class="meter">
-          <span class="covered" style="width: 75%"></span>
-        </span>
-        <span class="percentage">75% <span class="stats">(9 / 12)</span></span>
-        <a href="lib/NetIR/backends/dummybackend.ml.html">
-          <span class="dirname">lib/NetIR/backends/</span>dummybackend.ml
         </a>
       </div>
       <div>
@@ -64,20 +55,11 @@ weight = 1
       </div>
       <div>
         <span class="meter">
-          <span class="covered" style="width: 100%"></span>
+          <span class="covered" style="width: 98%"></span>
         </span>
-        <span class="percentage">100% <span class="stats">(53 / 53)</span></span>
+        <span class="percentage">98% <span class="stats">(52 / 53)</span></span>
         <a href="lib/NetIR/nometa.ml.html">
           <span class="dirname">lib/NetIR/</span>nometa.ml
-        </a>
-      </div>
-      <div>
-        <span class="meter">
-          <span class="covered" style="width: 84%"></span>
-        </span>
-        <span class="percentage">84% <span class="stats">(124 / 147)</span></span>
-        <a href="lib/NetIR/ocamlgen.ml.html">
-          <span class="dirname">lib/NetIR/</span>ocamlgen.ml
         </a>
       </div>
       <div>
