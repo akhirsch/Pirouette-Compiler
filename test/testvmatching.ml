@@ -66,9 +66,9 @@ let multi_constructor_single_var _ =
       None
       (variant_map "nothing")
       "variant_map produced non-existent constructors";
-    check_string (Some "v_test") (constructor_map "c1_test") "constructor_map failed";
-    check_string (Some "v_test") (constructor_map "c2_test") "constructor_map failed";
-    check_string (Some "v_test") (constructor_map "c3_test") "constructor_map failed";
+    check_string (Some "v_test") (constructor_map "c1_test") "c1_test did not map correctly";
+    check_string (Some "v_test") (constructor_map "c2_test") "c2_test did not mpa correctly";
+    check_string (Some "v_test") (constructor_map "c3_test") "c3_test did not map correctly";
     check_string None (constructor_map "nothing") "constructor_map produced non-existent variant"
     
 let single_constructor_multi_var _ =
@@ -77,11 +77,11 @@ let single_constructor_multi_var _ =
       data v2_test := | c2_test : v2_test|}
   in 
   let variant_map, constructor_map = tables_of_text program_text in
-    check_list (Some ["c1_test"]) (variant_map "v1_test") "variant_map failed";
-    check_list (Some ["c2_test"]) (variant_map "v2_test") "variant_map failed";
+    check_list (Some ["c1_test"]) (variant_map "v1_test") "v1_test did not map correctly";
+    check_list (Some ["c2_test"]) (variant_map "v2_test") "v2_test did not map correctly";
     check_list None (variant_map "nothing") "variant_map produced non-existent constructors";
-    check_string (Some "v1_test") (constructor_map "c1_test") "constructor_map failed";
-    check_string (Some "v2_test") (constructor_map "c2_test") "constructor_map failed";
+    check_string (Some "v1_test") (constructor_map "c1_test") "c1_test did not map correctly";
+    check_string (Some "v2_test") (constructor_map "c2_test") "c2_test did not map correctly";
     check_string None (constructor_map "nothing") "constructor_map produced non-existent variant"
 
 let multi_constructor_multi_var _ =
@@ -94,13 +94,13 @@ let multi_constructor_multi_var _ =
       | c2_test2 : v2_test|}
   in 
   let variant_map, constructor_map = tables_of_text program_text in
-    check_list (Some ["c1_test1" ; "c1_test2"]) (variant_map "v1_test") "variant_map failed";
-    check_list (Some ["c2_test1" ; "c2_test2"]) (variant_map "v2_test") "variant_map failed";
+    check_list (Some ["c1_test1" ; "c1_test2"]) (variant_map "v1_test") "v1_test did not map correctly";
+    check_list (Some ["c2_test1" ; "c2_test2"]) (variant_map "v2_test") "v2_test did not map correctly";
     check_list None (variant_map "nothing") "variant_map produced non-existent constructors";
-    check_string (Some "v1_test") (constructor_map "c1_test1") "constructor_map failed";
-    check_string (Some "v1_test") (constructor_map "c1_test2") "constructor_map failed";
-    check_string (Some "v2_test") (constructor_map "c2_test1") "constructor_map failed";
-    check_string (Some "v2_test") (constructor_map "c2_test2") "constructor_map failed";
+    check_string (Some "v1_test") (constructor_map "c1_test1") "c1_test1 did not map correctly";
+    check_string (Some "v1_test") (constructor_map "c1_test2") "c1_test2 did not map correctly";
+    check_string (Some "v2_test") (constructor_map "c2_test1") "c2_test1 did not map correctly";
+    check_string (Some "v2_test") (constructor_map "c2_test2") "c2_test2 did not map correctly";
     check_string None (constructor_map "nothing") "constructor_map produced non-existent variant"
 
 let suite = [
