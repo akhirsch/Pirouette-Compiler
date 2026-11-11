@@ -1,6 +1,12 @@
 module MkVariantMatching (A : Ast.AST) = struct
   let collect_variants prog =
     let arrange_data (vs, cs) decl =
+      (* Below, we are gathering all constructors and formatting
+        them in two ways; packaging them with their variant, and packaging
+        them into a list on their own. We package them with the variant because
+        that's what will be going into our constructor lookup table, and we
+        package them on their own so we can attach the variant name and place that
+        in the variant lookup table.*)
       match decl with
       | A.VariantDecl (_, (_, v_name), decl_cs) ->
           let split_decl =
@@ -15,10 +21,18 @@ module MkVariantMatching (A : Ast.AST) = struct
 
   let gen_lookup_fun table =
    fun target ->
-    match List.find_opt (fun (key, _) -> String.equal key target) table with
+    let find_fun = fun (key, _) -> String.equal key target in
+    (* List.find_opt returns an option of the first element in the list that satisfies 
+    the given predicate, or None if nothing is found. *)
+    match List.find_opt find_fun table with
     | Some (_, value) -> Some value
     | None -> None
 
+  (* This is the entry point to variant matching. It returns a pair of functions.
+    The first function is given the name of a variant, and returns a list of 
+    that variant's constructors, or None if nothing is found. The second function
+    is given the name of a constructor, and returns the name of its associated
+    variant. *)
   let get_variant_tables prog =
     let variant_table, constructor_table = collect_variants prog in
     let variant_fun = gen_lookup_fun variant_table in

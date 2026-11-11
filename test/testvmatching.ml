@@ -36,20 +36,14 @@ let no_variant _ =
 let single_constructor_single_var _ =
   let program_text = "data v_test := | c_test : v_test" in
   let variant_map, constructor_map = tables_of_text program_text in
-  (match (variant_map "v_test", constructor_map "c_test") with
-  | Some [ "c_test" ], Some "v_test" -> ()
-  | Some [ "c_test" ], _ -> assert_failure "constructor_map failed"
-  | _, Some "v_test" -> assert_failure "variant_map failed"
-  | _ ->
-      assert_failure "tables for single element constructor are not as expected");
-
-  match (variant_map "nothing", constructor_map "nothing") with
-  | None, None -> ()
-  | _, None -> assert_failure "variant_map produced non-existent constructors"
-  | None, _ -> assert_failure "constructor_map produced non-existent variant"
-  | _ ->
-      assert_failure
-        "non-existent constructors/variants produced by lookup tables"
+  check_list (Some [ "c_test" ]) (variant_map "v_test") "variant_map failed";
+  check_list None (variant_map "nothing")
+    "Variant map produced non-existent constructors";
+  check_string (Some "v_test") (constructor_map "c_test")
+    "constructor_map failed";
+  check_string None
+    (constructor_map "nothing")
+    "constructor map produced non-existent variant"
 
 let multi_constructor_single_var _ =
   let program_text =
@@ -102,11 +96,11 @@ let single_constructor_multi_var _ =
 let multi_constructor_multi_var _ =
   let program_text =
     {|data v1_test := 
-      | c1_test1 : v1_test
-      | c1_test2 : v1_test
+        | c1_test1 : v1_test
+        | c1_test2 : v1_test
       data v2_test := 
-      | c2_test1 : v2_test
-      | c2_test2 : v2_test|}
+        | c2_test1 : v2_test
+        | c2_test2 : v2_test|}
   in
   let variant_map, constructor_map = tables_of_text program_text in
   check_list
