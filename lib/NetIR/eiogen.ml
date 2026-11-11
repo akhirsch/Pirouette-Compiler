@@ -1,4 +1,4 @@
-module type NetAST = Ast.AST
+(* module type NetAST = Ast.AST
 
 open Ppxlib
 open Ast_builder.Default
@@ -338,4 +338,4 @@ module MkOcamlGen (Net : NetAST) = struct
     in
     (* Header first, then each translated declaration in program order. *)
     who_i_am @ emu_loc_variant @ List.map (decl_gen me) inter_prog
-end
+end*)
