@@ -1,9 +1,5 @@
-module MkDotAST (M : sig
-  include Metainfo.Meta.Metainfo
-end) =
-struct
-  module AST = Ast.MkAST (M)
-  open AST
+module MkDotAST (A : Ast.AST) = struct
+  open A
 
   let spf = Printf.sprintf
 

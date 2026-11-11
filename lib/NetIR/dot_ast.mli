@@ -1,8 +1,4 @@
-module MkDotAST (M : sig
-  include Metainfo.Meta.Metainfo
-end) : sig
-  module AST : module type of Ast.MkAST (M)
-
+module MkDotAST : functor (AST : Ast.AST) -> sig
   (**This module allows you to visualize an AST via DOT, a language that describes graphs. [generate_dot_code] will
   output a string of DOT code, which then can be written to a file or copied and visualized via the command line
 
