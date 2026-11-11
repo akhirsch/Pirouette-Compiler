@@ -1,10 +1,9 @@
-(* This file was copied from the '2-backend' branch's
-   'lib/backend/ocamlgen.ml' file *)
+module type NetAST = Ast.AST
 
 open Ppxlib
 open Ast_builder.Default
 
-module MkOcamlGen (Net : Netir.Ast.AST) = struct
+module MkOcamlGen (Net : NetAST) = struct
   (* with this declared now i can write Net.___ avoiding name conflicts *)
   let loc = Location.none
   (* every node in ppxlib AST carries a location *)
@@ -22,8 +21,18 @@ module MkOcamlGen (Net : Netir.Ast.AST) = struct
     | Net.StringTy _ -> [%type: string]
     | Net.BoolTy _ -> [%type: bool]
     | Net.FunTy (_, t1, t2) -> [%type: [%t type_gen t1] -> [%t type_gen t2]]
-    | Net.LocTy (_, _) -> [%type: Dummybackend.location]
+    (* Locations are represented as their names (strings), which is what
+       [Backend.Http_backend] takes. TODO: generate a location variant. *)
+    | Net.LocTy (_, _) -> [%type: string]
 
+  (*TODO*)
+  (* the list of locations that the process could be running on the list of names are like variants, 
+    and we want to pattern match on that and then if its anything else it will send an error you wont know the list 
+    but write the check as a fold at compile time you know what processes will be running determined by the type 
+    WHAT PROCESSES is this data allowed to work with in COMING from the user, *)
+
+  (* at some point someone is writing data of this type and then we check it, and your ast should have every type of 
+    the ast node, part of the metadata we are taking in type-checked ocaml code *)
   (*------------------- PATTERN GENRATION ---------------------------*)
   (* Convert a NetIR pattern into an OCaml pattern *)
   let rec pattern_gen (p : Net.pattern) : pattern =
@@ -41,12 +50,7 @@ module MkOcamlGen (Net : Netir.Ast.AST) = struct
     | Net.FalseLitPat _ -> [%pat? false]
     | Net.LocLitPat (_, (_, l)) -> pstring ~loc l
     | Net.ConstructorPat (_, (_, n), ps) ->
-        (* n = string
-      ps = net.pattern list 
-      Ocaml constructors must bc capatlized *)
-        (*TODO: net_ because a constructor could possibly be names left and then that would change to left
-      and then it would cause a problem here *)
-        let name = Located.lident ~loc (String.capitalize_ascii n) in
+        let name = Located.lident ~loc ("Pir_" ^ n) in
         (* Located.lident wraps the string as the identifier that ppat_construct is expecting
       Ppat_construct of Longident.t Asttypes.loc * (string Asttypes.loc list * pattern) option *)
         let converted_ps = List.map pattern_gen ps in
@@ -57,7 +61,7 @@ module MkOcamlGen (Net : Netir.Ast.AST) = struct
           | [ p ] -> Some p
           | many -> Some (ppat_tuple ~loc many)
           (* ocaml constructors arguments stores arguements as a pattern 
-      none, one and tuple *)
+          none, one and tuple *)
         in
         ppat_construct ~loc name args
     | Net.LocNamePat (_, (_, s)) -> pvar ~loc s
@@ -105,52 +109,55 @@ module MkOcamlGen (Net : Netir.Ast.AST) = struct
     | Net.StringLit (_, s) -> estring ~loc s
     | Net.TrueLit _ -> [%expr true]
     | Net.FalseLit _ -> [%expr false]
+    (* TODO: PR #114 also translates [Net.ConstructorLit], which only exists in
+       upstream dev's NetIR AST. Re-add that case once this branch has it. *)
     | Net.LocLit (_, (_, n)) -> estring ~loc n
     | Net.Match (_, e, pes) ->
         (* Turn each NetIR (pattern, body) pair into one OCaml match arm (a [case]).
-       ~lhs is the pattern (left of ->), 
-       ~rhs the body (right of ->),
-       ~guard is the optional [when] clause — NetIR has none, so always None. *)
+          ~lhs is the pattern (left of ->), 
+          ~rhs the body (right of ->),
+          ~guard is the optional [when] clause — NetIR has none, so always None. *)
         let cases =
           List.map
             (fun (pat, body) ->
               case
                 ~lhs:(pattern_gen pat) (* NetIR pattern -> OCaml pattern *)
-                ~guard:None
-                  (* NetIR's Match has no place to store a guard 
-          type is Match of m * expr * (pattern * expr) list, each branch is a pattern paired with a body only *)
-                  (* A guard is the when cond you can attach to an OCaml arm *)
+                ~guard:None (* Not implemented in NetIR *)
                 ~rhs:(expr_gen body)) (* NetIR body expr -> OCaml expr *)
             pes
         in
         pexp_match ~loc (expr_gen e) cases
         (* pexp_match takes a case list, and case
-        case: ~lhs ~guard ~rhs builder just fills in those three fields. 
-        So a match node is a subject expression "e" plus a case list 
-        That's why in the Match arm you build a list of cases and hand it over where each element is one | p -> e*)
+            case: ~lhs ~guard ~rhs builder just fills in those three fields. 
+            So a match node is a subject expression "e" plus a case list 
+            That's why in the Match arm you build a list of cases and hand it over where each element is one | p -> e *)
     | Net.RecAbs (_, (_, f), (_, x), e) ->
         [%expr
           let rec [%p pvar ~loc f] = fun [%p pvar ~loc x] -> [%e expr_gen e] in
           [%e evar ~loc f]]
-    (*NetIR writes fun f x := e: an anonymous function that takes argument x, 
-      has body e, and can call itself as f inside the body. 
-      "Rec" for recursive, "Abs" for abstraction*)
-    (* OCaml's grammar treats "the name being defined" as a pattern->f and
-      "the name being used" as an expression-> e *)
+        (* TODO Add "is_free" check for "f", and decide whether or not to add rec depending on the check
+            This will cut down on compilation warnings when the compiler is in use.*)
+        (*NetIR writes fun f x := e: a function, f, that takes argument x, 
+          has body e, and can call itself as f inside the body. 
+          "Rec" for recursive, "Abs" for abstraction*)
+        (* OCaml's grammar treats "the name being defined" as a pattern -> f and
+          "the name being used" as an expression -> e *)
     | Net.FunApp (_, f, a) -> [%expr [%e expr_gen f] [%e expr_gen a]]
     | Net.TypeConstr (_, e, t) -> [%expr ([%e expr_gen e] : [%t type_gen t])]
     | Net.Unop (_, u, e) -> unop_gen u (expr_gen e)
     | Net.Binop (_, b, e1, e2) -> binop_gen b (expr_gen e1) (expr_gen e2)
-    (* Communication Primitives *)
+    (* Communication Primitives: runtime calls into [Backend.Http_backend] *)
+    (* Send e to n, e is the payload and n is the name which holds a location *)
     | Net.Send (_, e, (_, n)) ->
-        [%expr Dummybackend.send [%e estring ~loc n] [%e expr_gen e]]
-    (* Send e  to n, e is the payload and n is the name which holds a location *)
+        [%expr Backend.Http_backend.send [%e estring ~loc n] [%e expr_gen e]]
+    (* of m * typ * name  Recv t from n
+       the annotation fixes the type [Http_backend.recv] decodes into *)
     | Net.Recv (_, t, (_, n)) ->
-        [%expr (Dummybackend.recv [%e estring ~loc n] : [%t type_gen t])]
-    (*of m * typ * name  Recv t from n *)
+        [%expr
+          (Backend.Http_backend.recv [%e estring ~loc n] : [%t type_gen t])]
     | Net.ChooseFor (_, (_, n), l) ->
         [%expr
-          Dummybackend.choose [%e estring ~loc n]
+          Backend.Http_backend.choose [%e estring ~loc n]
             [%e estring ~loc (label_gen l)]]
     (* a runtime call with a fixed text l is a Label of name *)
     (* works directly with AllowChoice *)
@@ -171,36 +178,34 @@ module MkOcamlGen (Net : Netir.Ast.AST) = struct
         let fallback =
           case
           (*case: ~lhs ~guard ~rhs builder needed to build the ppxlib node through ast_builder *)
-            ~lhs:[%pat? _]
+            ~lhs:[%pat? other]
             ~guard:None
-            ~rhs:[%expr failwith "unexpected label"]
-          (* the fail with case catch all _ for anything else *)
+            ~rhs:
+              [%expr
+                failwith
+                  (Printf.sprintf "unexpected label %s from %s" other
+                     [%e estring ~loc n])]
+          (* Error Reporting: other is binding a pattern so the error message will icnlude the 
+          unexpected label that arrived. *)
         in
         pexp_match ~loc
           (* pexp_match takes a case list, and case
         case: ~lhs ~guard ~rhs *)
-          [%expr Dummybackend.recv_label [%e estring ~loc n]]
+          [%expr Backend.Http_backend.recv_label [%e estring ~loc n]]
           (cases @ [ fallback ])
-    | Net.AmI (_, e) -> [%expr [%e expr_gen e] = me]
+    | Net.AmI (_, e) -> [%expr Backend.Http_backend.am_i [%e expr_gen e]]
 
   (*------------------- DECL GENRATION ---------------------------*)
-  let _decl_gen (d : Net.decl) : structure_item list =
+  let decl_gen (d : Net.decl) : structure_item =
     match d with
-    | Net.EmulatedLocDecl (_, (_, _l)) -> []
-    (* JACKIE you have _l here so the warnings are supressed UNDO once prog_gen written *)
-    (* Ocaml: emulated location Alice 
-        This is not an ast node, this is the declaration that introduces a participant *)
-    | Net.TypeDecl (_, (_, _n), _t) -> []
-    (* JACKIE you have the n and t _ here so that the warnings are supressed 
-          UNDO that change once you write program gen *)
-    (* n: Name
-         t: type  
-      OCaml type declaration doesn't exist as a standalone item either disappears or fuses into the let 
-      NetIR ex: three_to_alice : unit -> unit
-       OCaml's .ml (structure) grammar has NO top-level form for a bare value signature
-       and ppxlib has no Pstr_* constructor for it - can only exists in .mli files as Psig_value
-       this decl has nothing to build into on its own.
-       [] used here because the generated code still typechecks via inference *)
+    | Net.EmulatedLocDecl (_, (_, l)) ->
+        [%stri
+          let _ =
+            let _emulated_location = [%e estring ~loc l] in
+            ()]
+    | Net.TypeDecl (_, (_, n), t) ->
+        Ast_helper.Str.type_ ~loc Recursive
+          [ Ast_helper.Type.mk ~loc ~manifest:(type_gen t) { txt = n; loc } ]
     | Net.TypeAliasDecl (_, (_, n), t) ->
         (* n: Name
          t: type  
@@ -226,47 +231,56 @@ module MkOcamlGen (Net : Netir.Ast.AST) = struct
           (* manifest: is this equal to some other existing tyoe: YES thats an alias *)
           (* manifest actually gives that = sign *)
         in
-        [ pstr_type ~loc Nonrecursive [ td ] ]
+        pstr_type ~loc Nonrecursive [ td ]
         (* pstr_type is how we build a a top level type
         the type will not refrence itself type apple = apple is pointless so this is non recursive *)
-    | Net.DefnDecl (_, (_, n), ps, e) ->
-        (* of m * name * pattern list * expr
-       Ocaml let rec n ... = ... *)
-        let body = expr_gen e in
-        (* the body of the function -> an ocaml expression through expr_gen *)
-        let fun_expr =
-          (* fun_expr holds the body and the parameters *)
+    | Net.DefnDecl (_, (_, id), ps, e) ->
+        let body =
           List.fold_right
-            (fun p acc -> pexp_fun ~loc Nolabel None p acc)
-            (* each p the fold sees is one OCaml pattern
-            acc starts as body and gets wrapped once per pattern *)
-            (List.map pattern_gen ps)
-            (* list.map mapts a pattern list over pattern gen to give us a list of Ocaml patterns*)
-            body
+            (fun p mkfun -> [%expr fun [%p pattern_gen p] -> [%e mkfun]])
+            ps (expr_gen e)
         in
-        let v_bind = value_binding ~loc ~pat:(pvar ~loc n) ~expr:fun_expr in
-        (* value_binding builds one_name = expr 
-       ~pat: the left of the = a pattern, not just a name, because OCaml lets you bind patterns
-       pvar ~loc n : binds the name *)
-        [ pstr_value ~loc Nonrecursive [ v_bind ] ]
-        (* pstr_value is the let or the let in, that takes a list of value bindings into a top
-       level item pstr* is the top level builder syntax
-       takes a list because OCaml allows let a = … and b = … *)
-    | Net.ImportDecl _ (*_, (_, n)*) -> []
-    (* of m * name 
-      let name = Located.lident ~loc (String.capitalize_ascii n) in 
-      (* ocaml Module name must be capatlized *)
-        Pstr_include ~loc (Pmod_ident name) 
-       Ocaml include N *)
-    | Net.VariantDecl _ (*_, (_, n), cs*) -> []
-  (*
-      of m * name * (name * typ list * typ) list 
-       type n = C of ... | ...*)
+        [%stri let [%p Ast_builder.Default.pvar ~loc id] = [%e body]]
+    | Net.ImportDecl (_, (_, n)) ->
+        (* TODO: imports are not supported yet; generate no code until they are *)
+        Printf.eprintf
+          "Warning: import of module %S is not supported yet; skipping it.\n%!"
+          n;
+        [%stri [@@@ocaml.text "import skipped: not supported yet"]]
+        (* the @@@ocaml.txt compiles to nothing, also leaves a note in the generated output 
+        showing where the import was*)
+    | Net.VariantDecl (_, (_, n), cs) ->
+        (* val constructor_declaration :
+      loc:location -> 
+      name:string loc -> using Located.mk ~loc n (binding the location to the name)
+      args:constructor_arguments -> res:core_type option -> constructor_declaration*)
+        let constructor_gen ((_, cname), ts, _result) =
+          constructor_declaration ~loc
+            ~name:(Located.mk ~loc ("Pir_" ^ cname))
+              (* constructor names bounded to the location and capatalized *)
+            ~args:(Pcstr_tuple (List.map type_gen ts))
+              (* will be a tuple the smart constructor looks like this 
+        variantDecl "color"[("red", [], varty "color")] *)
+            ~res:None
+        in
+        let td =
+          (* val type_declaration :
+    loc:location ->
+    name:string loc ->
+    params:(core_type * (variance * injectivity)) list ->
+    cstrs:(core_type * core_type * location) list ->
+    kind:type_kind ->
+    private_:private_flag -> manifest:core_type option -> type_declaration*)
+          type_declaration ~loc ~name:(Located.mk ~loc n) ~params:[] ~cstrs:[]
+            ~kind:(Ptype_variant (List.map constructor_gen cs))
+            ~private_:Public ~manifest:None
+        in
+        pstr_type ~loc Recursive [ td ]
 
-  (*let program_gen (me : string) (prog : Net.program) : structure = [] *)
-  (*List.concat_map decl_gen prog*)
-  (*decl list*)
-  (*TODO: preserve the type annotation by merging it into the matching DefnDecl's let,
-       i.e. emit  let n : t = ...  should be done here i think , 
-       which sees both decls by name.... i think *)
+  (* program_gen: builds the full OCaml file for one participant
+     [prog] is that participant's NetIR program. The participant's identity is
+     not needed here: [Backend.Http_backend] reads it from the command line.
+     TODO: once locations become a variant, collect the emulated locations
+     into it (see PR #114). *)
+  let program_gen (prog : Net.program) : structure = List.map decl_gen prog
 end

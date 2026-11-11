@@ -1,0 +1,6 @@
+(library
+ (name backend)
+ (public_name pirc.backend)
+ (libraries cohttp cohttp-lwt-unix lwt lwt.unix unix uri)
+ (instrumentation
+  (backend bisect_ppx)))
