@@ -4,9 +4,12 @@
 name: odoc-to-zola
 
 on:
+# Lets other workflows run this one as a reusable workflow
   workflow_call:
+# Adds a "Run workflow" button in the Actions tab for manual runs
   workflow_dispatch:
 
+# defines which branch this work flow will execute on when pushed 
   push:
     branches:
       - 'main'
@@ -67,7 +70,7 @@ jobs:
       - name: Build Docs
         run: opam exec -- dune build @doc
 
-      #moved checkout zola site here after the dune steps Github told me
+      # moved checkout zola site here after the dune steps Github told me
       # this was problematic before bc dune trying to scan a symlink that was already scanned 
       - name: Checkout Zola site
         uses: actions/checkout@v6
@@ -86,6 +89,8 @@ jobs:
         run: zola build --base-url "${{ steps.pages.outputs.base_url }}"
  
       # Docs are served at <site>/module-docs/
+      # GitHub Actions passes that block to the shell as a script, and each line runs as its own command, one after another
+      # for workflows you can also chain commands with &&, avoiding that need for the arm |
       - name: Add docs to site
         run: |
           mkdir -p zola-site/public/module-docs
@@ -96,8 +101,8 @@ jobs:
         with:
           path: zola-site/public
 
- # takes that pages artifact and makes it live, needs environment: github-pages, or GitHub 
- # refuses the deploy
+ # takes that pages artifact and makes it live, needs environment: github-pages, or GitHub refuses the deploy
+ # Build the docs first then build site and at this stage we are deploying the zola site 
   deploy:
     needs: build
     runs-on: ubuntu-latest
