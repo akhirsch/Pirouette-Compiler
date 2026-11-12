@@ -1,0 +1,13 @@
+emulated location ALICE
+emulated location BOB
+
+main : unit
+main := match AmI ALICE with
+  | true := send 42 to BOB
+  | false := match AmI BOB with
+      | true := match recv int from ALICE with
+          | x := ()
+        end
+      | false := ()
+    end
+end;

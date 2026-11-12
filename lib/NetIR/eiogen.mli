@@ -8,7 +8,7 @@
     translations, while this [.mli] file exposes the functions available to
     other modules. *)
 
-(*module type NetAST = Ast.AST
+module type NetAST = Ast.AST
 (* Because of naming conflict betweeen "ast" and Ppxlib, we have to alias our AST module here. *)
 
 open Ppxlib
@@ -36,4 +36,4 @@ module MkOcamlGen : functor (Net : NetAST) -> sig
   (** Conver a Decl expression into an Ppxlib structure item *)
 
   val program_gen : string -> Net.program -> structure
-end*)
+end
