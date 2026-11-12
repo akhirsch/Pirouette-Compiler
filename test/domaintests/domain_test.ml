@@ -1,4 +1,7 @@
 
+(* this test can be run with the command dune exec ./test/domaintests/domain_test.exe *)
+(* This confirms that we can use separate domains to represent Pirouette locations and Eio streams to handle 
+communication between those locations. The next step is integrating this functionality into the backend*)
 
 let alice stream =
   Printf.printf "Alice: sending\n%!";

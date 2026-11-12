@@ -1,3 +1,5 @@
+(* this test can be run with dune exec ./test/domaintests/domaintest2.ml *)
+(* Line 5 is intended to keep this test from actually running completely *)
 let alice stream =
   Printf.printf "Alice: sending\n%!";
   Eio.Stream.take stream ;
