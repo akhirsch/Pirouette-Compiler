@@ -1,3 +1,9 @@
 (executables
  (names domain_test pir_runtime)
  (libraries eio eio_main))
+
+(executable
+ (name runtime_gen_test)
+ (modules runtime_gen_test)
+ (libraries ppxlib pirc.eio_domains_backend)
+ (preprocess (pps ppxlib.metaquot)))

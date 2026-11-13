@@ -2,3 +2,4 @@
  (name test)
  (modules testpretty testparser test testdot)
  (libraries ounit2 netir metainfo))
+
