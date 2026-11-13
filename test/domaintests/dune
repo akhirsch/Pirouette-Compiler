@@ -8,3 +8,10 @@
  (libraries ppxlib pirc.eio_domains_backend)
  (preprocess
   (pps ppxlib.metaquot)))
+
+(executable
+ (name commtest1)
+ (modules commtest1)
+ (libraries ppxlib pirc.eio_domains_backend)
+ (preprocess
+  (pps ppxlib.metaquot)))

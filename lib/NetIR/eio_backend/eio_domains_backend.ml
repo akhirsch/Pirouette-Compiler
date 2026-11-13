@@ -159,6 +159,18 @@ let wrap_location (me : string) (header : structure) (defns : structure) :
       (open_infos ~loc ~expr:(pmod_structure ~loc defns) ~override:Fresh)
       [%expr ()]
   in
+
+  (* Pir_runtime is a module defined within the generated runtime AST below.
+   It is not a separate source file or a module directly accessible by
+   the compiler at runtime.
+
+   The backend's send, recv, choose, and recv_label functions generate
+   expressions that reference Pir_runtime. When the generated OCaml
+   program executes, these expressions call the corresponding functions
+   in the generated Pir_runtime module.
+
+   runtime_gen_test.ml test verifies that this module generates executable OCaml code
+   comtests1.ml verifies that the backend generates the correct calls to its communication functions *)
   let run_item = [%stri let run = fun pir_chans -> [%e open_defns]] in
   [
     pstr_module ~loc

@@ -5,7 +5,15 @@ it is not calling on the actual implementation of the eio_diomains_backend *)
 (* Test the runtime's communication between two locations, Alice and Bob.
    Alice sends an integer and a label to Bob, then waits for a response.
    Bob receives both messages and sends a confirmation back to Alice.
-   This verifies value passing, label passing, and bidirectional communication!!!! *)
+   
+Strucutre of test: copied the runtime implementation into this file and added Alice/Bob communication tests
+to verifies that the runtime design works independently
+   
+   Verifies:
+   - value passing
+   - label passing
+   - bidirectional communication
+   - independent sucess of runtime design *)
 
 type msg = Value of Obj.t | Label of string
 type chans = (string * string, msg Eio.Stream.t) Hashtbl.t
