@@ -49,7 +49,6 @@ let run (progs : (string * (chans -> unit)) list) =
        (fun (_, prog) () -> Eio.Domain_manager.run dm (fun () -> prog chans))
        progs)
 
-
 (* Runtime communication test:
    The following code tests the runtime implementation above by
    simulating communication between two Pirouette locations.

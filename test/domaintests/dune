@@ -6,4 +6,5 @@
  (name runtime_gen_test)
  (modules runtime_gen_test)
  (libraries ppxlib pirc.eio_domains_backend)
- (preprocess (pps ppxlib.metaquot)))
+ (preprocess
+  (pps ppxlib.metaquot)))

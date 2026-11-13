@@ -9,7 +9,7 @@ between domains*)
   Note: There may be warnings this is FINE 
  3. /tmp/pir_generated_test *)
 
- (* expected output: 
+(* expected output: 
   Bob received: 42
   Bob received label: continue
   Alice received: Message received 
@@ -37,27 +37,16 @@ let test_program =
       let alice chans =
         Pir_runtime.send chans ~me:"Alice" ~dest:"Bob" 42;
         Pir_runtime.send_label chans ~me:"Alice" ~dest:"Bob" "continue";
-        let response : string =
-          Pir_runtime.recv chans ~me:"Alice" ~src:"Bob"
-        in
+        let response : string = Pir_runtime.recv chans ~me:"Alice" ~src:"Bob" in
         Printf.printf "Alice received: %s\n%!" response];
-
     [%stri
       let bob chans =
-        let value : int =
-          Pir_runtime.recv chans ~me:"Bob" ~src:"Alice"
-        in
+        let value : int = Pir_runtime.recv chans ~me:"Bob" ~src:"Alice" in
         Printf.printf "Bob received: %d\n%!" value;
-        let label =
-          Pir_runtime.recv_label chans ~me:"Bob" ~src:"Alice"
-        in
+        let label = Pir_runtime.recv_label chans ~me:"Bob" ~src:"Alice" in
         Printf.printf "Bob received label: %s\n%!" label;
         Pir_runtime.send chans ~me:"Bob" ~dest:"Alice" "Message received"];
-
-    [%stri
-      let () =
-        Pir_runtime.run
-          [("Alice", alice); ("Bob", bob)]];
+    [%stri let () = Pir_runtime.run [ ("Alice", alice); ("Bob", bob) ]];
   ]
 
 (* Uses the runtime AST from eio_domains_backend.ml to generate executable
