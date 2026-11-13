@@ -1,4 +1,3 @@
-
 (* this test can be run with the command dune exec ./test/domaintests/domain_test.exe *)
 (* This confirms that we can use separate domains to represent Pirouette locations and Eio streams to handle 
 communication between those locations. The next step is integrating this functionality into the backend*)
@@ -19,9 +18,5 @@ let () =
   let alice_to_bob = Eio.Stream.create 10 in
 
   Eio.Fiber.both
-    (fun () ->
-      Eio.Domain_manager.run domain_mgr
-        (fun () -> alice alice_to_bob))
-    (fun () ->
-      Eio.Domain_manager.run domain_mgr
-        (fun () -> bob alice_to_bob))
+    (fun () -> Eio.Domain_manager.run domain_mgr (fun () -> alice alice_to_bob))
+    (fun () -> Eio.Domain_manager.run domain_mgr (fun () -> bob alice_to_bob))

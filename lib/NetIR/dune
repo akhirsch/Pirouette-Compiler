@@ -2,7 +2,8 @@
  (name netir)
  (public_name pirc.netir)
  (libraries metainfo ppxlib pirc.eio_domains_backend)
- (preprocess (pps ppxlib.metaquot))
+ (preprocess
+  (pps ppxlib.metaquot))
  (instrumentation
   (backend bisect_ppx)))
 

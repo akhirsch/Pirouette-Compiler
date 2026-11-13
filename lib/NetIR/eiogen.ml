@@ -334,7 +334,7 @@ module MkOcamlGen (Net : NetAST) = struct
       else
         (* Generated: let pir_me = "Alice"
            Binds [me] so AmI checks like ("A" = me) compile *)
-         Eio_domains_backend.who_i_am me 
+        Eio_domains_backend.who_i_am me
     in
     (* Header first, then each translated declaration in program order. *)
     who_i_am @ emu_loc_variant @ List.map (decl_gen me) inter_prog

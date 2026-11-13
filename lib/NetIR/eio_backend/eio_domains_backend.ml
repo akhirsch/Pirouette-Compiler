@@ -3,35 +3,35 @@ open Ast_builder.Default
 
 let loc = Location.none
 
+(** The idea behind this backend structure is that each individual backend will
+    have its own unique dependencies and will also likely require some
+    specilized functions to be declared at the top level in order to make
+    communication possible.
 
-(**
-The idea behind this backend structure is that each individual backend will have its own unique dependencies
-and will also likely require some specilized functions to be declared at the top level in order to make communication possible.
-
-runtime (_locs : string list) : structure_item list 
-is a function that will be used to prepend the runtime module at the beginning of the generated program so that functions like 
-send and receive can simply call them to use the functionality. This makes it easier to modularize our backend structure, handle 
-code generation, and make the generated code easier to follow visually (for debugging).
-
-*)
+    runtime (_locs : string list) : structure_item list is a function that will
+    be used to prepend the runtime module at the beginning of the generated
+    program so that functions like send and receive can simply call them to use
+    the functionality. This makes it easier to modularize our backend structure,
+    handle code generation, and make the generated code easier to follow
+    visually (for debugging). *)
 
 (* ---------------- LOCATION TYPE ---------------- *)
 
-let location_type _ =
-  [%type: pir_emulated_location] (* ask jackie about this vs her implementation *)
-
+let location_type _ = [%type: pir_emulated_location]
+(* ask jackie about this vs her implementation *)
 
 (* ---------------- IDENTITY ---------------- *)
 
 let package_constructor id =
   pexp_construct ~loc { txt = Lident ("Pir_" ^ id); loc } None
 
-let who_i_am name = 
-  [ [%stri let pir_me = [%e package_constructor name]];
-    [%stri let pir_am_i l = (l = pir_me)] ]
+let who_i_am name =
+  [
+    [%stri let pir_me = [%e package_constructor name]];
+    [%stri let pir_am_i l = l = pir_me];
+  ]
 
 let am_i (_me : string) e = [%expr pir_am_i [%e e]]
-
 
 (* ---------------- SEND ---------------- *)
 
@@ -39,7 +39,6 @@ let send (me : string) (payload : expression) (dest : string) =
   [%expr
     Pir_runtime.send pir_chans ~me:[%e estring ~loc me]
       ~dest:[%e estring ~loc dest] [%e payload]]
-
 
 (* ---------------- RECEIVE ---------------- *)
 
@@ -49,14 +48,13 @@ let recv (me : string) (ty : core_type) (src : string) =
        ~src:[%e estring ~loc src]
       : [%t ty])]
 
-
 (* ---------------- CHOOSE ---------------- *)
 
-let choose (me : string) (dest : string) (label : string) = (* ask jackie if this looks correct *)
+let choose (me : string) (dest : string) (label : string) =
+  (* ask jackie if this looks correct *)
   [%expr
     Pir_runtime.send_label pir_chans ~me:[%e estring ~loc me]
       ~dest:[%e estring ~loc dest] [%e estring ~loc label]]
-
 
 (* ---------------- RECEIVE LABEL ---------------- *)
 
@@ -65,28 +63,25 @@ let recv_label (me : string) (src : string) =
     Pir_runtime.recv_label pir_chans ~me:[%e estring ~loc me]
       ~src:[%e estring ~loc src]]
 
-
-
-  (* --------------------------------------------------------------------------------------------- *)
-  (* --------------------------------------------------------------------------------------------- *)
-  (* --------------------------------------------------------------------------------------------- *)
-
-
+(* --------------------------------------------------------------------------------------------- *)
+(* --------------------------------------------------------------------------------------------- *)
+(* --------------------------------------------------------------------------------------------- *)
 
 (* ---------- runtime library ---------- *)
 
-(** 
-This is a module that gets prepended once to the top of the program so that each backend function described 
-above can actually perform communications. Each backend will follow this structure of implementing the common functions above
-and handling library-specific functions inside of the runtime library.
+(** This is a module that gets prepended once to the top of the program so that
+    each backend function described above can actually perform communications.
+    Each backend will follow this structure of implementing the common functions
+    above and handling library-specific functions inside of the runtime library.
 *)
 let runtime =
-  [ [%stri
+  [
+    [%stri
       module Pir_runtime = struct
         [@@@warning "-a"]
 
         (* Here Obj.t could be explicit as a variant of all other types we allow in pirouette, but Obj.t allows any type to be used*)
-        type msg = Value of Obj.t | Label of string 
+        type msg = Value of Obj.t | Label of string
         type channel_table = (string * string, msg Eio.Stream.t) Hashtbl.t
 
         (* 
@@ -100,14 +95,17 @@ let runtime =
           CB -> (Eio.stream for CB)
         *)
         let make_chans (locs : string list) : channel_table =
-          let channel_hashtable = Hashtbl.create 16 in (* initial size of 16 is arbitrary *)
+          let channel_hashtable = Hashtbl.create 16 in
+          (* initial size of 16 is arbitrary *)
           List.iter
             (fun s ->
               List.iter
                 (fun d ->
                   if s <> d then
-                    Hashtbl.add channel_hashtable (s, d) (Eio.Stream.create max_int))
-                    (*Hashtbl.add tbl (s, d) (Eio.Stream.create max_int))*) (* Edited here - Jackie *)
+                    Hashtbl.add channel_hashtable (s, d)
+                      (Eio.Stream.create max_int))
+                (*Hashtbl.add tbl (s, d) (Eio.Stream.create max_int))*)
+                (* Edited here - Jackie *)
                 locs)
             locs;
           channel_hashtable
@@ -120,7 +118,8 @@ let runtime =
         let send c ~me ~dest v =
           Eio.Stream.add (channel c me dest) (Value (Obj.repr v))
 
-        let send_label c ~me ~dest l = Eio.Stream.add (channel c me dest) (Label l)
+        let send_label c ~me ~dest l =
+          Eio.Stream.add (channel c me dest) (Label l)
 
         let recv c ~me ~src =
           match Eio.Stream.take (channel c src me) with
@@ -143,7 +142,8 @@ let runtime =
                (fun (_, prog) () ->
                  Eio.Domain_manager.run dm (fun () -> prog channels))
                progs)
-      end] ]
+      end];
+  ]
 
 (* ---------- structure: one module per location, then the launcher ---------- *)
 
@@ -160,10 +160,15 @@ let wrap_location (me : string) (header : structure) (defns : structure) :
       [%expr ()]
   in
   let run_item = [%stri let run = fun pir_chans -> [%e open_defns]] in
-  [ pstr_module ~loc
+  [
+    pstr_module ~loc
       (module_binding ~loc
          ~name:(Located.mk ~loc (Some ("Loc_" ^ me)))
-         ~expr:(pmod_structure ~loc ([ [%stri [@@@warning "-a"]] ] @ header @ [ run_item ]))) ]
-         let entry_point (_locs : string list) : structure_item list =
-          (* added _ in front of locs here bc this is a WIP need to run tests to see if we are on track *)
+         ~expr:
+           (pmod_structure ~loc
+              ([ [%stri [@@@warning "-a"]] ] @ header @ [ run_item ])));
+  ]
+
+let entry_point (_locs : string list) : structure_item list =
+  (* added _ in front of locs here bc this is a WIP need to run tests to see if we are on track *)
   failwith "TODO" (*not sure what to do here yet *)

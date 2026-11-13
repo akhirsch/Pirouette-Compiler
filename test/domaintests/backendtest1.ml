@@ -4,14 +4,7 @@ let alice chans =
 
 let bob chans =
   Printf.printf "Bob: waiting\n%!";
-  let value : int =
-    Pir_runtime.recv chans ~me:"Bob" ~src:"Alice"
-  in
+  let value : int = Pir_runtime.recv chans ~me:"Bob" ~src:"Alice" in
   Printf.printf "Bob: received %d\n%!" value
 
-let () =
-  Pir_runtime.run
-    [
-      ("Alice", alice);
-      ("Bob", bob);
-    ]
+let () = Pir_runtime.run [ ("Alice", alice); ("Bob", bob) ]

@@ -2,7 +2,7 @@
 (* Line 5 is intended to keep this test from actually running completely *)
 let alice stream =
   Printf.printf "Alice: sending\n%!";
-  Eio.Stream.take stream ;
+  Eio.Stream.take stream;
   Printf.printf "Alice: sent 42\n%!"
 
 let bob stream =
@@ -16,9 +16,5 @@ let () =
   let alice_to_bob = Eio.Stream.create 10 in
 
   Eio.Fiber.both
-    (fun () ->
-      Eio.Domain_manager.run domain_mgr
-        (fun () -> alice alice_to_bob))
-    (fun () ->
-      Eio.Domain_manager.run domain_mgr
-        (fun () -> bob alice_to_bob))
+    (fun () -> Eio.Domain_manager.run domain_mgr (fun () -> alice alice_to_bob))
+    (fun () -> Eio.Domain_manager.run domain_mgr (fun () -> bob alice_to_bob))
