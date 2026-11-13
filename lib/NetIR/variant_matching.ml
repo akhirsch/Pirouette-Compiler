@@ -19,7 +19,7 @@ module MkVariantMatching (A : Ast.AST) = struct
     in
     List.fold_left arrange_data ([], []) prog
 
-  let gen_lookup_fun table =
+  let make_lookup_fun table =
    fun target ->
     let find_fun = fun (key, _) -> String.equal key target in
     (* List.find_opt returns an option of the first element in the list that satisfies 
@@ -35,7 +35,7 @@ module MkVariantMatching (A : Ast.AST) = struct
     variant. *)
   let get_variant_tables prog =
     let variant_table, constructor_table = collect_variants prog in
-    let variant_fun = gen_lookup_fun variant_table in
-    let constructor_fun = gen_lookup_fun constructor_table in
+    let variant_fun = make_lookup_fun variant_table in
+    let constructor_fun = make_lookup_fun constructor_table in
     (variant_fun, constructor_fun)
 end
