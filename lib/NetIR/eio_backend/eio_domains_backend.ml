@@ -106,7 +106,8 @@ let runtime =
               List.iter
                 (fun d ->
                   if s <> d then
-                    Hashtbl.add tbl (s, d) (Eio.Stream.create max_int))
+                    Hashtbl.add channel_hashtable (s, d) (Eio.Stream.create max_int))
+                    (*Hashtbl.add tbl (s, d) (Eio.Stream.create max_int))*) (* Edited here - Jackie *)
                 locs)
             locs;
           channel_hashtable

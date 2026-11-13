@@ -1,0 +1,5 @@
+(library
+ (name eio_domains_backend)
+ (public_name pirc.eio_domains_backend)
+ (libraries ppxlib)
+ (preprocess (pps ppxlib.metaquot)))

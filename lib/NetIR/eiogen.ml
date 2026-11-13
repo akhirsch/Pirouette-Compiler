@@ -1,4 +1,4 @@
-(module type NetAST = Ast.AST
+module type NetAST = Ast.AST
 
 open Ppxlib
 open Ast_builder.Default
@@ -22,7 +22,7 @@ module MkOcamlGen (Net : NetAST) = struct
     | Net.BoolTy _ -> [%type: bool]
     | Net.FunTy (_, t1, t2) -> [%type: [%t type_gen t1] -> [%t type_gen t2]]
     | Net.LocTy (_, ids) ->
-        Backend.Dummybackend.location_type (List.map (fun (_, x) -> x) ids)
+        Eio_domains_backend.Eio_domains_backend.location_type (List.map (fun (_, x) -> x) ids)
 
   (*TODO*)
   (* the list of locations that the process could be running on the list of names are like variants, 
