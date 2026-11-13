@@ -22,7 +22,7 @@ module MkOcamlGen (Net : NetAST) = struct
     | Net.BoolTy _ -> [%type: bool]
     | Net.FunTy (_, t1, t2) -> [%type: [%t type_gen t1] -> [%t type_gen t2]]
     | Net.LocTy (_, ids) ->
-        Eio_domains_backend.Eio_domains_backend.location_type (List.map (fun (_, x) -> x) ids)
+        Eio_domains_backend.location_type (List.map (fun (_, x) -> x) ids)
 
   (*TODO*)
   (* the list of locations that the process could be running on the list of names are like variants, 
@@ -158,12 +158,12 @@ module MkOcamlGen (Net : NetAST) = struct
     (* Send e to n, e is the payload and n is the name which holds a location
        pass the payload code text AND the value added this so that stdout testing for
        the emulated background log holds more info here that is the payload and what *)
-    | Net.Send (_, e, (_, n)) -> Backend.Dummybackend.send me (expr_gen e) n
+    | Net.Send (_, e, (_, n)) -> Eio_domains_backend.send me (expr_gen e) n
     (* of m * typ * name  Recv t from n
        pass the expected type as text so the log shows it *)
-    | Net.Recv (_, t, (_, n)) -> Backend.Dummybackend.recv me (type_gen t) n
+    | Net.Recv (_, t, (_, n)) -> Eio_domains_backend.recv me (type_gen t) n
     | Net.ChooseFor (_, (_, n), l) ->
-        Backend.Dummybackend.choose me n (label_gen l)
+        Eio_domains_backend.choose me n (label_gen l)
     (* a runtime call with a fixed text l is a Label of name *)
     (* works directly with AllowChoice *)
     | Net.AllowChoice (_, (_, n), bs) ->
@@ -196,9 +196,9 @@ module MkOcamlGen (Net : NetAST) = struct
         pexp_match ~loc
           (* pexp_match takes a case list, and case
         case: ~lhs ~guard ~rhs *)
-          (Backend.Dummybackend.recv_label me n)
+          (Eio_domains_backend.recv_label me n)
           (cases @ [ fallback ])
-    | Net.AmI (_, e) -> Backend.Dummybackend.am_i me (expr_gen e)
+    | Net.AmI (_, e) -> Eio_domains_backend.am_i me (expr_gen e)
 
   (*------------------- DECL GENRATION ---------------------------*)
   let decl_gen (me : string) (d : Net.decl) : structure_item =
@@ -334,7 +334,7 @@ module MkOcamlGen (Net : NetAST) = struct
       else
         (* Generated: let pir_me = "Alice"
            Binds [me] so AmI checks like ("A" = me) compile *)
-        [ Backend.Dummybackend.who_i_am me ]
+         Eio_domains_backend.who_i_am me 
     in
     (* Header first, then each translated declaration in program order. *)
     who_i_am @ emu_loc_variant @ List.map (decl_gen me) inter_prog

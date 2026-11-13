@@ -164,6 +164,6 @@ let wrap_location (me : string) (header : structure) (defns : structure) :
       (module_binding ~loc
          ~name:(Located.mk ~loc (Some ("Loc_" ^ me)))
          ~expr:(pmod_structure ~loc ([ [%stri [@@@warning "-a"]] ] @ header @ [ run_item ]))) ]
-
-let entry_point (locs : string list) : structure_item list =
+         let entry_point (_locs : string list) : structure_item list =
+          (* added _ in front of locs here bc this is a WIP need to run tests to see if we are on track *)
   failwith "TODO" (*not sure what to do here yet *)
