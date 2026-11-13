@@ -60,6 +60,10 @@ let test_program =
           [("Alice", alice); ("Bob", bob)]];
   ]
 
+(* Uses the runtime AST from eio_domains_backend.ml to generate executable
+   OCaml code.
+   NOTE: This tests only the runtime implementation, not the other
+   backend functions or the eiogen.ml compiler integration. *)
 let () =
   let program = Eio_domains_backend.runtime @ test_program in
   Pprintast.structure Format.std_formatter program;
