@@ -34,18 +34,15 @@ let check name actual expected =
   let expected_str = Format.asprintf "%a" Pprintast.expression expected in
 
   if actual_str <> expected_str then (
-    Printf.eprintf "FAILED: %s\nExpected: %s\nActual: %s\n"
-      name expected_str actual_str;
-    failwith ("Test failed: " ^ name)
-  );
+    Printf.eprintf "FAILED: %s\nExpected: %s\nActual: %s\n" name expected_str
+      actual_str;
+    failwith ("Test failed: " ^ name));
 
   Printf.printf "PASSED: %s\n" name
 
 (* Verify that send generates the correct destination and payload *)
 let test_send () =
-  let actual =
-    Eio_domains_backend.send "Alice" (eint ~loc 42) "Bob"
-  in
+  let actual = Eio_domains_backend.send "Alice" (eint ~loc 42) "Bob" in
   let expected =
     [%expr Pir_runtime.send pir_chans ~me:"Alice" ~dest:"Bob" 42]
   in
@@ -53,9 +50,7 @@ let test_send () =
 
 (* Verify that recv generates the correct source and type annotation *)
 let test_recv () =
-  let actual =
-    Eio_domains_backend.recv "Bob" [%type: int] "Alice"
-  in
+  let actual = Eio_domains_backend.recv "Bob" [%type: int] "Alice" in
   let expected =
     [%expr (Pir_runtime.recv pir_chans ~me:"Bob" ~src:"Alice" : int)]
   in
@@ -63,21 +58,15 @@ let test_recv () =
 
 (* Verify that choose generates the correct label communication  *)
 let test_choose () =
-  let actual =
-    Eio_domains_backend.choose "Alice" "Bob" "continue"
-  in
+  let actual = Eio_domains_backend.choose "Alice" "Bob" "continue" in
   let expected =
-    [%expr
-      Pir_runtime.send_label pir_chans ~me:"Alice"
-        ~dest:"Bob" "continue"]
+    [%expr Pir_runtime.send_label pir_chans ~me:"Alice" ~dest:"Bob" "continue"]
   in
   check "choose" actual expected
 
 (* Verify that recv_label generates the correct source location. *)
 let test_recv_label () =
-  let actual =
-    Eio_domains_backend.recv_label "Bob" "Alice"
-  in
+  let actual = Eio_domains_backend.recv_label "Bob" "Alice" in
   let expected =
     [%expr Pir_runtime.recv_label pir_chans ~me:"Bob" ~src:"Alice"]
   in

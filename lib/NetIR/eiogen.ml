@@ -336,6 +336,15 @@ module MkOcamlGen (Net : NetAST) = struct
            Binds [me] so AmI checks like ("A" = me) compile *)
         Eio_domains_backend.who_i_am me
     in
-    (* Header first, then each translated declaration in program order. *)
-    who_i_am @ emu_loc_variant @ List.map (decl_gen me) inter_prog
+    (* Generate the declarations for this location. *)
+    let generated_decls = List.map (decl_gen me) inter_prog in
+
+    (* Declarations available throughout the location module. *)
+    let header = who_i_am @ emu_loc_variant in
+
+    (* Definitions that belong to this location. *)
+    let defns = generated_decls in
+
+    (* Wrap this location's code in its own module. *)
+    Eio_domains_backend.wrap_location me header defns
 end

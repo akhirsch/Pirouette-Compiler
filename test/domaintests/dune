@@ -15,3 +15,10 @@
  (libraries ppxlib pirc.eio_domains_backend)
  (preprocess
   (pps ppxlib.metaquot)))
+
+(executable
+ (name wrap_locationtest)
+ (modules wrap_locationtest)
+ (libraries ppxlib pirc.eio_domains_backend)
+ (preprocess
+  (pps ppxlib.metaquot)))
