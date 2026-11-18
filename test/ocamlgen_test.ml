@@ -167,8 +167,10 @@ let suite =
           (importdecl "mylib");
     (* emulated location decl: just a no op binding at runtime *)
     "emlocdecl"
-    >:: test_decl "let _ = let _emulated_location = \"alice\" in ()"
-          (emlocdecl "alice");
+    >:: test_decl
+          "let _ = let _emulated_location = (\"alice\", \"http://127.0.0.0\") \
+           in ()"
+          (emlocdecl "alice" "http://127.0.0.0");
     (* defn decl: f with one param x that returns x *)
     "defndecl"
     >:: test_decl "let f x = x" (defndecl "f" [ varpat "x" ] (var "x"));

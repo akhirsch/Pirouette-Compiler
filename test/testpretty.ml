@@ -111,7 +111,8 @@ let suite =
     "ami" >:: test_eq_string "AmI A" (prettify_expr (ami (loclit "A")));
     (* Declaration Tests *)
     "emulated location"
-    >:: test_eq_string "emulated location A" (prettify_decl (emlocdecl "A"));
+    >:: test_eq_string "emulated location A \"http://192.168.0.1\""
+          (prettify_decl (emlocdecl "A" "http://192.168.0.1"));
     "type decl"
     >:: test_eq_string "foo : int" (prettify_decl (typedecl "foo" intty));
     "type alias decl"

@@ -2,6 +2,9 @@ module type AST = sig
   type m
   type name = m * string
 
+  type hostname = m * string
+  (** A quoted string literal representing a location hostname. *)
+
   type typ =
     | VarTy of m * name
     | UnitTy of m
@@ -71,7 +74,8 @@ module type AST = sig
     | AmI of m * expr
 
   type decl =
-    | EmulatedLocDecl of m * name
+    | EmulatedLocDecl of m * name * hostname
+      (* An emulated location with the given name and hostname literal *)
     | TypeDecl of
         m * name * typ (* Declares the type of a binding: `foo : int` *)
     | TypeAliasDecl of
