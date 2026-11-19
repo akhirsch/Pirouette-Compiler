@@ -24,14 +24,6 @@ module MkOcamlGen (Net : NetAST) = struct
     | Net.LocTy (_, ids) ->
         Backend.Dummybackend.location_type (List.map (fun (_, x) -> x) ids)
 
-  (*TODO*)
-  (* the list of locations that the process could be running on the list of names are like variants, 
-    and we want to pattern match on that and then if its anything else it will send an error you wont know the list 
-    but write the check as a fold at compile time you know what processes will be running determined by the type 
-    WHAT PROCESSES is this data allowed to work with in COMING from the user, *)
-
-  (* at some point someone is writing data of this type and then we check it, and your ast should have every type of 
-    the ast node, part of the metadata we are taking in type-checked ocaml code *)
   (*------------------- PATTERN GENRATION ---------------------------*)
   (* Convert a NetIR pattern into an OCaml pattern *)
   let rec pattern_gen (p : Net.pattern) : pattern =
@@ -143,8 +135,6 @@ module MkOcamlGen (Net : NetAST) = struct
         [%expr
           let rec [%p pvar ~loc f] = fun [%p pvar ~loc x] -> [%e expr_gen e] in
           [%e evar ~loc f]]
-        (* TODO Add "is_free" check for "f", and decide whether or not to add rec depending on the check
-            This will cut down on compilation warnings when the compiler is in use.*)
         (*NetIR writes fun f x := e: a function, f, that takes argument x, 
           has body e, and can call itself as f inside the body. 
           "Rec" for recursive, "Abs" for abstraction*)
@@ -201,14 +191,22 @@ module MkOcamlGen (Net : NetAST) = struct
     | Net.AmI (_, e) -> Backend.Dummybackend.am_i me (expr_gen e)
 
   (*------------------- DECL GENRATION ---------------------------*)
+  (* converts a Pirouette declaration into an OCaml AST structure item *)
   let decl_gen (me : string) (d : Net.decl) : structure_item =
     let expr_gen = expr_gen me in
     match d with
     | Net.EmulatedLocDecl (_, (_, l)) ->
+        (* Net.EmulatedLocDecl handles declarations of emulated locations *)
         [%stri
           let _ =
             let _emulated_location = [%e estring ~loc l] in
+            (* estring ~loc l converts the location name into an OCaml 
+            string expression in the generated AST*)
             ()]
+    (* Extract the emulated location name and generate a placeholder
+      binding, since the location declaration does not require any runtime behavior 
+      Note: This branch does not actually create the location variant or initialize a participant
+      We are  generating a placeholder declaration that evaluates to *)
     | Net.TypeDecl (_, (_, n), t) ->
         Ast_helper.Str.type_ ~loc Recursive
           [ Ast_helper.Type.mk ~loc ~manifest:(type_gen t) { txt = n; loc } ]
@@ -232,7 +230,8 @@ module MkOcamlGen (Net : NetAST) = struct
         Ptype_variant [...] (yes, these constructors — A | B of int)
         Ptype_record [...] (yes, these fields — { x : int }). *)
             ~private_:Public
-              (* can either be private or public, i chose public *)
+              (* can either be private or public, i chose public because Public because 
+              the generated location constructors need to be available for use throughout the generated code  *)
             ~manifest:(Some (type_gen t))
           (* manifest: is this equal to some other existing tyoe: YES thats an alias *)
           (* manifest actually gives that = sign *)
@@ -241,6 +240,9 @@ module MkOcamlGen (Net : NetAST) = struct
         (* pstr_type is how we build a a top level type
         the type will not refrence itself type apple = apple is pointless so this is non recursive *)
     | Net.DefnDecl (_, (_, id), ps, e) ->
+        (* id: the name of the function/value being passed
+      ps: are a list of parameters the function takes 
+      e: the expression representing the functions body *)
         let body =
           List.fold_right
             (fun p mkfun -> [%expr fun [%p pattern_gen p] -> [%e mkfun]])
@@ -248,7 +250,7 @@ module MkOcamlGen (Net : NetAST) = struct
         in
         [%stri let [%p Ast_builder.Default.pvar ~loc id] = [%e body]]
     | Net.ImportDecl (_, (_, n)) ->
-        (* TODO: imports are not supported yet; generate no code until they are *)
+        (* Note: imports are not supported yet; generate no code until they are *)
         Printf.eprintf
           "Warning: import of module %S is not supported yet; skipping it.\n%!"
           n;
@@ -292,7 +294,7 @@ module MkOcamlGen (Net : NetAST) = struct
       undeclared emulated locations to be caught as an error.*)
     let emu_loc_delcs, inter_prog =
       List.partition
-        (fun x -> match x with Net.EmulatedLocDecl _ -> true | _ -> false)
+        (function Net.EmulatedLocDecl _ -> true | _ -> false)
         prog
     in
     let emu_loc_variant =

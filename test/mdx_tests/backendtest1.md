@@ -1,4 +1,11 @@
 # Dummy backend
+The following tests verify that the Dummybackend functions generate
+the expected OCaml expressions. Each function is called with sample
+arguments, and the resulting AST is printed using
+`Pprintast.string_of_expression`.
+
+These tests validate code generation rather than runtime execution
+or communication.
 
 Setup:
 

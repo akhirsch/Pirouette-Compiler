@@ -38,7 +38,7 @@ let send (me : string) (payload : expression) (dest : string) =
   log me ("would have sent " ^ what ^ " to " ^ dest)
 
 (* ---- incoming ----
-   ty is the type we expected to get so the log shows that
+   ty:  is the type we expected to get so the log shows that
    still no real value to give back so failwith for now *)
 let recv (me : string) (ty : core_type) (src : string) : expression =
   let ty_text = Format.asprintf "%a" Pprintast.core_type ty in
@@ -60,6 +60,8 @@ let recv_label (me : string) (src : string) =
     [%e log_expr];
     Random.int 999]
 
+(* Use of am_i: to check whether a given location matches 
+    the participant (me) whose code is being generated *)
 let am_i (me : string) e =
   (* Since locations are constructors fo the emulated declaration variant,
       we can check if some expression equals our own variant by matching on
@@ -74,3 +76,17 @@ let am_i (me : string) e =
     ]
   in
   pexp_match ~loc e cases
+
+(* am_i Example:
+if me = "Alice", the generated OCaml code is:
+
+ match e with
+ | Pir_Alice -> true
+ | _ -> false
+
+The first case matches the constructor for the current participant,
+while the wildcard case returns false for any other location. 
+
+NOTE: am_i does not directly evaluate whether two locations are equal. 
+It generates an AST representing an OCaml match expression that performs that 
+check when the generated program runs *)
