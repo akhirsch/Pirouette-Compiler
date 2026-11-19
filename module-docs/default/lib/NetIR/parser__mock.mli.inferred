@@ -1,0 +1,98 @@
+type token =
+    WITH
+  | WILDCARD
+  | WALRUS
+  | UNITTY
+  | UNITLIT
+  | TYPEDECL
+  | TRUELIT
+  | TO
+  | TIMES
+  | STRINGTY
+  | STRINGLIT of string
+  | SEND
+  | SEMICOLON
+  | RPAREN
+  | RECV
+  | RBRACK
+  | RBRACE
+  | PLUS
+  | OR
+  | NOT
+  | NEQ
+  | MINUS
+  | MATCH
+  | LT
+  | LPAREN
+  | LOCTY
+  | LOCLIT of string
+  | LEQ
+  | LBRACK
+  | LBRACE
+  | INTTY
+  | INTLIT of int
+  | IMPORT
+  | ID of string
+  | GT
+  | GEQ
+  | FUN
+  | FROM
+  | FOR
+  | FLOATTY
+  | FLOATLIT of float
+  | FALSELIT
+  | EQ
+  | EOF
+  | END
+  | EMULATEDLOCDECL
+  | DOUBLEARROW
+  | DIV
+  | DATA
+  | COMMA
+  | COLON
+  | CHOOSE
+  | CHOICE
+  | CHARTY
+  | CHARLIT of char
+  | BOOLTY
+  | BAR
+  | ARROW
+  | AND
+  | AMI
+  | ALLOW
+val mkpos : Lexing.position -> Lexing.position -> Ast.PosInfo_AST.m
+val menhir_begin_marker : int
+val xv_var_decl :
+  Ast.PosInfo_AST.name * Ast.PosInfo_AST.typ list * Ast.PosInfo_AST.typ
+val xv_un_op : Ast.PosInfo_AST.unop
+val xv_typ : Ast.PosInfo_AST.typ
+val xv_separated_nonempty_list_COMMA_loclit_ : Ast.PosInfo_AST.name list
+val xv_separated_list_COMMA_loclit_ : Ast.PosInfo_AST.name list
+val xv_program : Ast.PosInfo_AST.program
+val xv_pattern : Ast.PosInfo_AST.pattern
+val xv_op_expr : Ast.PosInfo_AST.expr
+val xv_nonempty_list_var_decl_ :
+  (Ast.PosInfo_AST.name * Ast.PosInfo_AST.typ list * Ast.PosInfo_AST.typ)
+  list
+val xv_nonempty_list_match_match_ :
+  (Ast.PosInfo_AST.pattern * Ast.PosInfo_AST.expr) list
+val xv_nonempty_list_atomic_pattern_ : Ast.PosInfo_AST.pattern list
+val xv_nonempty_list_allow_match_ :
+  (Ast.PosInfo_AST.lab * Ast.PosInfo_AST.expr) list
+val xv_match_match : Ast.PosInfo_AST.pattern * Ast.PosInfo_AST.expr
+val xv_loption_separated_nonempty_list_COMMA_loclit__ :
+  Ast.PosInfo_AST.name list
+val xv_loclit : Ast.PosInfo_AST.name
+val xv_list_pattern_ : Ast.PosInfo_AST.pattern list
+val xv_list_decl_ : Ast.PosInfo_AST.program
+val xv_lab : Ast.PosInfo_AST.lab
+val xv_id : Ast.PosInfo_AST.name
+val xv_expr : Ast.PosInfo_AST.expr
+val xv_decl : Ast.PosInfo_AST.decl
+val xv_bin_op : Ast.PosInfo_AST.binop
+val xv_atomic_typ : Ast.PosInfo_AST.typ
+val xv_atomic_pattern : Ast.PosInfo_AST.pattern
+val xv_atomic_expr : Ast.PosInfo_AST.expr
+val xv_app_expr : Ast.PosInfo_AST.expr
+val xv_allow_match : Ast.PosInfo_AST.lab * Ast.PosInfo_AST.expr
+val menhir_end_marker : int

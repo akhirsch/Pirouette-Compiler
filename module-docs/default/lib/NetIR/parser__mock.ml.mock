@@ -1,0 +1,1380 @@
+
+type token = 
+  | WITH
+  | WILDCARD
+  | WALRUS
+  | UNITTY
+  | UNITLIT
+  | TYPEDECL
+  | TRUELIT
+  | TO
+  | TIMES
+  | STRINGTY
+  | STRINGLIT of 
+# 25 "lib/NetIR/parser.mly"
+       (string)
+# 17 "lib/NetIR/parser__mock.ml.mock"
+
+  | SEND
+  | SEMICOLON
+  | RPAREN
+  | RECV
+  | RBRACK
+  | RBRACE
+  | PLUS
+  | OR
+  | NOT
+  | NEQ
+  | MINUS
+  | MATCH
+  | LT
+  | LPAREN
+  | LOCTY
+  | LOCLIT of 
+# 25 "lib/NetIR/parser.mly"
+       (string)
+# 37 "lib/NetIR/parser__mock.ml.mock"
+
+  | LEQ
+  | LBRACK
+  | LBRACE
+  | INTTY
+  | INTLIT of 
+# 21 "lib/NetIR/parser.mly"
+       (int)
+# 46 "lib/NetIR/parser__mock.ml.mock"
+
+  | IMPORT
+  | ID of 
+# 24 "lib/NetIR/parser.mly"
+       (string)
+# 52 "lib/NetIR/parser__mock.ml.mock"
+
+  | GT
+  | GEQ
+  | FUN
+  | FROM
+  | FOR
+  | FLOATTY
+  | FLOATLIT of 
+# 22 "lib/NetIR/parser.mly"
+       (float)
+# 63 "lib/NetIR/parser__mock.ml.mock"
+
+  | FALSELIT
+  | EQ
+  | EOF
+  | END
+  | EMULATEDLOCDECL
+  | DOUBLEARROW
+  | DIV
+  | DATA
+  | COMMA
+  | COLON
+  | CHOOSE
+  | CHOICE
+  | CHARTY
+  | CHARLIT of 
+# 23 "lib/NetIR/parser.mly"
+       (char)
+# 81 "lib/NetIR/parser__mock.ml.mock"
+
+  | BOOLTY
+  | BAR
+  | ARROW
+  | AND
+  | AMI
+  | ALLOW
+
+# 1 "lib/NetIR/parser.mly"
+  
+    open Ast.PosInfo_AST
+    let mkpos (s : Lexing.position) (e : Lexing.position) : Metainfo.Meta.PosInfo.t =
+        {
+        filename = s.pos_fname;
+        start = (s.pos_lnum, s.pos_cnum - s.pos_bol);
+        stop = (e.pos_lnum, e.pos_cnum - e.pos_bol)
+        }
+
+# 100 "lib/NetIR/parser__mock.ml.mock"
+
+let menhir_begin_marker =
+  0
+
+and (xv_var_decl, xv_un_op, xv_typ, xv_separated_nonempty_list_COMMA_loclit_, xv_separated_list_COMMA_loclit_, xv_program, xv_pattern, xv_op_expr, xv_nonempty_list_var_decl_, xv_nonempty_list_match_match_, xv_nonempty_list_atomic_pattern_, xv_nonempty_list_allow_match_, xv_match_match, xv_loption_separated_nonempty_list_COMMA_loclit__, xv_loclit, xv_list_pattern_, xv_list_decl_, xv_lab, xv_id, xv_expr, xv_decl, xv_bin_op, xv_atomic_typ, xv_atomic_pattern, xv_atomic_expr, xv_app_expr, xv_allow_match) =
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 252 "<standard.mly>"
+                    xs
+# 109 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_separated_nonempty_list_COMMA_loclit_) (_startpos_xs_ : Lexing.position) (_endpos_xs_ : Lexing.position) (_startofs_xs_ : int) (_endofs_xs_ : int) (_loc_xs_ : Lexing.position * Lexing.position) (
+# 252 "<standard.mly>"
+        _2
+# 113 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__2_ : Lexing.position) (_endpos__2_ : Lexing.position) (_startofs__2_ : int) (_endofs__2_ : int) (_loc__2_ : Lexing.position * Lexing.position) (
+# 252 "<standard.mly>"
+  x
+# 117 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_loclit) (_startpos_x_ : Lexing.position) (_endpos_x_ : Lexing.position) (_startofs_x_ : int) (_endofs_x_ : int) (_loc_x_ : Lexing.position * Lexing.position) : ('tv_separated_nonempty_list_COMMA_loclit_) ->
+    
+# 253 "<standard.mly>"
+    ( x :: xs )
+# 122 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 249 "<standard.mly>"
+  x
+# 127 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_loclit) (_startpos_x_ : Lexing.position) (_endpos_x_ : Lexing.position) (_startofs_x_ : int) (_endofs_x_ : int) (_loc_x_ : Lexing.position * Lexing.position) : ('tv_separated_nonempty_list_COMMA_loclit_) ->
+    
+# 250 "<standard.mly>"
+    ( [ x ] )
+# 132 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 240 "<standard.mly>"
+  xs
+# 137 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_loption_separated_nonempty_list_COMMA_loclit__) (_startpos_xs_ : Lexing.position) (_endpos_xs_ : Lexing.position) (_startofs_xs_ : int) (_endofs_xs_ : int) (_loc_xs_ : Lexing.position * Lexing.position) : ('tv_separated_list_COMMA_loclit_) ->
+    
+# 241 "<standard.mly>"
+    ( xs )
+# 142 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 230 "<standard.mly>"
+         xs
+# 147 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_nonempty_list_var_decl_) (_startpos_xs_ : Lexing.position) (_endpos_xs_ : Lexing.position) (_startofs_xs_ : int) (_endofs_xs_ : int) (_loc_xs_ : Lexing.position * Lexing.position) (
+# 230 "<standard.mly>"
+  x
+# 151 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_var_decl) (_startpos_x_ : Lexing.position) (_endpos_x_ : Lexing.position) (_startofs_x_ : int) (_endofs_x_ : int) (_loc_x_ : Lexing.position * Lexing.position) : ('tv_nonempty_list_var_decl_) ->
+    
+# 231 "<standard.mly>"
+    ( x :: xs )
+# 156 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 227 "<standard.mly>"
+  x
+# 161 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_var_decl) (_startpos_x_ : Lexing.position) (_endpos_x_ : Lexing.position) (_startofs_x_ : int) (_endofs_x_ : int) (_loc_x_ : Lexing.position * Lexing.position) : ('tv_nonempty_list_var_decl_) ->
+    
+# 228 "<standard.mly>"
+    ( [ x ] )
+# 166 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 230 "<standard.mly>"
+         xs
+# 171 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_nonempty_list_match_match_) (_startpos_xs_ : Lexing.position) (_endpos_xs_ : Lexing.position) (_startofs_xs_ : int) (_endofs_xs_ : int) (_loc_xs_ : Lexing.position * Lexing.position) (
+# 230 "<standard.mly>"
+  x
+# 175 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_match_match) (_startpos_x_ : Lexing.position) (_endpos_x_ : Lexing.position) (_startofs_x_ : int) (_endofs_x_ : int) (_loc_x_ : Lexing.position * Lexing.position) : ('tv_nonempty_list_match_match_) ->
+    
+# 231 "<standard.mly>"
+    ( x :: xs )
+# 180 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 227 "<standard.mly>"
+  x
+# 185 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_match_match) (_startpos_x_ : Lexing.position) (_endpos_x_ : Lexing.position) (_startofs_x_ : int) (_endofs_x_ : int) (_loc_x_ : Lexing.position * Lexing.position) : ('tv_nonempty_list_match_match_) ->
+    
+# 228 "<standard.mly>"
+    ( [ x ] )
+# 190 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 230 "<standard.mly>"
+         xs
+# 195 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_nonempty_list_atomic_pattern_) (_startpos_xs_ : Lexing.position) (_endpos_xs_ : Lexing.position) (_startofs_xs_ : int) (_endofs_xs_ : int) (_loc_xs_ : Lexing.position * Lexing.position) (
+# 230 "<standard.mly>"
+  x
+# 199 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_atomic_pattern) (_startpos_x_ : Lexing.position) (_endpos_x_ : Lexing.position) (_startofs_x_ : int) (_endofs_x_ : int) (_loc_x_ : Lexing.position * Lexing.position) : ('tv_nonempty_list_atomic_pattern_) ->
+    
+# 231 "<standard.mly>"
+    ( x :: xs )
+# 204 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 227 "<standard.mly>"
+  x
+# 209 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_atomic_pattern) (_startpos_x_ : Lexing.position) (_endpos_x_ : Lexing.position) (_startofs_x_ : int) (_endofs_x_ : int) (_loc_x_ : Lexing.position * Lexing.position) : ('tv_nonempty_list_atomic_pattern_) ->
+    
+# 228 "<standard.mly>"
+    ( [ x ] )
+# 214 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 230 "<standard.mly>"
+         xs
+# 219 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_nonempty_list_allow_match_) (_startpos_xs_ : Lexing.position) (_endpos_xs_ : Lexing.position) (_startofs_xs_ : int) (_endofs_xs_ : int) (_loc_xs_ : Lexing.position * Lexing.position) (
+# 230 "<standard.mly>"
+  x
+# 223 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_allow_match) (_startpos_x_ : Lexing.position) (_endpos_x_ : Lexing.position) (_startofs_x_ : int) (_endofs_x_ : int) (_loc_x_ : Lexing.position * Lexing.position) : ('tv_nonempty_list_allow_match_) ->
+    
+# 231 "<standard.mly>"
+    ( x :: xs )
+# 228 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 227 "<standard.mly>"
+  x
+# 233 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_allow_match) (_startpos_x_ : Lexing.position) (_endpos_x_ : Lexing.position) (_startofs_x_ : int) (_endofs_x_ : int) (_loc_x_ : Lexing.position * Lexing.position) : ('tv_nonempty_list_allow_match_) ->
+    
+# 228 "<standard.mly>"
+    ( [ x ] )
+# 238 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 147 "<standard.mly>"
+  x
+# 243 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_separated_nonempty_list_COMMA_loclit_) (_startpos_x_ : Lexing.position) (_endpos_x_ : Lexing.position) (_startofs_x_ : int) (_endofs_x_ : int) (_loc_x_ : Lexing.position * Lexing.position) : ('tv_loption_separated_nonempty_list_COMMA_loclit__) ->
+    
+# 148 "<standard.mly>"
+    ( x )
+# 248 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) : ('tv_loption_separated_nonempty_list_COMMA_loclit__) ->
+    
+# 145 "<standard.mly>"
+    ( [] )
+# 254 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 218 "<standard.mly>"
+         xs
+# 259 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_list_pattern_) (_startpos_xs_ : Lexing.position) (_endpos_xs_ : Lexing.position) (_startofs_xs_ : int) (_endofs_xs_ : int) (_loc_xs_ : Lexing.position * Lexing.position) (
+# 218 "<standard.mly>"
+  x
+# 263 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_pattern) (_startpos_x_ : Lexing.position) (_endpos_x_ : Lexing.position) (_startofs_x_ : int) (_endofs_x_ : int) (_loc_x_ : Lexing.position * Lexing.position) : ('tv_list_pattern_) ->
+    
+# 219 "<standard.mly>"
+    ( x :: xs )
+# 268 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) : ('tv_list_pattern_) ->
+    
+# 216 "<standard.mly>"
+    ( [] )
+# 274 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 218 "<standard.mly>"
+         xs
+# 279 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_list_decl_) (_startpos_xs_ : Lexing.position) (_endpos_xs_ : Lexing.position) (_startofs_xs_ : int) (_endofs_xs_ : int) (_loc_xs_ : Lexing.position * Lexing.position) (
+# 218 "<standard.mly>"
+  x
+# 283 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_decl) (_startpos_x_ : Lexing.position) (_endpos_x_ : Lexing.position) (_startofs_x_ : int) (_endofs_x_ : int) (_loc_x_ : Lexing.position * Lexing.position) : ('tv_list_decl_) ->
+    
+# 219 "<standard.mly>"
+    ( x :: xs )
+# 288 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) : ('tv_list_decl_) ->
+    
+# 216 "<standard.mly>"
+    ( [] )
+# 294 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 134 "lib/NetIR/parser.mly"
+                     t
+# 299 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_typ) (_startpos_t_ : Lexing.position) (_endpos_t_ : Lexing.position) (_startofs_t_ : int) (_endofs_t_ : int) (_loc_t_ : Lexing.position * Lexing.position) (
+# 134 "lib/NetIR/parser.mly"
+              _3
+# 303 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__3_ : Lexing.position) (_endpos__3_ : Lexing.position) (_startofs__3_ : int) (_endofs__3_ : int) (_loc__3_ : Lexing.position * Lexing.position) (
+# 134 "lib/NetIR/parser.mly"
+          s
+# 307 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_id) (_startpos_s_ : Lexing.position) (_endpos_s_ : Lexing.position) (_startofs_s_ : int) (_endofs_s_ : int) (_loc_s_ : Lexing.position * Lexing.position) (
+# 134 "lib/NetIR/parser.mly"
+     _1
+# 311 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__1_ : Lexing.position) (_endpos__1_ : Lexing.position) (_startofs__1_ : int) (_endofs__1_ : int) (_loc__1_ : Lexing.position * Lexing.position) : ('tv_var_decl) ->
+    
+# 135 "lib/NetIR/parser.mly"
+        (
+            let rec get_last_typ = function
+                | (acc, FunTy (_, t1, t2)) -> get_last_typ (t1 :: acc, t2) 
+                    (* This will build the type list backwards, so we have to reverse it when returning*)
+                | (acc, t1) -> (List.rev acc, t1)
+            in
+            let arg_typs, ret_typ = get_last_typ ([], t) in
+                (s, arg_typs, ret_typ)
+        )
+# 324 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 152 "lib/NetIR/parser.mly"
+     _1
+# 329 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__1_ : Lexing.position) (_endpos__1_ : Lexing.position) (_startofs__1_ : int) (_endofs__1_ : int) (_loc__1_ : Lexing.position * Lexing.position) : ('tv_un_op) ->
+    
+# 152 "lib/NetIR/parser.mly"
+                  ( Not   (mkpos _startpos _endpos) )
+# 334 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 151 "lib/NetIR/parser.mly"
+     _1
+# 339 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__1_ : Lexing.position) (_endpos__1_ : Lexing.position) (_startofs__1_ : int) (_endofs__1_ : int) (_loc__1_ : Lexing.position * Lexing.position) : ('tv_un_op) ->
+    
+# 151 "lib/NetIR/parser.mly"
+                  ( Neg   (mkpos _startpos _endpos) )
+# 344 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 51 "lib/NetIR/parser.mly"
+                          t2
+# 349 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_typ) (_startpos_t2_ : Lexing.position) (_endpos_t2_ : Lexing.position) (_startofs_t2_ : int) (_endofs_t2_ : int) (_loc_t2_ : Lexing.position * Lexing.position) (
+# 51 "lib/NetIR/parser.mly"
+                   _2
+# 353 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__2_ : Lexing.position) (_endpos__2_ : Lexing.position) (_startofs__2_ : int) (_endofs__2_ : int) (_loc__2_ : Lexing.position * Lexing.position) (
+# 51 "lib/NetIR/parser.mly"
+      t1
+# 357 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_atomic_typ) (_startpos_t1_ : Lexing.position) (_endpos_t1_ : Lexing.position) (_startofs_t1_ : int) (_endofs_t1_ : int) (_loc_t1_ : Lexing.position * Lexing.position) : ('tv_typ) ->
+    
+# 51 "lib/NetIR/parser.mly"
+                                    (FunTy ((mkpos _startpos _endpos), t1, t2))
+# 362 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 50 "lib/NetIR/parser.mly"
+      t
+# 367 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_atomic_typ) (_startpos_t_ : Lexing.position) (_endpos_t_ : Lexing.position) (_startofs_t_ : int) (_endofs_t_ : int) (_loc_t_ : Lexing.position * Lexing.position) : ('tv_typ) ->
+    
+# 50 "lib/NetIR/parser.mly"
+                                    ( t )
+# 372 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 38 "lib/NetIR/parser.mly"
+                  _2
+# 377 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__2_ : Lexing.position) (_endpos__2_ : Lexing.position) (_startofs__2_ : int) (_endofs__2_ : int) (_loc__2_ : Lexing.position * Lexing.position) (
+# 38 "lib/NetIR/parser.mly"
+      l
+# 381 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_list_decl_) (_startpos_l_ : Lexing.position) (_endpos_l_ : Lexing.position) (_startofs_l_ : int) (_endofs_l_ : int) (_loc_l_ : Lexing.position * Lexing.position) : (
+# 34 "lib/NetIR/parser.mly"
+       (Ast.PosInfo_AST.program)
+# 385 "lib/NetIR/parser__mock.ml.mock"
+  ) ->
+    (
+# 38 "lib/NetIR/parser.mly"
+                       (l)
+# 390 "lib/NetIR/parser__mock.ml.mock"
+     : 'tv_program) in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 72 "lib/NetIR/parser.mly"
+      p
+# 395 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_atomic_pattern) (_startpos_p_ : Lexing.position) (_endpos_p_ : Lexing.position) (_startofs_p_ : int) (_endofs_p_ : int) (_loc_p_ : Lexing.position * Lexing.position) : ('tv_pattern) ->
+    
+# 72 "lib/NetIR/parser.mly"
+                                                            ( p )
+# 400 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 71 "lib/NetIR/parser.mly"
+                                                 _4
+# 405 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__4_ : Lexing.position) (_endpos__4_ : Lexing.position) (_startofs__4_ : int) (_endofs__4_ : int) (_loc__4_ : Lexing.position * Lexing.position) (
+# 71 "lib/NetIR/parser.mly"
+                  l
+# 409 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_nonempty_list_atomic_pattern_) (_startpos_l_ : Lexing.position) (_endpos_l_ : Lexing.position) (_startofs_l_ : int) (_endofs_l_ : int) (_loc_l_ : Lexing.position * Lexing.position) (
+# 71 "lib/NetIR/parser.mly"
+          _2
+# 413 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__2_ : Lexing.position) (_endpos__2_ : Lexing.position) (_startofs__2_ : int) (_endofs__2_ : int) (_loc__2_ : Lexing.position * Lexing.position) (
+# 71 "lib/NetIR/parser.mly"
+      s
+# 417 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_id) (_startpos_s_ : Lexing.position) (_endpos_s_ : Lexing.position) (_startofs_s_ : int) (_endofs_s_ : int) (_loc_s_ : Lexing.position * Lexing.position) : ('tv_pattern) ->
+    
+# 71 "lib/NetIR/parser.mly"
+                                                            (ConstructorPat (mkpos _startpos _endpos, s, l))
+# 422 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 107 "lib/NetIR/parser.mly"
+               e
+# 427 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_atomic_expr) (_startpos_e_ : Lexing.position) (_endpos_e_ : Lexing.position) (_startofs_e_ : int) (_endofs_e_ : int) (_loc_e_ : Lexing.position * Lexing.position) (
+# 107 "lib/NetIR/parser.mly"
+      op
+# 431 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_un_op) (_startpos_op_ : Lexing.position) (_endpos_op_ : Lexing.position) (_startofs_op_ : int) (_endofs_op_ : int) (_loc_op_ : Lexing.position * Lexing.position) : ('tv_op_expr) ->
+    
+# 107 "lib/NetIR/parser.mly"
+                                ( Unop (mkpos _startpos _endpos, op, e))
+# 436 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 106 "lib/NetIR/parser.mly"
+                           e2
+# 441 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_atomic_expr) (_startpos_e2_ : Lexing.position) (_endpos_e2_ : Lexing.position) (_startofs_e2_ : int) (_endofs_e2_ : int) (_loc_e2_ : Lexing.position * Lexing.position) (
+# 106 "lib/NetIR/parser.mly"
+                 op
+# 445 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_bin_op) (_startpos_op_ : Lexing.position) (_endpos_op_ : Lexing.position) (_startofs_op_ : int) (_endofs_op_ : int) (_loc_op_ : Lexing.position * Lexing.position) (
+# 106 "lib/NetIR/parser.mly"
+      e1
+# 449 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_op_expr) (_startpos_e1_ : Lexing.position) (_endpos_e1_ : Lexing.position) (_startofs_e1_ : int) (_endofs_e1_ : int) (_loc_e1_ : Lexing.position * Lexing.position) : ('tv_op_expr) ->
+    
+# 106 "lib/NetIR/parser.mly"
+                                            (Binop (mkpos _startpos _endpos, op, e1, e2))
+# 454 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 105 "lib/NetIR/parser.mly"
+      e
+# 459 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_app_expr) (_startpos_e_ : Lexing.position) (_endpos_e_ : Lexing.position) (_startofs_e_ : int) (_endofs_e_ : int) (_loc_e_ : Lexing.position * Lexing.position) : ('tv_op_expr) ->
+    
+# 105 "lib/NetIR/parser.mly"
+                                            ( e )
+# 464 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 99 "lib/NetIR/parser.mly"
+                           e
+# 469 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_expr) (_startpos_e_ : Lexing.position) (_endpos_e_ : Lexing.position) (_startofs_e_ : int) (_endofs_e_ : int) (_loc_e_ : Lexing.position * Lexing.position) (
+# 99 "lib/NetIR/parser.mly"
+                   _3
+# 473 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__3_ : Lexing.position) (_endpos__3_ : Lexing.position) (_startofs__3_ : int) (_endofs__3_ : int) (_loc__3_ : Lexing.position * Lexing.position) (
+# 99 "lib/NetIR/parser.mly"
+          a
+# 477 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_pattern) (_startpos_a_ : Lexing.position) (_endpos_a_ : Lexing.position) (_startofs_a_ : int) (_endofs_a_ : int) (_loc_a_ : Lexing.position * Lexing.position) (
+# 99 "lib/NetIR/parser.mly"
+     _1
+# 481 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__1_ : Lexing.position) (_endpos__1_ : Lexing.position) (_startofs__1_ : int) (_endofs__1_ : int) (_loc__1_ : Lexing.position * Lexing.position) : ('tv_match_match) ->
+    
+# 99 "lib/NetIR/parser.mly"
+                                    ( (a, e) )
+# 486 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 44 "lib/NetIR/parser.mly"
+      s
+# 491 "lib/NetIR/parser__mock.ml.mock"
+   : 
+# 25 "lib/NetIR/parser.mly"
+       (string)
+# 495 "lib/NetIR/parser__mock.ml.mock"
+  ) (_startpos_s_ : Lexing.position) (_endpos_s_ : Lexing.position) (_startofs_s_ : int) (_endofs_s_ : int) (_loc_s_ : Lexing.position * Lexing.position) : ('tv_loclit) ->
+    
+# 44 "lib/NetIR/parser.mly"
+               ((mkpos _startpos _endpos, s))
+# 500 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 47 "lib/NetIR/parser.mly"
+                     _3
+# 505 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__3_ : Lexing.position) (_endpos__3_ : Lexing.position) (_startofs__3_ : int) (_endofs__3_ : int) (_loc__3_ : Lexing.position * Lexing.position) (
+# 47 "lib/NetIR/parser.mly"
+             s
+# 509 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_loclit) (_startpos_s_ : Lexing.position) (_endpos_s_ : Lexing.position) (_startofs_s_ : int) (_endofs_s_ : int) (_loc_s_ : Lexing.position * Lexing.position) (
+# 47 "lib/NetIR/parser.mly"
+     _1
+# 513 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__1_ : Lexing.position) (_endpos__1_ : Lexing.position) (_startofs__1_ : int) (_endofs__1_ : int) (_loc__1_ : Lexing.position * Lexing.position) : ('tv_lab) ->
+    
+# 47 "lib/NetIR/parser.mly"
+                                ( Label s )
+# 518 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 41 "lib/NetIR/parser.mly"
+      s
+# 523 "lib/NetIR/parser__mock.ml.mock"
+   : 
+# 24 "lib/NetIR/parser.mly"
+       (string)
+# 527 "lib/NetIR/parser__mock.ml.mock"
+  ) (_startpos_s_ : Lexing.position) (_endpos_s_ : Lexing.position) (_startofs_s_ : int) (_endofs_s_ : int) (_loc_s_ : Lexing.position * Lexing.position) : ('tv_id) ->
+    
+# 41 "lib/NetIR/parser.mly"
+            ((mkpos _startpos _endpos, s))
+# 532 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 96 "lib/NetIR/parser.mly"
+                                                    _5
+# 537 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__5_ : Lexing.position) (_endpos__5_ : Lexing.position) (_startofs__5_ : int) (_endofs__5_ : int) (_loc__5_ : Lexing.position * Lexing.position) (
+# 96 "lib/NetIR/parser.mly"
+                        l
+# 541 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_nonempty_list_allow_match_) (_startpos_l_ : Lexing.position) (_endpos_l_ : Lexing.position) (_startofs_l_ : int) (_endofs_l_ : int) (_loc_l_ : Lexing.position * Lexing.position) (
+# 96 "lib/NetIR/parser.mly"
+                _3
+# 545 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__3_ : Lexing.position) (_endpos__3_ : Lexing.position) (_startofs__3_ : int) (_endofs__3_ : int) (_loc__3_ : Lexing.position * Lexing.position) (
+# 96 "lib/NetIR/parser.mly"
+            s
+# 549 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_id) (_startpos_s_ : Lexing.position) (_endpos_s_ : Lexing.position) (_startofs_s_ : int) (_endofs_s_ : int) (_loc_s_ : Lexing.position * Lexing.position) (
+# 96 "lib/NetIR/parser.mly"
+     _1
+# 553 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__1_ : Lexing.position) (_endpos__1_ : Lexing.position) (_startofs__1_ : int) (_endofs__1_ : int) (_loc__1_ : Lexing.position * Lexing.position) : ('tv_expr) ->
+    
+# 96 "lib/NetIR/parser.mly"
+                                                         (AllowChoice (mkpos _startpos _endpos, s, l))
+# 558 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 95 "lib/NetIR/parser.mly"
+          e
+# 563 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_expr) (_startpos_e_ : Lexing.position) (_endpos_e_ : Lexing.position) (_startofs_e_ : int) (_endofs_e_ : int) (_loc_e_ : Lexing.position * Lexing.position) (
+# 95 "lib/NetIR/parser.mly"
+     _1
+# 567 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__1_ : Lexing.position) (_endpos__1_ : Lexing.position) (_startofs__1_ : int) (_endofs__1_ : int) (_loc__1_ : Lexing.position * Lexing.position) : ('tv_expr) ->
+    
+# 95 "lib/NetIR/parser.mly"
+                                        (AmI (mkpos _startpos _endpos, e))
+# 572 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 94 "lib/NetIR/parser.mly"
+                       s
+# 577 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_id) (_startpos_s_ : Lexing.position) (_endpos_s_ : Lexing.position) (_startofs_s_ : int) (_endofs_s_ : int) (_loc_s_ : Lexing.position * Lexing.position) (
+# 94 "lib/NetIR/parser.mly"
+                  _3
+# 581 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__3_ : Lexing.position) (_endpos__3_ : Lexing.position) (_startofs__3_ : int) (_endofs__3_ : int) (_loc__3_ : Lexing.position * Lexing.position) (
+# 94 "lib/NetIR/parser.mly"
+             l
+# 585 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_lab) (_startpos_l_ : Lexing.position) (_endpos_l_ : Lexing.position) (_startofs_l_ : int) (_endofs_l_ : int) (_loc_l_ : Lexing.position * Lexing.position) (
+# 94 "lib/NetIR/parser.mly"
+     _1
+# 589 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__1_ : Lexing.position) (_endpos__1_ : Lexing.position) (_startofs__1_ : int) (_endofs__1_ : int) (_loc__1_ : Lexing.position * Lexing.position) : ('tv_expr) ->
+    
+# 94 "lib/NetIR/parser.mly"
+                                        (ChooseFor (mkpos _startpos _endpos, s, l))
+# 594 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 93 "lib/NetIR/parser.mly"
+                      s
+# 599 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_id) (_startpos_s_ : Lexing.position) (_endpos_s_ : Lexing.position) (_startofs_s_ : int) (_endofs_s_ : int) (_loc_s_ : Lexing.position * Lexing.position) (
+# 93 "lib/NetIR/parser.mly"
+                _3
+# 603 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__3_ : Lexing.position) (_endpos__3_ : Lexing.position) (_startofs__3_ : int) (_endofs__3_ : int) (_loc__3_ : Lexing.position * Lexing.position) (
+# 93 "lib/NetIR/parser.mly"
+           t
+# 607 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_typ) (_startpos_t_ : Lexing.position) (_endpos_t_ : Lexing.position) (_startofs_t_ : int) (_endofs_t_ : int) (_loc_t_ : Lexing.position * Lexing.position) (
+# 93 "lib/NetIR/parser.mly"
+     _1
+# 611 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__1_ : Lexing.position) (_endpos__1_ : Lexing.position) (_startofs__1_ : int) (_endofs__1_ : int) (_loc__1_ : Lexing.position * Lexing.position) : ('tv_expr) ->
+    
+# 93 "lib/NetIR/parser.mly"
+                                        (Recv (mkpos _startpos _endpos, t, s))
+# 616 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 92 "lib/NetIR/parser.mly"
+                        s
+# 621 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_id) (_startpos_s_ : Lexing.position) (_endpos_s_ : Lexing.position) (_startofs_s_ : int) (_endofs_s_ : int) (_loc_s_ : Lexing.position * Lexing.position) (
+# 92 "lib/NetIR/parser.mly"
+                    _3
+# 625 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__3_ : Lexing.position) (_endpos__3_ : Lexing.position) (_startofs__3_ : int) (_endofs__3_ : int) (_loc__3_ : Lexing.position * Lexing.position) (
+# 92 "lib/NetIR/parser.mly"
+           e
+# 629 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_op_expr) (_startpos_e_ : Lexing.position) (_endpos_e_ : Lexing.position) (_startofs_e_ : int) (_endofs_e_ : int) (_loc_e_ : Lexing.position * Lexing.position) (
+# 92 "lib/NetIR/parser.mly"
+     _1
+# 633 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__1_ : Lexing.position) (_endpos__1_ : Lexing.position) (_startofs__1_ : int) (_endofs__1_ : int) (_loc__1_ : Lexing.position * Lexing.position) : ('tv_expr) ->
+    
+# 92 "lib/NetIR/parser.mly"
+                                        (Send (mkpos _startpos _endpos, e, s))
+# 638 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 91 "lib/NetIR/parser.mly"
+                      t
+# 643 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_typ) (_startpos_t_ : Lexing.position) (_endpos_t_ : Lexing.position) (_startofs_t_ : int) (_endofs_t_ : int) (_loc_t_ : Lexing.position * Lexing.position) (
+# 91 "lib/NetIR/parser.mly"
+               _2
+# 647 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__2_ : Lexing.position) (_endpos__2_ : Lexing.position) (_startofs__2_ : int) (_endofs__2_ : int) (_loc__2_ : Lexing.position * Lexing.position) (
+# 91 "lib/NetIR/parser.mly"
+      e
+# 651 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_op_expr) (_startpos_e_ : Lexing.position) (_endpos_e_ : Lexing.position) (_startofs_e_ : int) (_endofs_e_ : int) (_loc_e_ : Lexing.position * Lexing.position) : ('tv_expr) ->
+    
+# 91 "lib/NetIR/parser.mly"
+                                        (TypeConstr (mkpos _startpos _endpos, e, t))
+# 656 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 90 "lib/NetIR/parser.mly"
+                           e
+# 661 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_op_expr) (_startpos_e_ : Lexing.position) (_endpos_e_ : Lexing.position) (_startofs_e_ : int) (_endofs_e_ : int) (_loc_e_ : Lexing.position * Lexing.position) (
+# 90 "lib/NetIR/parser.mly"
+                   _4
+# 665 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__4_ : Lexing.position) (_endpos__4_ : Lexing.position) (_startofs__4_ : int) (_endofs__4_ : int) (_loc__4_ : Lexing.position * Lexing.position) (
+# 90 "lib/NetIR/parser.mly"
+               a
+# 669 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_id) (_startpos_a_ : Lexing.position) (_endpos_a_ : Lexing.position) (_startofs_a_ : int) (_endofs_a_ : int) (_loc_a_ : Lexing.position * Lexing.position) (
+# 90 "lib/NetIR/parser.mly"
+          f
+# 673 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_id) (_startpos_f_ : Lexing.position) (_endpos_f_ : Lexing.position) (_startofs_f_ : int) (_endofs_f_ : int) (_loc_f_ : Lexing.position * Lexing.position) (
+# 90 "lib/NetIR/parser.mly"
+     _1
+# 677 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__1_ : Lexing.position) (_endpos__1_ : Lexing.position) (_startofs__1_ : int) (_endofs__1_ : int) (_loc__1_ : Lexing.position * Lexing.position) : ('tv_expr) ->
+    
+# 90 "lib/NetIR/parser.mly"
+                                        (RecAbs (mkpos _startpos _endpos, f, a, e))
+# 682 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 89 "lib/NetIR/parser.mly"
+                                                    _5
+# 687 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__5_ : Lexing.position) (_endpos__5_ : Lexing.position) (_startofs__5_ : int) (_endofs__5_ : int) (_loc__5_ : Lexing.position * Lexing.position) (
+# 89 "lib/NetIR/parser.mly"
+                        l
+# 691 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_nonempty_list_match_match_) (_startpos_l_ : Lexing.position) (_endpos_l_ : Lexing.position) (_startofs_l_ : int) (_endofs_l_ : int) (_loc_l_ : Lexing.position * Lexing.position) (
+# 89 "lib/NetIR/parser.mly"
+                  _3
+# 695 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__3_ : Lexing.position) (_endpos__3_ : Lexing.position) (_startofs__3_ : int) (_endofs__3_ : int) (_loc__3_ : Lexing.position * Lexing.position) (
+# 89 "lib/NetIR/parser.mly"
+            e
+# 699 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_expr) (_startpos_e_ : Lexing.position) (_endpos_e_ : Lexing.position) (_startofs_e_ : int) (_endofs_e_ : int) (_loc_e_ : Lexing.position * Lexing.position) (
+# 89 "lib/NetIR/parser.mly"
+     _1
+# 703 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__1_ : Lexing.position) (_endpos__1_ : Lexing.position) (_startofs__1_ : int) (_endofs__1_ : int) (_loc__1_ : Lexing.position * Lexing.position) : ('tv_expr) ->
+    
+# 89 "lib/NetIR/parser.mly"
+                                                         (Match (mkpos _startpos _endpos, e, l))
+# 708 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 88 "lib/NetIR/parser.mly"
+      e
+# 713 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_op_expr) (_startpos_e_ : Lexing.position) (_endpos_e_ : Lexing.position) (_startofs_e_ : int) (_endofs_e_ : int) (_loc_e_ : Lexing.position * Lexing.position) : ('tv_expr) ->
+    
+# 88 "lib/NetIR/parser.mly"
+                                        ( e )
+# 718 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 131 "lib/NetIR/parser.mly"
+                       l
+# 723 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_nonempty_list_var_decl_) (_startpos_l_ : Lexing.position) (_endpos_l_ : Lexing.position) (_startofs_l_ : int) (_endofs_l_ : int) (_loc_l_ : Lexing.position * Lexing.position) (
+# 131 "lib/NetIR/parser.mly"
+               _3
+# 727 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__3_ : Lexing.position) (_endpos__3_ : Lexing.position) (_startofs__3_ : int) (_endofs__3_ : int) (_loc__3_ : Lexing.position * Lexing.position) (
+# 131 "lib/NetIR/parser.mly"
+           s
+# 731 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_id) (_startpos_s_ : Lexing.position) (_endpos_s_ : Lexing.position) (_startofs_s_ : int) (_endofs_s_ : int) (_loc_s_ : Lexing.position * Lexing.position) (
+# 131 "lib/NetIR/parser.mly"
+     _1
+# 735 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__1_ : Lexing.position) (_endpos__1_ : Lexing.position) (_startofs__1_ : int) (_endofs__1_ : int) (_loc__1_ : Lexing.position * Lexing.position) : ('tv_decl) ->
+    
+# 131 "lib/NetIR/parser.mly"
+                                                    (VariantDecl (mkpos _startpos _endpos, s, l))
+# 740 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 130 "lib/NetIR/parser.mly"
+             s
+# 745 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_id) (_startpos_s_ : Lexing.position) (_endpos_s_ : Lexing.position) (_startofs_s_ : int) (_endofs_s_ : int) (_loc_s_ : Lexing.position * Lexing.position) (
+# 130 "lib/NetIR/parser.mly"
+     _1
+# 749 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__1_ : Lexing.position) (_endpos__1_ : Lexing.position) (_startofs__1_ : int) (_endofs__1_ : int) (_loc__1_ : Lexing.position * Lexing.position) : ('tv_decl) ->
+    
+# 130 "lib/NetIR/parser.mly"
+                                                    (ImportDecl (mkpos _startpos _endpos, s))
+# 754 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 129 "lib/NetIR/parser.mly"
+                                        _5
+# 759 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__5_ : Lexing.position) (_endpos__5_ : Lexing.position) (_startofs__5_ : int) (_endofs__5_ : int) (_loc__5_ : Lexing.position * Lexing.position) (
+# 129 "lib/NetIR/parser.mly"
+                                  e
+# 763 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_expr) (_startpos_e_ : Lexing.position) (_endpos_e_ : Lexing.position) (_startofs_e_ : int) (_endofs_e_ : int) (_loc_e_ : Lexing.position * Lexing.position) (
+# 129 "lib/NetIR/parser.mly"
+                          _3
+# 767 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__3_ : Lexing.position) (_endpos__3_ : Lexing.position) (_startofs__3_ : int) (_endofs__3_ : int) (_loc__3_ : Lexing.position * Lexing.position) (
+# 129 "lib/NetIR/parser.mly"
+           l
+# 771 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_list_pattern_) (_startpos_l_ : Lexing.position) (_endpos_l_ : Lexing.position) (_startofs_l_ : int) (_endofs_l_ : int) (_loc_l_ : Lexing.position * Lexing.position) (
+# 129 "lib/NetIR/parser.mly"
+      s
+# 775 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_id) (_startpos_s_ : Lexing.position) (_endpos_s_ : Lexing.position) (_startofs_s_ : int) (_endofs_s_ : int) (_loc_s_ : Lexing.position * Lexing.position) : ('tv_decl) ->
+    
+# 129 "lib/NetIR/parser.mly"
+                                                    (DefnDecl (mkpos _startpos _endpos, s, l, e))
+# 780 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 128 "lib/NetIR/parser.mly"
+                           t
+# 785 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_typ) (_startpos_t_ : Lexing.position) (_endpos_t_ : Lexing.position) (_startofs_t_ : int) (_endofs_t_ : int) (_loc_t_ : Lexing.position * Lexing.position) (
+# 128 "lib/NetIR/parser.mly"
+                   _3
+# 789 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__3_ : Lexing.position) (_endpos__3_ : Lexing.position) (_startofs__3_ : int) (_endofs__3_ : int) (_loc__3_ : Lexing.position * Lexing.position) (
+# 128 "lib/NetIR/parser.mly"
+               s
+# 793 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_id) (_startpos_s_ : Lexing.position) (_endpos_s_ : Lexing.position) (_startofs_s_ : int) (_endofs_s_ : int) (_loc_s_ : Lexing.position * Lexing.position) (
+# 128 "lib/NetIR/parser.mly"
+     _1
+# 797 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__1_ : Lexing.position) (_endpos__1_ : Lexing.position) (_startofs__1_ : int) (_endofs__1_ : int) (_loc__1_ : Lexing.position * Lexing.position) : ('tv_decl) ->
+    
+# 128 "lib/NetIR/parser.mly"
+                                                    (TypeAliasDecl (mkpos _startpos _endpos, s, t))
+# 802 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 127 "lib/NetIR/parser.mly"
+                 t
+# 807 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_typ) (_startpos_t_ : Lexing.position) (_endpos_t_ : Lexing.position) (_startofs_t_ : int) (_endofs_t_ : int) (_loc_t_ : Lexing.position * Lexing.position) (
+# 127 "lib/NetIR/parser.mly"
+          _2
+# 811 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__2_ : Lexing.position) (_endpos__2_ : Lexing.position) (_startofs__2_ : int) (_endofs__2_ : int) (_loc__2_ : Lexing.position * Lexing.position) (
+# 127 "lib/NetIR/parser.mly"
+      s
+# 815 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_id) (_startpos_s_ : Lexing.position) (_endpos_s_ : Lexing.position) (_startofs_s_ : int) (_endofs_s_ : int) (_loc_s_ : Lexing.position * Lexing.position) : ('tv_decl) ->
+    
+# 127 "lib/NetIR/parser.mly"
+                                                    (TypeDecl (mkpos _startpos _endpos, s, t))
+# 820 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 126 "lib/NetIR/parser.mly"
+                      s
+# 825 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_id) (_startpos_s_ : Lexing.position) (_endpos_s_ : Lexing.position) (_startofs_s_ : int) (_endofs_s_ : int) (_loc_s_ : Lexing.position * Lexing.position) (
+# 126 "lib/NetIR/parser.mly"
+     _1
+# 829 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__1_ : Lexing.position) (_endpos__1_ : Lexing.position) (_startofs__1_ : int) (_endofs__1_ : int) (_loc__1_ : Lexing.position * Lexing.position) : ('tv_decl) ->
+    
+# 126 "lib/NetIR/parser.mly"
+                                                    (EmulatedLocDecl (mkpos _startpos _endpos, s))
+# 834 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 166 "lib/NetIR/parser.mly"
+     _1
+# 839 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__1_ : Lexing.position) (_endpos__1_ : Lexing.position) (_startofs__1_ : int) (_endofs__1_ : int) (_loc__1_ : Lexing.position * Lexing.position) : ('tv_bin_op) ->
+    
+# 166 "lib/NetIR/parser.mly"
+                  ( Geq   (mkpos _startpos _endpos) )
+# 844 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 165 "lib/NetIR/parser.mly"
+     _1
+# 849 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__1_ : Lexing.position) (_endpos__1_ : Lexing.position) (_startofs__1_ : int) (_endofs__1_ : int) (_loc__1_ : Lexing.position * Lexing.position) : ('tv_bin_op) ->
+    
+# 165 "lib/NetIR/parser.mly"
+                  ( Gt    (mkpos _startpos _endpos) )
+# 854 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 164 "lib/NetIR/parser.mly"
+     _1
+# 859 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__1_ : Lexing.position) (_endpos__1_ : Lexing.position) (_startofs__1_ : int) (_endofs__1_ : int) (_loc__1_ : Lexing.position * Lexing.position) : ('tv_bin_op) ->
+    
+# 164 "lib/NetIR/parser.mly"
+                  ( Leq   (mkpos _startpos _endpos) )
+# 864 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 163 "lib/NetIR/parser.mly"
+     _1
+# 869 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__1_ : Lexing.position) (_endpos__1_ : Lexing.position) (_startofs__1_ : int) (_endofs__1_ : int) (_loc__1_ : Lexing.position * Lexing.position) : ('tv_bin_op) ->
+    
+# 163 "lib/NetIR/parser.mly"
+                  ( Lt    (mkpos _startpos _endpos) )
+# 874 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 162 "lib/NetIR/parser.mly"
+     _1
+# 879 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__1_ : Lexing.position) (_endpos__1_ : Lexing.position) (_startofs__1_ : int) (_endofs__1_ : int) (_loc__1_ : Lexing.position * Lexing.position) : ('tv_bin_op) ->
+    
+# 162 "lib/NetIR/parser.mly"
+                  ( Neq   (mkpos _startpos _endpos) )
+# 884 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 161 "lib/NetIR/parser.mly"
+     _1
+# 889 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__1_ : Lexing.position) (_endpos__1_ : Lexing.position) (_startofs__1_ : int) (_endofs__1_ : int) (_loc__1_ : Lexing.position * Lexing.position) : ('tv_bin_op) ->
+    
+# 161 "lib/NetIR/parser.mly"
+                  ( Eq    (mkpos _startpos _endpos) )
+# 894 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 160 "lib/NetIR/parser.mly"
+     _1
+# 899 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__1_ : Lexing.position) (_endpos__1_ : Lexing.position) (_startofs__1_ : int) (_endofs__1_ : int) (_loc__1_ : Lexing.position * Lexing.position) : ('tv_bin_op) ->
+    
+# 160 "lib/NetIR/parser.mly"
+                  ( Or    (mkpos _startpos _endpos) )
+# 904 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 159 "lib/NetIR/parser.mly"
+     _1
+# 909 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__1_ : Lexing.position) (_endpos__1_ : Lexing.position) (_startofs__1_ : int) (_endofs__1_ : int) (_loc__1_ : Lexing.position * Lexing.position) : ('tv_bin_op) ->
+    
+# 159 "lib/NetIR/parser.mly"
+                  ( And   (mkpos _startpos _endpos) )
+# 914 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 158 "lib/NetIR/parser.mly"
+     _1
+# 919 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__1_ : Lexing.position) (_endpos__1_ : Lexing.position) (_startofs__1_ : int) (_endofs__1_ : int) (_loc__1_ : Lexing.position * Lexing.position) : ('tv_bin_op) ->
+    
+# 158 "lib/NetIR/parser.mly"
+                  ( Div   (mkpos _startpos _endpos) )
+# 924 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 157 "lib/NetIR/parser.mly"
+     _1
+# 929 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__1_ : Lexing.position) (_endpos__1_ : Lexing.position) (_startofs__1_ : int) (_endofs__1_ : int) (_loc__1_ : Lexing.position * Lexing.position) : ('tv_bin_op) ->
+    
+# 157 "lib/NetIR/parser.mly"
+                  ( Times (mkpos _startpos _endpos) )
+# 934 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 156 "lib/NetIR/parser.mly"
+     _1
+# 939 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__1_ : Lexing.position) (_endpos__1_ : Lexing.position) (_startofs__1_ : int) (_endofs__1_ : int) (_loc__1_ : Lexing.position * Lexing.position) : ('tv_bin_op) ->
+    
+# 156 "lib/NetIR/parser.mly"
+                  ( Minus (mkpos _startpos _endpos) )
+# 944 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 155 "lib/NetIR/parser.mly"
+     _1
+# 949 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__1_ : Lexing.position) (_endpos__1_ : Lexing.position) (_startofs__1_ : int) (_endofs__1_ : int) (_loc__1_ : Lexing.position * Lexing.position) : ('tv_bin_op) ->
+    
+# 155 "lib/NetIR/parser.mly"
+                  ( Plus  (mkpos _startpos _endpos) )
+# 954 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 62 "lib/NetIR/parser.mly"
+      s
+# 959 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_id) (_startpos_s_ : Lexing.position) (_endpos_s_ : Lexing.position) (_startofs_s_ : int) (_endofs_s_ : int) (_loc_s_ : Lexing.position * Lexing.position) : ('tv_atomic_typ) ->
+    
+# 62 "lib/NetIR/parser.mly"
+                            (VarTy (mkpos _startpos _endpos, s))
+# 964 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 61 "lib/NetIR/parser.mly"
+                                                    _4
+# 969 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__4_ : Lexing.position) (_endpos__4_ : Lexing.position) (_startofs__4_ : int) (_endofs__4_ : int) (_loc__4_ : Lexing.position * Lexing.position) (
+# 61 "lib/NetIR/parser.mly"
+                   ids
+# 973 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_separated_list_COMMA_loclit_) (_startpos_ids_ : Lexing.position) (_endpos_ids_ : Lexing.position) (_startofs_ids_ : int) (_endofs_ids_ : int) (_loc_ids_ : Lexing.position * Lexing.position) (
+# 61 "lib/NetIR/parser.mly"
+           _2
+# 977 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__2_ : Lexing.position) (_endpos__2_ : Lexing.position) (_startofs__2_ : int) (_endofs__2_ : int) (_loc__2_ : Lexing.position * Lexing.position) (
+# 61 "lib/NetIR/parser.mly"
+     _1
+# 981 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__1_ : Lexing.position) (_endpos__1_ : Lexing.position) (_startofs__1_ : int) (_endofs__1_ : int) (_loc__1_ : Lexing.position * Lexing.position) : ('tv_atomic_typ) ->
+    
+# 61 "lib/NetIR/parser.mly"
+                                                            (LocTy (mkpos _startpos _endpos, ids))
+# 986 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 60 "lib/NetIR/parser.mly"
+     _1
+# 991 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__1_ : Lexing.position) (_endpos__1_ : Lexing.position) (_startofs__1_ : int) (_endofs__1_ : int) (_loc__1_ : Lexing.position * Lexing.position) : ('tv_atomic_typ) ->
+    
+# 60 "lib/NetIR/parser.mly"
+                            (BoolTy (mkpos _startpos _endpos))
+# 996 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 59 "lib/NetIR/parser.mly"
+     _1
+# 1001 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__1_ : Lexing.position) (_endpos__1_ : Lexing.position) (_startofs__1_ : int) (_endofs__1_ : int) (_loc__1_ : Lexing.position * Lexing.position) : ('tv_atomic_typ) ->
+    
+# 59 "lib/NetIR/parser.mly"
+                            (StringTy (mkpos _startpos _endpos))
+# 1006 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 58 "lib/NetIR/parser.mly"
+     _1
+# 1011 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__1_ : Lexing.position) (_endpos__1_ : Lexing.position) (_startofs__1_ : int) (_endofs__1_ : int) (_loc__1_ : Lexing.position * Lexing.position) : ('tv_atomic_typ) ->
+    
+# 58 "lib/NetIR/parser.mly"
+                            (CharTy (mkpos _startpos _endpos))
+# 1016 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 57 "lib/NetIR/parser.mly"
+     _1
+# 1021 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__1_ : Lexing.position) (_endpos__1_ : Lexing.position) (_startofs__1_ : int) (_endofs__1_ : int) (_loc__1_ : Lexing.position * Lexing.position) : ('tv_atomic_typ) ->
+    
+# 57 "lib/NetIR/parser.mly"
+                            (FloatTy (mkpos _startpos _endpos))
+# 1026 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 56 "lib/NetIR/parser.mly"
+     _1
+# 1031 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__1_ : Lexing.position) (_endpos__1_ : Lexing.position) (_startofs__1_ : int) (_endofs__1_ : int) (_loc__1_ : Lexing.position * Lexing.position) : ('tv_atomic_typ) ->
+    
+# 56 "lib/NetIR/parser.mly"
+                            (IntTy (mkpos _startpos _endpos))
+# 1036 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 55 "lib/NetIR/parser.mly"
+     _1
+# 1041 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__1_ : Lexing.position) (_endpos__1_ : Lexing.position) (_startofs__1_ : int) (_endofs__1_ : int) (_loc__1_ : Lexing.position * Lexing.position) : ('tv_atomic_typ) ->
+    
+# 55 "lib/NetIR/parser.mly"
+                            (UnitTy (mkpos _startpos _endpos))
+# 1046 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 54 "lib/NetIR/parser.mly"
+                  _3
+# 1051 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__3_ : Lexing.position) (_endpos__3_ : Lexing.position) (_startofs__3_ : int) (_endofs__3_ : int) (_loc__3_ : Lexing.position * Lexing.position) (
+# 54 "lib/NetIR/parser.mly"
+             t
+# 1055 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_typ) (_startpos_t_ : Lexing.position) (_endpos_t_ : Lexing.position) (_startofs_t_ : int) (_endofs_t_ : int) (_loc_t_ : Lexing.position * Lexing.position) (
+# 54 "lib/NetIR/parser.mly"
+     _1
+# 1059 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__1_ : Lexing.position) (_endpos__1_ : Lexing.position) (_startofs__1_ : int) (_endofs__1_ : int) (_loc__1_ : Lexing.position * Lexing.position) : ('tv_atomic_typ) ->
+    
+# 54 "lib/NetIR/parser.mly"
+                            ( t )
+# 1064 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 85 "lib/NetIR/parser.mly"
+                               _5
+# 1069 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__5_ : Lexing.position) (_endpos__5_ : Lexing.position) (_startofs__5_ : int) (_endofs__5_ : int) (_loc__5_ : Lexing.position * Lexing.position) (
+# 85 "lib/NetIR/parser.mly"
+                        _4
+# 1073 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__4_ : Lexing.position) (_endpos__4_ : Lexing.position) (_startofs__4_ : int) (_endofs__4_ : int) (_loc__4_ : Lexing.position * Lexing.position) (
+# 85 "lib/NetIR/parser.mly"
+                    s
+# 1077 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_id) (_startpos_s_ : Lexing.position) (_endpos_s_ : Lexing.position) (_startofs_s_ : int) (_endofs_s_ : int) (_loc_s_ : Lexing.position * Lexing.position) (
+# 85 "lib/NetIR/parser.mly"
+            _2
+# 1081 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__2_ : Lexing.position) (_endpos__2_ : Lexing.position) (_startofs__2_ : int) (_endofs__2_ : int) (_loc__2_ : Lexing.position * Lexing.position) (
+# 85 "lib/NetIR/parser.mly"
+     _1
+# 1085 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__1_ : Lexing.position) (_endpos__1_ : Lexing.position) (_startofs__1_ : int) (_endofs__1_ : int) (_loc__1_ : Lexing.position * Lexing.position) : ('tv_atomic_pattern) ->
+    
+# 85 "lib/NetIR/parser.mly"
+                                       (LocNamePat (mkpos _startpos _endpos, s))
+# 1090 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 84 "lib/NetIR/parser.mly"
+      l
+# 1095 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_loclit) (_startpos_l_ : Lexing.position) (_endpos_l_ : Lexing.position) (_startofs_l_ : int) (_endofs_l_ : int) (_loc_l_ : Lexing.position * Lexing.position) : ('tv_atomic_pattern) ->
+    
+# 84 "lib/NetIR/parser.mly"
+                            (LocLitPat (mkpos _startpos _endpos, l))
+# 1100 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 83 "lib/NetIR/parser.mly"
+     _1
+# 1105 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__1_ : Lexing.position) (_endpos__1_ : Lexing.position) (_startofs__1_ : int) (_endofs__1_ : int) (_loc__1_ : Lexing.position * Lexing.position) : ('tv_atomic_pattern) ->
+    
+# 83 "lib/NetIR/parser.mly"
+                            (FalseLitPat (mkpos _startpos _endpos))
+# 1110 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 82 "lib/NetIR/parser.mly"
+     _1
+# 1115 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__1_ : Lexing.position) (_endpos__1_ : Lexing.position) (_startofs__1_ : int) (_endofs__1_ : int) (_loc__1_ : Lexing.position * Lexing.position) : ('tv_atomic_pattern) ->
+    
+# 82 "lib/NetIR/parser.mly"
+                            (TrueLitPat (mkpos _startpos _endpos))
+# 1120 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 81 "lib/NetIR/parser.mly"
+      s
+# 1125 "lib/NetIR/parser__mock.ml.mock"
+   : 
+# 25 "lib/NetIR/parser.mly"
+       (string)
+# 1129 "lib/NetIR/parser__mock.ml.mock"
+  ) (_startpos_s_ : Lexing.position) (_endpos_s_ : Lexing.position) (_startofs_s_ : int) (_endofs_s_ : int) (_loc_s_ : Lexing.position * Lexing.position) : ('tv_atomic_pattern) ->
+    
+# 81 "lib/NetIR/parser.mly"
+                            (StringLitPat (mkpos _startpos _endpos, s))
+# 1134 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 80 "lib/NetIR/parser.mly"
+      c
+# 1139 "lib/NetIR/parser__mock.ml.mock"
+   : 
+# 23 "lib/NetIR/parser.mly"
+       (char)
+# 1143 "lib/NetIR/parser__mock.ml.mock"
+  ) (_startpos_c_ : Lexing.position) (_endpos_c_ : Lexing.position) (_startofs_c_ : int) (_endofs_c_ : int) (_loc_c_ : Lexing.position * Lexing.position) : ('tv_atomic_pattern) ->
+    
+# 80 "lib/NetIR/parser.mly"
+                            (CharLitPat (mkpos _startpos _endpos, c))
+# 1148 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 79 "lib/NetIR/parser.mly"
+      f
+# 1153 "lib/NetIR/parser__mock.ml.mock"
+   : 
+# 22 "lib/NetIR/parser.mly"
+       (float)
+# 1157 "lib/NetIR/parser__mock.ml.mock"
+  ) (_startpos_f_ : Lexing.position) (_endpos_f_ : Lexing.position) (_startofs_f_ : int) (_endofs_f_ : int) (_loc_f_ : Lexing.position * Lexing.position) : ('tv_atomic_pattern) ->
+    
+# 79 "lib/NetIR/parser.mly"
+                            (FloatLitPat (mkpos _startpos _endpos, f))
+# 1162 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 78 "lib/NetIR/parser.mly"
+      n
+# 1167 "lib/NetIR/parser__mock.ml.mock"
+   : 
+# 21 "lib/NetIR/parser.mly"
+       (int)
+# 1171 "lib/NetIR/parser__mock.ml.mock"
+  ) (_startpos_n_ : Lexing.position) (_endpos_n_ : Lexing.position) (_startofs_n_ : int) (_endofs_n_ : int) (_loc_n_ : Lexing.position * Lexing.position) : ('tv_atomic_pattern) ->
+    
+# 78 "lib/NetIR/parser.mly"
+                            (IntLitPat (mkpos _startpos _endpos, n))
+# 1176 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 77 "lib/NetIR/parser.mly"
+     _1
+# 1181 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__1_ : Lexing.position) (_endpos__1_ : Lexing.position) (_startofs__1_ : int) (_endofs__1_ : int) (_loc__1_ : Lexing.position * Lexing.position) : ('tv_atomic_pattern) ->
+    
+# 77 "lib/NetIR/parser.mly"
+                            (UnitLitPat (mkpos _startpos _endpos))
+# 1186 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 76 "lib/NetIR/parser.mly"
+      s
+# 1191 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_id) (_startpos_s_ : Lexing.position) (_endpos_s_ : Lexing.position) (_startofs_s_ : int) (_endofs_s_ : int) (_loc_s_ : Lexing.position * Lexing.position) : ('tv_atomic_pattern) ->
+    
+# 76 "lib/NetIR/parser.mly"
+                            (VarPat (mkpos _startpos _endpos, s))
+# 1196 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 75 "lib/NetIR/parser.mly"
+     _1
+# 1201 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__1_ : Lexing.position) (_endpos__1_ : Lexing.position) (_startofs__1_ : int) (_endofs__1_ : int) (_loc__1_ : Lexing.position * Lexing.position) : ('tv_atomic_pattern) ->
+    
+# 75 "lib/NetIR/parser.mly"
+                            (WildcardPat (mkpos _startpos _endpos))
+# 1206 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 123 "lib/NetIR/parser.mly"
+      s
+# 1211 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_id) (_startpos_s_ : Lexing.position) (_endpos_s_ : Lexing.position) (_startofs_s_ : int) (_endofs_s_ : int) (_loc_s_ : Lexing.position * Lexing.position) : ('tv_atomic_expr) ->
+    
+# 123 "lib/NetIR/parser.mly"
+                                (Var (mkpos _startpos _endpos, s))
+# 1216 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 122 "lib/NetIR/parser.mly"
+      l
+# 1221 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_loclit) (_startpos_l_ : Lexing.position) (_endpos_l_ : Lexing.position) (_startofs_l_ : int) (_endofs_l_ : int) (_loc_l_ : Lexing.position * Lexing.position) : ('tv_atomic_expr) ->
+    
+# 122 "lib/NetIR/parser.mly"
+                                (LocLit (mkpos _startpos _endpos, l))
+# 1226 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 121 "lib/NetIR/parser.mly"
+     _1
+# 1231 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__1_ : Lexing.position) (_endpos__1_ : Lexing.position) (_startofs__1_ : int) (_endofs__1_ : int) (_loc__1_ : Lexing.position * Lexing.position) : ('tv_atomic_expr) ->
+    
+# 121 "lib/NetIR/parser.mly"
+                                (FalseLit (mkpos _startpos _endpos))
+# 1236 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 120 "lib/NetIR/parser.mly"
+     _1
+# 1241 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__1_ : Lexing.position) (_endpos__1_ : Lexing.position) (_startofs__1_ : int) (_endofs__1_ : int) (_loc__1_ : Lexing.position * Lexing.position) : ('tv_atomic_expr) ->
+    
+# 120 "lib/NetIR/parser.mly"
+                                (TrueLit (mkpos _startpos _endpos))
+# 1246 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 119 "lib/NetIR/parser.mly"
+      s
+# 1251 "lib/NetIR/parser__mock.ml.mock"
+   : 
+# 25 "lib/NetIR/parser.mly"
+       (string)
+# 1255 "lib/NetIR/parser__mock.ml.mock"
+  ) (_startpos_s_ : Lexing.position) (_endpos_s_ : Lexing.position) (_startofs_s_ : int) (_endofs_s_ : int) (_loc_s_ : Lexing.position * Lexing.position) : ('tv_atomic_expr) ->
+    
+# 119 "lib/NetIR/parser.mly"
+                                (StringLit (mkpos _startpos _endpos, s))
+# 1260 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 118 "lib/NetIR/parser.mly"
+      c
+# 1265 "lib/NetIR/parser__mock.ml.mock"
+   : 
+# 23 "lib/NetIR/parser.mly"
+       (char)
+# 1269 "lib/NetIR/parser__mock.ml.mock"
+  ) (_startpos_c_ : Lexing.position) (_endpos_c_ : Lexing.position) (_startofs_c_ : int) (_endofs_c_ : int) (_loc_c_ : Lexing.position * Lexing.position) : ('tv_atomic_expr) ->
+    
+# 118 "lib/NetIR/parser.mly"
+                                (CharLit (mkpos _startpos _endpos, c))
+# 1274 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 117 "lib/NetIR/parser.mly"
+      f
+# 1279 "lib/NetIR/parser__mock.ml.mock"
+   : 
+# 22 "lib/NetIR/parser.mly"
+       (float)
+# 1283 "lib/NetIR/parser__mock.ml.mock"
+  ) (_startpos_f_ : Lexing.position) (_endpos_f_ : Lexing.position) (_startofs_f_ : int) (_endofs_f_ : int) (_loc_f_ : Lexing.position * Lexing.position) : ('tv_atomic_expr) ->
+    
+# 117 "lib/NetIR/parser.mly"
+                                (FloatLit (mkpos _startpos _endpos, f))
+# 1288 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 116 "lib/NetIR/parser.mly"
+      n
+# 1293 "lib/NetIR/parser__mock.ml.mock"
+   : 
+# 21 "lib/NetIR/parser.mly"
+       (int)
+# 1297 "lib/NetIR/parser__mock.ml.mock"
+  ) (_startpos_n_ : Lexing.position) (_endpos_n_ : Lexing.position) (_startofs_n_ : int) (_endofs_n_ : int) (_loc_n_ : Lexing.position * Lexing.position) : ('tv_atomic_expr) ->
+    
+# 116 "lib/NetIR/parser.mly"
+                                (IntLit (mkpos _startpos _endpos, n))
+# 1302 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 115 "lib/NetIR/parser.mly"
+     _1
+# 1307 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__1_ : Lexing.position) (_endpos__1_ : Lexing.position) (_startofs__1_ : int) (_endofs__1_ : int) (_loc__1_ : Lexing.position * Lexing.position) : ('tv_atomic_expr) ->
+    
+# 115 "lib/NetIR/parser.mly"
+                                (UnitLit (mkpos _startpos _endpos))
+# 1312 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 114 "lib/NetIR/parser.mly"
+                   _3
+# 1317 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__3_ : Lexing.position) (_endpos__3_ : Lexing.position) (_startofs__3_ : int) (_endofs__3_ : int) (_loc__3_ : Lexing.position * Lexing.position) (
+# 114 "lib/NetIR/parser.mly"
+             e
+# 1321 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_expr) (_startpos_e_ : Lexing.position) (_endpos_e_ : Lexing.position) (_startofs_e_ : int) (_endofs_e_ : int) (_loc_e_ : Lexing.position * Lexing.position) (
+# 114 "lib/NetIR/parser.mly"
+     _1
+# 1325 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__1_ : Lexing.position) (_endpos__1_ : Lexing.position) (_startofs__1_ : int) (_endofs__1_ : int) (_loc__1_ : Lexing.position * Lexing.position) : ('tv_atomic_expr) ->
+    
+# 114 "lib/NetIR/parser.mly"
+                                ( e )
+# 1330 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 111 "lib/NetIR/parser.mly"
+                    a
+# 1335 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_app_expr) (_startpos_a_ : Lexing.position) (_endpos_a_ : Lexing.position) (_startofs_a_ : int) (_endofs_a_ : int) (_loc_a_ : Lexing.position * Lexing.position) (
+# 111 "lib/NetIR/parser.mly"
+      f
+# 1339 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_atomic_expr) (_startpos_f_ : Lexing.position) (_endpos_f_ : Lexing.position) (_startofs_f_ : int) (_endofs_f_ : int) (_loc_f_ : Lexing.position * Lexing.position) : ('tv_app_expr) ->
+    
+# 111 "lib/NetIR/parser.mly"
+                                ( FunApp (mkpos _startpos _endpos, f, a))
+# 1344 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 110 "lib/NetIR/parser.mly"
+      e
+# 1349 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_atomic_expr) (_startpos_e_ : Lexing.position) (_endpos_e_ : Lexing.position) (_startofs_e_ : int) (_endofs_e_ : int) (_loc_e_ : Lexing.position * Lexing.position) : ('tv_app_expr) ->
+    
+# 110 "lib/NetIR/parser.mly"
+                                ( e )
+# 1354 "lib/NetIR/parser__mock.ml.mock"
+     in
+  let _ = fun (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (
+# 102 "lib/NetIR/parser.mly"
+                            e
+# 1359 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_expr) (_startpos_e_ : Lexing.position) (_endpos_e_ : Lexing.position) (_startofs_e_ : int) (_endofs_e_ : int) (_loc_e_ : Lexing.position * Lexing.position) (
+# 102 "lib/NetIR/parser.mly"
+               _3
+# 1363 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__3_ : Lexing.position) (_endpos__3_ : Lexing.position) (_startofs__3_ : int) (_endofs__3_ : int) (_loc__3_ : Lexing.position * Lexing.position) (
+# 102 "lib/NetIR/parser.mly"
+          l
+# 1367 "lib/NetIR/parser__mock.ml.mock"
+   : 'tv_lab) (_startpos_l_ : Lexing.position) (_endpos_l_ : Lexing.position) (_startofs_l_ : int) (_endofs_l_ : int) (_loc_l_ : Lexing.position * Lexing.position) (
+# 102 "lib/NetIR/parser.mly"
+     _1
+# 1371 "lib/NetIR/parser__mock.ml.mock"
+   : unit) (_startpos__1_ : Lexing.position) (_endpos__1_ : Lexing.position) (_startofs__1_ : int) (_endofs__1_ : int) (_loc__1_ : Lexing.position * Lexing.position) : ('tv_allow_match) ->
+    
+# 102 "lib/NetIR/parser.mly"
+                                    ( (l, e) )
+# 1376 "lib/NetIR/parser__mock.ml.mock"
+     in
+  ((let rec diverge() = diverge() in diverge()) : 'tv_var_decl * 'tv_un_op * 'tv_typ * 'tv_separated_nonempty_list_COMMA_loclit_ * 'tv_separated_list_COMMA_loclit_ * 'tv_program * 'tv_pattern * 'tv_op_expr * 'tv_nonempty_list_var_decl_ * 'tv_nonempty_list_match_match_ * 'tv_nonempty_list_atomic_pattern_ * 'tv_nonempty_list_allow_match_ * 'tv_match_match * 'tv_loption_separated_nonempty_list_COMMA_loclit__ * 'tv_loclit * 'tv_list_pattern_ * 'tv_list_decl_ * 'tv_lab * 'tv_id * 'tv_expr * 'tv_decl * 'tv_bin_op * 'tv_atomic_typ * 'tv_atomic_pattern * 'tv_atomic_expr * 'tv_app_expr * 'tv_allow_match)
+
+and menhir_end_marker =
+  0
