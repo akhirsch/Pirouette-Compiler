@@ -815,13 +815,18 @@ let expr_suite =
 let expected_locdecl =
   "n0 [label=\"EmulatedLocDecl [test.ml: 1:15--1:16]\"];\n\
    n0 -> n1;\n\
-   n1 [label=\"Name test [test.ml: 2:20--2:50]\"];\n"
+   n0 -> n2;\n\
+   n1 [label=\"Name test [test.ml: 2:20--2:50]\"];\n\
+   n2 [label=\"Hostname http://192.168.1.1 [test.ml: 3:31--3:41]\"];\n"
 
 let test_locdecl =
   DotAST.node_counter := 0;
   let pos = { filename = "test.ml"; start = (1, 15); stop = (1, 16) } in
   let pos2 = { filename = "test.ml"; start = (2, 20); stop = (2, 50) } in
-  let expr = EmulatedLocDecl (pos, (pos2, "test")) in
+  let pos3 = { filename = "test.ml"; start = (3, 31); stop = (3, 41) } in
+  let expr =
+    EmulatedLocDecl (pos, (pos2, "test"), (pos3, "http://192.168.1.1"))
+  in
   let out, _ = DotAST.dot_decl Meta.string_of_mi expr in
   out
 

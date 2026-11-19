@@ -23,6 +23,13 @@ struct
         (string_of_info info),
       node_name )
 
+  let dot_hostname string_of_info hostname =
+    let node_name = generate_node_name () in
+    let info, str = hostname in
+    ( spf "%s [label=\"Hostname %s %s\"];\n" node_name (String.escaped str)
+        (string_of_info info),
+      node_name )
+
   let dot_lab string_of_info (label : lab) =
     let node_name = generate_node_name () in
     match label with
@@ -446,14 +453,16 @@ struct
   and dot_decl string_of_info decl =
     let node_name = generate_node_name () in
     match decl with
-    | EmulatedLocDecl (m, name) ->
-        let c, n = dot_name string_of_info name in
+    | EmulatedLocDecl (m, name, hostname) ->
+        let c1, n1 = dot_name string_of_info name in
+        let c2, n2 = dot_hostname string_of_info hostname in
         let decl_node =
           spf "%s [label=\"EmulatedLocDecl %s\"];\n" node_name
             (string_of_info m)
         in
-        let edge = spf "%s -> %s;\n" node_name n in
-        (decl_node ^ edge ^ c, node_name)
+        let edge1 = spf "%s -> %s;\n" node_name n1 in
+        let edge2 = spf "%s -> %s;\n" node_name n2 in
+        (decl_node ^ edge1 ^ edge2 ^ c1 ^ c2, node_name)
     | TypeDecl (m, name, typ) ->
         let c1, n1 = dot_name string_of_info name in
         let c2, n2 = dot_typ string_of_info typ in

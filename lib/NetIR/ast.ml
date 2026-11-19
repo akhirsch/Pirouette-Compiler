@@ -2,6 +2,9 @@ module type AST = sig
   type m
   type name = m * string
 
+  type hostname = m * string
+  (** A quoted string literal representing a location hostname. *)
+
   type typ =
     | VarTy of m * name
     | UnitTy of m
@@ -71,7 +74,8 @@ module type AST = sig
     | AmI of m * expr
 
   type decl =
-    | EmulatedLocDecl of m * name
+    | EmulatedLocDecl of m * name * hostname
+      (* An emulated location with the given name and hostname string literal *)
     | TypeDecl of m * name * typ (* Declares the type of a program binding *)
     | TypeAliasDecl of m * name * typ
     | DefnDecl of m * name * pattern list * expr
@@ -84,6 +88,7 @@ end
 module MkAST (M : Metainfo.Meta.Metainfo) = struct
   type m = M.t
   type name = M.t * string
+  type hostname = M.t * string
 
   type typ =
     | VarTy of M.t * name
@@ -154,7 +159,7 @@ module MkAST (M : Metainfo.Meta.Metainfo) = struct
     | AmI of m * expr
 
   type decl =
-    | EmulatedLocDecl of m * name
+    | EmulatedLocDecl of m * name * hostname
     | TypeDecl of M.t * name * typ
     | TypeAliasDecl of M.t * name * typ
     | DefnDecl of M.t * name * pattern list * expr

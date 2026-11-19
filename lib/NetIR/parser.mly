@@ -123,7 +123,7 @@
     | s=id                      {Var (mkpos $startpos $endpos, s)}
 
     decl:
-    | EMULATEDLOCDECL s=id                          {EmulatedLocDecl (mkpos $startpos $endpos, s)}
+    | EMULATEDLOCDECL s=id  h=STRINGLIT             {EmulatedLocDecl (mkpos $startpos $endpos, s, (mkpos $startpos(h) $endpos(h), h))}
     | s=id COLON t=typ                              {TypeDecl (mkpos $startpos $endpos, s, t)}
     | TYPEDECL s=id WALRUS t=typ                    {TypeAliasDecl (mkpos $startpos $endpos, s, t)}
     | s=id l=list(pattern) WALRUS e=expr SEMICOLON  {DefnDecl (mkpos $startpos $endpos, s, l, e)}

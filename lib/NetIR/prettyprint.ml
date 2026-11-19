@@ -113,7 +113,8 @@ module MkPrettify (A : Ast.AST) = struct
     prettify_int_expr false e
 
   let prettify_decl = function
-    | EmulatedLocDecl (_, (_, l)) -> "emulated location " ^ l
+    | EmulatedLocDecl (_, (_, l), (_, h)) ->
+        Printf.sprintf "emulated location %s \"%s\"" l (String.escaped h)
     | TypeDecl (_, (_, n), t) -> n ^ " : " ^ prettify_typ t
     | TypeAliasDecl (_, (_, n), t) -> "type " ^ n ^ " := " ^ prettify_typ t
     | DefnDecl (_, (_, n), ps, e) ->

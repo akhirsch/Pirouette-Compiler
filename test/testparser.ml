@@ -532,9 +532,9 @@ let expr_suite =
 (* -- DECL TESTS -- *)
 
 let emulated_loc_decl_test _ =
-  let full_program_text = "emulated location test" in
+  let full_program_text = "emulated location test \"http://127.0.0.0\"" in
   match program_of_text full_program_text with
-  | [ EmulatedLocDecl (_, (_, "test")) ] -> ()
+  | [ EmulatedLocDecl (_, (_, "test"), (_, "http://127.0.0.0")) ] -> ()
   | _ -> assert_failure "EmulatedLocDecl did not parse"
 
 let type_decl_test _ =
