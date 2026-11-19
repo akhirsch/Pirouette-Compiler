@@ -1,5 +1,50 @@
+(* http_backend.ml — runtime for emulated locations
+
+   Generated files call into this when they run.
+
+   At a high level, since HTTP requires asynchrony, this file deals with two
+   threads. The server thread receives messages (see `process_request` in
+   `start_server`), while the main thread performs computations and calls
+   NetIR primitives. Namely:
+   1. The `send` and `choose` primitives send messages through
+      `_post_message_impl`. Using Cohttp, this function blocks the main thread
+      until the other participant receives the message (per the Pirouette spec).
+   1. The `recv` and `recv_label` primitives get messages through
+      `_get_message_impl`. To my knowledge, Cohttp doesn't have an appropriate
+      primitive, so `_get_message_impl` blocks my waiting on the server thread
+      for incoming messages.
+   Thus, `process_request` and `_get_message_impl` handle most synchronization.
+   To synchronize the two, each participant has an associated `Lwt_mvar.t` that
+   acts as a mailbox. The server puts incoming messages into the mailbox and
+   the main thread consumes them. But remember that for `_post_message_impl`
+   to work properly, the server thread can only resolve an incoming `POST`
+   request when the message has been processed. Thus, the server also puts a
+   `Lwt_condition.t` in the mailbox, so when the main thread consumes a message,
+   it signals the server to complete the request.
+
+   Here are two examples. Suppose _Bob_ is sending a message to _Alice_ and
+   consider the following:
+   1. If _Bob_ finishes early and sends a `POST` request to _Alice_, the
+      message goes into a mailbox (`Lwt_mvar.put`). While _Alice_ is processing,
+      the server is waiting on the `Lwt_condition` and the `POST` request is
+      live. Once _Alice_ finishes and calls `recv`, she empties the mailbox
+      (`Lwt_mvar.take`) and signals the server thread (`Lwt_condition.signal`),
+      completing the request. When the request completes, _Bob_ unblocks.
+   2. If _Alice_ finishes early and calls `recv`, she'll be waiting on the
+      mailbox with `Lwt_mvar.take`. When _Bob_ is ready, he'll send a `POST`
+      request, so the server will update the mailbox, which _Alice_ will
+      promptly consume, signaling to the server to complete the request.
+   These examples highlight how the implementation synchronizes `send`/`choose`
+   with `recv`/`recv_label`. *)
+
+(** Basically *throws* if the given `Result` is an error. *)
 let ( let* ) = Result.bind
+
+(** Basically *awaits* for the given `Lwt.t` promise to be fulfilled. *)
 let ( let** ) = Lwt.bind
+
+(** Basically *awaits* the `Lwt_result.t` promise, and *throws* if it resolves
+    to an error. *)
 let ( let**? ) = Lwt_result.bind
 
 (*---------------------------------------------------------------------------*)
@@ -28,8 +73,8 @@ let message_type_to_string = function Send -> "/send" | Choose -> "/choose"
 type message = message_type * string
 
 type message_completion = bool Lwt_condition.t
-(** Indicates the message was received. If given `true`, the result processed
-    successfully; else, we have a `/send` vs `/choose` mismatch *)
+(** A type that indicates the message was received. If given `true`, the result
+    processed successfully; else, we have a `/send` vs `/choose` mismatch *)
 
 type peer = {
   hostname : Uri.t;
@@ -72,15 +117,17 @@ type client_error =
   | MissingOrigin  (** We need the `Origin` header to identify the peer *)
   | UnknownPeer  (** Peer must be registered *)
   | CannotMessageTwice  (** Cannot message twice *)
+  | MessageTypeMismatch
+      (** Receiver expected the other kind (`/send` vs `/choose`). Unlike the
+          other errors, this is detected *after* the receiver consumed the
+          message from the mailbox. *)
 
 let client_result_to_http_status = function
-  | Result.Ok true -> `OK
+  | Result.Ok () -> `OK
   | Result.Error MethodNotPost -> `Method_not_allowed
   | Result.Error UnknownPath -> `Not_found
   | Result.Error UnknownPeer -> `Unauthorized
-  | Result.Ok false
-  | Result.Error MissingOrigin
-  | Result.Error CannotMessageTwice ->
+  | Result.Error (MissingOrigin | CannotMessageTwice | MessageTypeMismatch) ->
       `Bad_request
 
 type http_get_error = InvalidSourcePeer | WrongMessageType of message_type
@@ -206,10 +253,10 @@ let with_connection_retry (task : unit -> 'a Lwt.t) : 'a Lwt.t =
 
 (** Starts the HTTP server, returning an Lwt promise *)
 let start_server () : unit Lwt.t =
-  (* Processes the given request with the given string. Returns
-     the message_completion indicating we've received the message. *)
+  (* Processes the given POST request with the given string body. Returns
+     `Ok ()` once the receiver consumed the message, or a client error. *)
   let process_request (req : Http.Request.t) (body : string) :
-      (bool, client_error) result Lwt.t =
+      (unit, client_error) result Lwt.t =
     (* Ensure it's a POST request. *)
     let**? () =
       if req.meth == `POST then Lwt.return_ok ()
@@ -241,15 +288,15 @@ let start_server () : unit Lwt.t =
       | Some _ -> Lwt.return_error CannotMessageTwice
       | None -> Lwt.return_error UnknownPeer
     in
-    (* Send message via the channel *)
+    (* Put message into the mailbox *)
     let message_completion : message_completion = Lwt_condition.create () in
     let message = ((message_type, body), message_completion) in
     (* Should return instantly since we're the only thread adding messages,
        and we just checked there's no backlog. *)
     let** () = Lwt_mvar.put channel message in
-    (* Return completion *)
-    let** success = Lwt_condition.wait message_completion in
-    Lwt.return_ok success
+    (* Wait for `_get_message_impl` to take message out of the mailbox *)
+    let** type_matched : bool = Lwt_condition.wait message_completion in
+    Lwt.return (if type_matched then Ok () else Error MessageTypeMismatch)
   in
   let callback _conn (req : Http.Request.t) (body : Cohttp_lwt.Body.t) =
     (* Get body string
@@ -282,7 +329,12 @@ let _get_message_impl (type a) (message_type : message_type)
   let** (req_message_type, message_body), completion =
     Lwt_mvar.take peer.message_channel
   in
-  (* Signal to peer whether we could take the message *)
+  (* Signal to server thread that we consumed the message, and inform
+     of type mismatch.
+
+     Note: We signal before decoding because we don't inform the sender
+     of a failure anyway (we assume communication doesn't fail), and
+     to simplifies control flow around `WrongMessageType`. *)
   let is_correct_type = req_message_type = message_type in
   Lwt_condition.signal completion is_correct_type;
   (* Ensure we have a `/send` message (or throw) *)
