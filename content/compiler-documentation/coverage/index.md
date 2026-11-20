@@ -8,13 +8,13 @@ weight = 1
   <head>
     <meta charset="utf-8"/>
     <title>Coverage report</title>
-    <meta name="description" content="70.17% coverage overall"/>
+    <meta name="description" content="66.31% coverage overall"/>
     <link rel="stylesheet" type="text/css" href="coverage.css"/>
   </head>
   <body>
     <div id="header">
       <h1>Coverage report</h1>
-      <h2>70.17%</h2>
+      <h2>66.31%</h2>
     </div>
     <div id="files">
       <div>
@@ -42,6 +42,15 @@ weight = 1
         <span class="percentage">100% <span class="stats">(0 / 0)</span></span>
         <a href="lib/NetIR/ast.ml.html">
           <span class="dirname">lib/NetIR/</span>ast.ml
+        </a>
+      </div>
+      <div>
+        <span class="meter">
+          <span class="covered" style="width: 14%"></span>
+        </span>
+        <span class="percentage">14% <span class="stats">(28 / 192)</span></span>
+        <a href="lib/NetIR/astmapper.ml.html">
+          <span class="dirname">lib/NetIR/</span>astmapper.ml
         </a>
       </div>
       <div>
@@ -93,7 +102,7 @@ weight = 1
         <span class="meter">
           <span class="covered" style="width: 54%"></span>
         </span>
-        <span class="percentage">54% <span class="stats">(756 / 1390)</span></span>
+        <span class="percentage">54% <span class="stats">(760 / 1390)</span></span>
         <a href="lib/NetIR/parser.ml.html">
           <span class="dirname">lib/NetIR/</span>parser.ml
         </a>
@@ -105,6 +114,15 @@ weight = 1
         <span class="percentage">95% <span class="stats">(137 / 143)</span></span>
         <a href="lib/NetIR/prettyprint.ml.html">
           <span class="dirname">lib/NetIR/</span>prettyprint.ml
+        </a>
+      </div>
+      <div>
+        <span class="meter">
+          <span class="covered" style="width: 100%"></span>
+        </span>
+        <span class="percentage">100% <span class="stats">(15 / 15)</span></span>
+        <a href="lib/NetIR/variant_matching.ml.html">
+          <span class="dirname">lib/NetIR/</span>variant_matching.ml
         </a>
       </div>
     </div>

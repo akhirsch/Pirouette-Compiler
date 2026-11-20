@@ -258,8 +258,8 @@ let rec unroll_function = function
   | <span data-count="2">x</span> -&gt; [ x ]
 
 let rec replace_expr_constructor constructor_names (ast : M.expr) : M.expr =
-  <span data-count="130">l</span>et recurse = replace_expr_constructor constructor_names in
-  <span data-count="130">m</span>atch ast with
+  <span data-count="131">l</span>et recurse = replace_expr_constructor constructor_names in
+  <span data-count="131">m</span>atch ast with
   | <span data-count="14">M</span>atch (m, e, ps_and_es) -&gt;
       Match
         ( m,
@@ -289,31 +289,31 @@ let rec replace_expr_constructor constructor_names (ast : M.expr) : M.expr =
   | <span data-count="11">V</span>ar (m1, (m2, id)) -&gt;
       if List.mem id constructor_names then <span data-count="1">C</span>onstructorLit (m1, (m2, id), [])
       else <span data-count="10">V</span>ar (m1, (m2, id))
-  | <span data-count="80">x</span> -&gt; x
+  | <span data-count="81">x</span> -&gt; x
 (* Any expression that doesn't itself contain an expression needs no processing.*)
 
 let replace_decl_constructor constructor_names ast =
-  <span data-count="84">m</span>atch ast with
-  | <span data-count="60">M</span>.DefnDecl (m, name, ps, e) -&gt;
+  <span data-count="91">m</span>atch ast with
+  | <span data-count="61">M</span>.DefnDecl (m, name, ps, e) -&gt;
       M.DefnDecl
         ( m,
           name,
-          List.ma<span data-count="60">p</span> (replace_pat_constructo<span data-count="60">r</span> constructor_names) ps,
-          replace_expr_constructo<span data-count="60">r</span> constructor_names e )
-  | <span data-count="24">x</span> -&gt; x
+          List.ma<span data-count="61">p</span> (replace_pat_constructo<span data-count="61">r</span> constructor_names) ps,
+          replace_expr_constructo<span data-count="61">r</span> constructor_names e )
+  | <span data-count="30">x</span> -&gt; x
 (* DefnDecls are the only decl nodes that contain patterns and expressions. We are only modifying patterns and expression
       (as expressions can contain patterns), so we return all other nodes unchanged. *)
 
 let decl_collect = function
-  | <span data-count="8">M</span>.VariantDecl (_, _, var_decls) -&gt;
-      List.fold_left (fun acc ((_, name), _, _) -&gt; <span data-count="10">n</span>ame :: acc) [] var_decls
-  | <span data-count="76">_</span> -&gt; []
+  | <span data-count="14">M</span>.VariantDecl (_, _, var_decls) -&gt;
+      List.fold_left (fun acc ((_, name), _, _) -&gt; <span data-count="20">n</span>ame :: acc) [] var_decls
+  | <span data-count="77">_</span> -&gt; []
 
 let process_parsed_ast (ast : M.decl list) =
-  <span data-count="79">l</span>et constructor_names =
-    List.fold_left (fun acc y -&gt; <span data-count="84">d</span>ecl_collec<span data-count="84">t</span> y @ acc) [] ast
+  <span data-count="84">l</span>et constructor_names =
+    List.fold_left (fun acc y -&gt; <span data-count="91">d</span>ecl_collec<span data-count="91">t</span> y @ acc) [] ast
   in
-  <span data-count="79">L</span>ist.map (replace_decl_constructo<span data-count="79">r</span> constructor_names) ast
+  <span data-count="84">L</span>ist.map (replace_decl_constructo<span data-count="84">r</span> constructor_names) ast
 </code></pre>
       </div>
     </div>

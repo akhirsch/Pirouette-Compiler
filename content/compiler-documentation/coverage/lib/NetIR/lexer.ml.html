@@ -5317,7 +5317,7 @@ open Parser
 exception SyntaxError of string
 
 let next_line lexbuf =
-    <span data-count="57">l</span>et pos = lexbuf.lex_curr_p in
+    <span data-count="66">l</span>et pos = lexbuf.lex_curr_p in
     lexbuf.lex_curr_p &lt;- { pos with pos_lnum = pos.pos_lnum + 1; pos_bol = lexbuf.lex_curr_pos }
 
 # 13 "lib/NetIR/lexer.ml"
@@ -7501,17 +7501,17 @@ let __ocaml_lex_tables = {
 }
 
 let rec read lexbuf =
-   <span data-count="1150">_</span>_ocaml_lex_read_rec lexbuf 0
+   <span data-count="1293">_</span>_ocaml_lex_read_rec lexbuf 0
 and __ocaml_lex_read_rec lexbuf __ocaml_lex_state =
-  <span data-count="1150">m</span>atch Lexing.engine __ocaml_lex_tables __ocaml_lex_state lexbuf with
-      | <span data-count="433">0</span> -&gt;
+  <span data-count="1293">m</span>atch Lexing.engine __ocaml_lex_tables __ocaml_lex_state lexbuf with
+      | <span data-count="496">0</span> -&gt;
 # 26 "lib/NetIR/lexer.mll"
           ( read lexbuf )
 # 2200 "lib/NetIR/lexer.ml"
 
-  | <span data-count="57">1</span> -&gt;
+  | <span data-count="66">1</span> -&gt;
 # 27 "lib/NetIR/lexer.mll"
-            ( next_line lexbuf; <span data-count="57">r</span>ead lexbuf)
+            ( next_line lexbuf; <span data-count="66">r</span>ead lexbuf)
 # 2205 "lib/NetIR/lexer.ml"
 
   | <span data-count="5">2</span> -&gt;
@@ -7519,7 +7519,7 @@ and __ocaml_lex_read_rec lexbuf __ocaml_lex_state =
            ( UNITTY )
 # 2210 "lib/NetIR/lexer.ml"
 
-  | <span data-count="10">3</span> -&gt;
+  | <span data-count="11">3</span> -&gt;
 # 30 "lib/NetIR/lexer.mll"
           ( INTTY )
 # 2215 "lib/NetIR/lexer.ml"
@@ -7539,7 +7539,7 @@ and __ocaml_lex_read_rec lexbuf __ocaml_lex_state =
              ( STRINGTY )
 # 2230 "lib/NetIR/lexer.ml"
 
-  | <span data-count="4">7</span> -&gt;
+  | <span data-count="5">7</span> -&gt;
 # 34 "lib/NetIR/lexer.mll"
            ( BOOLTY )
 # 2235 "lib/NetIR/lexer.ml"
@@ -7614,7 +7614,7 @@ and __ocaml_lex_read_rec lexbuf __ocaml_lex_state =
          ( GEQ )
 # 2305 "lib/NetIR/lexer.ml"
 
-  | <span data-count="22">2</span>2 -&gt;
+  | <span data-count="23">2</span>2 -&gt;
 # 52 "lib/NetIR/lexer.mll"
          ( UNITLIT )
 # 2310 "lib/NetIR/lexer.ml"
@@ -7629,7 +7629,7 @@ and __ocaml_lex_read_rec lexbuf __ocaml_lex_state =
             ( FALSELIT )
 # 2320 "lib/NetIR/lexer.ml"
 
-  | <span data-count="17">2</span>5 -&gt;
+  | <span data-count="19">2</span>5 -&gt;
 # 55 "lib/NetIR/lexer.mll"
          ( ARROW )
 # 2325 "lib/NetIR/lexer.ml"
@@ -7674,7 +7674,7 @@ and __ocaml_lex_read_rec lexbuf __ocaml_lex_state =
          ( RBRACE )
 # 2365 "lib/NetIR/lexer.ml"
 
-  | <span data-count="28">3</span>4 -&gt;
+  | <span data-count="38">3</span>4 -&gt;
 # 64 "lib/NetIR/lexer.mll"
         ( BAR )
 # 2370 "lib/NetIR/lexer.ml"
@@ -7689,17 +7689,17 @@ and __ocaml_lex_read_rec lexbuf __ocaml_lex_state =
         ( read_string (Buffer.creat<span data-count="8">e</span> 16) lexbuf )
 # 2380 "lib/NetIR/lexer.ml"
 
-  | <span data-count="89">3</span>7 -&gt;
+  | <span data-count="96">3</span>7 -&gt;
 # 67 "lib/NetIR/lexer.mll"
          ( WALRUS )
 # 2385 "lib/NetIR/lexer.ml"
 
-  | <span data-count="24">3</span>8 -&gt;
+  | <span data-count="34">3</span>8 -&gt;
 # 68 "lib/NetIR/lexer.mll"
         ( COLON )
 # 2390 "lib/NetIR/lexer.ml"
 
-  | <span data-count="60">3</span>9 -&gt;
+  | <span data-count="61">3</span>9 -&gt;
 # 69 "lib/NetIR/lexer.mll"
         ( SEMICOLON )
 # 2395 "lib/NetIR/lexer.ml"
@@ -7789,7 +7789,7 @@ and __ocaml_lex_read_rec lexbuf __ocaml_lex_state =
              ( IMPORT )
 # 2480 "lib/NetIR/lexer.ml"
 
-  | <span data-count="8">5</span>7 -&gt;
+  | <span data-count="14">5</span>7 -&gt;
 # 88 "lib/NetIR/lexer.mll"
            ( DATA )
 # 2485 "lib/NetIR/lexer.ml"
@@ -7819,17 +7819,17 @@ let
                   <span data-count="7">(</span> LOCLIT s )
 # 2510 "lib/NetIR/lexer.ml"
 
-  | <span data-count="136">6</span>1 -&gt;
+  | <span data-count="163">6</span>1 -&gt;
 let
 # 92 "lib/NetIR/lexer.mll"
                   s
 # 2516 "lib/NetIR/lexer.ml"
 = Lexing.sub_lexeme lexbuf lexbuf.Lexing.lex_start_pos lexbuf.Lexing.lex_curr_pos in
 # 92 "lib/NetIR/lexer.mll"
-                    <span data-count="136">(</span> ID s )
+                    <span data-count="163">(</span> ID s )
 # 2520 "lib/NetIR/lexer.ml"
 
-  | <span data-count="79">6</span>2 -&gt;
+  | <span data-count="84">6</span>2 -&gt;
 # 93 "lib/NetIR/lexer.mll"
         ( EOF )
 # 2525 "lib/NetIR/lexer.ml"
