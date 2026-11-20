@@ -2,8 +2,7 @@ open Lexing
 module Prettyprint = Netir.Prettyprint.MkPrettify (Netir.Ast.PosInfo_AST)
 module Meta = Metainfo.Meta.PosInfo
 module DotAST = Netir.Dot_ast.MkDotAST (Netir.Ast.PosInfo_AST)
-module Ocamlgen = struct end
-(* PLACEHOLDER: Once the ocamlgen has been implemented, this will be filled in *)
+module Ocamlgen = Netir.Ocamlgen.MkOcamlGen (Netir.Ast.PosInfo_AST)
 
 let _PLACEHOLDER = fun a -> a
 
@@ -16,6 +15,7 @@ let dot = ref false
 let input_filename = ref None
 let input_string = ref ""
 let output_file = ref ""
+let loc_name = ref ""
 
 let get_file filename =
   (*we only want to allow for one file*)
