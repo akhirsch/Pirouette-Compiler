@@ -7,7 +7,7 @@ module Ocamlgen = Netir.Ocamlgen.MkOcamlGen (Netir.Ast.PosInfo_AST)
 let _PLACEHOLDER = fun a -> a
 
 let usage_msg =
-  "pirouette [<file> | -input <input_string>] [-o <output>] [--pretty]"
+  "pirouette [<loc_name> <file> | <loc_name> -input <input_string>] [-o <output>] [--pretty]"
 
 let verbose = ref false
 let pretty = ref false
