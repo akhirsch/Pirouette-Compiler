@@ -284,6 +284,10 @@ module MkOcamlGen (Net : NetAST) = struct
             ~private_:Public ~manifest:None
         in
         pstr_type ~loc Recursive [ td ]
+    | Net.ForeignDecl (_, (_, in_name), (_, ext_name), _) ->
+        [%stri
+          let [%p Ast_builder.Default.pvar ~loc in_name] =
+            [%e Ast_builder.Default.evar ~loc ext_name]]
 
   (* program_gen: builds the full OCaml file for one participant
      [me] is the participant's name (ex "Alice") known at compile time

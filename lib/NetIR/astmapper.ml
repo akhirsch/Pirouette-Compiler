@@ -102,6 +102,9 @@ module ASTMapper (A1 : AST) (A2 : AST) = struct
               (fun (n, ts, t) ->
                 (name_map f n, List.map (typ_map f) ts, typ_map f t))
               cs )
+    | A1.ForeignDecl (m, in_name, ext_name, t) ->
+        A2.ForeignDecl
+          (f m, name_map f in_name, name_map f ext_name, typ_map f t)
 
   let program_map (f : A1.m -> A2.m) = List.map (decl_map f)
 end

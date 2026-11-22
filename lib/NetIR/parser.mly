@@ -25,7 +25,7 @@
 %token <string> STRINGLIT LOCLIT
 %token TRUELIT FALSELIT MATCH WITH END UNITLIT
 %token SEND RECV CHOOSE CHOICE AMI TO FROM FOR
-%token TYPEDECL COLON WALRUS IMPORT BAR
+%token TYPEDECL COLON WALRUS IMPORT BAR FOREIGN
 %token EMULATEDLOCDECL DOUBLEARROW
 %token WILDCARD LPAREN RPAREN LBRACK RBRACK 
 %token LBRACE RBRACE FUN ALLOW DATA COMMA SEMICOLON
@@ -123,12 +123,13 @@
     | s=id                      {Var (mkpos $startpos $endpos, s)}
 
     decl:
-    | EMULATEDLOCDECL s=id                          {EmulatedLocDecl (mkpos $startpos $endpos, s)}
-    | s=id COLON t=typ                              {TypeDecl (mkpos $startpos $endpos, s, t)}
-    | TYPEDECL s=id WALRUS t=typ                    {TypeAliasDecl (mkpos $startpos $endpos, s, t)}
-    | s=id l=list(pattern) WALRUS e=expr SEMICOLON  {DefnDecl (mkpos $startpos $endpos, s, l, e)}
-    | IMPORT s=id                                   {ImportDecl (mkpos $startpos $endpos, s)}
-    | DATA s=id WALRUS l=nonempty_list(var_decl)    {VariantDecl (mkpos $startpos $endpos, s, l)}
+    | EMULATEDLOCDECL s=id                              {EmulatedLocDecl (mkpos $startpos $endpos, s)}
+    | s=id COLON t=typ                                  {TypeDecl (mkpos $startpos $endpos, s, t)}
+    | TYPEDECL s=id WALRUS t=typ                        {TypeAliasDecl (mkpos $startpos $endpos, s, t)}
+    | s=id l=list(pattern) WALRUS e=expr SEMICOLON      {DefnDecl (mkpos $startpos $endpos, s, l, e)}
+    | IMPORT s=id                                       {ImportDecl (mkpos $startpos $endpos, s)}
+    | DATA s=id WALRUS l=nonempty_list(var_decl)        {VariantDecl (mkpos $startpos $endpos, s, l)}
+    | FOREIGN in_name=id WALRUS ext_name=id COLON t=typ {ForeignDecl (mkpos $startpos $endpos, in_name, ext_name, t)}
 
     var_decl:
     | BAR s=id COLON t=typ    

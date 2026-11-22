@@ -144,6 +144,8 @@ module MkPrettify (A : Ast.AST) = struct
         ^ List.fold_left
             (fun s1 (n, ts, t) -> s1 ^ "\n" ^ prettify_cons n ts t)
             "" cs
+    | ForeignDecl (_, (_, in_name), (_, ext_name), t) ->
+        "foreign " ^ in_name ^ " := " ^ ext_name ^ " : " ^ prettify_typ t
 
   let prettify_prog = function
     | [] -> ""

@@ -85,6 +85,7 @@ rule read =
   | "emulated location" { EMULATEDLOCDECL }
   | "type" { TYPEDECL }
   | "import" { IMPORT }
+  | "foreign" { FOREIGN }
   | "data" { DATA }
   | float as f { FLOATLIT (float_of_string f)}
   | int { INTLIT (int_of_string (Lexing.lexeme lexbuf)) }

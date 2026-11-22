@@ -535,6 +535,17 @@ struct
         in
         let codes = String.concat "" constr_codes in
         (decl_node ^ edge1 ^ edges ^ c1 ^ codes, node_name)
+    | ForeignDecl (m, in_name, ext_name, t) ->
+        let c1, n1 = dot_name string_of_info in_name in
+        let c2, n2 = dot_name string_of_info ext_name in
+        let c3, n3 = dot_typ string_of_info t in
+        let decl_node =
+          spf "%s [label=\"Foreign Decl %s\"];\n" node_name (string_of_info m)
+        in
+        let edge1 = spf "%s -> %s;\n" node_name n1 in
+        let edge2 = spf "%s -> %s;\n" node_name n2 in
+        let edge3 = spf "%s -> %s;\n" node_name n3 in
+        (decl_node ^ edge1 ^ edge2 ^ edge3 ^ c1 ^ c2 ^ c3, node_name)
 
   let generate_dot_code string_of_info program =
     let string_of_info m = String.escaped (string_of_info m) in

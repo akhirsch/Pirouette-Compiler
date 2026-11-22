@@ -90,5 +90,8 @@ let typealiasdecl x t = TypeAliasDecl ((), ((), x), t)
 let defndecl x p e = DefnDecl ((), ((), x), p, e)
 let importdecl x = ImportDecl ((), ((), x))
 
+let foreign_decl in_name ext_name t =
+  ForeignDecl ((), ((), in_name), ((), ext_name), t)
+
 let variantdecl x conses =
   VariantDecl ((), ((), x), List.map (fun (s, l, t) -> (((), s), l, t)) conses)

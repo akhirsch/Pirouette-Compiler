@@ -77,6 +77,7 @@ module type AST = sig
     | DefnDecl of m * name * pattern list * expr
     | ImportDecl of m * name
     | VariantDecl of m * name * (name * typ list * typ) list
+    | ForeignDecl of m * name * name * typ
 
   type program = decl list
 end
@@ -160,6 +161,7 @@ module MkAST (M : Metainfo.Meta.Metainfo) = struct
     | DefnDecl of M.t * name * pattern list * expr
     | ImportDecl of M.t * name
     | VariantDecl of M.t * name * (name * typ list * typ) list
+    | ForeignDecl of M.t * name * name * typ
 
   type program = decl list
 end
