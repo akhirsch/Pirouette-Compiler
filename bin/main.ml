@@ -7,7 +7,8 @@ module Ocamlgen = Netir.Ocamlgen.MkOcamlGen (Netir.Ast.PosInfo_AST)
 let _PLACEHOLDER = fun a -> a
 
 let usage_msg =
-  "pirouette [<loc_name> <file> | <loc_name> -input <input_string>] [-o <output>] [--pretty]"
+  "pirouette [<loc_name> <file> | <loc_name> -input <input_string>] [-o \
+   <output>] [--pretty]"
 
 let verbose = ref false
 let pretty = ref false
@@ -18,10 +19,13 @@ let output_file = ref ""
 let loc_name = ref ""
 
 let get_file filename =
-  (*we only want to allow for one file*)
-  match !input_filename with
-  | None -> input_filename := Some filename
-  | Some _ -> raise (Arg.Bad "only one input file allowed")
+  match !loc_name with
+  | "" -> failwith "missing location name"
+  | _input -> (
+      loc_name := _input;
+      match !input_filename with
+      | None -> input_filename := Some filename
+      | Some _ -> raise (Arg.Bad "only one input file allowed"))
 
 let speclist =
   [
