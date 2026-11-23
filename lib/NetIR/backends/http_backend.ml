@@ -22,8 +22,8 @@
    `Lwt_condition.t` in the mailbox, so when the main thread consumes a message,
    it signals the server to complete the request.
 
-   Here are two examples. Suppose _Bob_ is sending a message to _Alice_ and
-   consider the following:
+   For instance, suppose _Bob_ is sending a message to _Alice_ and
+   consider the following cases:
    1. If _Bob_ finishes early and sends a `POST` request to _Alice_, the
       message goes into a mailbox (`Lwt_mvar.put`). While _Alice_ is processing,
       the server is waiting on the `Lwt_condition` and the `POST` request is
