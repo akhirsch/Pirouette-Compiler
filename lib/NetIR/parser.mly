@@ -6,6 +6,27 @@
         start = (s.pos_lnum, s.pos_cnum - s.pos_bol);
         stop = (e.pos_lnum, e.pos_cnum - e.pos_bol)
         }
+
+    (* An emulated location's address: `http://<host>:<port>` + optional
+       '/' suffix.
+       Note that we reject user info, paths, queries and fragments. *)
+    let address_re = Str.regexp "^http://\\([A-Za-z0-9.-]+\\):\\([0-9]+\\)/?$"
+
+    (* Parses `address` into its host and port, or says what's wrong with it *)
+    let parse_address (address : string) : (string * int, string) result =
+        (* Failure helper *)
+        let fail reason = Result.Error (Printf.sprintf "'%s' %s" address reason) in
+        (* Ensure we match *)
+        if not (Str.string_match address_re address 0) then
+          fail "must be of the form http://<host>:<port>"
+        else
+          (* Get host *)
+          let host = Str.matched_group 1 address in
+          (* Get port
+             Note: `int_of_string_opt` gives `None` for ports too big for an `int` *)
+          match int_of_string_opt (Str.matched_group 2 address) with
+          | Some port when port >= 1 && port <= 65535 -> Result.Ok (host, port)
+          | _ -> fail "must have a port between 1 and 65535"
 %}
 
 (* Type literals *)
@@ -123,7 +144,14 @@
     | s=id                      {Var (mkpos $startpos $endpos, s)}
 
     decl:
-    | EMULATEDLOCDECL s=id  h=STRINGLIT             {EmulatedLocDecl (mkpos $startpos $endpos, s, (mkpos $startpos(h) $endpos(h), h))}
+    | EMULATEDLOCDECL s=id  a=STRINGLIT
+        {
+            let apos = mkpos $startpos(a) $endpos(a) in
+            match parse_address a with
+            | Result.Ok (host, port) -> EmulatedLocDecl (mkpos $startpos $endpos, s, (apos, host, port))
+            | Result.Error reason ->
+                failwith (Metainfo.Meta.PosInfo.string_of_mi apos ^ " " ^ reason)
+        }
     | s=id COLON t=typ                              {TypeDecl (mkpos $startpos $endpos, s, t)}
     | TYPEDECL s=id WALRUS t=typ                    {TypeAliasDecl (mkpos $startpos $endpos, s, t)}
     | s=id l=list(pattern) WALRUS e=expr SEMICOLON  {DefnDecl (mkpos $startpos $endpos, s, l, e)}
