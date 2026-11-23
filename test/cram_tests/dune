@@ -1,5 +1,6 @@
 (cram
  (deps
+  %{bin:pirc}
   (source_tree ../../lib/NetIR/backends)
   (source_tree cram_programs)))
 
