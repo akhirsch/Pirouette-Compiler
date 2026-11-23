@@ -86,8 +86,8 @@ module ASTMapper (A1 : AST) (A2 : AST) = struct
     | A1.AmI (m, e) -> A2.AmI (f m, expr_map f e)
 
   let decl_map (f : A1.m -> A2.m) = function
-    | A1.EmulatedLocDecl (m, n, h) ->
-        A2.EmulatedLocDecl (f m, name_map f n, name_map f h)
+    | A1.EmulatedLocDecl (m1, n, (m2, host, port)) ->
+        A2.EmulatedLocDecl (f m1, name_map f n, (f m2, host, port))
     | A1.TypeDecl (m, n, t) -> A2.TypeDecl (f m, name_map f n, typ_map f t)
     | A1.TypeAliasDecl (m, n, t) ->
         A2.TypeAliasDecl (f m, name_map f n, typ_map f t)

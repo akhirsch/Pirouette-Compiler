@@ -206,11 +206,11 @@ module MkOcamlGen (Net : NetAST) = struct
   (*------------------- DECL GENRATION ---------------------------*)
   let decl_gen (d : Net.decl) : structure_item =
     match d with
-    | Net.EmulatedLocDecl (_, (_, l), (_, h)) ->
+    | Net.EmulatedLocDecl (_, (_, l), (_, host, port)) ->
         [%stri
           let _ =
             let _emulated_location =
-              ([%e estring ~loc l], [%e estring ~loc h])
+              ([%e estring ~loc l], [%e estring ~loc host], [%e eint ~loc port])
             in
             ()]
     | Net.TypeDecl (_, (_, n), t) ->

@@ -84,7 +84,7 @@ let allowchoice n arms = AllowChoice ((), ((), n), arms)
 let ami e = AmI ((), e)
 
 (* Declaration smart constructors *)
-let emlocdecl l h = EmulatedLocDecl ((), ((), l), ((), h))
+let emlocdecl l host port = EmulatedLocDecl ((), ((), l), ((), host, port))
 let typedecl x t = TypeDecl ((), ((), x), t)
 let typealiasdecl x t = TypeAliasDecl ((), ((), x), t)
 let defndecl x p e = DefnDecl ((), ((), x), p, e)
