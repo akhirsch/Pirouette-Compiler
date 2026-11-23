@@ -73,13 +73,12 @@ end) : sig
       - Returns: A tuple of strings where the first element is the dot code for
         the name and the second element is the node name of the name. *)
 
-  val dot_hostname : (AST.m -> string) -> AST.hostname -> string * string
-  (** [dot_hostname string_of_info hostname] generates DOT code for a hostname
-      tuple.
+  val dot_address : (AST.m -> string) -> AST.address -> string * string
+  (** [dot_address string_of_info address] generates DOT code for an address.
 
-      - [name] is a tuple of info and a hostname string literal.
+      - [address] is a tuple of info, host and port.
       - Returns: A tuple of strings where the first element is the dot code for
-        the hostname and the second element is the node name of the name. *)
+        the address and the second element is the node name of the address. *)
 
   val dot_lab : (AST.m -> string) -> AST.lab -> string * string
   (** [dot_lab string_of_info label] generates DOT code for a label.

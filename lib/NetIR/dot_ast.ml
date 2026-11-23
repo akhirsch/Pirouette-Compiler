@@ -23,11 +23,11 @@ struct
         (string_of_info info),
       node_name )
 
-  let dot_hostname string_of_info hostname =
+  let dot_address string_of_info address =
     let node_name = generate_node_name () in
-    let info, str = hostname in
-    ( spf "%s [label=\"Hostname %s %s\"];\n" node_name (String.escaped str)
-        (string_of_info info),
+    let info, host, port = address in
+    ( spf "%s [label=\"Address http://%s:%d %s\"];\n" node_name
+        (String.escaped host) port (string_of_info info),
       node_name )
 
   let dot_lab string_of_info (label : lab) =
@@ -453,9 +453,9 @@ struct
   and dot_decl string_of_info decl =
     let node_name = generate_node_name () in
     match decl with
-    | EmulatedLocDecl (m, name, hostname) ->
+    | EmulatedLocDecl (m, name, address) ->
         let c1, n1 = dot_name string_of_info name in
-        let c2, n2 = dot_hostname string_of_info hostname in
+        let c2, n2 = dot_address string_of_info address in
         let decl_node =
           spf "%s [label=\"EmulatedLocDecl %s\"];\n" node_name
             (string_of_info m)
