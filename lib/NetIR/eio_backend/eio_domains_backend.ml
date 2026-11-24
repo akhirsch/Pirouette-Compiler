@@ -189,6 +189,33 @@ let wrap_location (me : string) (header : structure) (defns : structure) :
               ([ [%stri [@@@warning "-a"]] ] @ header @ [ run_item ])));
   ]
 
-let entry_point (_locs : string list) : structure_item list =
-  (* added _ in front of locs here bc this is a WIP need to run tests to see if we are on track *)
-  failwith "TODO" (*not sure what to do here yet *)
+(* entry_point takes a list of locations 
+ex: ["Alice"; "Bob"]
+ and should generat the OCaml AST:
+ let () = 
+   Pir_runtime.run 
+    [
+      ("Alice", Loc_Alice.run);
+      ("Bob", Loc_Bob.run);
+    ]
+
+Note: wrap_location already generates a run function for each participant    *)
+let entry_point (locs : string list) : structure_item list =
+  let participants =
+    List.map (* Iterates over every location name to generate the participant tuple *)
+      (fun name ->
+        let run_fn =
+          pexp_ident ~loc
+            {
+              txt = Ldot (Lident ("Loc_" ^ name), "run"); (* Constructs a qualified identifier here it will be Loc_Name.run *)
+              loc;
+            }
+        in
+        [%expr ([%e estring ~loc name], [%e run_fn])]) (* creating the tuple *)
+      locs
+  in
+  let participant_list = elist ~loc participants in
+  [
+    [%stri let () = Pir_runtime.run [%e participant_list]];
+    (* Generates the top-level structure item that starts the program *)
+  ]
