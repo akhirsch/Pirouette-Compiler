@@ -36,3 +36,10 @@
  (libraries ppxlib pirc.eio_domains_backend)
  (preprocess
   (pps ppxlib.metaquot)))
+
+(executable
+ (name full_program_test)
+ (modules full_program_test)
+ (libraries ppxlib pirc.netir pirc.eio_domains_backend)
+ (preprocess
+  (pps ppxlib.metaquot)))
