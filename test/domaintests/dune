@@ -50,3 +50,9 @@
  (libraries ppxlib pirc.netir pirc.eio_domains_backend)
  (preprocess
   (pps ppxlib.metaquot)))
+
+(executable
+ (name choreotest)
+ (modules choreotest)
+ (libraries ppxlib pirc.netir pirc.eio_domains_backend)
+ (preprocess (pps ppxlib.metaquot)))

@@ -283,7 +283,10 @@ module MkOcamlGen (Net : NetAST) = struct
         in
         pstr_type ~loc Recursive [ td ]
 
-  (* program_gen: builds the full OCaml file for one participant
+  (* program_gen: generates the OCaml AST for a single participant,
+   wrapped in a module containing its identity, type declarations,
+   and run function
+
      [me] is the participant's name (ex "Alice") known at compile time
      [prog] is that participant's NetIR program *)
   let program_gen (me : string) (prog : Net.program) : structure =
@@ -363,4 +366,11 @@ module MkOcamlGen (Net : NetAST) = struct
 
     (* Wrap this location's code in its own module. *)
     Eio_domains_backend.wrap_location me header defns
+
+  (* Generate the complete OCaml AST for all participants *)
+  let choreography_gen (participants : (string * Net.program) list) : structure
+      =
+    Eio_domains_backend.runtime
+    @ List.concat_map (fun (name, prog) -> program_gen name prog) participants
+    @ Eio_domains_backend.entry_point (List.map fst participants)
 end

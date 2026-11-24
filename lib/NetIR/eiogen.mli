@@ -36,4 +36,9 @@ module MkOcamlGen : functor (Net : NetAST) -> sig
   (** Conver a Decl expression into an Ppxlib structure item *)
 
   val program_gen : string -> Net.program -> structure
+  (** generates one participant's module *)
+
+  val choreography_gen : (string * Net.program) list -> structure
+  (**  Generates the complete OCaml AST, including the shared runtime,
+    all participant modules, and the entry point *)
 end

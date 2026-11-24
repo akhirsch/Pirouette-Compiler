@@ -26,7 +26,6 @@ open Ppxlib
 
 module A = Netir.Nometa
 module Gen = Netir.Eiogen.MkOcamlGen (A)
-
 open A
 
 let alice_prog =
@@ -42,17 +41,14 @@ let bob_prog =
     emlocdecl "Bob";
     defndecl "message" [] (recv intty "Alice");
     defndecl "check_message" []
-      (mkmatch (var "message")
-         [
-           (intlitpat 42, unitlit);
-         ]);
+      (mkmatch (var "message") [ (intlitpat 42, unitlit) ]);
   ]
 
 let generated =
   Eio_domains_backend.runtime
   @ Gen.program_gen "Alice" alice_prog
   @ Gen.program_gen "Bob" bob_prog
-  @ Eio_domains_backend.entry_point ["Alice"; "Bob"]
+  @ Eio_domains_backend.entry_point [ "Alice"; "Bob" ]
 
 let () =
   Pprintast.structure Format.std_formatter generated;
