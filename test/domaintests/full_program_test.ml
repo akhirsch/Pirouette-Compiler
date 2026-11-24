@@ -8,7 +8,10 @@
    This test verifies code generation, not compilation or
    runtime execution
 
-to run this test: dune exec ./test/domaintests/full_program_test.exe *)
+to run this test: dune exec ./test/domaintests/full_program_test.exe 
+
+NOTE: we are manually supplying each participant's NetIR program
+      We are verifying complete program generation from NetIR.    *)
 
 open Ppxlib
 module A = Netir.Nometa
