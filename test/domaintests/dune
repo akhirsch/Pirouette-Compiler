@@ -29,3 +29,10 @@
  (libraries ppxlib pirc.netir pirc.eio_domains_backend)
  (preprocess
   (pps ppxlib.metaquot)))
+
+(executable
+ (name entrypoint_test)
+ (modules entrypoint_test)
+ (libraries ppxlib pirc.eio_domains_backend)
+ (preprocess
+  (pps ppxlib.metaquot)))

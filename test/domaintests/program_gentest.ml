@@ -20,10 +20,8 @@ the run function, where pir_chans is in scope
 *)
 
 open Ppxlib
-
 module A = Netir.Nometa
 module Gen = Netir.Eiogen.MkOcamlGen (A)
-
 open A
 
 let prog =
@@ -32,10 +30,7 @@ let prog =
     emlocdecl "Bob";
     typealiasdecl "user_id" intty;
     variantdecl "color"
-      [
-        ("Red", [], varty "color");
-        ("Blue", [], varty "color");
-      ];
+      [ ("Red", [], varty "color"); ("Blue", [], varty "color") ];
     defndecl "message" [] (send (intlit 42) "Bob");
   ]
 

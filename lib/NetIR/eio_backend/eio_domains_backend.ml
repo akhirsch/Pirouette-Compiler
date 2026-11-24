@@ -202,16 +202,18 @@ ex: ["Alice"; "Bob"]
 Note: wrap_location already generates a run function for each participant    *)
 let entry_point (locs : string list) : structure_item list =
   let participants =
-    List.map (* Iterates over every location name to generate the participant tuple *)
+    List.map
+      (* Iterates over every location name to generate the participant tuple *)
       (fun name ->
         let run_fn =
           pexp_ident ~loc
             {
-              txt = Ldot (Lident ("Loc_" ^ name), "run"); (* Constructs a qualified identifier here it will be Loc_Name.run *)
+              txt = Ldot (Lident ("Loc_" ^ name), "run");
+              (* Constructs a qualified identifier here it will be Loc_Name.run *)
               loc;
             }
         in
-        [%expr ([%e estring ~loc name], [%e run_fn])]) (* creating the tuple *)
+        [%expr [%e estring ~loc name], [%e run_fn]]) (* creating the tuple *)
       locs
   in
   let participant_list = elist ~loc participants in
