@@ -154,10 +154,18 @@ let runtime =
    *)
 let wrap_location (me : string) (header : structure) (defns : structure) :
     structure_item list =
+  (* Assumes that every item in defns is a pstr_value all other items will 
+  trigger that fail with *)
   let open_defns =
-    pexp_open ~loc
-      (open_infos ~loc ~expr:(pmod_structure ~loc defns) ~override:Fresh)
-      [%expr ()]
+    List.fold_right (* processes the defs become a nested let *)
+      (fun item body ->
+        match item.pstr_desc with
+        | Pstr_value (rec_flag, bindings) ->
+            (* extracts the value bindings from each structured item *)
+            pexp_let ~loc rec_flag bindings body (* created the let...in*)
+        | _ -> failwith "Unexpected structure item")
+      defns [%expr ()]
+    (* the final expression of the function body *)
   in
 
   (* Pir_runtime is a module defined within the generated runtime AST below.

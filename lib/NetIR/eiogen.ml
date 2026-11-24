@@ -337,13 +337,29 @@ module MkOcamlGen (Net : NetAST) = struct
         Eio_domains_backend.who_i_am me
     in
     (* Generate the declarations for this location. *)
-    let generated_decls = List.map (decl_gen me) inter_prog in
+    let defn_decls, other_decls =
+      List.partition (function Net.DefnDecl _ -> true | _ -> false) inter_prog
+    in
+    (* Let Header = needs the emu_loc_variant here before who am i, we need this because
+    pri_me references a variant constructor that needs to be declared first
+    
+    example:
+    type pir_emulated_location = Pir_Alice | Pir_Bob
+    let pir_me = Pir_Alice
+    let pir_am_i l = (l = pir_me)  
+    
+    NOTE: that last line in the example defines a function that takes l
+    which is a location and returns a boolean indicating weather that location matches 
+    pir_me
+    
+    so for Alice's module:
+    pir_am_i Pir_Alice would be True 
+    pir_am_i Pir_Bob would be Flase *)
+    let header =
+      emu_loc_variant @ who_i_am @ List.map (decl_gen me) other_decls
+    in
 
-    (* Declarations available throughout the location module. *)
-    let header = who_i_am @ emu_loc_variant in
-
-    (* Definitions that belong to this location. *)
-    let defns = generated_decls in
+    let defns = List.map (decl_gen me) defn_decls in
 
     (* Wrap this location's code in its own module. *)
     Eio_domains_backend.wrap_location me header defns
