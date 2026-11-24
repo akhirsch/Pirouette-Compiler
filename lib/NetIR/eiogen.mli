@@ -39,6 +39,6 @@ module MkOcamlGen : functor (Net : NetAST) -> sig
   (** generates one participant's module *)
 
   val choreography_gen : (string * Net.program) list -> structure
-  (**  Generates the complete OCaml AST, including the shared runtime,
-    all participant modules, and the entry point *)
+  (** Generates the complete OCaml AST, including the shared runtime, all
+      participant modules, and the entry point *)
 end

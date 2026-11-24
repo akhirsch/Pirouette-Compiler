@@ -17,10 +17,8 @@ rm -f ./test/domaintests/generated_choreo.{ml,cmi,cmx,o,exe}
 *)
 
 open Ppxlib
-
 module A = Netir.Nometa
 module Gen = Netir.Eiogen.MkOcamlGen (A)
-
 open A
 
 let alice_prog =
@@ -36,13 +34,12 @@ let bob_prog =
     emlocdecl "Bob";
     defndecl "message" [] (recv intty "Alice");
     defndecl "check_message" []
-      (mkmatch (var "message") [(intlitpat 42, unitlit)]);
+      (mkmatch (var "message") [ (intlitpat 42, unitlit) ]);
   ]
 
 (* Test the new choreography_gen function *)
 let generated =
-  Gen.choreography_gen
-    [("Alice", alice_prog); ("Bob", bob_prog)]
+  Gen.choreography_gen [ ("Alice", alice_prog); ("Bob", bob_prog) ]
 
 let () =
   Pprintast.structure Format.std_formatter generated;
