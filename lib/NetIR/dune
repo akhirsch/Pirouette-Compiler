@@ -1,8 +1,9 @@
 (library
  (name netir)
  (public_name pirc.netir)
- (libraries metainfo ppxlib)
- (preprocess (pps ppxlib.metaquot))
+ (libraries metainfo ppxlib backend)
+ (preprocess
+  (pps ppxlib.metaquot))
  (instrumentation
   (backend bisect_ppx)))
 
