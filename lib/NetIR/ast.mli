@@ -69,6 +69,9 @@ module type AST = sig
     | AllowChoice of m * name * (lab * expr) list
     (* Location-Checking Primitive *)
     | AmI of m * expr
+    (* OCaml Function Primitives*)
+    | Print of m * string
+    | Sleep of m * int
 
   type decl =
     | EmulatedLocDecl of m * name

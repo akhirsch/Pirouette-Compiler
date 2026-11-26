@@ -109,6 +109,8 @@ module MkPrettify (A : Ast.AST) = struct
           in
           mkparens is_int ("allow " ^ n ^ " choice " ^ parms ^ "\nend")
       | AmI (_, e) -> "AmI " ^ prettify_int_expr true e
+      | Print (_, string) -> "Print " ^ string
+      | Sleep (_, x) -> "Sleep " ^ string_of_int x
     in
     prettify_int_expr false e
 

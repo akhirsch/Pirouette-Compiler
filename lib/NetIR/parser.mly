@@ -24,7 +24,7 @@
 %token <string> ID
 %token <string> STRINGLIT LOCLIT
 %token TRUELIT FALSELIT MATCH WITH END UNITLIT
-%token SEND RECV CHOOSE CHOICE AMI TO FROM FOR
+%token SEND RECV CHOOSE CHOICE AMI TO FROM FOR PRINT SLEEP
 %token TYPEDECL COLON WALRUS IMPORT BAR
 %token EMULATEDLOCDECL DOUBLEARROW
 %token WILDCARD LPAREN RPAREN LBRACK RBRACK 
@@ -94,6 +94,8 @@
     | CHOOSE l=lab FOR s=id             {ChooseFor (mkpos $startpos $endpos, s, l)}
     | AMI e=expr                        {AmI (mkpos $startpos $endpos, e)}
     | ALLOW s=id CHOICE l=nonempty_list(allow_match) END {AllowChoice (mkpos $startpos $endpos, s, l)}
+    | PRINT s=STRINGLIT                 {Print (mkpos $startpos $endpos, s)}
+    | SLEEP n=INTLIT                    {Sleep (mkpos $startpos $endpos, n)}
 
     match_match:
     | BAR a=pattern WALRUS e=expr   { (a, e) }

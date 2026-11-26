@@ -432,6 +432,20 @@ struct
         in
         let edge = spf "%s -> %s;\n" node_name n in
         (expr_node ^ edge ^ c, node_name)
+    | Print (m, string) ->
+        let c, n = dot_string string in
+        let expr_node =
+          spf "%s [label=\"Print %s\"];\n" node_name (string_of_info m)
+        in
+        let edge = spf "%s -> %s;\n" node_name n in
+        (expr_node ^ edge ^ c, node_name)
+    | Sleep (m, int) ->
+        let c, n = dot_int int in
+        let expr_node =
+          spf "%s [label=\"Sleep %s\"];\n" node_name (string_of_info m)
+        in
+        let edge = spf "%s -> %s;\n" node_name n in
+        (expr_node ^ edge ^ c, node_name)
 
   let rec dot_decls string_of_info program =
     match program with

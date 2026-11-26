@@ -81,6 +81,8 @@ rule read =
   | "allow" { ALLOW }
   | "choice" { CHOICE }
   | "AmI" { AMI }
+  | "print" { PRINT }
+  | "sleep" { SLEEP }
   (* Declarations *)
   | "emulated location" { EMULATEDLOCDECL }
   | "type" { TYPEDECL }

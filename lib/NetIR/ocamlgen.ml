@@ -189,6 +189,8 @@ module MkOcamlGen (Net : NetAST) = struct
           (Backend.Dummybackend.recv_label me n)
           (cases @ [ fallback ])
     | Net.AmI (_, e) -> Backend.Dummybackend.am_i me (expr_gen e)
+    | Net.Print (_, s) -> [%expr Printf.printf "%s\n" [%e estring ~loc s]]
+    | Net.Sleep (_, x) -> [%expr Unix.sleep [%e eint ~loc x]]
 
   (*------------------- DECL GENRATION ---------------------------*)
   (* converts a Pirouette declaration into an OCaml AST structure item *)

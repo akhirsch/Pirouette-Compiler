@@ -84,6 +84,8 @@ module ASTMapper (A1 : AST) (A2 : AST) = struct
             name_map f n,
             List.map (fun (l, e) -> (lab_map f l, expr_map f e)) bs )
     | A1.AmI (m, e) -> A2.AmI (f m, expr_map f e)
+    | A1.Print (m, s) -> A2.Print (f m, s)
+    | A1.Sleep (m, i) -> A2.Sleep (f m, i)
 
   let decl_map (f : A1.m -> A2.m) = function
     | A1.EmulatedLocDecl (m, n) -> A2.EmulatedLocDecl (f m, name_map f n)
