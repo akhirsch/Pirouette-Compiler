@@ -1,12 +1,10 @@
 ; Standalone runtime tests
-
 (executables
  (names domain_test pir_runtime)
  (modules domain_test pir_runtime)
  (libraries eio eio_main))
 
 ; Runtime generation test
-
 (executable
  (name runtime_gen_test)
  (modules runtime_gen_test)
@@ -15,7 +13,6 @@
   (pps ppxlib.metaquot)))
 
 ; Communication generation test
-
 (executable
  (name commtest1)
  (modules commtest1)
@@ -24,7 +21,6 @@
   (pps ppxlib.metaquot)))
 
 ; Location wrapping test
-
 (executable
  (name wrap_locationtest)
  (modules wrap_locationtest)
@@ -33,7 +29,6 @@
   (pps ppxlib.metaquot)))
 
 ; Individual participant generation test
-
 (executable
  (name program_gentest)
  (modules program_gentest)
@@ -42,7 +37,6 @@
   (pps ppxlib.metaquot)))
 
 ; Entry point generation test
-
 (executable
  (name entrypoint_test)
  (modules entrypoint_test)
@@ -51,7 +45,6 @@
   (pps ppxlib.metaquot)))
 
 ; Full program generation test
-
 (executable
  (name full_program_test)
  (modules full_program_test)
@@ -60,7 +53,6 @@
   (pps ppxlib.metaquot)))
 
 ; Manual assembly of the complete OCaml AST
-
 (executable
  (name full_test)
  (modules full_test)
@@ -69,7 +61,6 @@
   (pps ppxlib.metaquot)))
 
 ; Generate OCaml source from full_test
-
 (rule
  (target generated_eio.ml)
  (action
@@ -78,14 +69,12 @@
    (run %{exe:full_test.exe}))))
 
 ; Compile and execute the generated program
-
 (test
  (name generated_eio)
  (modules generated_eio)
  (libraries eio eio_main))
 
 ; Automatic choreography assembly
-
 (executable
  (name choreotest)
  (modules choreotest)
@@ -94,7 +83,6 @@
   (pps ppxlib.metaquot)))
 
 ; Generate OCaml source from choreotest
-
 (rule
  (target generated_choreo.ml)
  (action
@@ -103,8 +91,14 @@
    (run %{exe:choreotest.exe}))))
 
 ; Compile and execute the generated choreography
-
 (test
  (name generated_choreo)
  (modules generated_choreo)
  (libraries eio eio_main))
+
+; Investigates generated label communication and compiler diagnostics.
+(executable
+ (name labeltest)
+ (modules labeltest)
+ (libraries ppxlib pirc.netir pirc.eio_domains_backend)
+ (preprocess (pps ppxlib.metaquot)))
