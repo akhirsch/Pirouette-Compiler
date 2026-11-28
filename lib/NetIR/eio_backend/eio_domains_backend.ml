@@ -74,12 +74,46 @@ let recv_label (me : string) (src : string) =
     Each backend will follow this structure of implementing the common functions
     above and handling library-specific functions inside of the runtime library.
 *)
+(** This is a module that gets prepended once to the top of the program so that
+    each backend function described above can actually perform communications.
+    Each backend will follow this structure of implementing the common functions
+    above and handling library-specific functions inside of the runtime library.
+*)
 let runtime =
   [
     [%stri
-      module Pir_runtime = struct
-        [@@@warning "-a"]
+      (* Define an explicit public interface for the generated runtime.
 
+         Not every generated program will use every communication function.
+         For example, a program that only exchanges values may not use
+         send_label or recv_label.
+
+         Rather than suppressing compiler warnings, we introduce an explicit
+         interface to distinguish the intended public runtime functionality
+         from internal implementation details while preserving compiler
+         diagnostic reporting.
+
+         The channel_table type is abstract to prevent participants from
+         directly accessing or modifying the underlying communication channels.
+      *)
+      module Pir_runtime : sig
+        type channel_table
+
+        val send :
+          channel_table -> me:string -> dest:string -> 'a -> unit
+
+        val send_label :
+          channel_table -> me:string -> dest:string -> string -> unit
+
+        val recv :
+          channel_table -> me:string -> src:string -> 'a
+
+        val recv_label :
+          channel_table -> me:string -> src:string -> string
+
+        val run :
+          (string * (channel_table -> unit)) list -> unit
+      end = struct
         (* Here Obj.t could be explicit as a variant of all other types we allow in pirouette, but Obj.t allows any type to be used*)
         type msg = Value of Obj.t | Label of string
         type channel_table = (string * string, msg Eio.Stream.t) Hashtbl.t
@@ -184,9 +218,7 @@ let wrap_location (me : string) (header : structure) (defns : structure) :
     pstr_module ~loc
       (module_binding ~loc
          ~name:(Located.mk ~loc (Some ("Loc_" ^ me)))
-         ~expr:
-           (pmod_structure ~loc
-              ([ [%stri [@@@warning "-a"]] ] @ header @ [ run_item ])));
+         ~expr:(pmod_structure ~loc (header @ [ run_item ])));
   ]
 
 (* entry_point takes a list of locations 

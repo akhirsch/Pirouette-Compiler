@@ -25,7 +25,7 @@ let alice_prog =
   [
     emlocdecl "Alice";
     emlocdecl "Bob";
-    defndecl "message" [] (send (intlit 42) "Bob");
+    defndecl "_message" [] (send (intlit 42) "Bob");
   ]
 
 let bob_prog =
@@ -33,8 +33,14 @@ let bob_prog =
     emlocdecl "Alice";
     emlocdecl "Bob";
     defndecl "message" [] (recv intty "Alice");
-    defndecl "check_message" []
-      (mkmatch (var "message") [ (intlitpat 42, unitlit) ]);
+    defndecl "_check_message" []
+      (mkmatch (var "message")
+         [
+           (intlitpat 42, unitlit);
+           ( wildcardpat,
+             funapp (var "failwith")
+               (stringlit "Bob received an incorrect message from Alice") );
+         ]);
   ]
 
 (* Test the new choreography_gen function *)
